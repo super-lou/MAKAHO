@@ -1,0 +1,258 @@
+country;area
+Russia;16995800
+Antarctica;14000000
+China;9326410
+United States;9161923
+Canada;9093507
+Brazil;8456510
+Australia;7617930
+India;2973190
+Argentina;2736690
+Kazakhstan;2669800
+Algeria;2381740
+Sudan;2376000
+Congo, Democratic Republic of the;2267600
+Greenland;2166086
+Saudi Arabia;2149690
+Mexico;1923040
+Indonesia;1826440
+Libya;1759540
+Iran;1636000
+Peru;1280000
+Niger;1266700
+Chad;1259200
+Angola;1246700
+Mali;1220000
+South Africa;1219912
+Ethiopia;1119683
+Bolivia;1084390
+Colombia;1038700
+Mauritania;1030400
+Egypt;995450
+Nigeria;910768
+Tanzania;886037
+Venezuela;882050
+Namibia;825418
+Mozambique;784090
+Pakistan;778720
+Turkey;770760
+Chile;748800
+Zambia;740724
+Burma;657740
+Afghanistan;647500
+France;640053
+Somalia;627337
+Central African Republic;622984
+Ukraine;603700
+Botswana;585370
+Madagascar;581540
+Kenya;569250
+Yemen;527970
+Thailand;511770
+Spain;499542
+Turkmenistan;488100
+Cameroon;469440
+Papua New Guinea;452860
+Morocco;446300
+Iraq;432162
+Uzbekistan;425400
+Sweden;410934
+Paraguay;397300
+Zimbabwe;386670
+Japan;374744
+Germany;349223
+Congo, Republic of the;341500
+Malaysia;328550
+Vietnam;325360
+Cote d'Ivoire;318000
+Norway;307442
+Finland;304473
+Poland;304465
+Philippines;298170
+Italy;294020
+Ecuador;276840
+Burkina Faso;273800
+New Zealand;268021
+Western Sahara;266000
+Gabon;257667
+Guinea;245857
+United Kingdom;241590
+Ghana;230940
+Laos;230800
+Romania;230340
+Oman;212460
+Belarus;207600
+Uganda;199710
+Guyana;196850
+Senegal;192000
+Kyrgyzstan;191300
+Syria;184050
+Cambodia;176520
+Uruguay;173620
+Suriname;161470
+Tunisia;155360
+Nepal;143181
+Tajikistan;142700
+Bangladesh;133910
+Greece;130800
+Eritrea;121320
+Korea, North;120410
+Nicaragua;120254
+Honduras;111890
+Cuba;110860
+Benin;110620
+Bulgaria;110550
+Guatemala;108430
+Serbia and Montenegro;102136
+Iceland;100250
+Korea, South;98190
+Liberia;96320
+Malawi;94080
+Hungary;92340
+Jordan;91971
+Portugal;91951
+French Guiana;89150
+Azerbaijan;86100
+United Arab Emirates;83600
+Austria;82444
+Czech Republic;77276
+Panama;75990
+Sierra Leone;71620
+Georgia;69700
+Ireland;68890
+Sri Lanka;64740
+Latvia;63589
+Svalbard;61020
+Croatia;56414
+Togo;54385
+Bosnia and Herzegovina;51129
+Costa Rica;50660
+Slovakia;48800
+Dominican Republic;48380
+Bhutan;47000
+Estonia;43211
+Denmark;42394
+Switzerland;39770
+Netherlands;33883
+Moldova;33371
+Taiwan;32260
+Lesotho;30355
+Belgium;30278
+Armenia;28400
+Equatorial Guinea;28051
+Guinea-Bissau;28000
+Haiti;27560
+Solomon Islands;27540
+Albania;27398
+Burundi;25650
+Rwanda;24948
+Macedonia;24856
+Djibouti;22980
+Belize;22806
+El Salvador;20720
+Israel;20330
+Slovenia;20151
+New Caledonia;18575
+Fiji;18270
+Kuwait;17820
+Swaziland;17203
+Vanuatu;12200
+Falkland Islands (Islas Malvinas);12173
+Qatar;11437
+Jamaica;10831
+Lebanon;10230
+Bahamas, The;10070
+Gambia, The;10000
+Cyprus;9240
+Puerto Rico;8870
+West Bank;5640
+Brunei;5270
+Trinidad and Tobago;5128
+Cape Verde;4033
+South Georgia and the South Sandwich Islands;3903
+French Polynesia;3660
+Samoa;2934
+Luxembourg;2586
+Reunion;2507
+Comoros;2170
+Mauritius;2030
+Guadeloupe;1706
+Faroe Islands;1399
+Martinique;1060
+Hong Kong;1042
+Sao Tome and Principe;1001
+Netherlands Antilles;960
+Kiribati;811
+Dominica;754
+Tonga;718
+Micronesia, Federated States of;702
+Singapore;682.7
+Bahrain;665
+Saint Lucia;606
+Isle of Man;572
+Guam;541.3
+Northern Mariana Islands;477
+Andorra;468
+Palau;458
+Seychelles;455
+Antigua and Barbuda;442.6
+Barbados;431
+Turks and Caicos Islands;430
+Heard Island and McDonald Islands;412
+Saint Vincent and the Grenadines;389
+Jan Mayen;377
+Mayotte;374
+Gaza Strip;360
+Virgin Islands;346
+Grenada;344
+Malta;316
+Maldives;300
+Wallis and Futuna;274
+Cayman Islands;262
+Saint Kitts and Nevis;261
+Niue;260
+Saint Pierre and Miquelon;242
+Cook Islands;236.7
+American Samoa;199
+Aruba;193
+Marshall Islands;181.3
+Liechtenstein;160
+British Virgin Islands;153
+Christmas Island;135
+Jersey;116
+Anguilla;102
+Montserrat;102
+Guernsey;78
+San Marino;61.2
+British Indian Ocean Territory;60
+Bermuda;53.3
+Bouvet Island;49
+Pitcairn Islands;47
+Norfolk Island;34.6
+Macau;28.2
+Europa Island;28
+Tuvalu;26
+Nauru;21
+Cocos (Keeling) Islands;14
+Tokelau;10
+Gibraltar;6.5
+Wake Island;6.5
+Clipperton Island;6
+Navassa Island;5.4
+Ashmore and Cartier Islands;5
+Glorioso Islands;5
+Spratly Islands;5
+Juan de Nova Island;4.4
+Coral Sea Islands;3
+Monaco;1.95
+Tromelin Island;1
+Holy See (Vatican City);0.44
+Bassas da India;0.2
+Akrotiri;
+Dhekelia;
+French Southern and Antarctic Lands;
+Lithuania;NA
+Mongolia;
+Paracel Islands;NA
+Saint Helena;
+Timor-Leste;NA 

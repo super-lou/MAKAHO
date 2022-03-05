@@ -1,0 +1,4 @@
+id;FR
+t1;Tendances par site
+t2;Tendances par régions
+t3;Synthèse
