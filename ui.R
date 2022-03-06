@@ -69,12 +69,20 @@ ui = bootstrapPage(
             id='Menu',
             style="background-color: rgba(40, 40, 40, 0.8)",
             left=10, bottom=60,
-            checkboxInput('input_draw_point', 'Draw point', FALSE ),
-            verbatimTextOutput('summary'))),
+
+            actionButton("Crue_button", "Crue"),
+            actionButton("CrueNivale_button", "Crue nivale"),
+            actionButton("MoyennesEaux_button", "Moyennes eaux"),
+            actionButton("Etiage_button", "Étiage"),
+            textOutput("varName")
+        )
+    ),
+
+    
 
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
-               actionButton('menuButton', HTML(paste0("<b>","Menu","</b>")),
+               actionButton('Menu_button', HTML(paste0("<b>","Menu","</b>")),
                             style="color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent"))
 
 )
