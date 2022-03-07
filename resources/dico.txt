@@ -1,12 +1,9 @@
 id;FR
-t1;Tendances par site
-t2;Tendances par régions
-t3;Synthèse
-varTitle;Choix variable hydrologique
+varT;Choix variable hydrologique
 var1;Crues
-var1.1;Débit Max An
-var1.2;Date Max An
-var1.3;Fréquence annuelle [Q> Qp]	
+var1.1;Débit Max An 
+var1.2;Date Max An 
+var1.3;Fréquence annuelle [Q> Qp]
 var2;Crues Nivales
 var2.1;Débit Max An
 var2.2;Date Max An
@@ -28,3 +25,12 @@ var4.5;Date méd. Étiage (50% déficit)
 var4.6;Date fin Étiage (90% déficit)
 var4.7;Volume déficite
 var4.8;Durée Étiage
+varp;Probabilité p
+dh;"Début de l'année hydrologique"
+da;"Période d’analyse"
+ds;"Début de l'analyse"
+de;"Fin de l'analyse"
+sig;Seuil de significativité
+ctT;Carte de tendance par ...
+cts;sites
+ctr;régions

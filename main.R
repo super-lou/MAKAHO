@@ -19,11 +19,30 @@ urlTile =
 # "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png"
 # "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
 # "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+# "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
 # "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
 # "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
 # "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
-# "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
+    # "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
+# "https://{s}.tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token={accessToken}"
+    # "https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token={accessToken}"
+"https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token={accessToken}"
+
+if (grepl("jawg", urlTile, fixed=TRUE)) {
+    provider = "jawg"
+    token =
+        "hEjAgwvvpEJBpIR62stbJUflOVZXM73MoB1hQGAR69fCtoNVQiHJOKp8lVlPOdFH"
+} else {
+    provider = ""
+    token = NULL
+}
+
+
+if (provider == "jawg") {
+    urlTile = sub("[{]accessToken[}]", token, urlTile)
+}
+
+
 
 
 # Path to the data
@@ -31,6 +50,14 @@ computer_data_path = file.path(computer_work_path, 'data')
 
 # Resources directory
 resources_path = file.path(computer_work_path, 'resources')
+
+
+today = Sys.Date()
+
+minZoom = 1
+maxZoom = 13
+
+varP = c(word("var1.3"), word("var3.3"))
 
 dico_path = file.path(resources_path, 'dico.txt')
 dico = tibble(read.table(dico_path, header=TRUE, sep=";"))
@@ -82,6 +109,15 @@ get_listVar = function () {
         names(listIdVar)[length(listIdVar)] = word(paste0("var", i))
     } 
     return (listIdVar)
+}
+
+
+create_period = function (anHydro, dateStart, dateEnd) {
+    monthStart = formatC(anHydro, width=2, flag=0)
+    monthEnd = formatC((anHydro-2)%%12+1, width=2, flag=0)
+    period = paste0(dateStart, "-", monthStart, "-01 / ",
+                    dateEnd, "-", monthEnd, "-31")
+    return (period)
 }
 
 
