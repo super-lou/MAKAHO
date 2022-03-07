@@ -59,6 +59,33 @@ area = tibble(read.table(area_path, header=TRUE,
 area$country = as.character(area$country)
 area$area = as.double(area$area)
 
+
+get_listVar = function () {
+    OkPhe = as.vector(regexpr("var[0-9]$", dico[[1]])) != -1
+    IdPhe = which(OkPhe)
+    nbPhe = sum(as.numeric(OkPhe))
+
+    OkNumVar = as.vector(regexpr("var[0-9].[0-9]$", dico[[1]]))
+    nbVar = with(rle(OkNumVar), lengths[values == 1])
+
+    listIdVar = list()
+
+    for (i in 1:nbPhe) {
+        nbVar_phe = nbVar[i]
+        sub_listIdVar = list()
+        
+        for (j in 1:nbVar_phe) {
+            sub_listIdVar = append(sub_listIdVar,
+                                   word(paste0("var", i, "." , j)))
+        }
+        listIdVar = append(listIdVar, list(sub_listIdVar))
+        names(listIdVar)[length(listIdVar)] = word(paste0("var", i))
+    } 
+    return (listIdVar)
+}
+
+
+
 source('ui.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')
 shinyApp(ui=ui, server=server)

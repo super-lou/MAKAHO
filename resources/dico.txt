@@ -2,3 +2,29 @@ id;FR
 t1;Tendances par site
 t2;Tendances par régions
 t3;Synthèse
+varTitle;Choix variable hydrologique
+var1;Crues
+var1.1;Débit Max An
+var1.2;Date Max An
+var1.3;Fréquence annuelle [Q> Qp]	
+var2;Crues Nivales
+var2.1;Débit Max An
+var2.2;Date Max An
+var2.3;Date début Fonte (10% volume)
+var2.4;Date méd. Fonte (50% volume)
+var2.5;Date fin Fonte (90% volume)
+var2.6;Volume Fonte
+var2.7;Durée Fonte
+var3;Moyennes Eaux
+var3.1;Débit moyen annuel QA
+var3.2;Débit moyen mensuel
+var3.3;Décile Qp (débits classés)
+var4;Étiages
+var4.1;Débit Min An
+var4.2;Débit Mensuel Étiage QMNA
+var4.3;Débit moyen Mini VCN10
+var4.4;Date début Étiage (10% déficit)
+var4.5;Date méd. Étiage (50% déficit)
+var4.6;Date fin Étiage (90% déficit)
+var4.7;Volume déficite
+var4.8;Durée Étiage

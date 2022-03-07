@@ -3,59 +3,7 @@ library(leaflet)
 library(shinyjs)
 
 
-# ui = bootstrapPage(
-#     # tabsetPanel(
-        
-#     #     tabPanel(title=word('t1'), {
-#     #         tags$style(type = "text/css",
-#     #                    "html, body {width:100%;height:100%}")
-#     #         leafletOutput("map", width="100%", height="100%")
-#     #     }),
-        
-#     #     tabPanel(word('t2')),
-#     #     tabPanel(word('t3'))
-        
-#     # )
-    
-#     tags$style(type = "text/css",
-#                "html, body {width:100%;height:100%}"),
-#     leafletOutput("map", width="100%", height="100%"),
-
-#     absolutePanel(
-#         id="controls", class="panel panel-default", fixed=TRUE,
-#         draggable=FALSE, top="auto", left=10, right="auto", bottom=10,
-#         width="auto", height="auto",
-        
-
-        
-#         tags$div(id='demo', class="collapse",
-#                  "aaaaaaaaaaaaaaaa"),
-        
-#         HTML('<button 
-# style="background-color: transparent;border:none;color:#00B0F0;width:100px"
-# data-toggle="collapse"
-#  data-target="#demo">
-# Menu
-# </button>')
-
-#     )
-
-# ) 
-
-
 ui = bootstrapPage(
-    # tabsetPanel(
-        
-    #     tabPanel(title=word('t1'), {
-    #         tags$style(type = "text/css",
-    #                    "html, body {width:100%;height:100%}")
-    #         leafletOutput("map", width="100%", height="100%")
-    #     }),
-        
-    #     tabPanel(word('t2')),
-    #     tabPanel(word('t3'))
-        
-    # )
 
     useShinyjs(),
     
@@ -68,13 +16,18 @@ ui = bootstrapPage(
         absolutePanel(
             id='Menu',
             style="background-color: rgba(40, 40, 40, 0.8)",
+            fixed=TRUE,        
+            width="auto", height="auto",
             left=10, bottom=60,
+            
+            tags$div(
+                     selectInput("var", word('varTitle'),
+                                get_listVar()),
+                     tags$br(),
+                     textOutput("var")
 
-            actionButton("Crue_button", "Crue"),
-            actionButton("CrueNivale_button", "Crue nivale"),
-            actionButton("MoyennesEaux_button", "Moyennes eaux"),
-            actionButton("Etiage_button", "Étiage"),
-            textOutput("varName")
+
+                 )
         )
     ),
 
