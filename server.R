@@ -4,6 +4,13 @@ library(leaflet)
 
 server = function (input, output, session) {
 
+    urlTile = reactive({
+        get_urlTile(input$theme_choice,
+                    provider,
+                    theme_file,
+                    resources_path)
+    })
+    
     output$map = renderLeaflet({
         map = leaflet(options=leafletOptions(minZoom=minZoom,
                                              maxZoom=maxZoom,
@@ -15,18 +22,26 @@ server = function (input, output, session) {
                       6)
         
         map = addTiles(map,
-                       urlTemplate=urlTile)
+                       urlTemplate=urlTile())
     })
 
-    observeEvent(input$Menu_but, {
-        toggle(id='Menu')
+    observeEvent(input$ana_button, {
+        toggle(id='ana_panel')
+    })
+
+    observeEvent(input$map_button, {
+        toggle(id='map_panel')
+    })
+    
+    observeEvent(input$search_button, {
+        toggle(id='search_panel')
     })
 
 
-    observe({
-        toggle(id="action",
-               condition=input$var %in% varP)
-    })
+    # observe({
+    #     toggle(id="action",
+    #            condition=input$var %in% varP)
+    # })
     
 
     # observe({
@@ -44,13 +59,18 @@ server = function (input, output, session) {
 
     
     period = reactive({
-        create_period(input$anHydro_inp,
-                      input$dateStart_inp,
-                      input$dateEnd_inp)
+        create_period(input$anHydro_input,
+                      input$dateStart_input,
+                      input$dateEnd_input)
     })
 
     output$period <- renderText({
         period()
+    })
+
+
+    observe({
+        print(input$search_input)
     })
    
 } 

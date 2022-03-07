@@ -34,3 +34,8 @@ sig;Seuil de significativité
 ctT;Carte de tendance par ...
 cts;sites
 ctr;régions
+r.theme;Fond de carte
+r.theme.light;Clair
+r.theme.ter;Terrain
+r.theme.dark;Sombre
+s.back;Rechercher

@@ -1,39 +1,33 @@
 library(shiny)
 library(leaflet)
 library(shinyjs)
+library(icons)
 
 
 ui = bootstrapPage(
 
     useShinyjs(),
-    
+
+    ### ______________________________________________________________
     tags$style(type = "text/css",
                "html, body {width:100%;height:100%}"),
     leafletOutput("map", width="100%", height="100%"),
 
-
+    ### ______________________________________________________________
     hidden(
         absolutePanel(
-            id='Menu',
+            id='ana_panel',
             style="background-color: rgba(40, 40, 40, 0.8)",
             fixed=TRUE,        
-            width=275, height=550,
+            width=275, height=450,
             left=10, bottom=60,
             
             tags$div(
                 tags$br(),
                 selectInput("var", word('varT'),
                             get_listVar()),
-                
-                # sliderInput("anHydro_sli",,
-                #             min=1, max=12, value=12),
-                
-                # dateRangeInput("dateAnalyse_inp",
-                #                word("da"),
-                #                startview="decade",
-                #                separator= "/"),
 
-                numericInput("anHydro_inp",
+                numericInput("anHydro_input",
                              word("dh"),
                              1,
                              min=1,
@@ -41,13 +35,13 @@ ui = bootstrapPage(
 
                 fluidRow(
                     column(6,
-                           numericInput("dateStart_inp",
+                           numericInput("dateStart_input",
                                         word("ds"),
                                         1968,
                                         min=1900,
                                         max=format(today, "%Y"))),
                     column(6,
-                           numericInput("dateEnd_inp",
+                           numericInput("dateEnd_input",
                                         word("de"),
                                         2020,
                                         min=1900,
@@ -57,13 +51,13 @@ ui = bootstrapPage(
                 textOutput("period"),
                 tags$br(),
 
-                radioButtons(inputId="signif_cho",
+                radioButtons(inputId="signif_choice",
                              label=word("sig"),
                              inline=TRUE,
                              selected="10%",
                              choices=c("1%", "5%", "10%")),
 
-                radioButtons(inputId="carte_cho",
+                radioButtons(inputId="trendArea_choice",
                              label=word("ctT"),
                              inline=TRUE,
                              selected=word("cts"),
@@ -74,11 +68,79 @@ ui = bootstrapPage(
         )
     ),
 
-    
-
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
-               actionButton('Menu_but', HTML(paste0("<b>","Menu","</b>")),
-                            style="color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent"))
+               actionButton('ana_button',
+                            HTML(paste0("<b>","Analyse","</b>")),
+                            style=panelButtonCSS)),
 
+
+    ### ______________________________________________________________
+    hidden(
+        absolutePanel(
+            id='map_panel',
+            style="background-color: rgba(40, 40, 40, 0.8)",
+            fixed=TRUE,        
+            width="auto", height="auto",
+            left=170, bottom=10,
+            
+            tags$div(
+                radioButtons(inputId="theme_choice",
+                             label=NULL,
+                             inline=TRUE,
+                             selected=word("r.theme.dark"),
+                             choices=c(word("r.theme.light"),
+                                       word("r.theme.ter"),
+                                       word("r.theme.dark")))
+                
+                )
+        )
+    ),
+    
+    fixedPanel(left=100, bottom=10,
+               width="auto", height="auto",
+               actionButton('map_button', label=NULL,
+                            style=panelButtonCSS,
+                            icon=NULL, width=NULL,
+                            img(google_material(name="rocket"))
+                            )
+               ),
+
+    ### ______________________________________________________________
+    hidden(
+        absolutePanel(
+            id='search_panel',
+            style="background-color: rgba(40, 40, 40, 0.8)",
+            fixed=TRUE,        
+            width="auto", height="auto",
+            left=60, top=10,
+            
+            tags$div(
+                selectizeInput(
+                    inputId="search_input", 
+                    label=NULL,
+                    multiple=TRUE,
+                    choices=c("SBI Cap"),
+                    options=list(
+                        create=FALSE,
+                        placeholder=word("s.back"),
+                        onDropdownOpen=
+                            I("function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}"),
+                        onType=
+                            I("function (str) {if (str === \"\") {this.close();}}"),
+                        onItemAdd=
+                            I("function() {this.close();}")
+                    ))
+                )
+        )
+    ),
+    
+    fixedPanel(left=10, top=10,
+               width="auto", height="auto",
+               actionButton('search_button', label=NULL,
+                            # icon=icon('search', lib='glyphicon'),
+                            style=panelButtonCSS))
+
+
+    
 )
