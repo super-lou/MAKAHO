@@ -1,5 +1,4 @@
-library(shiny)
-library(leaflet)
+
 
 
 server = function (input, output, session) {
@@ -38,10 +37,22 @@ server = function (input, output, session) {
     })
 
 
-    # observe({
-    #     toggle(id="action",
-    #            condition=input$var %in% varP)
-    # })
+    observe({
+        toggle(id="proba_choice",
+               condition=input$var %in% varP)
+
+        if (input$var %in% varP) {
+            choices = valP[[which(input$var == varP)]]
+        } else {
+            choices = FALSE
+        }
+
+        updateRadioButtons(session, "proba_choice",
+                           label=word("varp"),
+                           inline=TRUE,
+                           choices=choices)
+        
+    })
     
 
     # observe({

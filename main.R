@@ -5,6 +5,10 @@ computer_work_path =
 # Sets working directory
 setwd(computer_work_path)
 
+library(shiny)
+library(shinyjs)
+library(icons)
+library(leaflet)
 library(dplyr)
 
 source(file.path('Rcode', 'tools.R'))
@@ -15,6 +19,9 @@ computer_data_path = file.path(computer_work_path, 'data')
 
 # Resources directory
 resources_path = file.path(computer_work_path, 'resources')
+
+icon_dir = 'icons'
+iconLib = get_icon(icon_dir, resources_path)
 
 theme_file = 'theme.txt'
 provider = 'jawg'
@@ -49,9 +56,11 @@ area$area = as.double(area$area)
 
 
 
+varP = c(word("var1.3"),
+         word("var3.3"))
 
-varP = c(word("var1.3"), word("var3.3"))
-
+valP = list(c("90%", "95%", "99%"),
+            c("10%", "25%", "50%", "75%", "90%")) 
 
 source('ui.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')
