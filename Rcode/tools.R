@@ -77,14 +77,6 @@ get_urlTile = function (theme, provider, theme_file, resources_path) {
 # get_urlTile(word("r.theme.light"), 'jawg', 'theme.txt', resources_path)
 
 
-create_period = function (anHydro, dateStart, dateEnd) {
-    monthStart = formatC(anHydro, width=2, flag=0)
-    monthEnd = formatC((anHydro-2)%%12+1, width=2, flag=0)
-    period = paste0(dateStart, "-", monthStart, "-01 / ",
-                    dateEnd, "-", monthEnd, "-31")
-    return (period)
-}
-
 get_icon = function (icon_dir, resources_path) {
     # icon_file = paste0(name, '.svg')
     iconLib = icon_set(file.path(resources_path, icon_dir))#, icon_file))
@@ -100,3 +92,16 @@ actionButtonI = function (inputId, label, icon_name, width=NULL, ...){
                  img(icon_name, align="right"),
                  ...)
 }
+
+
+read_FST = function (resdir, filename, filedir='fst') {
+    outfile = file.path(resdir, filedir, filename)
+    df = tibble(fst::read_fst(outfile))
+    return (df)
+}
+
+
+# df_data = read_FST(computer_data_path, 'data_QMNA_01.fst', filedir='fst')
+# df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
+
+

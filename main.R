@@ -10,6 +10,10 @@ library(shinyjs)
 library(icons)
 library(leaflet)
 library(dplyr)
+library(tools) # file_ext
+library(data.table) # fast reading
+library(sp) # crs
+library(sf) # crs
 
 source(file.path('Rcode', 'tools.R'))
 source(file.path('Rcode', 'style.R'))
@@ -19,6 +23,13 @@ computer_data_path = file.path(computer_work_path, 'data')
 
 # Resources directory
 resources_path = file.path(computer_work_path, 'resources')
+
+# # Result directory
+# resdir = file.path(computer_work_path, 'results')
+# if (!(file.exists(resdir))) {
+#   dir.create(resdir)
+# }
+# print(paste('resdir :', resdir))
 
 icon_dir = 'icons'
 iconLib = get_icon(icon_dir, resources_path)
@@ -65,3 +76,4 @@ valP = list(c("90%", "95%", "99%"),
 source('ui.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')
 shinyApp(ui=ui, server=server)
+
