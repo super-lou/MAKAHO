@@ -14,6 +14,7 @@ library(tools) # file_ext
 library(data.table) # fast reading
 library(sp) # crs
 library(sf) # crs
+library(StatsAnalysisTrend)
 
 source(file.path('Rcode', 'tools.R'))
 source(file.path('Rcode', 'style.R'))
@@ -65,10 +66,36 @@ area = tibble(read.table(area_path, header=TRUE,
 area$country = as.character(area$country)
 area$area = as.double(area$area)
 
+varNameList = get_varNameList()
+varNameVect = do.call(c, unlist(varNameList, recursive=FALSE))
+names(varNameVect) = NULL
 
+varVect = c(
+    "MAXAN",
+    "tMAXAN",
+    "fA",
+    "MAXANniv",
+    "tMAXANniv",
+    "tDEBfon",
+    "tMEDfon",
+    "tFINfon",
+    "VOLfon",
+    "tFON",
+    "QA",
+    "QMA",
+    "Qp",
+    "QNA",
+    "QMNA",
+    "VCN10",
+    "tDEBeti",
+    "tMEDeti",
+    "tFINeti",
+    "VOLdef",
+    "tETI"
+)
 
-varP = c(word("var1.3"),
-         word("var3.3"))
+varP = c("fA",
+         "Qp")
 
 valP = list(c("90%", "95%", "99%"),
             c("10%", "25%", "50%", "75%", "90%")) 

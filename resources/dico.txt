@@ -25,7 +25,7 @@ var4.5;Date méd. Étiage (50% déficit)
 var4.6;Date fin Étiage (90% déficit)
 var4.7;Volume déficite
 var4.8;Durée Étiage
-varp;Probabilité p
+varP;Probabilité p
 dh;"Début de l'année hydrologique"
 da;"Période d’analyse"
 ds;"Début de l'analyse"
@@ -39,3 +39,7 @@ r.theme.light;Clair
 r.theme.ter;Terrain
 r.theme.dark;Sombre
 s.back;Rechercher
+m.hov.lat;lat
+m.hov.lon;lon
+m.hov.code;code
+m.hov.name;nom

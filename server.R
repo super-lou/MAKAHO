@@ -34,17 +34,21 @@ server = function (input, output, session) {
         map = clearShapes(map)
         label =
             paste0(
-                "<b>lat. </b>", signif(df_meta()$lat, 6),
-                " / <b>lon. </b>", signif(df_meta()$lon, 6), '<br>',
-                "<b>code </b>", df_meta()$code, '<br>',
-                "<b>nom </b>", df_meta()$nom, '<br>'
-                )
+                "<b>", word('m.hov.lat'),". </b>",
+                    signif(df_meta()$lat, 6),
+                " / <b>", word('m.hov.lon'),". </b>",
+                    signif(df_meta()$lon, 6), '<br>',
+                "<b>", word('m.hov.code')," </b>",
+                    df_meta()$code, '<br>',
+                "<b>", word('m.hov.name')," </b>",
+                    df_meta()$nom, '<br>'
+            )
         
         map = addCircleMarkers(map,
                                lng=df_meta()$lon,
                                lat=df_meta()$lat,
                                radius=5, weight=1,
-                               color='grey50', fillColor='grey80',
+                               color='grey50', fillColor=colorList(),
                                opacity=1, fillOpacity=1,
                                label=lapply(label, HTML))
     })
@@ -55,36 +59,71 @@ server = function (input, output, session) {
         toggle(id='ana_panel')
     })
 
+    period = reactive({
+        monthStart = formatC(input$anHydro_input,
+                             width=2, flag=0)
+        monthEnd = formatC((input$anHydro_input-2)%%12+1,
+                           width=2, flag=0)
+        paste0(input$dateStart_input, "-",
+               monthStart, "-01 / ",
+               input$dateEnd_input, "-",
+               monthEnd, "-31")
+    })
+
+    output$period = renderText({
+        period()
+    })
+
+    var = reactive({
+        print(varVect[varNameVect == input$varName])
+        varVect[varNameVect == input$varName]
+    })
+
     observe({
         toggle(id="proba_choice",
-               condition=input$var %in% varP)
+               condition=var() %in% varP)
 
-        if (input$var %in% varP) {
-            choices = valP[[which(input$var == varP)]]
+        if (var() %in% varP) {
+            choices = valP[[which(var() == varP)]]
         } else {
             choices = FALSE
         }
         updateRadioButtons(session, "proba_choice",
-                           label=word("varp"),
+                           label=word("varP"),
                            inline=TRUE,
                            choices=choices)
     })
 
-    df_XEx = reactive({
+    filename = reactive({ 
         monthStart = formatC(input$anHydro_input,
                              width=2, flag=0)
-        filename = paste0('data_',
-                          input$var, '_',
-                          monthStart, '.fst')
-        df_dataExtmp = read_FST(computer_data_path,
-                             filename,
-                             filedir='fst')
-        names(df_dataExtmp)=c('datetime', 'group1', 'values', 'code')
-        df_dataExtmp
+        filenametmp = paste0(var(), 'Ex_',
+                             monthStart, '.fst')
+
+        file_path = file.path(computer_data_path, 'fst', filenametmp)
+        if (file.exists(file_path)) {
+            filenametmp
+        } else {
+            NULL
+        }
+    })
+    
+    df_XEx = reactive({
+        if (!is.null(filename())) {
+            df_XExtmp = read_FST(computer_data_path,
+                                 filename(),
+                                 filedir='fst')
+            names(df_XExtmp)=c('datetime', 'group1', 'values', 'code')
+            #period selection
+            df_XExtmp
+        } else {
+            NULL
+         }
     })
         
     df_meta = reactive({
-        df_metatmp = read_FST(computer_data_path, 'meta.fst',
+        df_metatmp = read_FST(computer_data_path,
+                              'meta.fst',
                               filedir='fst')
         crs_rgf93 = st_crs(2154)
         crs_wgs84 = st_crs(4326)
@@ -98,22 +137,43 @@ server = function (input, output, session) {
         df_metatmp
     })
     
-    period = reactive({
-        monthStart = formatC(input$anHydro_input,
-                             width=2, flag=0)
-        monthEnd = formatC((input$anHydro_input-2)%%12+1,
-                           width=2, flag=0)
-        paste0(input$dateStart_input, "-",
-               monthStart, "-01 / ",
-               input$dateEnd_input, "-",
-               monthEnd, "-31")
+    df_trend = reactive({
+        if (!is.null(df_XEx())) {
+            Estimate.stats(data.extract=df_XEx(),
+                           dep.option='AR1')
+        } else {
+            NULL
+        }
     })
 
-    
-    df_Xtrend = Estimate.stats(data.extract=df_dataEx(),
-                               dep.option='AR1')
-    
+    colorList = reactive({
+        Code = rle(df_meta()$code)$values
+        nCode = length(Code)
+        
+        if (!is.null(df_XEx()) | !is.null(df_trend())) {
+            res = get_trendExtremes(df_XEx(), df_trend(), df_meta(),
+                                    toMean=TRUE)
+            minTrendValue = res$min
+            maxTrendValue = res$max
 
+            colorListtmp = c()
+            for (code in Code) {
+                df_trend_code = df_trend[df_trend$code == code,]
+                trendValue = df_trend_code$trend
+                
+                color = get_color(trendValue, 
+                                  minTrendValue,
+                                  maxTrendValue,
+                                  palette_name='perso',
+                                  reverse=TRUE)
+                colorListtmp = c(colorListtmp, color)
+            }
+            colorListtmp
+        } else {
+            rep('grey80', nCode)
+        }
+    })
+    
     ### Search
     observeEvent(input$search_button, {
         toggle(id='search_panel')

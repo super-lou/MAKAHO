@@ -20,8 +20,8 @@ ui = bootstrapPage(
             
             tags$div(
                 tags$br(),
-                selectInput("var", word('varT'),
-                            get_listVar()),
+                selectInput("varName", word('varT'),
+                            varNameList),
 
                 hidden(
                     radioButtons(inputId="proba_choice",
@@ -80,6 +80,8 @@ ui = bootstrapPage(
                             )
                
                ),
+
+    textOutput("trend"),
 
 
     ### ______________________________________________________________
