@@ -15,6 +15,7 @@ library(data.table) # fast reading
 library(sp) # crs
 library(sf) # crs
 library(StatsAnalysisTrend)
+library(ggplot2)
 
 source(file.path('Rcode', 'tools.R'))
 source(file.path('Rcode', 'style.R'))
@@ -98,7 +99,12 @@ varP = c("fA",
          "Qp")
 
 valP = list(c("90%", "95%", "99%"),
-            c("10%", "25%", "50%", "75%", "90%")) 
+            c("10%", "25%", "50%", "75%", "90%"))
+
+sigP = c("1%", "5%", "10%")
+
+
+Cgreymid = "#808080"
 
 source('ui.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')

@@ -29,28 +29,72 @@ server = function (input, output, session) {
                        urlTemplate=urlTile())
     })
 
-    observeEvent(input$theme_choice, {
+    observeEvent({ ### /!\
+        input$theme_choice
+        input$signif_choice
+        df_meta()
+        fillList()
+    }, {
         map = leafletProxy("map")
-        map = clearShapes(map)
-        label =
+        
+        alpha = as.numeric(sub("%", "", input$signif_choice)) / 100
+        
+        Code = rle(df_meta()$code)$values
+        
+        CodeS = df_trend()$code[df_trend()$p <= alpha]
+        fillListS = fillList()[Code %in% CodeS]
+        df_metaS = df_meta()[df_meta()$code %in% CodeS,]
+
+        CodeNS = df_trend()$code[!(df_trend()$p <= alpha)]
+        fillListNS = fillList()[Code %in% CodeNS]
+        df_metaNS = df_meta()[df_meta()$code %in% CodeNS,]
+
+        print('a')
+
+        print(fillList())
+        
+        markerListNS = get_markerList(Cgreymid, fillListNS,
+                                      resources_path)
+
+
+        
+        labelNS =
             paste0(
                 "<b>", word('m.hov.lat'),". </b>",
-                    signif(df_meta()$lat, 6),
+                    signif(df_metaNS$lat, 6),
                 " / <b>", word('m.hov.lon'),". </b>",
-                    signif(df_meta()$lon, 6), '<br>',
+                    signif(df_metaNS$lon, 6), '<br>',
                 "<b>", word('m.hov.code')," </b>",
-                    df_meta()$code, '<br>',
+                    df_metaNS$code, '<br>',
                 "<b>", word('m.hov.name')," </b>",
-                    df_meta()$nom, '<br>'
+                    df_metaNS$nom, '<br>'
             )
-        
+
+        print('b')
+
+        map = clearMarkers(map)
         map = addCircleMarkers(map,
-                               lng=df_meta()$lon,
-                               lat=df_meta()$lat,
-                               radius=5, weight=1,
-                               color='grey50', fillColor=colorList(),
-                               opacity=1, fillOpacity=1,
-                               label=lapply(label, HTML))
+                               lng=df_metaS$lon,
+                               lat=df_metaS$lat,
+                               stroke=TRUE,
+                               color=Cgreymid,
+                               weight=1,
+                               opacity=1,
+                               radius=8,
+                               fillColor=fillListS,
+                               fillOpacity=1)
+                               # label=lapply(label, HTML))
+
+        print('c')
+        
+        map = addMarkers(map,
+                         lng=df_metaNS$lon,
+                         lat=df_metaNS$lat,
+                         icon=markerListNS,
+                         label=lapply(labelNS, HTML))
+
+        print('d')
+        
     })
     
     
@@ -64,10 +108,17 @@ server = function (input, output, session) {
                              width=2, flag=0)
         monthEnd = formatC((input$anHydro_input-2)%%12+1,
                            width=2, flag=0)
-        paste0(input$dateStart_input, "-",
-               monthStart, "-01 / ",
-               input$dateEnd_input, "-",
-               monthEnd, "-31")
+
+        DateStart = as.Date(paste(input$dateStart_input,
+                                  monthStart,
+                                  '01',
+                                  sep='-'))
+        DateEnd = as.Date(paste(input$dateEnd_input,
+                                monthStart,
+                                '01',
+                                sep='-')) - 1
+        
+        paste0(DateStart, " / ", DateEnd)
     })
 
     output$period = renderText({
@@ -75,7 +126,6 @@ server = function (input, output, session) {
     })
 
     var = reactive({
-        print(varVect[varNameVect == input$varName])
         varVect[varNameVect == input$varName]
     })
 
@@ -114,7 +164,12 @@ server = function (input, output, session) {
                                  filename(),
                                  filedir='fst')
             names(df_XExtmp)=c('datetime', 'group1', 'values', 'code')
-            #period selection
+
+            Start = as.Date(substr(period(), 1, 10))
+            End = as.Date(substr(period(), 14, 23))
+            Date = as.Date(df_XExtmp$datetime) ### /!\
+            
+            df_XExtmp = df_XExtmp[Date >= Start & Date <= End,]
             df_XExtmp
         } else {
             NULL
@@ -146,29 +201,31 @@ server = function (input, output, session) {
         }
     })
 
-    colorList = reactive({
+    fillList = reactive({
         Code = rle(df_meta()$code)$values
         nCode = length(Code)
         
-        if (!is.null(df_XEx()) | !is.null(df_trend())) {
+        if (!is.null(df_XEx()) | !is.null(df_trend())) {            
             res = get_trendExtremes(df_XEx(), df_trend(), df_meta(),
                                     toMean=TRUE)
+            TrendValueList = res$value
             minTrendValue = res$min
             maxTrendValue = res$max
 
-            colorListtmp = c()
-            for (code in Code) {
-                df_trend_code = df_trend[df_trend$code == code,]
-                trendValue = df_trend_code$trend
-                
+            fillListtmp = c()
+            for (k in 1:nCode) {
+
+                trendValue = TrendValueList[k]
+
                 color = get_color(trendValue, 
                                   minTrendValue,
                                   maxTrendValue,
                                   palette_name='perso',
                                   reverse=TRUE)
-                colorListtmp = c(colorListtmp, color)
+                
+                fillListtmp = c(fillListtmp, color)
             }
-            colorListtmp
+            fillListtmp
         } else {
             rep('grey80', nCode)
         }

@@ -57,8 +57,8 @@ ui = bootstrapPage(
                 radioButtons(inputId="signif_choice",
                              label=word("sig"),
                              inline=TRUE,
-                             selected="10%",
-                             choices=c("1%", "5%", "10%")),
+                             selected=sigP[3],
+                             choices=sigP),
 
                 radioButtons(inputId="trendArea_choice",
                              label=word("ctT"),

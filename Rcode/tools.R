@@ -96,7 +96,6 @@ actionButtonI = function (inputId, label, icon_name, width=NULL, ...){
 
 read_FST = function (resdir, filename, filedir='fst') {
     outfile = file.path(resdir, filedir, filename)
-    print(outfile)
     df = tibble(fst::read_fst(outfile))
     return (df)
 }
@@ -115,8 +114,7 @@ get_trendExtremes = function (df_data, df_trend, df_meta, toMean=TRUE) {
     
     # Blank array to store mean of the trend for each
     # station, perdiod and variable
-    TrendValue_code = array(rep(1, nCode),
-                            dim=c(nCode))
+    TrendValueList = c()
 
     # For all the code
     for (k in 1:nCode) {
@@ -127,26 +125,27 @@ get_trendExtremes = function (df_data, df_trend, df_meta, toMean=TRUE) {
         # Extracts the data corresponding to the code
         df_data_code = df_data[df_data$code == code,] 
         df_trend_code = df_trend[df_trend$code == code,]
-        
+
         # If it is a flow variable
         if (toMean) {
             # Computes the mean of the data on the period
-            dataMean = mean(df_data_code_per$Value, na.rm=TRUE)
+            dataMean = mean(df_data_code$values, na.rm=TRUE) ### /!\
             # Normalises the trend value by the mean of the data
-            trendValue = df_trend_code_per$trend / dataMean
+            trendValue = df_trend_code$trend / dataMean
             # If it is a date variable
         } else {
-            trendValue = df_trend_code_per$trend
+            trendValue = df_trend_code$trend
         }
         # Stores the mean trend
-        TrendValue_code[j, i, k] = trendValue
+        TrendValueList = c(TrendValueList, trendValue)
     }
 
     # Compute the min and the max of the mean trend for all the station
-    minTrendValue = min(TrendValue_code, na.rm=TRUE)
-    maxTrendValue = max(TrendValue_code, na.rm=TRUE)
+    minTrendValue = min(TrendValueList, na.rm=TRUE)
+    maxTrendValue = max(TrendValueList, na.rm=TRUE)
 
-    res = list(min=minTrendValue, max=maxTrendValue)
+    res = list(value=TrendValueList,
+               min=minTrendValue, max=maxTrendValue)
     return (res)
 }
 
@@ -213,7 +212,6 @@ get_color = function (value, min, max, ncolor=256, palette_name='perso', reverse
         id = round(idNorm*(ncolor - 1) + 1, 0)        
         # The associated color
         color = palette_cold[id]
-        
     # Same if it is a positive value
     } else {
         if (maxAbs == 0) {
@@ -371,3 +369,101 @@ palette_tester = function (palette_name='perso', figdir='figures', n=256) {
            filename=paste(palette_name, '.png', sep=''),
            width=10, height=10, units='cm', dpi=300)
 }
+
+
+## 2. USEFUL GENERICAL PLOT __________________________________________
+### 2.1. Void plot ___________________________________________________
+# A plot completly blank
+void = ggplot() + geom_blank(aes(1,1)) +
+    theme(
+        plot.background = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_blank()
+    )
+
+
+get_marker = function (color, fill, outdir, id, size=10, stroke=1.5, shape='o', ...) {
+
+    filename = paste0(id, '.png')
+    
+    if (shape == 'o') {
+        shape = 21
+    } else if (shape == '^') {
+        shape = 24
+    } else if (shape == 'v') {
+        shape = 25
+    }
+    
+    p = ggplot() + theme_void() +
+        geom_point(aes(x=0, y=0), size=size, stroke=stroke,
+                   shape=shape, color=color, fill=fill, ...) +
+        # X axis of the colorbar
+        scale_x_continuous(limits=c(-0.1, 0.1),
+                           expand=c(0, 0)) +
+        # Y axis of the colorbar
+        scale_y_continuous(limits=c(-0.1, 0.1),
+                           expand=c(0, 0)) +
+        # Margin of the colorbar
+        theme(plot.margin=margin(t=0, r=0, b=0, l=0, unit="mm"))
+
+    ggsave(plot=p,
+           path=outdir,
+           filename=filename,
+           width=1, height=1, units='cm', dpi=100)
+    
+    marker = makeIcon(file.path(outdir, filename))
+    return (marker)
+}
+
+# get_marker('grey50', 'grey80', resources_path, 'marker', id=1, shape='o')
+
+get_markerList = function (colorList, fillList, resources_path, filedir='marker', size=10, stroke=1.5, shape='o', ...) {
+
+    # Names of a temporary directory to store all the independent pages
+    outdir = file.path(resources_path, filedir)
+    # Creates it if it does not exist
+    if (!(file.exists(outdir))) {
+        dir.create(outdir)
+    # If it already exists it deletes the pre-existent directory
+    # and recreates one
+    } else {
+        unlink(outdir, recursive=TRUE)
+        dir.create(outdir)
+    }
+
+    nC = length(colorList)
+    nF = length(fillList)
+
+    if (nC == 1 & nF > 1) {
+        colorList = rep(colorList, nF)
+        n = nF
+    } else if (nC > 1 & nF == 1) {
+        fillList = rep(fillList, nC)
+        n = nC
+    } else if (nC > 1 & nF > 1) {
+        stop ("colorList and fillList have not the same size or none of them have size one")
+    } else {
+        n = 1
+    }
+
+    print(n)
+    
+    markerList = list()
+    for (i in 1:n) {
+        marker = get_marker(colorList[i], fillList[i], outdir, id=i,
+                            shape=shape, size=size, stroke=stroke)
+        markerList = append(markerList, marker)
+    }
+    # class(markerList) = "leaflet_icon_set"
+    return (icons(markerList))
+}
+
+# markerList = get_markerList('black', c('grey40', 'grey50', 'grey60'), resources_path)
