@@ -38,63 +38,50 @@ server = function (input, output, session) {
         map = leafletProxy("map")
         
         alpha = as.numeric(sub("%", "", input$signif_choice)) / 100
-        
+
+
         Code = rle(df_meta()$code)$values
+
+        OkS = df_trend()$p <= alpha
+        CodeSU = df_trend()$code[OkS & df_trend()$trend >= 0]
+        CodeSD = df_trend()$code[OkS & df_trend()$trend < 0]
+        CodeNS = df_trend()$code[!OkS]
         
-        CodeS = df_trend()$code[df_trend()$p <= alpha]
-        fillListS = fillList()[Code %in% CodeS]
-        df_metaS = df_meta()[df_meta()$code %in% CodeS,]
+        shapeList = rep(1, length(fillList()))
+        shapeList[Code %in% CodeSU] = '^'
+        shapeList[Code %in% CodeSD] = 'v'
+        shapeList[Code %in% CodeNS] = 'o'
 
-        CodeNS = df_trend()$code[!(df_trend()$p <= alpha)]
-        fillListNS = fillList()[Code %in% CodeNS]
-        df_metaNS = df_meta()[df_meta()$code %in% CodeNS,]
+        markerList = get_markerList(shapeList, fillList(),
+                                    resources_path)
 
-        print('a')
-
-        print(fillList())
+        print(markerList)
         
-        markerListNS = get_markerList(Cgreymid, fillListNS,
-                                      resources_path)
-
-
-        
-        labelNS =
+        label =
             paste0(
                 "<b>", word('m.hov.lat'),". </b>",
-                    signif(df_metaNS$lat, 6),
+                    signif(df_meta()$lat, 6),
                 " / <b>", word('m.hov.lon'),". </b>",
-                    signif(df_metaNS$lon, 6), '<br>',
+                    signif(df_meta()$lon, 6), '<br>',
                 "<b>", word('m.hov.code')," </b>",
-                    df_metaNS$code, '<br>',
+                    df_meta()$code, '<br>',
                 "<b>", word('m.hov.name')," </b>",
-                    df_metaNS$nom, '<br>'
+                    df_meta()$nom, '<br>'
             )
 
-        print('b')
-
         map = clearMarkers(map)
-        map = addCircleMarkers(map,
-                               lng=df_metaS$lon,
-                               lat=df_metaS$lat,
-                               stroke=TRUE,
-                               color=Cgreymid,
-                               weight=1,
-                               opacity=1,
-                               radius=8,
-                               fillColor=fillListS,
-                               fillOpacity=1)
-                               # label=lapply(label, HTML))
-
-        print('c')
-        
         map = addMarkers(map,
-                         lng=df_metaNS$lon,
-                         lat=df_metaNS$lat,
-                         icon=markerListNS,
-                         label=lapply(labelNS, HTML))
+                         lng=df_meta()$lon,
+                         lat=df_meta()$lat,
+                         icon=markerList,
+                         label=lapply(label, HTML))
+        map = addCircleMarkers(map,
+                               lng=df_meta()$lon,
+                               lat=df_meta()$lat,
+                               radius=3,
+                               fillColor=Cgreymid, fillOpacity=1,
+                               color=Cgreymid, opacity=1)
 
-        print('d')
-        
     })
     
     
@@ -227,7 +214,7 @@ server = function (input, output, session) {
             }
             fillListtmp
         } else {
-            rep('grey80', nCode)
+            rep('grey50', nCode)
         }
     })
     

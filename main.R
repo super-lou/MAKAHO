@@ -106,6 +106,8 @@ sigP = c("1%", "5%", "10%")
 
 Cgreymid = "#808080"
 
+# create_marker(resources_path)
+
 source('ui.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')
 shinyApp(ui=ui, server=server)

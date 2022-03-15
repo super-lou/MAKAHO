@@ -150,22 +150,21 @@ get_trendExtremes = function (df_data, df_trend, df_meta, toMean=TRUE) {
 }
 
 
-palette_perso = c('#0f3b57', # cold
-                  '#1d7881',
-                  '#80c4a9',
-                  '#e2dac6', # mid
-                  '#fadfad',
-                  '#d08363',
-                  '#7e392f') # hot
+PalettePerso = c('#0f3b57', # cold
+                 '#1d7881',
+                 '#80c4a9',
+                 '#e2dac6', # mid
+                 '#fadfad',
+                 '#d08363',
+                 '#7e392f') # hot
 
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________
 # Returns a color of a palette corresponding to a value included
 # between the min and the max of the variable
-get_color = function (value, min, max, ncolor=256, palette_name='perso', reverse=FALSE) {
+get_color = function (value, min, max, nColor=256, palette_name='perso', reverse=FALSE) {
 
-    
     # If the value is a NA return NA color
     if (is.na(value)) {
         return (NA)
@@ -173,7 +172,7 @@ get_color = function (value, min, max, ncolor=256, palette_name='perso', reverse
     
     # If the palette chosen is the personal ones
     if (palette_name == 'perso') {
-        colorList = palette_perso
+        colorList = PalettePerso
     # Else takes the palette corresponding to the name given
     } else {
         colorList = brewer.pal(11, palette_name)
@@ -182,25 +181,49 @@ get_color = function (value, min, max, ncolor=256, palette_name='perso', reverse
     # Gets the number of discrete colors in the palette
     nSample = length(colorList)
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(ncolor)
-    # Separates it in the middle to have a cold and a hot palette
-    Sample_hot = 1:(as.integer(nSample/2)+1)
-    Sample_cold = (as.integer(nSample/2)+1):nSample
-    palette_hot = colorRampPalette(colorList[Sample_hot])(ncolor)
-    palette_cold = colorRampPalette(colorList[Sample_cold])(ncolor)
+    palette = colorRampPalette(colorList)(nColor)
 
-    # Reverses the palette if it needs to be
+    midDown = round(nColor/2, 0)
+    midUp = midDown
+    if (nColor %% 2 == 0) {
+        midUp = midUp + 1
+    }
     if (reverse) {
+        Sample_hot = 1:midDown
+        Sample_cold = midUp:nColor
+        
+        palette_hot = palette[Sample_hot]
+        palette_cold = palette[Sample_cold]
+        
         palette = rev(palette)
         palette_hot = rev(palette_hot)
         palette_cold = rev(palette_cold)
+    } else {
+        Sample_hot = midUp:nColor
+        Sample_cold = 1:midDown
+        
+        palette_hot = palette[Sample_hot]
+        palette_cold = palette[Sample_cold]
     }
+    
+    nColor_hot = length(palette_hot)
+    nColor_cold = length(palette_cold)
 
+    # print(palette)
+    # print('cold')
+    # print(palette_cold)
+    # print(Sample_cold)
+    # print(nColor_cold)
+    # print('hot')
+    # print(palette_hot)
+    # print(Sample_hot)
+    # print(nColor_hot)    
+    
     # Computes the absolute max
     maxAbs = max(abs(max), abs(min))
 
     # If the value is negative
-    if (value < 0) {
+    if (value <= 0) {
         if (maxAbs == 0) {
             idNorm = 0
         } else {
@@ -209,7 +232,7 @@ get_color = function (value, min, max, ncolor=256, palette_name='perso', reverse
             idNorm = (value + maxAbs) / maxAbs
         }
         # The index corresponding
-        id = round(idNorm*(ncolor - 1) + 1, 0)        
+        id = round(idNorm*(nColor_cold - 1) + 1, 0)
         # The associated color
         color = palette_cold[id]
     # Same if it is a positive value
@@ -219,16 +242,21 @@ get_color = function (value, min, max, ncolor=256, palette_name='perso', reverse
         } else {
             idNorm = value / maxAbs
         }
-        id = round(idNorm*(ncolor - 1) + 1, 0)
+        id = round(idNorm*(nColor_hot - 1) + 1, 0)
+        # The associated color
         color = palette_hot[id]
     }
+    # print(idNorm)
+    # print(id)
+    # print(palette_hot)
+    # print(color)
     return(color)
 }
 
 ### 1.2. Colorbar ____________________________________________________
 # Returns the colorbar but also positions, labels and colors of some
 # ticks along it 
-get_palette = function (min, max, ncolor=256, palette_name='perso', reverse=FALSE, nbTick=10) {
+get_palette = function (min, max, nColor=256, palette_name='perso', reverse=FALSE, nbTick=10) {
 
     # If the value is a NA return NA color
     if (is.null(min) | is.null(max)) {
@@ -237,7 +265,7 @@ get_palette = function (min, max, ncolor=256, palette_name='perso', reverse=FALS
     
     # If the palette chosen is the personal ones
     if (palette_name == 'perso') {
-        colorList = palette_perso
+        colorList = PalettePerso
     # Else takes the palette corresponding to the name given
     } else {
         colorList = brewer.pal(11, palette_name)
@@ -246,19 +274,33 @@ get_palette = function (min, max, ncolor=256, palette_name='perso', reverse=FALS
     # Gets the number of discrete colors in the palette
     nSample = length(colorList)
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(ncolor)
-    # Separates it in the middle to have a cold and a hot palette
-    Sample_hot = 1:(as.integer(nSample/2)+1)
-    Sample_cold = (as.integer(nSample/2)+1):nSample
-    palette_hot = colorRampPalette(colorList[Sample_hot])(ncolor)
-    palette_cold = colorRampPalette(colorList[Sample_cold])(ncolor)
+    palette = colorRampPalette(colorList)(nColor)
 
-    # Reverses the palette if it needs to be
+    midDown = round(nColor/2, 0)
+    midUp = midDown
+    if (nColor %% 2 == 0) {
+        midUp = midUp + 1
+    }
     if (reverse) {
+        Sample_hot = 1:midDown
+        Sample_cold = midUp:nColor
+        
+        palette_hot = palette[Sample_hot]
+        palette_cold = palette[Sample_cold]
+        
         palette = rev(palette)
         palette_hot = rev(palette_hot)
         palette_cold = rev(palette_cold)
+    } else {
+        Sample_hot = midUp:nColor
+        Sample_cold = 1:midDown
+        
+        palette_hot = palette[Sample_hot]
+        palette_cold = palette[Sample_cold]
     }
+    
+    nColor_hot = length(palette_hot)
+    nColor_cold = length(palette_cold)
 
     # If the min and the max are below zero
     if (min < 0 & max < 0) {
@@ -282,11 +324,13 @@ get_palette = function (min, max, ncolor=256, palette_name='perso', reverse=FALS
     for (i in 1:nbTick) {
         # Computes the graduation between the min and max
         lab = (i-1)/(nbTick-1) * (max - min) + min
+        
         # Gets the associated color
         col = get_color(lab, min=min, max=max,
-                        ncolor=ncolor,
+                        nColor=nColor,
                         palette_name=palette_name,
                         reverse=reverse)
+        
         # Stores them
         labTick = c(labTick, lab)
         colTick = c(colTick, col)
@@ -299,7 +343,7 @@ get_palette = function (min, max, ncolor=256, palette_name='perso', reverse=FALS
 
 ### 1.3. Palette tester ______________________________________________
 # Allows to display the current personal palette
-palette_tester = function (palette_name='perso', figdir='figures', n=256) {
+palette_tester = function (palette_name='perso', figdir='figures', nColor=256) {
 
     outdir = file.path(figdir, 'palette')
     if (!(file.exists(outdir))) {
@@ -308,19 +352,19 @@ palette_tester = function (palette_name='perso', figdir='figures', n=256) {
     
     # If the palette chosen is the personal ones
     if (palette_name == 'perso') {
-        colorList = palette_perso
+        colorList = PalettePerso
     # Else takes the palette corresponding to the name given
     } else {
         colorList = brewer.pal(11, palette_name)
     }
     
     # An arbitrary x vector
-    X = 1:n
+    X = 1:nColor
     # All the same arbitrary y position to create a colorbar
-    Y = rep(0, times=n)
+    Y = rep(0, times=nColor)
 
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(n)
+    palette = colorRampPalette(colorList)(nColor)
 
     # Open a plot
     p = ggplot() + 
@@ -352,7 +396,7 @@ palette_tester = function (palette_name='perso', figdir='figures', n=256) {
     }
 
     p = p +
-        scale_x_continuous(limits=c(0, n),
+        scale_x_continuous(limits=c(0, nColor),
                            expand=c(0, 0)) +
         
         scale_y_continuous(limits=c(0, 1),
@@ -390,43 +434,87 @@ void = ggplot() + geom_blank(aes(1,1)) +
     )
 
 
-get_marker = function (color, fill, outdir, id, size=10, stroke=1.5, shape='o', ...) {
+# get_marker = function (color, fill, outdir, id, size=10, stroke=1.5, shape='o', ...) {
 
-    filename = paste0(id, '.png')
+#     filename = paste0(id, '.svg')
     
-    if (shape == 'o') {
-        shape = 21
-    } else if (shape == '^') {
-        shape = 24
-    } else if (shape == 'v') {
-        shape = 25
-    }
+#     if (shape == 'o') {
+#         shape = 21
+#     } else if (shape == '^') {
+#         shape = 24
+#     } else if (shape == 'v') {
+#         shape = 25
+#     }
     
-    p = ggplot() + theme_void() +
-        geom_point(aes(x=0, y=0), size=size, stroke=stroke,
-                   shape=shape, color=color, fill=fill, ...) +
-        # X axis of the colorbar
-        scale_x_continuous(limits=c(-0.1, 0.1),
-                           expand=c(0, 0)) +
-        # Y axis of the colorbar
-        scale_y_continuous(limits=c(-0.1, 0.1),
-                           expand=c(0, 0)) +
-        # Margin of the colorbar
-        theme(plot.margin=margin(t=0, r=0, b=0, l=0, unit="mm"))
+#     p = ggplot() + theme_void() +
+#         geom_point(aes(x=0, y=0), size=size, stroke=stroke,
+#                    shape=shape, color=color, fill=fill, ...) +
+#         # X axis of the colorbar
+#         scale_x_continuous(limits=c(-0.1, 0.1),
+#                            expand=c(0, 0)) +
+#         # Y axis of the colorbar
+#         scale_y_continuous(limits=c(-0.1, 0.1),
+#                            expand=c(0, 0)) +
+#         # Margin of the colorbar
+#         theme(plot.margin=margin(t=0, r=0, b=0, l=0, unit="mm"))
 
-    ggsave(plot=p,
-           path=outdir,
-           filename=filename,
-           width=1, height=1, units='cm', dpi=100)
+#     ggsave(plot=p,
+#            path=outdir,
+#            filename=filename,
+#            width=1, height=1, units='cm', dpi=100)
     
-    marker = makeIcon(file.path(outdir, filename))
-    return (marker)
-}
+#     marker = makeIcon(file.path(outdir, filename))
+#     return (marker)
+# }
 
 # get_marker('grey50', 'grey80', resources_path, 'marker', id=1, shape='o')
 
-get_markerList = function (colorList, fillList, resources_path, filedir='marker', size=10, stroke=1.5, shape='o', ...) {
+# get_markerList = function (colorList, fillList, resources_path, filedir='marker', size=10, stroke=1.5, shape='o', ...) {
 
+#     # Names of a temporary directory to store all the independent pages
+#     outdir = file.path(resources_path, filedir)
+#     # Creates it if it does not exist
+#     if (!(file.exists(outdir))) {
+#         dir.create(outdir)
+#     # If it already exists it deletes the pre-existent directory
+#     # and recreates one
+#     } else {
+#         unlink(outdir, recursive=TRUE)
+#         dir.create(outdir)
+#     }
+
+#     nC = length(colorList)
+#     nF = length(fillList)
+
+#     if (nC == 1 & nF > 1) {
+#         colorList = rep(colorList, nF)
+#         n = nF
+#     } else if (nC > 1 & nF == 1) {
+#         fillList = rep(fillList, nC)
+#         n = nC
+#     } else if (nC > 1 & nF > 1) {
+#         stop ("colorList and fillList have not the same size or none of them have size one")
+#     } else {
+#         n = 1
+#     }
+    
+#     markerList = list()
+#     for (i in 1:n) {
+#         marker = get_marker(colorList[i], fillList[i], outdir, id=i,
+#                             shape=shape, size=size, stroke=stroke)
+#         markerList = append(markerList, marker)
+#     }
+#     return (icons(markerList))
+# }
+
+# markerList = get_markerList('black', c('grey40', 'grey50', 'grey60'), resources_path)
+
+
+create_marker = function (resources_path, widthRel=1, filedir='marker', color='grey50', fill_PaletteName='perso', nColor=256, reverse=TRUE, stroke=1.5, ...) {
+
+    res = get_palette(-1, 1, nColor=nColor, palette_name=fill_PaletteName, reverse=reverse)
+    Palette = res$palette
+    
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
     # Creates it if it does not exist
@@ -438,32 +526,84 @@ get_markerList = function (colorList, fillList, resources_path, filedir='marker'
         unlink(outdir, recursive=TRUE)
         dir.create(outdir)
     }
-
-    nC = length(colorList)
-    nF = length(fillList)
-
-    if (nC == 1 & nF > 1) {
-        colorList = rep(colorList, nF)
-        n = nF
-    } else if (nC > 1 & nF == 1) {
-        fillList = rep(fillList, nC)
-        n = nC
-    } else if (nC > 1 & nF > 1) {
-        stop ("colorList and fillList have not the same size or none of them have size one")
-    } else {
-        n = 1
-    }
-
-    print(n)
     
-    markerList = list()
-    for (i in 1:n) {
-        marker = get_marker(colorList[i], fillList[i], outdir, id=i,
-                            shape=shape, size=size, stroke=stroke)
-        markerList = append(markerList, marker)
+    Shapes = c(21, 24, 25)
+    Sizes = c(8, 7, 7)*widthRel
+    Y = c(0, -0.02, 0.02)
+    nMark = length(Shapes)
+    
+    Urls = c()
+    for (i in 1:nColor) {
+
+        fill = Palette[i]
+        Filenames = paste0(Shapes, fill, '.svg')
+        
+        for (j in 1:nMark) {
+
+            p = ggplot() + theme_void() +
+                geom_point(aes(x=0, y=Y[j]), size=Sizes[j], stroke=stroke,
+                           shape=Shapes[j], color=color, fill=fill, ...) +
+                # X axis of the colorbar
+                scale_x_continuous(limits=c(-0.1, 0.1),
+                                   expand=c(0, 0)) +
+                # Y axis of the colorbar
+                scale_y_continuous(limits=c(-0.1, 0.1),
+                                   expand=c(0, 0)) +
+                # Margin of the colorbar
+                theme(plot.margin=margin(t=0, r=0, b=0, l=0, unit="mm"))
+            
+            ggsave(plot=p,
+                   path=outdir,
+                   filename=Filenames[j],
+                   width=100, height=100, units='px') # 100 px = 24 pt
+            Urls = c(Urls, file.path(outdir, Filenames[j]))
+        }
     }
-    # class(markerList) = "leaflet_icon_set"
-    return (icons(markerList))
+    return (Urls)
 }
 
-# markerList = get_markerList('black', c('grey40', 'grey50', 'grey60'), resources_path)
+# create_marker(resources_path, widthRel=0.8, stroke=0.8)
+
+
+get_marker = function (shape, fill, resources_path, filedir) {
+
+    if (shape == 'o') {
+        shape = 21
+    } else if (shape == '^') {
+        shape = 24
+    } else if (shape == 'v') {
+        shape = 25
+    }
+    
+    filename = paste0(shape, fill, '.svg')
+    marker = makeIcon(file.path(resources_path, filedir, filename))
+    return (marker)
+}
+
+# get_marker('o', '#0F3C57', resources_path, 'marker')
+
+get_markerList = function (shapeList, fillList, resources_path, filedir='marker', width=20) {
+
+    nMarkF = length(fillList)
+    nMarkS = length(shapeList)
+    if (nMarkF != nMarkS) {
+        stop("fillList and shapeList have not the same length")
+    } else {
+        nMark = nMarkF
+    }
+    
+    markerList = list()
+    for (i in 1:nMark) {
+        marker = get_marker(shapeList[i], fillList[i],
+                            resources_path, filedir)
+        markerList = append(markerList, marker)
+    }
+    # Not possible to resize with svg but 32 is the default
+    # size hence the 16 for anchoring
+    markerList = icons(markerList,
+                       # iconWidth=24, iconHeight=24,
+                       iconAnchorX=16, iconAnchorY=16) 
+    return (markerList)
+}
+
+# get_markerList(c('o', '^', 'v'), c('#1B727D', '#0F3C57', '#C97C5E'), resources_path, 'marker', width=20)
