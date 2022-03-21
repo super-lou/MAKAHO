@@ -20,6 +20,15 @@ ui = bootstrapPage(
             
             tags$div(
                 tags$br(),
+
+                pickerInput(
+                    inputId="code_picker",
+                    label="Code", 
+                    choices=FALSE,
+                    multiple=TRUE,
+                    selected=NULL,
+                    options=list(`live-search`=TRUE, `actions-box`=TRUE)),
+                     
                 selectInput("varName", word('varT'),
                             varNameList),
 

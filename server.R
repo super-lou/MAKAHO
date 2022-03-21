@@ -194,6 +194,11 @@ server = function (input, output, session) {
         rv$CodeSample = newCodeSample
     })
 
+    observeEvent(input$code_picker, {
+        print(input$code_picker)
+        rv$CodeSample = input$code_picker
+    })
+
 
     df_trend = reactive({
         if (!is.null(df_XEx())) {
@@ -241,6 +246,14 @@ server = function (input, output, session) {
             rep(grey50COL, nCodeAll)
         }
     })
+
+    
+    observe({
+        updatePickerInput(session, "code_picker",
+                          choices=CodeAll(),
+                          selected=rv$CodeSample)
+    })
+    
     
     ### Search
     observeEvent(input$search_button, {

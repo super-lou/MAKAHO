@@ -7,6 +7,7 @@ setwd(computer_work_path)
 
 library(shiny)
 library(shinyjs)
+library(shinyWidgets)
 library(icons)
 library(leaflet)
 library(dplyr)
