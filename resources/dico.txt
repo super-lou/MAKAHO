@@ -26,10 +26,8 @@ var4.6;Date fin Étiage (90% déficit)
 var4.7;Volume déficite
 var4.8;Durée Étiage
 varP;Probabilité p
-dh;"Début de l'année hydrologique"
-da;"Période d’analyse"
-ds;"Début de l'analyse"
-de;"Fin de l'analyse"
+dm;"Début de l'année hydrologique"
+dy;"Période d’analyse"
 sig;Seuil de significativité
 ctT;Carte de tendance par ...
 cts;sites

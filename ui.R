@@ -29,28 +29,20 @@ ui = bootstrapPage(
                                  inline=TRUE,
                                  choices=FALSE)),
                 
+                sliderInput("dateMonth_slider", word("dm"),
+                            step=1,
+                            sep='',
+                            min=1,
+                            max=12,
+                            value=1),
 
-                numericInput("anHydro_input",
-                             word("dh"),
-                             1,
-                             min=1,
-                             max=12),
-
-                fluidRow(
-                    column(6,
-                           numericInput("dateStart_input",
-                                        word("ds"),
-                                        1968,
-                                        min=1900,
-                                        max=format(today, "%Y"))),
-                    column(6,
-                           numericInput("dateEnd_input",
-                                        word("de"),
-                                        2020,
-                                        min=1900,
-                                        max=format(today, "%Y")))
-                ),
-                    
+                sliderInput("dateYear_slider", word("dy"),
+                            step=1,
+                            sep='',
+                            min=1900,
+                            max=as.numeric(format(today, "%Y")),
+                            value=c(1968, 2020)),
+                 
                 textOutput("period"),
                 tags$br(),
 
@@ -65,7 +57,6 @@ ui = bootstrapPage(
                              inline=TRUE,
                              selected=word("cts"),
                              choices=c(word("cts"), word("ctr"))),
-                
 
                 )
         )

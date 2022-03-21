@@ -2,7 +2,8 @@
 
 
 server = function (input, output, session) {
-
+    session$onSessionEnded(stopApp)    
+    
     ### Map
     observeEvent(input$map_button, {
         toggle(id='map_panel')
@@ -39,23 +40,22 @@ server = function (input, output, session) {
         
         alpha = as.numeric(sub("%", "", input$signif_choice)) / 100
 
+        CodeSample = rv$CodeSample
+        nCodeSample = length(CodeSample)
 
-        Code = rle(df_meta()$code)$values
-
+        
         OkS = df_trend()$p <= alpha
         CodeSU = df_trend()$code[OkS & df_trend()$trend >= 0]
         CodeSD = df_trend()$code[OkS & df_trend()$trend < 0]
         CodeNS = df_trend()$code[!OkS]
         
         shapeList = rep(1, length(fillList()))
-        shapeList[Code %in% CodeSU] = '^'
-        shapeList[Code %in% CodeSD] = 'v'
-        shapeList[Code %in% CodeNS] = 'o'
+        shapeList[match(CodeSU, CodeAll())] = '^'
+        shapeList[match(CodeSD, CodeAll())] = 'v'
+        shapeList[match(CodeNS, CodeAll())] = 'o'
 
         markerList = get_markerList(shapeList, fillList(),
                                     resources_path)
-
-        print(markerList)
         
         label =
             paste0(
@@ -74,16 +74,10 @@ server = function (input, output, session) {
                          lng=df_meta()$lon,
                          lat=df_meta()$lat,
                          icon=markerList,
-                         label=lapply(label, HTML))
-        map = addCircleMarkers(map,
-                               lng=df_meta()$lon,
-                               lat=df_meta()$lat,
-                               radius=3,
-                               fillColor=Cgreymid, fillOpacity=1,
-                               color=Cgreymid, opacity=1)
+                         label=lapply(label, HTML),
+                         layerId=CodeAll())
 
-    })
-    
+    })    
     
     ### Analyse
     observeEvent(input$ana_button, {
@@ -91,22 +85,24 @@ server = function (input, output, session) {
     })
 
     period = reactive({
-        monthStart = formatC(input$anHydro_input,
+        monthStart = formatC(input$dateMonth_slider,
                              width=2, flag=0)
-        monthEnd = formatC((input$anHydro_input-2)%%12+1,
+        monthEnd = formatC((input$dateMonth_slider-2)%%12+1,
                            width=2, flag=0)
 
-        DateStart = as.Date(paste(input$dateStart_input,
+        DateStart = as.Date(paste(input$dateYear_slider[1],
                                   monthStart,
                                   '01',
                                   sep='-'))
-        DateEnd = as.Date(paste(input$dateEnd_input,
+        DateEnd = as.Date(paste(input$dateYear_slider[2],
                                 monthStart,
                                 '01',
                                 sep='-')) - 1
         
         paste0(DateStart, " / ", DateEnd)
     })
+    period = debounce(period, 1000)
+    
 
     output$period = renderText({
         period()
@@ -131,9 +127,8 @@ server = function (input, output, session) {
                            choices=choices)
     })
 
-    filename = reactive({ 
-        monthStart = formatC(input$anHydro_input,
-                             width=2, flag=0)
+    filename = reactive({
+        monthStart = substr(period(), 6, 7)
         filenametmp = paste0(var(), 'Ex_',
                              monthStart, '.fst')
 
@@ -176,9 +171,30 @@ server = function (input, output, session) {
         sf_loca = st_coordinates(sf_loca$geometry)
         df_metatmp$lon = sf_loca[, 1]
         df_metatmp$lat = sf_loca[, 2]
+        df_metatmp = df_metatmp[order(df_metatmp$code),]
         df_metatmp
     })
+
     
+    CodeAll = reactive({
+        rle(df_meta()$code)$values
+    })
+        
+    rv = reactiveValues(CodeSample=NULL)
+    rv$CodeSample = isolate(CodeAll())
+    
+    observeEvent(input$map_marker_click, {
+        codeClick = input$map_marker_click$id
+        CodeSample = rv$CodeSample
+        if (codeClick %in% CodeSample) {
+            newCodeSample = CodeSample[CodeSample != codeClick]
+        } else {
+            newCodeSample = c(CodeSample, codeClick)
+        }
+        rv$CodeSample = newCodeSample
+    })
+
+
     df_trend = reactive({
         if (!is.null(df_XEx())) {
             Estimate.stats(data.extract=df_XEx(),
@@ -189,32 +205,40 @@ server = function (input, output, session) {
     })
 
     fillList = reactive({
-        Code = rle(df_meta()$code)$values
-        nCode = length(Code)
+        CodeSample = rv$CodeSample
+        nCodeAll = length(CodeAll())
         
         if (!is.null(df_XEx()) | !is.null(df_trend())) {            
-            res = get_trendExtremes(df_XEx(), df_trend(), df_meta(),
+            res = get_trendExtremes(df_XEx(), df_trend(),
+                                    CodeAll=CodeAll(),
+                                    CodeSample=CodeSample,
                                     toMean=TRUE)
-            TrendValueList = res$value
+            TrendValues = res$values
             minTrendValue = res$min
             maxTrendValue = res$max
 
             fillListtmp = c()
-            for (k in 1:nCode) {
+            for (k in 1:nCodeAll) {
 
-                trendValue = TrendValueList[k]
+                code = CodeAll()[k]
+                
+                if (code %in% CodeSample) {
+                    trendValue = TrendValues[k]
 
-                color = get_color(trendValue, 
-                                  minTrendValue,
-                                  maxTrendValue,
-                                  palette_name='perso',
-                                  reverse=TRUE)
+                    color = get_color(trendValue, 
+                                      minTrendValue,
+                                      maxTrendValue,
+                                      palette_name='perso',
+                                      reverse=TRUE)
+                } else {
+                    color = grey94COL
+                }
                 
                 fillListtmp = c(fillListtmp, color)
             }
             fillListtmp
         } else {
-            rep('grey50', nCode)
+            rep(grey50COL, nCodeAll)
         }
     })
     
@@ -232,22 +256,4 @@ server = function (input, output, session) {
     
    
 } 
-
-
-
-
-
-
-# observe({
-#     month_start = formatC(input$anHydro_sli, width=2, flag=0)
-#     month_end = formatC((input$anHydro_sli-2)%%12+1, width=2, flag=0)
-
-#     updateDateRangeInput(session, "dateAnalyse_inp",
-#                          start=paste0("1968-", month_start, '-01'),
-#                          end=paste0("2020-", month_end, '-31'))
-
-#     updateTextInput(session, "dateStart_inp",
-#                     value=paste("New text", value))
-
-# })
 

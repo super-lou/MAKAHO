@@ -17,11 +17,18 @@ library(sf) # crs
 library(StatsAnalysisTrend)
 library(ggplot2)
 
+
+grey97COL = "#f7f7f7"
+grey94COL = "#f0f0f0"
+grey85COL = "#d9d9d9"
+grey50COL = "#808080"
+
+
 source(file.path('Rcode', 'tools.R'))
 source(file.path('Rcode', 'style.R'))
 
 # Path to the data
-computer_data_path = file.path(computer_work_path, 'data')
+computer_data_path = file.path(computer_work_path, 'data')            
 
 # Resources directory
 resources_path = file.path(computer_work_path, 'resources')
@@ -103,8 +110,6 @@ valP = list(c("90%", "95%", "99%"),
 
 sigP = c("1%", "5%", "10%")
 
-
-Cgreymid = "#808080"
 
 # create_marker(resources_path)
 

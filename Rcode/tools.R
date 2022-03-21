@@ -107,19 +107,20 @@ read_FST = function (resdir, filename, filedir='fst') {
 
 
 
-get_trendExtremes = function (df_data, df_trend, df_meta, toMean=TRUE) {
-
-    Code = rle(df_meta$code)$values
-    nCode = length(Code)
+get_trendExtremes = function (df_data, df_trend, CodeAll,
+                              CodeSample, toMean=TRUE) {
+    
+    nCodeAll = length(CodeAll)
     
     # Blank array to store mean of the trend for each
     # station, perdiod and variable
-    TrendValueList = c()
+    TrendValuesSample = c()
+    TrendValuesAll = c()
 
     # For all the code
-    for (k in 1:nCode) {
+    for (k in 1:nCodeAll) {
         # Gets the code
-        code = Code[k]
+        code = CodeAll[k]
         
         # Extracts the type of the variable
         # Extracts the data corresponding to the code
@@ -137,14 +138,20 @@ get_trendExtremes = function (df_data, df_trend, df_meta, toMean=TRUE) {
             trendValue = df_trend_code$trend
         }
         # Stores the mean trend
-        TrendValueList = c(TrendValueList, trendValue)
+        TrendValuesAll = c(TrendValuesAll, trendValue)
+        
+        if (code %in% CodeSample) {
+            TrendValuesSample = c(TrendValuesSample, trendValue)
+        } else {
+            TrendValuesSample = c(TrendValuesSample, NA)
+        }
     }
 
     # Compute the min and the max of the mean trend for all the station
-    minTrendValue = min(TrendValueList, na.rm=TRUE)
-    maxTrendValue = max(TrendValueList, na.rm=TRUE)
+    minTrendValue = min(TrendValuesSample, na.rm=TRUE)
+    maxTrendValue = max(TrendValuesSample, na.rm=TRUE)
 
-    res = list(value=TrendValueList,
+    res = list(values=TrendValuesAll,
                min=minTrendValue, max=maxTrendValue)
     return (res)
 }
@@ -434,87 +441,8 @@ void = ggplot() + geom_blank(aes(1,1)) +
     )
 
 
-# get_marker = function (color, fill, outdir, id, size=10, stroke=1.5, shape='o', ...) {
+create_marker = function (resources_path, widthRel=1, filedir='marker', color='grey50', fill_PaletteName='perso', nColor=256, reverse=TRUE, stroke=1.5, fillAdd=NULL, colorAdd=NULL, ...) {
 
-#     filename = paste0(id, '.svg')
-    
-#     if (shape == 'o') {
-#         shape = 21
-#     } else if (shape == '^') {
-#         shape = 24
-#     } else if (shape == 'v') {
-#         shape = 25
-#     }
-    
-#     p = ggplot() + theme_void() +
-#         geom_point(aes(x=0, y=0), size=size, stroke=stroke,
-#                    shape=shape, color=color, fill=fill, ...) +
-#         # X axis of the colorbar
-#         scale_x_continuous(limits=c(-0.1, 0.1),
-#                            expand=c(0, 0)) +
-#         # Y axis of the colorbar
-#         scale_y_continuous(limits=c(-0.1, 0.1),
-#                            expand=c(0, 0)) +
-#         # Margin of the colorbar
-#         theme(plot.margin=margin(t=0, r=0, b=0, l=0, unit="mm"))
-
-#     ggsave(plot=p,
-#            path=outdir,
-#            filename=filename,
-#            width=1, height=1, units='cm', dpi=100)
-    
-#     marker = makeIcon(file.path(outdir, filename))
-#     return (marker)
-# }
-
-# get_marker('grey50', 'grey80', resources_path, 'marker', id=1, shape='o')
-
-# get_markerList = function (colorList, fillList, resources_path, filedir='marker', size=10, stroke=1.5, shape='o', ...) {
-
-#     # Names of a temporary directory to store all the independent pages
-#     outdir = file.path(resources_path, filedir)
-#     # Creates it if it does not exist
-#     if (!(file.exists(outdir))) {
-#         dir.create(outdir)
-#     # If it already exists it deletes the pre-existent directory
-#     # and recreates one
-#     } else {
-#         unlink(outdir, recursive=TRUE)
-#         dir.create(outdir)
-#     }
-
-#     nC = length(colorList)
-#     nF = length(fillList)
-
-#     if (nC == 1 & nF > 1) {
-#         colorList = rep(colorList, nF)
-#         n = nF
-#     } else if (nC > 1 & nF == 1) {
-#         fillList = rep(fillList, nC)
-#         n = nC
-#     } else if (nC > 1 & nF > 1) {
-#         stop ("colorList and fillList have not the same size or none of them have size one")
-#     } else {
-#         n = 1
-#     }
-    
-#     markerList = list()
-#     for (i in 1:n) {
-#         marker = get_marker(colorList[i], fillList[i], outdir, id=i,
-#                             shape=shape, size=size, stroke=stroke)
-#         markerList = append(markerList, marker)
-#     }
-#     return (icons(markerList))
-# }
-
-# markerList = get_markerList('black', c('grey40', 'grey50', 'grey60'), resources_path)
-
-
-create_marker = function (resources_path, widthRel=1, filedir='marker', color='grey50', fill_PaletteName='perso', nColor=256, reverse=TRUE, stroke=1.5, ...) {
-
-    res = get_palette(-1, 1, nColor=nColor, palette_name=fill_PaletteName, reverse=reverse)
-    Palette = res$palette
-    
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
     # Creates it if it does not exist
@@ -527,15 +455,30 @@ create_marker = function (resources_path, widthRel=1, filedir='marker', color='g
         dir.create(outdir)
     }
     
+    res = get_palette(-1, 1, nColor=nColor,
+                      palette_name=fill_PaletteName,
+                      reverse=reverse)
+    Palette = res$palette
+    if (!is.null(fillAdd)) {
+        Palette = c(Palette, fillAdd)
+    }
+    nColorPalette = length(Palette)
+
+    Color = rep(color, nColor)
+    if (!is.null(colorAdd)) {
+        Color = c(Color, colorAdd)
+    }
+    
     Shapes = c(21, 24, 25)
-    Sizes = c(8, 7, 7)*widthRel
+    Sizes = c(6, 7, 7)*widthRel
     Y = c(0, -0.02, 0.02)
     nMark = length(Shapes)
     
     Urls = c()
-    for (i in 1:nColor) {
+    for (i in 1:nColorPalette) {
 
         fill = Palette[i]
+        color = Color[i]
         Filenames = paste0(Shapes, fill, '.svg')
         
         for (j in 1:nMark) {
@@ -562,7 +505,11 @@ create_marker = function (resources_path, widthRel=1, filedir='marker', color='g
     return (Urls)
 }
 
-# create_marker(resources_path, widthRel=0.8, stroke=0.8)
+# create_marker(resources_path, widthRel=0.8, stroke=0.8,
+#               fill_PaletteName='perso',
+#               color=grey50COL,
+#               fillAdd=c(grey94COL, grey50COL),
+#               colorAdd=c(grey85COL, grey50COL))
 
 
 get_marker = function (shape, fill, resources_path, filedir) {
@@ -607,3 +554,18 @@ get_markerList = function (shapeList, fillList, resources_path, filedir='marker'
 }
 
 # get_markerList(c('o', '^', 'v'), c('#1B727D', '#0F3C57', '#C97C5E'), resources_path, 'marker', width=20)
+
+
+
+makeReactiveTrigger = function () {
+  rv = reactiveValues(a=0)
+  list(
+    depend = function() {
+      rv$a
+      invisible()
+    },
+    trigger = function() {
+      rv$a = isolate(rv$a + 1)
+    }
+  )
+}
