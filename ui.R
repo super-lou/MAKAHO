@@ -24,7 +24,7 @@ ui = bootstrapPage(
                 pickerInput(
                     inputId="code_picker",
                     label="Code", 
-                    choices=FALSE,
+                    choices=NULL,
                     multiple=TRUE,
                     selected=NULL,
                     options=list(`live-search`=TRUE, `actions-box`=TRUE)),

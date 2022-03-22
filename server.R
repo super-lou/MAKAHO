@@ -180,8 +180,7 @@ server = function (input, output, session) {
         rle(df_meta()$code)$values
     })
         
-    rv = reactiveValues(CodeSample=NULL)
-    rv$CodeSample = isolate(CodeAll())
+    rv = reactiveValues(CodeSample=isolate(CodeAll()))
     
     observeEvent(input$map_marker_click, {
         codeClick = input$map_marker_click$id
@@ -193,12 +192,27 @@ server = function (input, output, session) {
         }
         rv$CodeSample = newCodeSample
     })
-
+    
     observeEvent(input$code_picker, {
-        print(input$code_picker)
         rv$CodeSample = input$code_picker
     })
 
+    observe({
+        updatePickerInput(session, "code_picker",
+                          choices=CodeAll(),
+                          selected=rv$CodeSample)
+        if (!is.null(input$code_picker)) {
+            codeNULL_obs$resume()
+        }
+    })
+
+    codeNULL_obs = observe({
+        if (is.null(input$code_picker)) {
+            rv$CodeSample = input$code_picker
+            print('null')
+        }
+    }, suspended=TRUE)
+    
 
     df_trend = reactive({
         if (!is.null(df_XEx())) {
@@ -246,14 +260,6 @@ server = function (input, output, session) {
             rep(grey50COL, nCodeAll)
         }
     })
-
-    
-    observe({
-        updatePickerInput(session, "code_picker",
-                          choices=CodeAll(),
-                          selected=rv$CodeSample)
-    })
-    
     
     ### Search
     observeEvent(input$search_button, {
