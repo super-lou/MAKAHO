@@ -54,29 +54,39 @@ server = function (input, output, session) {
         shapeList[match(CodeSD, CodeAll())] = 'v'
         shapeList[match(CodeNS, CodeAll())] = 'o'
 
-        markerList = get_markerList(shapeList, fillList(),
-                                    resources_path)
+        markerListAll = get_markerList(shapeList,
+                                       fillList(),
+                                       resources_path)
+
+        okCode = unlist(markerListAll$iconUrl) != rv$iconUrl_save
+        Code = CodeAll()[okCode]
+        markerList = markerListAll
+        markerList$iconUrl = markerListAll$iconUrl[okCode]
+        Lon = df_meta()$lon[okCode]
+        Lat = df_meta()$lat[okCode]
+        Nom = df_meta()$nom[okCode]
         
         label =
             paste0(
                 "<b>", word('m.hov.lat'),". </b>",
-                    signif(df_meta()$lat, 6),
+                signif(Lat, 6),
                 " / <b>", word('m.hov.lon'),". </b>",
-                    signif(df_meta()$lon, 6), '<br>',
+                signif(Lon, 6), '<br>',
                 "<b>", word('m.hov.code')," </b>",
-                    df_meta()$code, '<br>',
+                Code, '<br>',
                 "<b>", word('m.hov.name')," </b>",
-                    df_meta()$nom, '<br>'
+                Nom, '<br>'
             )
-
-        map = clearMarkers(map)
+        
+        map = removeMarker(map, layerId=Code)
         map = addMarkers(map,
-                         lng=df_meta()$lon,
-                         lat=df_meta()$lat,
+                         lng=Lon,
+                         lat=Lat,
                          icon=markerList,
                          label=lapply(label, HTML),
-                         layerId=CodeAll())
-
+                         layerId=Code)
+        
+        rv$iconUrl_save = unlist(markerListAll$iconUrl)
     })    
     
     ### Analyse
@@ -180,7 +190,8 @@ server = function (input, output, session) {
         rle(df_meta()$code)$values
     })
         
-    rv = reactiveValues(CodeSample=isolate(CodeAll()))
+    rv = reactiveValues(CodeSample=isolate(CodeAll()),
+                        markerList_save=NULL)
     
     observeEvent(input$map_marker_click, {
         codeClick = input$map_marker_click$id

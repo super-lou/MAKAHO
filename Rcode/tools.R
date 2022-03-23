@@ -553,7 +553,7 @@ get_markerList = function (shapeList, fillList, resources_path, filedir='marker'
     return (markerList)
 }
 
-# get_markerList(c('o', '^', 'v'), c('#1B727D', '#0F3C57', '#C97C5E'), resources_path, 'marker', width=20)
+# markerList = get_markerList(c('o', '^', 'v'), c('#1B727D', '#0F3C57', '#C97C5E'), resources_path, 'marker', width=20)
 
 
 
