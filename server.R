@@ -95,10 +95,9 @@ server = function (input, output, session) {
     })
 
     period = reactive({
-        monthStart = formatC(input$dateMonth_slider,
-                             width=2, flag=0)
-        monthEnd = formatC((input$dateMonth_slider-2)%%12+1,
-                           width=2, flag=0)
+        month = which(Months == input$dateMonth_slider)
+        monthStart = formatC(month, width=2, flag=0)
+        monthEnd = formatC((month-2)%%12+1, width=2, flag=0)
 
         DateStart = as.Date(paste(input$dateYear_slider[1],
                                   monthStart,

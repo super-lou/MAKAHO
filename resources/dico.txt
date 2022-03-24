@@ -1,37 +1,50 @@
 id;FR
-varT;Choix variable hydrologique
-var1;Crues
-var1.1;Débit Max An 
-var1.2;Date Max An 
-var1.3;Fréquence annuelle [Q> Qp]
-var2;Crues Nivales
-var2.1;Débit Max An
-var2.2;Date Max An
-var2.3;Date début Fonte (10% volume)
-var2.4;Date méd. Fonte (50% volume)
-var2.5;Date fin Fonte (90% volume)
-var2.6;Volume Fonte
-var2.7;Durée Fonte
-var3;Moyennes Eaux
-var3.1;Débit moyen annuel QA
-var3.2;Débit moyen mensuel
-var3.3;Décile Qp (débits classés)
-var4;Étiages
-var4.1;Débit Min An
-var4.2;Débit Mensuel Étiage QMNA
-var4.3;Débit moyen Mini VCN10
-var4.4;Date début Étiage (10% déficit)
-var4.5;Date méd. Étiage (50% déficit)
-var4.6;Date fin Étiage (90% déficit)
-var4.7;Volume déficite
-var4.8;Durée Étiage
-varP;Probabilité p
-dm;"Début de l'année hydrologique"
-dy;"Période d’analyse"
-sig;Seuil de significativité
-ctT;Carte de tendance par ...
-cts;sites
-ctr;régions
+a.sta;Stations sélectionnées
+a.varT;Choix variable hydrologique
+a.var1;Crues
+a.var1.1;Débit Max An 
+a.var1.2;Date Max An 
+a.var1.3;Fréquence annuelle [Q> Qp]
+a.var2;Crues Nivales
+a.var2.1;Débit Max An
+a.var2.2;Date Max An
+a.var2.3;Date début Fonte (10% volume)
+a.var2.4;Date méd. Fonte (50% volume)
+a.var2.5;Date fin Fonte (90% volume)
+a.var2.6;Volume Fonte
+a.var2.7;Durée Fonte
+a.var3;Moyennes Eaux
+a.var3.1;Débit moyen annuel QA
+a.var3.2;Débit moyen mensuel
+a.var3.3;Décile Qp (débits classés)
+a.var4;Étiages
+a.var4.1;Débit Min An
+a.var4.2;Débit Mensuel Étiage QMNA
+a.var4.3;Débit moyen Mini VCN10
+a.var4.4;Date début Étiage (10% déficit)
+a.var4.5;Date méd. Étiage (50% déficit)
+a.var4.6;Date fin Étiage (90% déficit)
+a.var4.7;Volume déficite
+a.var4.8;Durée Étiage
+a.varP;Probabilité p
+a.dm;"Début de l'année hydrologique"
+a.m01;Janv
+a.m02;Févr
+a.m03;Mars
+a.m04;Avr
+a.m05;Mai
+a.m06;Juin
+a.m07;Juill
+a.m08;Août
+a.m09;Sept
+a.m10;Oct
+a.m11;Nov
+a.m12;Déc
+a.dy;"Période d’analyse"
+a.sig;Seuil de significativité
+a.ctT;Carte de tendance par ...
+a.cts;sites
+a.ctr;régions
 r.theme;Fond de carte
 r.theme.light;Clair
 r.theme.ter;Terrain

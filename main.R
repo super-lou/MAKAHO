@@ -79,6 +79,11 @@ varNameList = get_varNameList()
 varNameVect = do.call(c, unlist(varNameList, recursive=FALSE))
 names(varNameVect) = NULL
 
+Months = c(word("a.m01"), word("a.m02"), word("a.m03"), word("a.m04"),
+           word("a.m05"), word("a.m06"), word("a.m07"), word("a.m08"),
+           word("a.m09"), word("a.m10"), word("a.m11"), word("a.m12"))
+Years = 1900:as.numeric(format(today, "%Y"))
+
 varVect = c(
     "MAXAN",
     "tMAXAN",

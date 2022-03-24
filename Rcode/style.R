@@ -27,3 +27,9 @@ searchHTML = HTML("
 
 panelButtonCSS =
     "color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent"
+
+radioButtonCSS = 
+".btn-myClass {
+    color: #00A5A8;
+    background-color: #00A5A8;
+}"

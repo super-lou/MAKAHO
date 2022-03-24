@@ -16,11 +16,11 @@ create_dico = function (dico_file, resources_path) {
 }
 
 get_varNameList = function () {
-    OkPhe = as.vector(regexpr("var[0-9]$", dico[[1]])) != -1
+    OkPhe = as.vector(regexpr("a.var[0-9]$", dico[[1]])) != -1
     IdPhe = which(OkPhe)
     nbPhe = sum(as.numeric(OkPhe))
 
-    OkNumVar = as.vector(regexpr("var[0-9].[0-9]$", dico[[1]]))
+    OkNumVar = as.vector(regexpr("a.var[0-9].[0-9]$", dico[[1]]))
     nbVar = with(rle(OkNumVar), lengths[values == 1])
 
     IdList = list()
@@ -31,10 +31,10 @@ get_varNameList = function () {
         
         for (j in 1:nbVar_phe) {
             sub_IdList = append(sub_IdList,
-                                   word(paste0("var", i, "." , j)))
+                                   word(paste0("a.var", i, "." , j)))
         }
         IdList = append(IdList, list(sub_IdList))
-        names(IdList)[length(IdList)] = word(paste0("var", i))
+        names(IdList)[length(IdList)] = word(paste0("a.var", i))
     } 
     return (IdList)
 }

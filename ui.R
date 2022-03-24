@@ -19,33 +19,37 @@ ui = bootstrapPage(
             left=10, bottom=60,
             
             tags$div(
-                tags$br(),
 
                 pickerInput(
                     inputId="code_picker",
-                    label="Code", 
+                    label=word("a.sta"), 
                     choices=NULL,
                     multiple=TRUE,
                     selected=NULL,
-                    options=list(`live-search`=TRUE, `actions-box`=TRUE)),
+                    options=list(size=7,
+                                 `live-search`=TRUE,
+                                 `actions-box`=TRUE)),
                      
-                selectInput("varName", word('varT'),
+                selectInput("varName", word('a.varT'),
                             varNameList),
 
                 hidden(
                     radioButtons(inputId="proba_choice",
-                                 label=word("varp"),
+                                 label=word("a.varp"),
                                  inline=TRUE,
                                  choices=FALSE)),
-                
-                sliderInput("dateMonth_slider", word("dm"),
-                            step=1,
-                            sep='',
-                            min=1,
-                            max=12,
-                            value=1),
 
-                sliderInput("dateYear_slider", word("dy"),
+                chooseSliderSkin("Flat", "#00A5A8"),
+                tags$style(type="text/css",
+                           ".irs-grid-pol.small {height: 0px;}"),
+
+                sliderTextInput(inputId="dateMonth_slider",
+                                label=word("a.dm"),
+                                grid=TRUE,
+                                force_edges=TRUE,
+                                choices=Months),
+
+                sliderInput("dateYear_slider", word("a.dy"),
                             step=1,
                             sep='',
                             min=1900,
@@ -55,17 +59,25 @@ ui = bootstrapPage(
                 textOutput("period"),
                 tags$br(),
 
-                radioButtons(inputId="signif_choice",
-                             label=word("sig"),
-                             inline=TRUE,
-                             selected=sigP[3],
-                             choices=sigP),
+                radioGroupButtons(inputId="signif_choice",
+                                  label=word("a.sig"),
+                                  size="sm",
+                                  # status=radioButtonCSS,
+                                  choices=sigP,
+                                  selected=sigP[3]),
+                
+                radioGroupButtons(inputId="trendArea_choice",
+                                  label=word("a.ctT"),
+                                  size="sm",
+                                  # status=radioButtonCSS,
+                                  choices=c(word("a.cts"), word("a.ctr")),
+                                  selected=word("a.cts"))
 
-                radioButtons(inputId="trendArea_choice",
-                             label=word("ctT"),
-                             inline=TRUE,
-                             selected=word("cts"),
-                             choices=c(word("cts"), word("ctr"))),
+                # radioButtons(inputId="trendArea_choice",
+                #              label=word("a.ctT"),
+                #              inline=TRUE,
+                #              selected=word("a.cts"),
+                #              choices=c(word("a.cts"), word("a.ctr"))),
 
                 )
         )
