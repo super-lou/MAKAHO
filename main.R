@@ -34,6 +34,9 @@ computer_data_path = file.path(computer_work_path, 'data')
 # Resources directory
 resources_path = file.path(computer_work_path, 'resources')
 
+INRAElogo_path = file.path(resources_path,
+                           "logo", "Logo-INRAE_Transparent.png")
+
 # # Result directory
 # resdir = file.path(computer_work_path, 'results')
 # if (!(file.exists(resdir))) {

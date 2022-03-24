@@ -20,7 +20,8 @@ server = function (input, output, session) {
         map = leaflet(options=leafletOptions(minZoom=minZoom,
                                              maxZoom=maxZoom,
                                              worldCopyJump=FALSE,
-                                             zoomControl=FALSE))
+                                             zoomControl=FALSE,
+                                             attributionControl=FALSE))
         map = setView(map,
                       centroids$longitude[centroids$country == country],
                       centroids$latitude[centroids$country == country],
@@ -280,6 +281,11 @@ server = function (input, output, session) {
         updateSelectizeInput(session, 'search_input',
                              choices=df_meta()$code,
                              server=TRUE)
+    })
+
+    ### Info
+    observeEvent(input$info_button, {
+        toggle(id='info_panel')
     })
 
     

@@ -78,7 +78,6 @@ get_urlTile = function (theme, provider, theme_file, resources_path) {
 
 
 get_icon = function (icon_dir, resources_path) {
-    # icon_file = paste0(name, '.svg')
     iconLib = icon_set(file.path(resources_path, icon_dir))#, icon_file))
     return (iconLib)
 }
@@ -86,7 +85,7 @@ get_icon = function (icon_dir, resources_path) {
 actionButtonI = function (inputId, label, icon_name, width=NULL, ...){
     actionButton(inputId,
                  div(label,
-                     style="float:right;padding-left:3px;"),
+                     style="float:right; padding-left:3px;"),
                  icon=NULL,
                  width=width,
                  img(icon_name, align="right"),

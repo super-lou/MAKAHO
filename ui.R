@@ -73,12 +73,6 @@ ui = bootstrapPage(
                                   choices=c(word("a.cts"), word("a.ctr")),
                                   selected=word("a.cts"))
 
-                # radioButtons(inputId="trendArea_choice",
-                #              label=word("a.ctT"),
-                #              inline=TRUE,
-                #              selected=word("a.cts"),
-                #              choices=c(word("a.cts"), word("a.ctr"))),
-
                 )
         )
     ),
@@ -89,8 +83,7 @@ ui = bootstrapPage(
                             HTML(paste0("<b>","Analyse","</b>")),
                             style=panelButtonCSS,
                             icon_name=iconLib$analytics
-                            )
-               
+                            )          
                ),
 
     textOutput("trend"),
@@ -113,7 +106,6 @@ ui = bootstrapPage(
                              choices=c(word("r.theme.light"),
                                        word("r.theme.ter"),
                                        word("r.theme.dark")))
-                
                 )
         )
     ),
@@ -161,8 +153,26 @@ ui = bootstrapPage(
                              style=panelButtonCSS,
                              icon_name=iconLib$search
                              )
-               )
+               ),
 
+    ### ______________________________________________________________
+    hidden(
+        absolutePanel(
+            id='info_panel',
+            style="background-color: transparent",
+            fixed=TRUE,
+            width="auto", height="auto",
+            right=10, bottom=60,
+        )
+    ),
+    
+    fixedPanel(right=10, bottom=10,
+               width="auto", height="auto",
+               actionButtonI('info_button', label=NULL,
+                             style=infoButtonCSS,
+                             icon_name=iconLib$INRAElogo
+                             )
+               )
 
     
 )
