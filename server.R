@@ -191,7 +191,9 @@ server = function (input, output, session) {
     })
         
     rv = reactiveValues(CodeSample=isolate(CodeAll()),
-                        markerList_save=NULL)
+                        markerList_save=NULL,
+                        CodeSample_save=isolate(CodeAll()),
+                        Search_save=NULL)
     
     observeEvent(input$map_marker_click, {
         codeClick = input$map_marker_click$id
@@ -279,8 +281,36 @@ server = function (input, output, session) {
 
     observe({
         updateSelectizeInput(session, 'search_input',
-                             choices=df_meta()$code,
+                             choices=c(df_meta()$nom,
+                                       df_meta()$region_hydro,
+                                       df_meta()$regime_hydro),
                              server=TRUE)
+    })
+    observeEvent(input$search_input, {
+        Search = input$search_input    
+        CodeNom = df_meta()$code[df_meta()$nom %in% Search]
+        CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search]
+        CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search]
+        CodeSample = levels(factor(c(CodeNom,
+                                     CodeRegime,
+                                     CodeRegion)))
+
+        rv$CodeSample = CodeSample
+    })
+
+    observe({
+        if (is.null(input$search_input)) {
+            rv$CodeSample_save = rv$CodeSample
+        }
+    })
+    
+    observe({
+        rv$Search_save = input$search_input
+        if (is.null(input$search_input) & is.null(rv$Search_save)) {
+            rv$CodeSample = rv$CodeSample_save
+        }
+        print(rv$CodeSample_save)
+        print('')
     })
 
     ### Info

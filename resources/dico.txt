@@ -54,3 +54,6 @@ m.hov.lat;lat
 m.hov.lon;lon
 m.hov.code;code
 m.hov.name;nom
+i.con;Contact
+i.dev;Développeur : 
+i.ref;Référent :

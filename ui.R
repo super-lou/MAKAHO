@@ -159,10 +159,20 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='info_panel',
-            style="background-color: transparent",
+            style="background-color: rgba(40, 40, 40, 0.8)",
             fixed=TRUE,
             width="auto", height="auto",
             right=10, bottom=60,
+            tags$div(tags$b(word("i.con")),
+                     tags$br(),
+                     word("i.dev"),
+                     tags$a(href="mailto:louis.heraut@inrae.fr",
+                            "Louis Héraut"),
+                     tags$br(),
+                     word("i.ref"),
+                     tags$a(href="mailto:michel.lang@inrae.fr",
+                            "Michel Lang")
+                 )
         )
     ),
     
@@ -173,6 +183,5 @@ ui = bootstrapPage(
                              icon_name=iconLib$INRAElogo
                              )
                )
-
     
 )
