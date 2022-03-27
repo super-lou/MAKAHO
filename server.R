@@ -222,7 +222,6 @@ server = function (input, output, session) {
     codeNULL_obs = observe({
         if (is.null(input$code_picker)) {
             rv$CodeSample = input$code_picker
-            print('null')
         }
     }, suspended=TRUE)
     
@@ -297,20 +296,16 @@ server = function (input, output, session) {
 
         rv$CodeSample = CodeSample
     })
-
-    observe({
-        if (is.null(input$search_input)) {
-            rv$CodeSample_save = rv$CodeSample
-        }
-    })
+    
     
     observe({
-        rv$Search_save = input$search_input
-        if (is.null(input$search_input) & is.null(rv$Search_save)) {
+        if (is.null(input$search_input) & !is.null(rv$Search_save)) {
             rv$CodeSample = rv$CodeSample_save
         }
-        print(rv$CodeSample_save)
-        print('')
+        if (is.null(input$search_input) & is.null(rv$Search_save)) {
+            rv$CodeSample_save = rv$CodeSample
+        }
+        rv$Search_save = input$search_input
     })
 
     ### Info
