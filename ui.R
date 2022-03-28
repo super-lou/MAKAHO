@@ -1,5 +1,4 @@
 
-
 ui = bootstrapPage(
 
     useShinyjs(),
