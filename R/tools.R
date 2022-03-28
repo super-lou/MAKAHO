@@ -1,4 +1,29 @@
-
+# \\\
+# Copyright 2022 Louis Héraut*1
+#
+# *1   INRAE, France
+#      louis.heraut@inrae.fr
+#      https://github.com/super-lou
+#
+# This file is part of sht R toolbox.
+#
+# Sht R toolbox is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Sht R toolbox is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with sht R toolbox.
+# If not, see <https://www.gnu.org/licenses/>.
+# ///
+#
+#
+# R/tools.R
 
 
 word = function (id) {
@@ -48,8 +73,6 @@ get_urlTile = function (theme, provider, theme_file, resources_path) {
         
     OkProvider = grepl(provider, urlTiles, fixed=TRUE)
     urlTiles_provider = urlTiles[OkProvider]
-
-    # print(theme == )
     
     if (provider == "jawg") {
         if (theme == word("t.theme.light")) {
@@ -121,12 +144,8 @@ read_FST = function (resdir, filename, filedir='fst') {
     df = tibble(fst::read_fst(outfile))
     return (df)
 }
-
-
 # df_data = read_FST(computer_data_path, 'data_QMNA_01.fst', filedir='fst')
 # df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
-
-
 
 
 get_trendExtremes = function (df_data, df_trend, CodeAll,

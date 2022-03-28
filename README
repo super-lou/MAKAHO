@@ -1,0 +1,42 @@
+      _      _   
+ ___ | |__  | |_ 
+/ __|| '_ \ | __|
+\__ \| | | || |_ 
+|___/|_| |_| \__|
+sht R toolbox
+
+
+README
+	Sht is a toolbox of R code that perfoms 
+
+	The plan of a first use is developed below :
+
+	1. In order to manage to use this code, you firstly need to
+	install R (more info here : https://www.r-project.org) but
+	also for R studio if you want a user-friendly text editor
+	(more info here : https://www.rstudio.com/).
+
+
+CONTACT
+	If you have problems, questions, ideas or suggestions, please
+	contact us. Contact first Louis Héraut who is the main
+	developer. If it is not possible, Michel Lang is the main
+	referent at INRAE to contact :
+	
+	Louis Héraut : <louis.heraut@inrae.fr>
+	Michel Lang : <michel.lang@inrae.fr>
+
+
+GIT
+	To download the very latest source off the GIT server do this:
+	git clone https://gitlab.irstea.fr/louis.heraut/sht.git
+
+	(you will get a directory named sht created, filled with the
+	source code)
+
+
+NOTICE
+	Feel free to use all the code or only some parts but it would
+	be nice to at least mention the name of the authors.
+	
+	Sht stand for "Shiny Hydrological Tendency".
