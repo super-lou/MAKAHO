@@ -52,11 +52,11 @@ get_urlTile = function (theme, provider, theme_file, resources_path) {
     # print(theme == )
     
     if (provider == "jawg") {
-        if (theme == word("r.theme.light")) {
+        if (theme == word("t.theme.light")) {
             themeUrl = 'light'
-        } else if (theme == word("r.theme.ter")) {
+        } else if (theme == word("t.theme.ter")) {
             themeUrl = 'terrain'
-        } else if (theme == word("r.theme.dark")) {
+        } else if (theme == word("t.theme.dark")) {
             themeUrl = 'dark'
         }
     }

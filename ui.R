@@ -3,22 +3,55 @@ ui = bootstrapPage(
 
     useShinyjs(),
 
-    ### ______________________________________________________________
+    
+## 1. MAP ____________________________________________________________
+### 1.1. Panel _______________________________________________________
     tags$style(type = "text/css",
                "html, body {width:100%;height:100%}"),
     leafletOutput("map", width="100%", height="100%"),
 
-    ### ______________________________________________________________
+    hidden(
+        absolutePanel(
+            id='theme_panel',
+            style="background-color: rgba(100, 100, 100, 0.8)",
+            fixed=TRUE,        
+            width="auto", height="auto",
+            left=60, top=10,
+            
+            tags$div(
+### 1.2. Background selection ________________________________________
+                     radioButtons(inputId="theme_choice",
+                                  label=NULL,
+                                  inline=TRUE,
+                                  selected=word("t.theme.light"),
+                                  choices=c(word("t.theme.light"),
+                                            word("t.theme.ter"),
+                                            word("t.theme.dark")))
+                 )
+        )
+    ),
+### 1.3. Button ______________________________________________________
+    fixedPanel(left=10, top=10,
+               width="auto", height="auto",
+               actionButtonI('theme_button', label=NULL,
+                             style=panelButtonCSS,
+                             icon_name=iconLib$palette
+                             )
+               ),
+
+    
+## 2. ANALYSE ________________________________________________________
+### 2.1. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='ana_panel',
-            style="background-color: rgba(40, 40, 40, 0.8)",
+            style="background-color: rgba(100, 100, 100, 0.8)",
             fixed=TRUE,        
             width=300, height=500,
             left=10, bottom=60,
             
             tags$div(
-
+### 2.2. Code selection ______________________________________________
                 pickerInput(
                     inputId="code_picker",
                     label=word("a.sta"), 
@@ -28,7 +61,8 @@ ui = bootstrapPage(
                     options=list(size=7,
                                  `live-search`=TRUE,
                                  `actions-box`=TRUE)),
-                     
+
+### 2.3. Variable selection __________________________________________
                 selectInput("varName", word('a.varT'),
                             varNameList),
 
@@ -38,6 +72,7 @@ ui = bootstrapPage(
                                  inline=TRUE,
                                  choices=FALSE)),
 
+### 2.4. Period selection ____________________________________________
                 chooseSliderSkin("Flat", "#00A5A8"),
                 tags$style(type="text/css",
                            ".irs-grid-pol.small {height: 0px;}"),
@@ -58,6 +93,7 @@ ui = bootstrapPage(
                 textOutput("period"),
                 tags$br(),
 
+### 2.5. Statistical option ______________________________________________
                 radioGroupButtons(inputId="signif_choice",
                                   label=word("a.sig"),
                                   size="sm",
@@ -71,11 +107,11 @@ ui = bootstrapPage(
                                   # status=radioButtonCSS,
                                   choices=c(word("a.cts"), word("a.ctr")),
                                   selected=word("a.cts"))
-
                 )
         )
     ),
-
+    
+### 2.6. Button ______________________________________________________
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
                actionButtonI('ana_button',
@@ -85,39 +121,9 @@ ui = bootstrapPage(
                             )          
                ),
 
-    textOutput("trend"),
-
-
-    ### ______________________________________________________________
-    hidden(
-        absolutePanel(
-            id='map_panel',
-            style="background-color: rgba(40, 40, 40, 0.8)",
-            fixed=TRUE,        
-            width="auto", height="auto",
-            left=60, top=10,
-            
-            tags$div(
-                radioButtons(inputId="theme_choice",
-                             label=NULL,
-                             inline=TRUE,
-                             selected=word("r.theme.light"),
-                             choices=c(word("r.theme.light"),
-                                       word("r.theme.ter"),
-                                       word("r.theme.dark")))
-                )
-        )
-    ),
     
-    fixedPanel(left=10, top=10,
-               width="auto", height="auto",
-               actionButtonI('map_button', label=NULL,
-                             style=panelButtonCSS,
-                             icon_name=iconLib$palette
-                             )
-               ),
-
-    ### ______________________________________________________________
+## 3. SEARCH _________________________________________________________
+### 3.1. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='search_panel',
@@ -126,6 +132,7 @@ ui = bootstrapPage(
             width="auto", height="33",
             left=180, bottom=10,
 
+### 3.2. Search bar __________________________________________________
             tags$head(tags$style(HTML('#search_input+ div>.selectize-dropdown{bottom: 100% !important; top:auto!important;}'))),
 
             selectizeInput(
@@ -145,7 +152,8 @@ ui = bootstrapPage(
                 ))
         )
     ),
-    
+
+### 3.3. Button ______________________________________________________
     fixedPanel(left=130, bottom=10,
                width="auto", height="auto",
                actionButtonI('search_button', label=NULL,
@@ -154,14 +162,18 @@ ui = bootstrapPage(
                              )
                ),
 
-    ### ______________________________________________________________
+    
+## 4. INFO ___________________________________________________________
+### 4.1. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='info_panel',
-            style="background-color: rgba(40, 40, 40, 0.8)",
+            style="background-color: rgba(100, 100, 100, 0.8)",
             fixed=TRUE,
             width="auto", height="auto",
             right=10, bottom=60,
+
+### 4.2. Contact info ________________________________________________
             tags$div(tags$b(word("i.con")),
                      tags$br(),
                      word("i.dev"),
@@ -175,6 +187,7 @@ ui = bootstrapPage(
         )
     ),
     
+### 4.3. Button ______________________________________________________    
     fixedPanel(right=10, bottom=10,
                width="auto", height="auto",
                actionButtonI('info_button', label=NULL,

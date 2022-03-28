@@ -1,5 +1,5 @@
 
-
+# Import library
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -12,15 +12,6 @@ library(sp) # crs
 library(sf) # crs
 library(StatsAnalysisTrend)
 library(ggplot2)
-
-
-grey97COL = "#f7f7f7"
-grey94COL = "#f0f0f0"
-grey85COL = "#d9d9d9"
-grey50COL = "#808080"
-
-
-
 
 # Path to the data
 computer_data_path = file.path(computer_work_path, 'data')            
@@ -47,6 +38,7 @@ today = Sys.Date()
 
 # Language
 language = 'FR'
+
 # Country
 country = 'France'
 
@@ -69,16 +61,13 @@ area_file = 'area.txt'
 # Gets the area
 area = create_area(area_file, resources_path)
 
-
+# Gets the variable name list
 varNameList = get_varNameList()
+# Converts the 2 dimensional list into a vector
 varNameVect = do.call(c, unlist(varNameList, recursive=FALSE))
 names(varNameVect) = NULL
 
-Months = c(word("a.m01"), word("a.m02"), word("a.m03"), word("a.m04"),
-           word("a.m05"), word("a.m06"), word("a.m07"), word("a.m08"),
-           word("a.m09"), word("a.m10"), word("a.m11"), word("a.m12"))
-Years = 1900:as.numeric(format(today, "%Y"))
-
+# Vector of variable abbreviations
 varVect = c(
     "MAXAN",
     "tMAXAN",
@@ -103,14 +92,25 @@ varVect = c(
     "tETI"
 )
 
+# Variables that need a percentage
 varP = c("fA",
          "Qp")
 
+# Possible percentages for variables that need one
 valP = list(c("90%", "95%", "99%"),
             c("10%", "25%", "50%", "75%", "90%"))
 
+# Creates a vector of months name
+Months = c(word("a.m01"), word("a.m02"), word("a.m03"), word("a.m04"),
+           word("a.m05"), word("a.m06"), word("a.m07"), word("a.m08"),
+           word("a.m09"), word("a.m10"), word("a.m11"), word("a.m12"))
+
+# Creates a vector of years
+Years = 1900:as.numeric(format(today, "%Y"))
+
+# Level of risk
 sigP = c("1%", "5%", "10%")
 
-
+# Creates all marker possibilities
 # create_marker(resources_path)
 

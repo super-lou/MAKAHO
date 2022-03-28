@@ -6,6 +6,12 @@ PalettePerso = c('#0f3b57', # cold
                  '#d08363',
                  '#7e392f') # hot
 
+# Personnal colors
+grey97COL = "#f7f7f7"
+grey94COL = "#f0f0f0"
+grey85COL = "#d9d9d9"
+grey50COL = "#808080"
+
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________

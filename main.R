@@ -7,11 +7,11 @@ computer_work_path =
 setwd(computer_work_path)
 
 # Sourcing R files
+source(file.path('R', 'settings.R'), encoding='UTF-8')
 source(file.path('R', 'tools.R'), encoding='UTF-8')
 source(file.path('R', 'color_manager.R'), encoding='UTF-8')
 source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
 source(file.path('R', 'style.R'), encoding='UTF-8')
-source('settings.R', encoding='UTF-8')
 
 # Sourcing app
 source('ui.R', encoding='UTF-8')

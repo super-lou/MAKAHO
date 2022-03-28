@@ -1,13 +1,13 @@
-
-
 server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
+
     
-    ### Map
-    observeEvent(input$map_button, {
-        toggle(id='map_panel')
+## 1. MAP ____________________________________________________________
+    observeEvent(input$theme_button, {
+        toggle(id='theme_panel')
     })
 
+### 1.1. Background __________________________________________________
     urlTile = reactive({
         get_urlTile(input$theme_choice,
                     provider,
@@ -30,6 +30,7 @@ server = function (input, output, session) {
                        urlTemplate=urlTile())
     })
 
+### 1.2. Marker ______________________________________________________
     observeEvent({ ### /!\
         input$theme_choice
         input$signif_choice
@@ -89,11 +90,13 @@ server = function (input, output, session) {
         rv$iconUrl_save = unlist(markerListAll$iconUrl)
     })    
     
-    ### Analyse
+
+## 2. ANALYSE ________________________________________________________
     observeEvent(input$ana_button, {
         toggle(id='ana_panel')
     })
 
+### 2.1. Period ______________________________________________________
     period = reactive({
         month = which(Months == input$dateMonth_slider)
         monthStart = formatC(month, width=2, flag=0)
@@ -117,6 +120,7 @@ server = function (input, output, session) {
         period()
     })
 
+### 2.2. Variable extration __________________________________________
     var = reactive({
         varVect[varNameVect == input$varName]
     })
@@ -166,7 +170,8 @@ server = function (input, output, session) {
             NULL
          }
     })
-        
+
+### 2.3. Station metadata ____________________________________________
     df_meta = reactive({
         df_metatmp = read_FST(computer_data_path,
                               'meta.fst',
@@ -184,7 +189,7 @@ server = function (input, output, session) {
         df_metatmp
     })
 
-    
+### 2.4. Station selection ___________________________________________
     CodeAll = reactive({
         rle(df_meta()$code)$values
     })
@@ -224,7 +229,7 @@ server = function (input, output, session) {
         }
     }, suspended=TRUE)
     
-
+### 2.5. Trend analysis ______________________________________________
     df_trend = reactive({
         if (!is.null(df_XEx())) {
             Estimate.stats(data.extract=df_XEx(),
@@ -234,6 +239,7 @@ server = function (input, output, session) {
         }
     })
 
+### 2.6. Color _______________________________________________________
     fillList = reactive({
         CodeSample = rv$CodeSample
         nCodeAll = length(CodeAll())
@@ -271,8 +277,9 @@ server = function (input, output, session) {
             rep(grey50COL, nCodeAll)
         }
     })
+
     
-    ### Search
+## 3. SEARCH _________________________________________________________
     observeEvent(input$search_button, {
         toggle(id='search_panel')
     })
@@ -307,7 +314,8 @@ server = function (input, output, session) {
         rv$Search_save = input$search_input
     })
 
-    ### Info
+    
+## 4. INFO ___________________________________________________________
     observeEvent(input$info_button, {
         toggle(id='info_panel')
     })

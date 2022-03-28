@@ -45,10 +45,10 @@ a.sig;Seuil de significativité
 a.ctT;Carte de tendance par ...
 a.cts;sites
 a.ctr;régions
-r.theme;Fond de carte
-r.theme.light;Clair
-r.theme.ter;Terrain
-r.theme.dark;Sombre
+t.theme;Fond de carte
+t.theme.light;Clair
+t.theme.ter;Terrain
+t.theme.dark;Sombre
 s.back;Rechercher
 m.hov.lat;lat
 m.hov.lon;lon
