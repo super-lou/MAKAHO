@@ -162,10 +162,10 @@ server = function (input, output, session) {
         } else {
             choices = FALSE
         }
-        updateRadioButtons(session, "proba_choice",
-                           label=word("varP"),
-                           inline=TRUE,
-                           choices=choices)
+        updateRadioGroupButtons(session, "proba_choice",
+                                size="sm",
+                                justified=TRUE,
+                                choices=choices)
     })
 
     filename = reactive({

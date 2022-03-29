@@ -33,12 +33,28 @@ computer_work_path =
 # Sets working directory
 setwd(computer_work_path)
 
+# Import library
+library(shiny)
+library(shinyjs)
+library(shinyWidgets)
+library(icons)
+library(leaflet)
+library(dplyr)
+library(tools) # file_ext
+library(data.table) # fast reading
+library(sp) # crs
+library(sf) # crs
+library(StatsAnalysisTrend)
+library(ggplot2)
+library(sass) # CSS
+
+
 # Sourcing R files
-source(file.path('R', 'settings.R'), encoding='UTF-8')
 source(file.path('R', 'tools.R'), encoding='UTF-8')
 source(file.path('R', 'color_manager.R'), encoding='UTF-8')
 source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
 source(file.path('R', 'style.R'), encoding='UTF-8')
+source(file.path('R', 'settings.R'), encoding='UTF-8')
 
 # Sourcing app
 source('ui.R', encoding='UTF-8')

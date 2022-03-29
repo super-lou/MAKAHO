@@ -56,11 +56,18 @@ searchHTML = HTML("
 panelButtonCSS =
     "color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent"
 
+polyButtonCSS =
+    "margin-top: 25px; margin-bottom: 0px; color: rgba(35, 35, 35); background-color: #fff; border-color: transparent"
+
 infoButtonCSS =
     "padding-left: 0px; padding-right: 0px; padding-top: 0px; padding-bottom: 0px; color: #fff; background-color: rgba(0, 0, 0, 0); border-color: transparent; font-size: 25px"
 
-radioButtonCSS = 
-".btn-myClass {
-    color: #00A5A8;
+
+inraeRadioCSS=
+"
+.btn-inrae {
     background-color: #00A5A8;
-}"
+}
+"
+
+

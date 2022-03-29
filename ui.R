@@ -30,10 +30,12 @@ ui = bootstrapPage(
 
     useShinyjs(),
 
+    tags$head(tags$link(rel="stylesheet", type="text/css",
+                        href=file.path("CSS", "style.css"))),
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Panel _______________________________________________________
-    tags$style(type = "text/css",
+    tags$style(type="text/css",
                "html, body {width:100%;height:100%}"),
     leafletOutput("map", width="100%", height="100%"),
 
@@ -45,25 +47,30 @@ ui = bootstrapPage(
             width="auto", height="auto",
             left=60, top=10,
             
-            tags$div(
 ### 1.2. Background selection ________________________________________
-                     radioButtons(inputId="theme_choice",
-                                  label=NULL,
-                                  inline=TRUE,
-                                  selected=word("t.theme.light"),
-                                  choices=c(word("t.theme.light"),
-                                            word("t.theme.ter"),
-                                            word("t.theme.dark")))
-                 )
+            column(12,
+                   radioGroupButtons(inputId="theme_choice",
+                                     size="xs",
+                                     selected="light",
+                                     choiceNames=
+                                         list(img(iconLib$light,
+                                                  align="right"),
+                                              img(iconLib$terrain,
+                                                  align="right"),
+                                              img(iconLib$dark,
+                                                  align="right")),
+                                     choiceValues= list("light",
+                                                        "terrain",
+                                                        "dark")))
         )
     ),
+    
 ### 1.3. Button ______________________________________________________
     fixedPanel(left=10, top=10,
                width="auto", height="auto",
                actionButtonI('theme_button', label=NULL,
                              style=panelButtonCSS,
-                             icon_name=iconLib$palette
-                             )
+                             icon_name=iconLib$palette)
                ),
 
     
@@ -73,68 +80,73 @@ ui = bootstrapPage(
         absolutePanel(
             id='ana_panel',
             style="background-color: rgba(100, 100, 100, 0.8)",
-            fixed=TRUE,        
-            width=300, height=500,
+            fixed=TRUE,
+            width=310, height="auto",
             left=10, bottom=60,
             
-            tags$div(
 ### 2.2. Code selection ______________________________________________
-                pickerInput(
-                    inputId="code_picker",
-                    label=word("a.sta"), 
-                    choices=NULL,
-                    multiple=TRUE,
-                    selected=NULL,
-                    options=list(size=7,
-                                 `live-search`=TRUE,
-                                 `actions-box`=TRUE)),
+            column(9, style='padding-right: 0px;',
+                   pickerInput(
+                       inputId="code_picker",
+                       label=word("a.sta"), 
+                       choices=NULL,
+                       multiple=TRUE,
+                       selected=NULL,
+                       options=list(size=7,
+                                    `live-search`=TRUE,
+                                    `actions-box`=TRUE))),
+            
+            column(2, style='padding-left: 14px;',
+                   actionButtonI('poly_button',
+                                 NULL,
+                                 style=polyButtonCSS,
+                                 icon_name=iconLib$draw
+                                 )),         
 
 ### 2.3. Variable selection __________________________________________
-                selectInput("varName", word('a.varT'),
-                            varNameList),
-
-                hidden(
-                    radioButtons(inputId="proba_choice",
-                                 label=word("a.varp"),
-                                 inline=TRUE,
-                                 choices=FALSE)),
-
+            column(12,
+                   selectInput("varName", word('a.varT'),
+                               varNameList)),
+            column(12, style="margin-top: -12px;",
+                   hidden(
+                       radioGroupButtons(inputId="proba_choice",
+                                         choices=FALSE,
+                                         selected=NULL))),
+        
 ### 2.4. Period selection ____________________________________________
-                chooseSliderSkin("Flat", "#00A5A8"),
-                tags$style(type="text/css",
-                           ".irs-grid-pol.small {height: 0px;}"),
+            chooseSliderSkin("Flat", "#00A5A8"),
+            tags$style(type="text/css",
+                       ".irs-grid-pol.small {height: 0px;}"),
 
-                sliderTextInput(inputId="dateMonth_slider",
-                                label=word("a.dm"),
-                                grid=TRUE,
-                                force_edges=TRUE,
-                                choices=Months),
+            column(12,
+                   sliderTextInput(inputId="dateMonth_slider",
+                                   label=word("a.dm"),
+                                   grid=TRUE,
+                                   force_edges=TRUE,
+                                   choices=Months)),
 
-                sliderInput("dateYear_slider", word("a.dy"),
-                            step=1,
-                            sep='',
-                            min=1900,
-                            max=as.numeric(format(today, "%Y")),
-                            value=c(1968, 2020)),
-                 
-                textOutput("period"),
-                tags$br(),
+            column(12,
+                   sliderInput("dateYear_slider", word("a.dy"),
+                               step=1,
+                               sep='',
+                               min=1900,
+                               max=as.numeric(format(today, "%Y")),
+                               value=c(1968, 2020))),
 
 ### 2.5. Statistical option ______________________________________________
-                radioGroupButtons(inputId="signif_choice",
-                                  label=word("a.sig"),
-                                  size="sm",
-                                  # status=radioButtonCSS,
-                                  choices=sigP,
-                                  selected=sigP[3]),
-                
-                radioGroupButtons(inputId="trendArea_choice",
-                                  label=word("a.ctT"),
-                                  size="sm",
-                                  # status=radioButtonCSS,
-                                  choices=c(word("a.cts"), word("a.ctr")),
-                                  selected=word("a.cts"))
-                )
+            column(12,
+                   radioGroupButtons(inputId="signif_choice",
+                                     label=word("a.sig"),
+                                     size="sm",
+                                     choices=sigP,
+                                     selected=sigP[3])),
+            
+            column(12,
+                   radioGroupButtons(inputId="trendArea_choice",
+                                     label=word("a.ctT"),
+                                     size="sm",
+                                     choices=c(word("a.cts"), word("a.ctr")),
+                                     selected=word("a.cts")))
         )
     ),
     
@@ -142,7 +154,7 @@ ui = bootstrapPage(
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
                actionButtonI('ana_button',
-                            HTML(paste0("<b>","Analyse","</b>")),
+                            HTML(paste0("<b>", word("a.title"),"</b>")),
                             style=panelButtonCSS,
                             icon_name=iconLib$analytics
                             )          
@@ -201,6 +213,7 @@ ui = bootstrapPage(
             right=10, bottom=60,
 
 ### 4.2. Contact info ________________________________________________
+            column(12,
             tags$div(tags$b(word("i.con")),
                      tags$br(),
                      word("i.dev"),
@@ -210,7 +223,7 @@ ui = bootstrapPage(
                      word("i.ref"),
                      tags$a(href="mailto:michel.lang@inrae.fr",
                             "Michel Lang")
-                 )
+                 ))
         )
     ),
     

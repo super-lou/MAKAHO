@@ -75,11 +75,11 @@ get_urlTile = function (theme, provider, theme_file, resources_path) {
     urlTiles_provider = urlTiles[OkProvider]
     
     if (provider == "jawg") {
-        if (theme == word("t.theme.light")) {
+        if (theme == 'light') {
             themeUrl = 'light'
-        } else if (theme == word("t.theme.ter")) {
+        } else if (theme == 'terrain') {
             themeUrl = 'terrain'
-        } else if (theme == word("t.theme.dark")) {
+        } else if (theme == 'dark') {
             themeUrl = 'dark'
         }
     }

@@ -26,20 +26,6 @@
 # R/settings.R
 
 
-# Import library
-library(shiny)
-library(shinyjs)
-library(shinyWidgets)
-library(icons)
-library(leaflet)
-library(dplyr)
-library(tools) # file_ext
-library(data.table) # fast reading
-library(sp) # crs
-library(sf) # crs
-library(StatsAnalysisTrend)
-library(ggplot2)
-
 # Path to the data
 computer_data_path = file.path(computer_work_path, 'data')            
 

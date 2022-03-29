@@ -40,4 +40,3 @@ library(icons)
 
 
 install.packages("svglite")
-
