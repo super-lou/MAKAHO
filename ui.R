@@ -30,48 +30,10 @@ ui = bootstrapPage(
 
     useShinyjs(),
 
-    tags$head(tags$link(rel="stylesheet", type="text/css",
-                        href=file.path("CSS", "style.css"))),
-    
 ## 1. MAP ____________________________________________________________
-### 1.1. Panel _______________________________________________________
     tags$style(type="text/css",
                "html, body {width:100%;height:100%}"),
     leafletOutput("map", width="100%", height="100%"),
-
-    hidden(
-        absolutePanel(
-            id='theme_panel',
-            style="background-color: rgba(100, 100, 100, 0.8)",
-            fixed=TRUE,        
-            width="auto", height="auto",
-            left=60, top=10,
-            
-### 1.2. Background selection ________________________________________
-            column(12,
-                   radioGroupButtons(inputId="theme_choice",
-                                     size="xs",
-                                     selected="light",
-                                     choiceNames=
-                                         list(img(iconLib$light,
-                                                  align="right"),
-                                              img(iconLib$terrain,
-                                                  align="right"),
-                                              img(iconLib$dark,
-                                                  align="right")),
-                                     choiceValues= list("light",
-                                                        "terrain",
-                                                        "dark")))
-        )
-    ),
-    
-### 1.3. Button ______________________________________________________
-    fixedPanel(left=10, top=10,
-               width="auto", height="auto",
-               actionButtonI('theme_button', label=NULL,
-                             style=panelButtonCSS,
-                             icon_name=iconLib$palette)
-               ),
 
     
 ## 2. ANALYSE ________________________________________________________
@@ -82,10 +44,10 @@ ui = bootstrapPage(
             style="background-color: rgba(100, 100, 100, 0.8)",
             fixed=TRUE,
             width=310, height="auto",
-            left=10, bottom=60,
+            left=10, bottom=53,
             
 ### 2.2. Code selection ______________________________________________
-            column(9, style='padding-right: 0px;',
+            column(9, style='padding-right: 0px; margin-right: 0px;',
                    pickerInput(
                        inputId="code_picker",
                        label=word("a.sta"), 
@@ -96,12 +58,27 @@ ui = bootstrapPage(
                                     `live-search`=TRUE,
                                     `actions-box`=TRUE))),
             
-            column(2, style='padding-left: 14px;',
+            column(2, style='margin-left: 7px;',
                    actionButtonI('poly_button',
                                  NULL,
                                  style=polyButtonCSS,
-                                 icon_name=iconLib$draw
-                                 )),         
+                                 icon_name=iconLib$draw)),
+
+            column(12,
+                   selectizeInput(
+                       inputId="search_input", 
+                       label=NULL,
+                       multiple=TRUE,
+                       choices=NULL,
+                       options=list(
+                           create=FALSE,
+                           placeholder=word("s.back"),
+                           onDropdownOpen=
+                               I("function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}"),
+                           onType=
+                               I("function (str) {if (str === \"\") {this.close();}}"),
+                           onItemAdd=
+                               I("function() {this.close();}")))),
 
 ### 2.3. Variable selection __________________________________________
             column(12,
@@ -156,49 +133,47 @@ ui = bootstrapPage(
                actionButtonI('ana_button',
                             HTML(paste0("<b>", word("a.title"),"</b>")),
                             style=panelButtonCSS,
-                            icon_name=iconLib$analytics
-                            )          
+                            icon_name=iconLib$analytics)
                ),
 
+
+
+
+
     
-## 3. SEARCH _________________________________________________________
-### 3.1. Panel _______________________________________________________
+
     hidden(
         absolutePanel(
-            id='search_panel',
-            style="background-color: transparent",
-            fixed=TRUE,
-            width="auto", height="33",
-            left=180, bottom=10,
-
-### 3.2. Search bar __________________________________________________
-            tags$head(tags$style(HTML('#search_input+ div>.selectize-dropdown{bottom: 100% !important; top:auto!important;}'))),
-
-            selectizeInput(
-                inputId="search_input", 
-                label=NULL,
-                multiple=TRUE,
-                choices=NULL,
-                options=list(
-                    create=FALSE,
-                    placeholder=word("s.back"),
-                    onDropdownOpen=
-                        I("function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}"),
-                    onType=
-                        I("function (str) {if (str === \"\") {this.close();}}"),
-                    onItemAdd=
-                        I("function() {this.close();}")
-                ))
+            id='theme_panel',
+            style="background-color: rgba(100, 100, 100, 0.8)",
+            fixed=TRUE,        
+            width="auto", height="auto",
+            left=130, bottom=53,
+            
+### 1.2. Background selection ________________________________________
+            column(12,
+                   radioGroupButtons(inputId="theme_choice",
+                                     size="xs",
+                                     selected="light",
+                                     choiceNames=
+                                         list(img(iconLib$light,
+                                                  align="right"),
+                                              img(iconLib$terrain,
+                                                  align="right"),
+                                              img(iconLib$dark,
+                                                  align="right")),
+                                     choiceValues= list("light",
+                                                        "terrain",
+                                                        "dark")))
         )
     ),
-
-### 3.3. Button ______________________________________________________
-    fixedPanel(left=130, bottom=10,
+    
+### 1.3. Button ______________________________________________________
+    fixedPanel(left=120, bottom=10,
                width="auto", height="auto",
-               actionButtonI('search_button', label=NULL,
+               actionButtonI('theme_button', label=NULL,
                              style=panelButtonCSS,
-                             icon_name=iconLib$search
-                             )
+                             icon_name=iconLib$palette)
                ),
 
     
@@ -210,7 +185,7 @@ ui = bootstrapPage(
             style="background-color: rgba(100, 100, 100, 0.8)",
             fixed=TRUE,
             width="auto", height="auto",
-            right=10, bottom=60,
+            right=10, bottom=40,
 
 ### 4.2. Contact info ________________________________________________
             column(12,
@@ -228,7 +203,7 @@ ui = bootstrapPage(
     ),
     
 ### 4.3. Button ______________________________________________________    
-    fixedPanel(right=10, bottom=10,
+    fixedPanel(right=10, bottom=0,
                width="auto", height="auto",
                actionButtonI('info_button', label=NULL,
                              style=infoButtonCSS,

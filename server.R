@@ -225,17 +225,20 @@ server = function (input, output, session) {
     rv = reactiveValues(CodeSample=isolate(CodeAll()),
                         markerList_save=NULL,
                         CodeSample_save=isolate(CodeAll()),
-                        Search_save=NULL)
+                        Search_save=NULL,
+                        polyCoord=NULL)
     
     observeEvent(input$map_marker_click, {
-        codeClick = input$map_marker_click$id
-        CodeSample = rv$CodeSample
-        if (codeClick %in% CodeSample) {
-            newCodeSample = CodeSample[CodeSample != codeClick]
-        } else {
-            newCodeSample = c(CodeSample, codeClick)
+        if (is.null(rv$polyCoord)) {
+            codeClick = input$map_marker_click$id
+            CodeSample = rv$CodeSample
+            if (codeClick %in% CodeSample) {
+                newCodeSample = CodeSample[CodeSample != codeClick]
+            } else {
+                newCodeSample = c(CodeSample, codeClick)
+            }
+            rv$CodeSample = newCodeSample
         }
-        rv$CodeSample = newCodeSample
     })
     
     observeEvent(input$code_picker, {
@@ -256,6 +259,34 @@ server = function (input, output, session) {
             rv$CodeSample = input$code_picker
         }
     }, suspended=TRUE)
+
+
+    observeEvent(input$poly_button, {
+        hide(id='ana_panel')
+        hide(id='theme_panel')
+        hide(id='info_panel')
+
+        rv$polyCoord = tibble()
+    })
+
+    observeEvent(input$map_click, {
+        if (!is.null(rv$polyCoord)) {
+
+            rv$polyCoord = bind_rows(rv$polyCoord,
+                                     tibble(lng=input$map_click$lng,
+                                            lat=input$map_click$lat))
+            
+            map = leafletProxy("map")
+            map = clearShapes(map)
+            map = addPolygons(map,
+                              lng=rv$polyCoord$lng,
+                              lat=rv$polyCoord$lat)
+            
+
+            
+        }
+    })
+    
     
 ### 2.5. Trend analysis ______________________________________________
     df_trend = reactive({
@@ -308,10 +339,6 @@ server = function (input, output, session) {
 
     
 ## 3. SEARCH _________________________________________________________
-    observeEvent(input$search_button, {
-        toggle(id='search_panel')
-    })
-
     observe({
         updateSelectizeInput(session, 'search_input',
                              choices=c(df_meta()$nom,
