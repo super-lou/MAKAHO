@@ -69,16 +69,7 @@ ui = bootstrapPage(
                        inputId="search_input", 
                        label=NULL,
                        multiple=TRUE,
-                       choices=NULL,
-                       options=list(
-                           create=FALSE,
-                           placeholder=word("a.search"),
-                           onDropdownOpen=
-                               I("function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}"),
-                           onType=
-                               I("function (str) {if (str === \"\") {this.close();}}"),
-                           onItemAdd=
-                               I("function() {this.close();}")))),
+                       choices=NULL)),
 
 ### 2.3. Variable selection __________________________________________
             column(12,

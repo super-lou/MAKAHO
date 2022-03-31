@@ -47,6 +47,9 @@ a.ctT;Carte de tendance par ...
 a.cts;sites
 a.ctr;régions
 a.search;Rechercher
+a.search.name;nom
+a.search.region;région hydro.
+a.search.regime;régime hydro.
 p.ok;Terminer
 c.title;Style
 c.theme;Fond de carte

@@ -70,7 +70,7 @@ server = function (input, output, session) {
         
         alpha = as.numeric(sub("%", "", input$signif_choice)) / 100
 
-        CodeSample = rv$CodeSample
+        CodeSample = CodeSample()
         nCodeSample = length(CodeSample)
 
         
@@ -145,10 +145,6 @@ server = function (input, output, session) {
     })
     period = debounce(period, 1000)
     
-
-    output$period = renderText({
-        period()
-    })
 
 ### 2.2. Variable extration __________________________________________
     var = reactive({
@@ -230,6 +226,11 @@ server = function (input, output, session) {
                         Search_save=NULL,
                         polyCoord=NULL)
 
+    CodeSample = reactive({
+        rv$CodeSample
+    })
+    CodeSample = debounce(CodeSample, 500)
+
 #### 2.4.1. Map click ________________________________________________
     observeEvent(input$map_marker_click, {
         if (is.null(rv$polyCoord)) {
@@ -308,35 +309,66 @@ server = function (input, output, session) {
     })
 
 #### 2.4.4. Search ___________________________________________________
-    nomHTML = reactive({
-        df_meta()$nom
-        lapply(label, HTML)
-    })
-    
-    regionHydroHTML = reactive({
-        df_meta()$region_hydro
-    })
-    
-    regimeHydroHTML = reactive({
-        df_meta()$regime_hydro
+    searchChoices = reactive({
+        Values = c(
+            paste0("name:", df_meta()$nom),
+            paste0("region:", df_meta()$region_hydro),
+            paste0("regime:", df_meta()$regime_hydro)
+        )
+        htmlValues = c(
+            paste0(df_meta()$nom,
+                   '<i style="font-size: 9pt; color: ',
+                   grey70COL, '">&emsp;', word("a.search.name"),
+                   '</i>'),
+            paste0(df_meta()$region_hydro,
+                   '<i style="font-size: 9pt; color: ',
+                   grey70COL, '">&emsp;', word("a.search.region"),
+                   '</i>'),
+            paste0(df_meta()$regime_hydro,
+                   '<i style="font-size: 9pt; color: ',
+                   grey70COL, '">&emsp;', word("a.search.regime"),
+                   '</i>')
+        )
+        
+        tibble(value=Values, label=htmlValues, 
+               html=htmlValues, stringsAsFactors=FALSE)
     })
 
     observe({
         updateSelectizeInput(session, 'search_input',
-                             choices=c(nomHTML(),
-                                       regionHydroHTML(),
-                                       regimeHydroHTML()),
-                             server=TRUE)
+                             choices=searchChoices(),
+                             server=TRUE,
+                             options=list(
+                                 create=FALSE,
+                                 placeholder=word("a.search"),
+                                 render=I('{
+                 item: function(item, escape) {
+                    return "<div>" + item.html + "</div>";
+                 },
+                  option: function(item, escape) {
+                    return "<div>" + item.html + "</div>";
+                 }
+                                 }'),
+                                 onDropdownOpen=
+                                     I('function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}'),
+                                 onType=
+                                     I('function (str) {if (str === \"\") {this.close();}}'),
+                                 onItemAdd=
+                                     I('function() {this.close();}')))
     })
     
     observeEvent(input$search_input, {
-        Search = input$search_input    
-        CodeNom = df_meta()$code[df_meta()$nom %in% Search]
-        CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search]
-        CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search]
+        htmlSearch = input$search_input
+        Search = gsub("(.*?):", "", htmlSearch)
+        searchType = gsub(":(.*)", "", htmlSearch)
+        
+        CodeNom = df_meta()$code[df_meta()$nom %in% Search[searchType == "name"]]
+        CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search[searchType == "region"]]
+        CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search[searchType == "regime"]]
+
         CodeSample = levels(factor(c(CodeNom,
-                                     CodeRegime,
-                                     CodeRegion)))
+                                     CodeRegion,
+                                     CodeRegime)))
         rv$CodeSample = CodeSample
     })
     
@@ -363,7 +395,7 @@ server = function (input, output, session) {
 
 ### 2.6. Color _______________________________________________________
     fillList = reactive({
-        CodeSample = rv$CodeSample
+        CodeSample = CodeSample()
         nCodeAll = length(CodeAll())
         
         if (!is.null(df_XEx()) | !is.null(df_trend())) {            

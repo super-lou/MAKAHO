@@ -38,6 +38,7 @@ PalettePerso = c('#0f3b57', # cold
 grey97COL = "#f7f7f7"
 grey94COL = "#f0f0f0"
 grey85COL = "#d9d9d9"
+grey70COL = "#b3b3b3"
 grey50COL = "#808080"
 
 
