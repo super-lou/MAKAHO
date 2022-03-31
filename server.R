@@ -309,11 +309,21 @@ server = function (input, output, session) {
     })
 
 #### 2.4.4. Search ___________________________________________________
+    location = reactive({
+        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", df_meta()$nom)
+    })
+
+    river = reactive({
+        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", df_meta()$nom)
+    })
+    
     searchChoices = reactive({
         Values = c(
             paste0("name:", df_meta()$nom),
             paste0("region:", df_meta()$region_hydro),
-            paste0("regime:", df_meta()$regime_hydro)
+            paste0("regime:", df_meta()$regime_hydro),
+            paste0("location:", location()),
+            paste0("river:", river())
         )
         htmlValues = c(
             paste0(df_meta()$nom,
@@ -327,6 +337,14 @@ server = function (input, output, session) {
             paste0(df_meta()$regime_hydro,
                    '<i style="font-size: 9pt; color: ',
                    grey70COL, '">&emsp;', word("a.search.regime"),
+                   '</i>'),
+            paste0(location(),
+                   '<i style="font-size: 9pt; color: ',
+                   grey70COL, '">&emsp;', word("a.search.location"),
+                   '</i>'),
+            paste0(river(),
+                   '<i style="font-size: 9pt; color: ',
+                   grey70COL, '">&emsp;', word("a.search.river"),
                    '</i>')
         )
         
@@ -365,10 +383,14 @@ server = function (input, output, session) {
         CodeNom = df_meta()$code[df_meta()$nom %in% Search[searchType == "name"]]
         CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search[searchType == "region"]]
         CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search[searchType == "regime"]]
+        CodeLocation = df_meta()$code[location() %in% Search[searchType == "location"]]
+        CodeRiver = df_meta()$code[river() %in% Search[searchType == "river"]]
 
         CodeSample = levels(factor(c(CodeNom,
                                      CodeRegion,
-                                     CodeRegime)))
+                                     CodeRegime,
+                                     CodeLocation,
+                                     CodeRiver)))
         rv$CodeSample = CodeSample
     })
     

@@ -47,9 +47,11 @@ a.ctT;Carte de tendance par ...
 a.cts;sites
 a.ctr;régions
 a.search;Rechercher
-a.search.name;nom
+a.search.name;station
 a.search.region;région hydro.
 a.search.regime;régime hydro.
+a.search.location;lieu
+a.search.river;"cours d'eau"
 p.ok;Terminer
 c.title;Style
 c.theme;Fond de carte
