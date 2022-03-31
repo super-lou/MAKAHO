@@ -41,10 +41,10 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='ana_panel',
-            style="background-color: rgba(100, 100, 100, 0.8)",
+            style=menuPanelCSS,
             fixed=TRUE,
             width=310, height="auto",
-            left=10, bottom=53,
+            left=10, bottom=50,
             
 ### 2.2. Code selection ______________________________________________
             column(9, style='padding-right: 0px; margin-right: 0px;',
@@ -133,10 +133,10 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='theme_panel',
-            style="background-color: rgba(100, 100, 100, 0.8)",
+            style=menuPanelCSS,
             fixed=TRUE,        
             width="auto", height="auto",
-            left=130, bottom=53,
+            left=120, bottom=50,
             
 ### 3.2. Background selection ________________________________________
             column(12,
@@ -187,7 +187,7 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='info_panel',
-            style="background-color: rgba(100, 100, 100, 0.8)",
+            style=infoPanelCSS,
             fixed=TRUE,
             width="auto", height="auto",
             right=10, bottom=40,

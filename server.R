@@ -34,6 +34,7 @@ server = function (input, output, session) {
     observeEvent(input$theme_button, {
         toggle(id='theme_panel')
         hide(id='ana_panel')
+        hide(id='info_panel')
     })
 
 ### 1.1. Background __________________________________________________
@@ -88,7 +89,13 @@ server = function (input, output, session) {
                                        fillList(),
                                        resources_path)
 
-        okCode = unlist(markerListAll$iconUrl) != rv$iconUrl_save
+        if (input$theme_choice != rv$theme_choice_save) {
+            okCode = rep(TRUE, length(CodeAll()))
+        } else {
+            okCode = unlist(markerListAll$iconUrl) != rv$iconUrl_save
+        }
+        rv$theme_choice_save = input$theme_choice
+
         Code = CodeAll()[okCode]
         markerList = markerListAll
         markerList$iconUrl = markerListAll$iconUrl[okCode]
@@ -124,6 +131,7 @@ server = function (input, output, session) {
     observeEvent(input$ana_button, {
         toggle(id='ana_panel')
         hide(id='theme_panel')
+        hide(id='info_panel')
     })
 
 ### 2.1. Period ______________________________________________________
@@ -224,7 +232,8 @@ server = function (input, output, session) {
                         markerList_save=NULL,
                         CodeSample_save=isolate(CodeAll()),
                         Search_save=NULL,
-                        polyCoord=NULL)
+                        polyCoord=NULL,
+                        theme_choice_save=isolate(input$theme_choice))
 
     CodeSample = reactive({
         rv$CodeSample
@@ -487,6 +496,8 @@ server = function (input, output, session) {
 ## 4. INFO ___________________________________________________________
     observeEvent(input$info_button, {
         toggle(id='info_panel')
+        hide(id='ana_panel')
+        hide(id='theme_panel')
     })
 
     

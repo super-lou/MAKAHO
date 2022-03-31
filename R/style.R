@@ -27,7 +27,11 @@
 
 
 
+menuPanelCSS =
+    "background-color: rgba(100, 100, 100, 0.8); border-radius: 5px 5px 5px 2px;"
 
+infoPanelCSS =
+    "background-color: rgba(100, 100, 100, 0.8); border-radius: 5px 5px 2px 5px;"
 
 panelButtonCSS =
     "color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent"
