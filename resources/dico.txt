@@ -52,6 +52,7 @@ a.search.region;région hydro.
 a.search.regime;régime hydro.
 a.search.location;lieu
 a.search.river;"cours d'eau"
+a.search.basin;bassin hydro.
 p.ok;Terminer
 c.title;Style
 c.theme;Fond de carte

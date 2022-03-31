@@ -309,12 +309,34 @@ server = function (input, output, session) {
     })
 
 #### 2.4.4. Search ___________________________________________________
-    location = reactive({
+    meta_location = reactive({
         gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", df_meta()$nom)
     })
 
-    river = reactive({
+    meta_river = reactive({
         gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", df_meta()$nom)
+    })
+
+    meta_basin = reactive({
+        df_basinName = tibble(letter=
+                                  c('D', 'E',
+                                    'A', 'B',
+                                    'F', 'G', 'H', 'I',
+                                    'J', 'K', 'L', 'M', 'N',
+                                    'O', 'P', 'Q', 'R', 'S',
+                                    'U', 'V', 'W', 'X', 'Y',
+                                    'Z'),
+                              basin=
+                                  c(rep('Artois-Picardie', 2),
+                                    rep('Rhin-Meuse', 2),
+                                    rep('Seine-Normandie', 4),
+                                    rep('Loire-Bretagne', 5),
+                                    rep('Adour-Garonne', 5),
+                                    rep('Rhône-Méditérannée & Corse', 5),
+                                    rep('Îles', 1)
+                                    ))
+        fL = substr(df_meta()$code, 1, 1)
+        df_basinName$basin[match(fL, df_basinName$letter)]
     })
     
     searchChoices = reactive({
@@ -322,8 +344,9 @@ server = function (input, output, session) {
             paste0("name:", df_meta()$nom),
             paste0("region:", df_meta()$region_hydro),
             paste0("regime:", df_meta()$regime_hydro),
-            paste0("location:", location()),
-            paste0("river:", river())
+            paste0("location:", meta_location()),
+            paste0("river:", meta_river()),
+            paste0("basin:", meta_basin())
         )
         htmlValues = c(
             paste0(df_meta()$nom,
@@ -338,13 +361,17 @@ server = function (input, output, session) {
                    '<i style="font-size: 9pt; color: ',
                    grey70COL, '">&emsp;', word("a.search.regime"),
                    '</i>'),
-            paste0(location(),
+            paste0(meta_location(),
                    '<i style="font-size: 9pt; color: ',
                    grey70COL, '">&emsp;', word("a.search.location"),
                    '</i>'),
-            paste0(river(),
+            paste0(meta_river(),
                    '<i style="font-size: 9pt; color: ',
                    grey70COL, '">&emsp;', word("a.search.river"),
+                   '</i>'),
+            paste0(meta_basin(),
+                   '<i style="font-size: 9pt; color: ',
+                   grey70COL, '">&emsp;', word("a.search.basin"),
                    '</i>')
         )
         
@@ -383,14 +410,16 @@ server = function (input, output, session) {
         CodeNom = df_meta()$code[df_meta()$nom %in% Search[searchType == "name"]]
         CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search[searchType == "region"]]
         CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search[searchType == "regime"]]
-        CodeLocation = df_meta()$code[location() %in% Search[searchType == "location"]]
-        CodeRiver = df_meta()$code[river() %in% Search[searchType == "river"]]
+        CodeLocation = df_meta()$code[meta_location() %in% Search[searchType == "location"]]
+        CodeRiver = df_meta()$code[meta_river() %in% Search[searchType == "river"]]
+        CodeBasin = df_meta()$code[meta_basin() %in% Search[searchType == "basin"]]
 
         CodeSample = levels(factor(c(CodeNom,
                                      CodeRegion,
                                      CodeRegime,
                                      CodeLocation,
-                                     CodeRiver)))
+                                     CodeRiver,
+                                     CodeBasin)))
         rv$CodeSample = CodeSample
     })
     
