@@ -46,15 +46,14 @@ a.sig;Seuil de significativité
 a.ctT;Carte de tendance par ...
 a.cts;sites
 a.ctr;régions
-t.theme;Fond de carte
-t.theme.light;Clair
-t.theme.ter;Terrain
-t.theme.dark;Sombre
-s.back;Rechercher
+a.search;Rechercher
+p.ok;Terminer
+c.title;Style
+c.theme;Fond de carte
+i.con;Contact
+i.dev;Développeur : 
+i.ref;Référent :
 m.hov.lat;lat
 m.hov.lon;lon
 m.hov.code;code
 m.hov.name;nom
-i.con;Contact
-i.dev;Développeur : 
-i.ref;Référent :

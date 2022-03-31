@@ -72,7 +72,7 @@ ui = bootstrapPage(
                        choices=NULL,
                        options=list(
                            create=FALSE,
-                           placeholder=word("s.back"),
+                           placeholder=word("a.search"),
                            onDropdownOpen=
                                I("function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}"),
                            onType=
@@ -127,21 +127,18 @@ ui = bootstrapPage(
         )
     ),
     
-### 2.6. Button ______________________________________________________
+### 2.6. Panel button ________________________________________________
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
                actionButtonI('ana_button',
-                            HTML(paste0("<b>", word("a.title"),"</b>")),
+                            HTML(paste0("<b>", word("a.title"), "</b>")),
                             style=panelButtonCSS,
                             icon_name=iconLib$analytics)
                ),
 
 
-
-
-
-    
-
+## 3. CUSTOMIZATION __________________________________________________
+### 3.1. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='theme_panel',
@@ -150,9 +147,10 @@ ui = bootstrapPage(
             width="auto", height="auto",
             left=130, bottom=53,
             
-### 1.2. Background selection ________________________________________
+### 3.2. Background selection ________________________________________
             column(12,
                    radioGroupButtons(inputId="theme_choice",
+                                     label=word("c.theme"),
                                      size="xs",
                                      selected="light",
                                      choiceNames=
@@ -168,13 +166,29 @@ ui = bootstrapPage(
         )
     ),
     
-### 1.3. Button ______________________________________________________
+### 3.3. Panel button ________________________________________________
     fixedPanel(left=120, bottom=10,
                width="auto", height="auto",
                actionButtonI('theme_button', label=NULL,
                              style=panelButtonCSS,
                              icon_name=iconLib$palette)
                ),
+
+### 3.4. Polygon panel _______________________________________________
+    hidden(
+        absolutePanel(
+            id='poly_panel',
+            style="background-color: transparent",
+            fixed=TRUE,
+            width="auto", height="auto",
+            left="50%", top=10,
+            
+            actionButtonI('polyOk_button', label=word("p.ok"),
+                          style=polyBarButtonCSS,
+                          icon_name=iconLib$ok)
+            
+            )
+        ),
 
     
 ## 4. INFO ___________________________________________________________
@@ -197,18 +211,16 @@ ui = bootstrapPage(
                      tags$br(),
                      word("i.ref"),
                      tags$a(href="mailto:michel.lang@inrae.fr",
-                            "Michel Lang")
-                 ))
+                            "Michel Lang")))
         )
     ),
     
-### 4.3. Button ______________________________________________________    
+### 4.3. Panel button ________________________________________________ 
     fixedPanel(right=10, bottom=0,
                width="auto", height="auto",
                actionButtonI('info_button', label=NULL,
                              style=infoButtonCSS,
-                             icon_name=iconLib$INRAElogo
-                             )
+                             icon_name=iconLib$INRAElogo)
                )
     
 )

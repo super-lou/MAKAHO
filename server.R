@@ -33,6 +33,7 @@ server = function (input, output, session) {
 ## 1. MAP ____________________________________________________________
     observeEvent(input$theme_button, {
         toggle(id='theme_panel')
+        hide(id='ana_panel')
     })
 
 ### 1.1. Background __________________________________________________
@@ -122,6 +123,7 @@ server = function (input, output, session) {
 ## 2. ANALYSE ________________________________________________________
     observeEvent(input$ana_button, {
         toggle(id='ana_panel')
+        hide(id='theme_panel')
     })
 
 ### 2.1. Period ______________________________________________________
@@ -227,7 +229,8 @@ server = function (input, output, session) {
                         CodeSample_save=isolate(CodeAll()),
                         Search_save=NULL,
                         polyCoord=NULL)
-    
+
+#### 2.4.1. Map click ________________________________________________
     observeEvent(input$map_marker_click, {
         if (is.null(rv$polyCoord)) {
             codeClick = input$map_marker_click$id
@@ -240,7 +243,8 @@ server = function (input, output, session) {
             rv$CodeSample = newCodeSample
         }
     })
-    
+
+#### 2.4.2. Picker ___________________________________________________
     observeEvent(input$code_picker, {
         rv$CodeSample = input$code_picker
     })
@@ -260,33 +264,92 @@ server = function (input, output, session) {
         }
     }, suspended=TRUE)
 
-
+#### 2.4.3. Polygone _________________________________________________
     observeEvent(input$poly_button, {
         hide(id='ana_panel')
         hide(id='theme_panel')
         hide(id='info_panel')
-
+        showElement(id='poly_panel')
         rv$polyCoord = tibble()
     })
 
     observeEvent(input$map_click, {
         if (!is.null(rv$polyCoord)) {
-
             rv$polyCoord = bind_rows(rv$polyCoord,
                                      tibble(lng=input$map_click$lng,
                                             lat=input$map_click$lat))
-            
             map = leafletProxy("map")
             map = clearShapes(map)
             map = addPolygons(map,
                               lng=rv$polyCoord$lng,
-                              lat=rv$polyCoord$lat)
-            
-
-            
+                              lat=rv$polyCoord$lat)            
         }
     })
+
+    observeEvent(input$polyOk_button, {
+        hide(id='poly_panel')
+        
+        station_coordinates = SpatialPointsDataFrame(
+            df_meta()[c('lon', 'lat')],
+            df_meta()['code'])
+
+        # Transform them to an sp Polygon
+        drawn_polygon = Polygon(as.matrix(rv$polyCoord))
+        
+        # Use over from the sp package to identify selected station
+        selected_station = station_coordinates %over% SpatialPolygons(list(Polygons(list(drawn_polygon),"drawn_polygon")))
+        
+        rv$CodeSample = df_meta()$code[!is.na(selected_station)]
+
+        map = leafletProxy("map")
+        map = clearShapes(map)
+        rv$polyCoord = NULL
+        showElement(id='ana_panel')
+    })
+
+#### 2.4.4. Search ___________________________________________________
+    nomHTML = reactive({
+        df_meta()$nom
+        lapply(label, HTML)
+    })
     
+    regionHydroHTML = reactive({
+        df_meta()$region_hydro
+    })
+    
+    regimeHydroHTML = reactive({
+        df_meta()$regime_hydro
+    })
+
+    observe({
+        updateSelectizeInput(session, 'search_input',
+                             choices=c(nomHTML(),
+                                       regionHydroHTML(),
+                                       regimeHydroHTML()),
+                             server=TRUE)
+    })
+    
+    observeEvent(input$search_input, {
+        Search = input$search_input    
+        CodeNom = df_meta()$code[df_meta()$nom %in% Search]
+        CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search]
+        CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search]
+        CodeSample = levels(factor(c(CodeNom,
+                                     CodeRegime,
+                                     CodeRegion)))
+        rv$CodeSample = CodeSample
+    })
+    
+    
+    observe({
+        if (is.null(input$search_input) & !is.null(rv$Search_save)) {
+            rv$CodeSample = rv$CodeSample_save
+        }
+        if (is.null(input$search_input) & is.null(rv$Search_save)) {
+            rv$CodeSample_save = rv$CodeSample
+        }
+        rv$Search_save = input$search_input
+    })
     
 ### 2.5. Trend analysis ______________________________________________
     df_trend = reactive({
@@ -336,39 +399,7 @@ server = function (input, output, session) {
             rep(grey50COL, nCodeAll)
         }
     })
-
     
-## 3. SEARCH _________________________________________________________
-    observe({
-        updateSelectizeInput(session, 'search_input',
-                             choices=c(df_meta()$nom,
-                                       df_meta()$region_hydro,
-                                       df_meta()$regime_hydro),
-                             server=TRUE)
-    })
-    observeEvent(input$search_input, {
-        Search = input$search_input    
-        CodeNom = df_meta()$code[df_meta()$nom %in% Search]
-        CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search]
-        CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search]
-        CodeSample = levels(factor(c(CodeNom,
-                                     CodeRegime,
-                                     CodeRegion)))
-
-        rv$CodeSample = CodeSample
-    })
-    
-    
-    observe({
-        if (is.null(input$search_input) & !is.null(rv$Search_save)) {
-            rv$CodeSample = rv$CodeSample_save
-        }
-        if (is.null(input$search_input) & is.null(rv$Search_save)) {
-            rv$CodeSample_save = rv$CodeSample
-        }
-        rv$Search_save = input$search_input
-    })
-
     
 ## 4. INFO ___________________________________________________________
     observeEvent(input$info_button, {
