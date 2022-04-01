@@ -64,7 +64,7 @@ get_varNameList = function () {
     return (IdList)
 }
 
-get_urlTile = function (theme, provider, theme_file, resources_path) {
+get_urlTile = function (theme, provider, theme_file, resources_path, token=NULL) {
     
     theme_path = file.path(resources_path, theme_file)
     urlTiles = as.character(read.table(file=theme_path,
@@ -82,22 +82,29 @@ get_urlTile = function (theme, provider, theme_file, resources_path) {
         } else if (theme == 'dark') {
             themeUrl = 'dark'
         }
+    } else if (provider == "stadia") {
+        if (theme == 'light') {
+            themeUrl = "alidade_smooth/"
+        } else if (theme == 'terrain') {
+            themeUrl ="outdoors"
+        } else if (theme == 'dark') {
+            themeUrl = "alidade_smooth_dark/"
+        }
     }
 
     OkTheme = grepl(themeUrl, urlTiles_provider, fixed=TRUE)
     urlTile = urlTiles_provider[OkTheme]
     
     if (provider == "jawg") {
-        token =
-            "hEjAgwvvpEJBpIR62stbJUflOVZXM73MoB1hQGAR69fCtoNVQiHJOKp8lVlPOdFH"
         urlTile = sub("[{]accessToken[}]", token, urlTile)
-    } else {
-        stop("error")
     }
     return (urlTile)
 }
 
-# get_urlTile(word("r.theme.light"), 'jawg', 'theme.txt', resources_path)
+# get_urlTile('light', 'stadia',
+#             'theme.txt',
+#             resources_path,
+#             token=jawg_token)
 
 
 create_iconLib = function (icon_dir, resources_path) {
@@ -200,3 +207,16 @@ get_trendExtremes = function (df_data, df_trend, CodeAll,
 
 
 
+get_label = function (Lon, Lat, Code, Nom) {
+    label = paste0(
+        "<b>", word('m.hov.lat'),". </b>",
+        signif(Lat, 6),
+        " / <b>", word('m.hov.lon'),". </b>",
+        signif(Lon, 6), '<br>',
+        "<b>", word('m.hov.code')," </b>",
+        Code, '<br>',
+        "<b>", word('m.hov.name')," </b>",
+        Nom, '<br>'
+    )
+    return (label)
+}

@@ -44,7 +44,12 @@ iconLib = create_iconLib(icon_dir, resources_path)
 # Filename of the map tiles theme available
 theme_file = 'theme.txt'
 # Selection of the provider of map 
-provider = 'jawg'
+provider =
+    'jawg'
+    # 'stadia'
+# Token for the map 
+jawg_token =
+    "hEjAgwvvpEJBpIR62stbJUflOVZXM73MoB1hQGAR69fCtoNVQiHJOKp8lVlPOdFH"
 
 # today's date
 today = Sys.Date()
@@ -58,7 +63,7 @@ latFR = 46.727638
 
 # Min and max zoom of the map
 minZoom = 1
-maxZoom = 13
+maxZoom = 20
 
 # Name of the dictionnary to use for the translation
 dico_file = 'dico.txt'

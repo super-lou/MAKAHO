@@ -29,6 +29,14 @@
 server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 
+
+    rv = reactiveValues(CodeSample=NULL,
+                        markerListAll_save=NULL,
+                        CodeSample_save=NULL,
+                        Search_save=NULL,
+                        polyCoord=NULL,
+                        theme_choice_save=NULL,
+                        mapHTML=NULL)
     
 ## 1. MAP ____________________________________________________________
     observeEvent(input$theme_button, {
@@ -42,7 +50,8 @@ server = function (input, output, session) {
         get_urlTile(input$theme_choice,
                     provider,
                     theme_file,
-                    resources_path)
+                    resources_path,
+                    token=jawg_token)
     })
     
     output$map = renderLeaflet({
@@ -52,7 +61,6 @@ server = function (input, output, session) {
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
         map = setView(map, lonFR, latFR, 6)
-        
         map = addTiles(map,
                        urlTemplate=urlTile())
 
@@ -92,7 +100,7 @@ server = function (input, output, session) {
         if (input$theme_choice != rv$theme_choice_save) {
             okCode = rep(TRUE, length(CodeAll()))
         } else {
-            okCode = unlist(markerListAll$iconUrl) != rv$iconUrl_save
+            okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
         rv$theme_choice_save = input$theme_choice
 
@@ -103,17 +111,7 @@ server = function (input, output, session) {
         Lat = df_meta()$lat[okCode]
         Nom = df_meta()$nom[okCode]
         
-        label =
-            paste0(
-                "<b>", word('m.hov.lat'),". </b>",
-                signif(Lat, 6),
-                " / <b>", word('m.hov.lon'),". </b>",
-                signif(Lon, 6), '<br>',
-                "<b>", word('m.hov.code')," </b>",
-                Code, '<br>',
-                "<b>", word('m.hov.name')," </b>",
-                Nom, '<br>'
-            )
+        label = get_label(Lon, Lat, Code, Nom)
         
         map = removeMarker(map, layerId=Code)
         map = addMarkers(map,
@@ -123,7 +121,7 @@ server = function (input, output, session) {
                          label=lapply(label, HTML),
                          layerId=Code)
 
-        rv$iconUrl_save = unlist(markerListAll$iconUrl)
+        rv$markerListAll_save = markerListAll
     })    
     
 
@@ -227,15 +225,11 @@ server = function (input, output, session) {
     CodeAll = reactive({
         rle(df_meta()$code)$values
     })
-        
-    rv = reactiveValues(CodeSample=isolate(CodeAll()),
-                        markerList_save=NULL,
-                        CodeSample_save=isolate(CodeAll()),
-                        Search_save=NULL,
-                        polyCoord=NULL,
-                        theme_choice_save=isolate(input$theme_choice),
-                        mapHTML=NULL)
 
+    rv$CodeSample = isolate(CodeAll())
+    rv$CodeSample_save = isolate(CodeAll())
+    rv$theme_choice_save = isolate(input$theme_choice)
+    
     CodeSample = reactive({
         rv$CodeSample
     })
@@ -504,15 +498,25 @@ server = function (input, output, session) {
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    # observeEvent(input$photo_button, {
-    #     
-    #     mapshot(map, file='./map.pdf')
-    # })
-
-    
     output$photo_button <- downloadHandler(
-        filename = paste0("map.png"),
+        filename = "map.png",
+
         content = function(file) {
+            markerList = rv$markerListAll_save
+            Lon = df_meta()$lon
+            Lat = df_meta()$lat
+            Nom = df_meta()$nom
+            
+            label = get_label(Lon, Lat, CodeAll(), Nom)
+            
+            rv$mapHTML = clearMarkers(rv$mapHTML)
+            rv$mapHTML = addMarkers(rv$mapHTML,
+                                    lng=Lon,
+                                    lat=Lat,
+                                    icon=markerList,
+                                    label=lapply(label, HTML),
+                                    layerId=CodeAll())
+            
             mapshot(rv$mapHTML, file=file,
                     cliprect="viewport",
                     selfcontained=FALSE)
