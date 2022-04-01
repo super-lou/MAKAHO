@@ -47,7 +47,7 @@ ui = bootstrapPage(
             left=10, bottom=50,
             
 ### 2.2. Code selection ______________________________________________
-            column(9, style='padding-right: 0px; margin-right: 0px;',
+            column(9, style='padding-right: 0px; margin-right: 0px; margin-top: 9px;',
                    pickerInput(
                        inputId="code_picker",
                        label=word("a.sta"), 
@@ -58,7 +58,7 @@ ui = bootstrapPage(
                                     `live-search`=TRUE,
                                     `actions-box`=TRUE))),
             
-            column(2, style='margin-left: 7px;',
+            column(2, style='margin-left: 7px; margin-top: 9px;',
                    actionButtonI('poly_button',
                                  NULL,
                                  style=polyButtonCSS,
@@ -138,7 +138,7 @@ ui = bootstrapPage(
             width="auto", height="auto",
             left=120, bottom=50,
             
-### 3.2. Background selection ________________________________________
+### 3.2. Background theme ____________________________________________
             column(12,
                    radioGroupButtons(inputId="theme_choice",
                                      label=word("c.theme"),
@@ -212,6 +212,18 @@ ui = bootstrapPage(
                actionButtonI('info_button', label=NULL,
                              style=infoButtonCSS,
                              icon_name=iconLib$INRAElogo)
+               ),
+
+## 5. SAVE ___________________________________________________________
+### 5.1. Screenshot __________________________________________________
+    fixedPanel(left=10, top=10,
+               width="auto", height="auto",
+               
+               downloadButton("photo_button", label=NULL)
+               
+               # actionButtonI('photo_button', label=NULL,
+               #               style=panelButtonCSS,
+               #               icon_name=iconLib$photo)
                )
-    
+   
 )

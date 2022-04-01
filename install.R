@@ -40,3 +40,7 @@ library(icons)
 
 
 install.packages("svglite")
+
+install.packages("mapview")
+sudo sh install_phantomjs.sh
+

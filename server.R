@@ -51,15 +51,15 @@ server = function (input, output, session) {
                                              worldCopyJump=FALSE,
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
-        map = setView(map,
-                      centroids$longitude[centroids$country == country],
-                      centroids$latitude[centroids$country == country],
-                      6)
+        map = setView(map, lonFR, latFR, 6)
         
         map = addTiles(map,
                        urlTemplate=urlTile())
-    })
 
+        rv$mapHTML = map
+    })
+    
+    
 ### 1.2. Marker ______________________________________________________
     observeEvent({ ### /!\
         input$theme_choice
@@ -122,7 +122,7 @@ server = function (input, output, session) {
                          icon=markerList,
                          label=lapply(label, HTML),
                          layerId=Code)
-        
+
         rv$iconUrl_save = unlist(markerListAll$iconUrl)
     })    
     
@@ -233,7 +233,8 @@ server = function (input, output, session) {
                         CodeSample_save=isolate(CodeAll()),
                         Search_save=NULL,
                         polyCoord=NULL,
-                        theme_choice_save=isolate(input$theme_choice))
+                        theme_choice_save=isolate(input$theme_choice),
+                        mapHTML=NULL)
 
     CodeSample = reactive({
         rv$CodeSample
@@ -501,6 +502,22 @@ server = function (input, output, session) {
     })
 
     
-   
+## 5. SAVE ___________________________________________________________
+### 5.1. Screenshot __________________________________________________
+    # observeEvent(input$photo_button, {
+    #     
+    #     mapshot(map, file='./map.pdf')
+    # })
+
+    
+    output$photo_button <- downloadHandler(
+        filename = paste0("map.png"),
+        content = function(file) {
+            mapshot(rv$mapHTML, file=file,
+                    cliprect="viewport",
+                    selfcontained=FALSE)
+        }
+    )
+    
 } 
 

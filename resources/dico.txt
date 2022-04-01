@@ -1,7 +1,7 @@
 id;FR
 a.title;Analyse
 a.sta;Stations sélectionnées
-a.varT;Choix variable hydrologique
+a.varT;Choix de la variable hydrologique
 a.var1;Crues
 a.var1.1;Débit Max An 
 a.var1.2;Date Max An 

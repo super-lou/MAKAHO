@@ -52,8 +52,9 @@ today = Sys.Date()
 # Language
 language = 'FR'
 
-# Country
-country = 'France'
+# Localisation
+lonFR = 2.213749
+latFR = 46.727638
 
 # Min and max zoom of the map
 minZoom = 1
@@ -63,16 +64,6 @@ maxZoom = 13
 dico_file = 'dico.txt'
 # Creates the dictionnary
 dico = create_dico(dico_file, resources_path)
-
-# Name of the file of centroids for every countries
-centroids_file = 'centroids.txt'
-# Gets the centroids
-centroids = create_centroids(centroids_file, resources_path)
-
-# Name of the file of area for every countries
-area_file = 'area.txt'
-# Gets the area
-area = create_area(area_file, resources_path)
 
 # Gets the variable name list
 varNameList = get_varNameList()

@@ -47,6 +47,7 @@ library(sf) # crs
 library(StatsAnalysisTrend)
 library(ggplot2)
 library(sass) # CSS
+library(mapview) # screenshot
 
 
 # Sourcing R files
