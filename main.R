@@ -48,6 +48,7 @@ library(StatsAnalysisTrend)
 library(ggplot2)
 library(sass) # CSS
 library(mapview) # screenshot
+library(mapboxapi)
 
 
 # Sourcing R files

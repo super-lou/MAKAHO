@@ -43,13 +43,17 @@ iconLib = create_iconLib(icon_dir, resources_path)
 
 # Filename of the map tiles theme available
 theme_file = 'theme.txt'
-# Selection of the provider of map 
-provider =
+# Selection of the provider of map
+mapProvider =
     'jawg'
     # 'stadia'
+
 # Token for the map 
 jawg_token =
     "hEjAgwvvpEJBpIR62stbJUflOVZXM73MoB1hQGAR69fCtoNVQiHJOKp8lVlPOdFH"
+
+mapbox_token =
+"pk.eyJ1IjoibG91aXMtaGVyYXV0IiwiYSI6ImNsMWtydnBiNTAyNTQzZW9ib3JveG1zNmwifQ._gLGC_XIT-Ll6S9NysqgwQ"
 
 # today's date
 today = Sys.Date()

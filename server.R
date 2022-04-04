@@ -61,8 +61,14 @@ server = function (input, output, session) {
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
         map = setView(map, lonFR, latFR, 6)
-        map = addTiles(map,
-                       urlTemplate=urlTile())
+        
+        map = addMapboxTiles(map,
+                             style_id="light-v9",
+                             username="mapbox",
+                             access_token=mapbox_token)
+        # map = addTiles(map, urlTemplate=urlTile())
+
+        # map = addProviderTiles(map, "Jawg.Light")
 
         rv$mapHTML = map
     })
