@@ -34,13 +34,18 @@ install.packages("shinyWidgets")
 install.packages("leaflet")
 install.packages("shinyjs")
 install.packages("shiny")
+install.packages("data.table")
+install.packages("dplyr")
+install.packages("sp")
+install.packages("sf")
+install.packages("fst")
 
 remotes::install_github("mitchelloharawild/icons")
-library(icons)
-
 
 install.packages("svglite")
 
 install.packages("mapview")
 sudo sh install_phantomjs.sh
+
+remotes::install_github('trafficonese/leaflet.extras2')
 

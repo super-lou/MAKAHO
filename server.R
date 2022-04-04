@@ -57,18 +57,10 @@ server = function (input, output, session) {
     output$map = renderLeaflet({
         map = leaflet(options=leafletOptions(minZoom=minZoom,
                                              maxZoom=maxZoom,
-                                             worldCopyJump=FALSE,
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
         map = setView(map, lonFR, latFR, 6)
-        
-        map = addMapboxTiles(map,
-                             style_id="light-v9",
-                             username="mapbox",
-                             access_token=mapbox_token)
-        # map = addTiles(map, urlTemplate=urlTile())
-
-        # map = addProviderTiles(map, "Jawg.Light")
+        map = addTiles(map, urlTemplate=urlTile())
 
         rv$mapHTML = map
     })
@@ -504,30 +496,30 @@ server = function (input, output, session) {
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    output$photo_button <- downloadHandler(
-        filename = "map.png",
+    # output$photo_button <- downloadHandler(
+    #     filename = "map.png",
 
-        content = function(file) {
-            markerList = rv$markerListAll_save
-            Lon = df_meta()$lon
-            Lat = df_meta()$lat
-            Nom = df_meta()$nom
+    #     content = function(file) {
+    #         markerList = rv$markerListAll_save
+    #         Lon = df_meta()$lon
+    #         Lat = df_meta()$lat
+    #         Nom = df_meta()$nom
             
-            label = get_label(Lon, Lat, CodeAll(), Nom)
+    #         label = get_label(Lon, Lat, CodeAll(), Nom)
             
-            rv$mapHTML = clearMarkers(rv$mapHTML)
-            rv$mapHTML = addMarkers(rv$mapHTML,
-                                    lng=Lon,
-                                    lat=Lat,
-                                    icon=markerList,
-                                    label=lapply(label, HTML),
-                                    layerId=CodeAll())
+    #         rv$mapHTML = clearMarkers(rv$mapHTML)
+    #         rv$mapHTML = addMarkers(rv$mapHTML,
+    #                                 lng=Lon,
+    #                                 lat=Lat,
+    #                                 icon=markerList,
+    #                                 label=lapply(label, HTML),
+    #                                 layerId=CodeAll())
             
-            mapshot(rv$mapHTML, file=file,
-                    cliprect="viewport",
-                    selfcontained=FALSE)
-        }
-    )
+    #         mapshot(rv$mapHTML, file=file,
+    #                 cliprect="viewport",
+    #                 selfcontained=FALSE)
+    #     }
+    # )
     
 } 
 

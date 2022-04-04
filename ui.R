@@ -25,10 +25,13 @@
 #
 # ui.R
 
+# jsfile <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js" 
 
 ui = bootstrapPage(
 
     useShinyjs(),
+    
+    # tags$head(tags$script(src=jsfile)),
 
 ## 1. MAP ____________________________________________________________
     tags$style(type="text/css",
@@ -216,14 +219,16 @@ ui = bootstrapPage(
 
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    fixedPanel(left=10, top=10,
-               width="auto", height="auto",
+    # fixedPanel(left=10, top=10,
+    #            width="auto", height="auto",
                
-               downloadButton("photo_button", label=NULL)
+               # downloadButton("photo_button", label=NULL)
+
+               # actionButton("print", "Print Map")
                
                # actionButtonI('photo_button', label=NULL,
                #               style=panelButtonCSS,
                #               icon_name=iconLib$photo)
-               )
+               # )
    
 )

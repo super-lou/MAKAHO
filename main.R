@@ -45,10 +45,8 @@ library(data.table) # fast reading
 library(sp) # crs
 library(sf) # crs
 library(StatsAnalysisTrend)
-library(ggplot2)
-library(sass) # CSS
-library(mapview) # screenshot
-library(mapboxapi)
+library(leaflet.extras2)
+
 
 
 # Sourcing R files
