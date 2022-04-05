@@ -36,7 +36,9 @@ server = function (input, output, session) {
                         Search_save=NULL,
                         polyCoord=NULL,
                         theme_choice_save=NULL,
-                        mapHTML=NULL)
+                        mapHTML=NULL,
+                        polyMode='false',
+                        inputPhoto=0)
     
 ## 1. MAP ____________________________________________________________
     observeEvent(input$theme_button, {
@@ -59,14 +61,62 @@ server = function (input, output, session) {
                                              maxZoom=maxZoom,
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
-        map = setView(map, lonFR, latFR, 6)
+        map = setView(map, lonFR, latFR, zoomFR)
         map = addTiles(map, urlTemplate=urlTile())
-
+        map = addEasyprint(map, options=easyprintOptions(
+                                    sizeModes=c("Current",
+                                                "A4Landscape",
+                                                "A4Portrait"),
+                                    exportOnly=TRUE,
+                                    hidden=TRUE))
+        
         rv$mapHTML = map
     })
+
+### 1.2. Zoom ________________________________________________________
+    observeEvent(input$focus_button, {        
+
+        Lon = df_meta()$lon[df_meta()$code %in% rv$CodeSample]
+        Lat = df_meta()$lat[df_meta()$code %in% rv$CodeSample]
+        map = leafletProxy("map")
+        map = fitBounds(map,
+                        lng1=min(Lon), lat1=min(Lat),
+                        lng2=max(Lon), lat2=max(Lat),
+                        options=list(padding=c(70, 70)))
+            
+        hide(id='focus_panel')
+        showElement(id='crop_panel')
+        
+    })
     
+    observeEvent(input$crop_button, {
+        Lon = df_meta()$lon[df_meta()$code %in% rv$CodeSample]
+        Lat = df_meta()$lat[df_meta()$code %in% rv$CodeSample]
+        map = leafletProxy("map")
+        map = setView(map, lonFR, latFR, zoomFR)
+
+        showElement(id='focus_panel')
+        hide(id='crop_panel')
+    })
     
-### 1.2. Marker ______________________________________________________
+
+    observeEvent({
+        input$map_zoom
+        input$map_bounds
+    }, {
+        if (!is.null(input$map_zoom)) {
+            isNotDefault = input$map_zoom != zoomFR | input$map_center$lng != lonFR | input$map_center$lat != latFR
+            if (isNotDefault) {
+                hide(id='focus_panel')
+                showElement(id='crop_panel')
+            } else {
+                showElement(id='focus_panel')
+                hide(id='crop_panel')
+            }
+        }
+    })
+    
+### 1.3. Marker ______________________________________________________
     observeEvent({ ### /!\
         input$theme_choice
         input$signif_choice
@@ -273,40 +323,84 @@ server = function (input, output, session) {
         hide(id='theme_panel')
         hide(id='info_panel')
         showElement(id='poly_panel')
+        rv$polyMode = "Add"
         rv$polyCoord = tibble()
     })
 
+    observeEvent(input$polyAdd_button, {
+        rv$polyMode = "Add"
+        if (nrow(rv$polyCoord) != 0) {
+            map = leafletProxy("map")
+            map = clearShapes(map)
+            color = "#6d9192"
+            map = addPolygons(map,
+                              color=color,
+                              lng=rv$polyCoord$lng,
+                              lat=rv$polyCoord$lat)
+        }
+    })
+    observeEvent(input$polyRm_button, {
+        rv$polyMode = "Rm"
+        if (nrow(rv$polyCoord) != 0) {
+            map = leafletProxy("map")
+            map = clearShapes(map)
+            color = "#b35457"
+            map = addPolygons(map,
+                              color=color,
+                              lng=rv$polyCoord$lng,
+                              lat=rv$polyCoord$lat)
+        }
+    })
+    
     observeEvent(input$map_click, {
-        if (!is.null(rv$polyCoord)) {
+        if (rv$polyMode != 'false') {
             rv$polyCoord = bind_rows(rv$polyCoord,
                                      tibble(lng=input$map_click$lng,
                                             lat=input$map_click$lat))
             map = leafletProxy("map")
             map = clearShapes(map)
+            if (rv$polyMode == "Add") {
+                color = "#6d9192"
+            } else if (rv$polyMode == "Rm") {
+                color = "#b35457"
+            }
             map = addPolygons(map,
+                              color=color,
                               lng=rv$polyCoord$lng,
-                              lat=rv$polyCoord$lat)            
+                              lat=rv$polyCoord$lat)
         }
     })
 
+    
     observeEvent(input$polyOk_button, {
+        if (nrow(rv$polyCoord) != 0) {
+        
+            station_coordinates = SpatialPointsDataFrame(
+                df_meta()[c('lon', 'lat')],
+                df_meta()['code'])
+
+            # Transform them to an sp Polygon
+            drawn_polygon = Polygon(as.matrix(rv$polyCoord))
+            
+            # Use over from the sp package to identify selected station
+            selected_station = station_coordinates %over% SpatialPolygons(list(Polygons(list(drawn_polygon), "drawn_polygon")))
+
+            selectCode = df_meta()$code[!is.na(selected_station)]
+
+            if (rv$polyMode == "Add") {
+                rv$CodeSample = c(rv$CodeSample, selectCode)
+                rv$CodeSample = rv$CodeSample[!duplicated(rv$CodeSample)]
+            } else if (rv$polyMode == "Rm") {
+                rv$CodeSample = rv$CodeSample[!(rv$CodeSample %in% selectCode)]
+            }
+
+            map = leafletProxy("map")
+            map = clearShapes(map)
+            rv$polyCoord = NULL
+        }
+        
+        rv$polyMode = 'false'
         hide(id='poly_panel')
-        
-        station_coordinates = SpatialPointsDataFrame(
-            df_meta()[c('lon', 'lat')],
-            df_meta()['code'])
-
-        # Transform them to an sp Polygon
-        drawn_polygon = Polygon(as.matrix(rv$polyCoord))
-        
-        # Use over from the sp package to identify selected station
-        selected_station = station_coordinates %over% SpatialPolygons(list(Polygons(list(drawn_polygon),"drawn_polygon")))
-        
-        rv$CodeSample = df_meta()$code[!is.na(selected_station)]
-
-        map = leafletProxy("map")
-        map = clearShapes(map)
-        rv$polyCoord = NULL
         showElement(id='ana_panel')
     })
 
@@ -496,30 +590,24 @@ server = function (input, output, session) {
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    # output$photo_button <- downloadHandler(
-    #     filename = "map.png",
+    observeEvent(input$photo_button, {
+        rv$inputPhoto = 1
+    })
 
-    #     content = function(file) {
-    #         markerList = rv$markerListAll_save
-    #         Lon = df_meta()$lon
-    #         Lat = df_meta()$lat
-    #         Nom = df_meta()$nom
-            
-    #         label = get_label(Lon, Lat, CodeAll(), Nom)
-            
-    #         rv$mapHTML = clearMarkers(rv$mapHTML)
-    #         rv$mapHTML = addMarkers(rv$mapHTML,
-    #                                 lng=Lon,
-    #                                 lat=Lat,
-    #                                 icon=markerList,
-    #                                 label=lapply(label, HTML),
-    #                                 layerId=CodeAll())
-            
-    #         mapshot(rv$mapHTML, file=file,
-    #                 cliprect="viewport",
-    #                 selfcontained=FALSE)
-    #     }
-    # )
+    inputPhotoDEB = reactive({
+        rv$inputPhoto
+    })
     
+    inputPhotoDEB = debounce(inputPhotoDEB, 500)
+
+    observe({
+        if (inputPhotoDEB() == 1) {
+            map = leafletProxy("map")
+            easyprintMap(map, sizeModes="A4Landscape")
+            rv$inputPhoto = 0
+        }
+    })
+
+
 } 
 

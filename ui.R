@@ -25,20 +25,40 @@
 #
 # ui.R
 
-# jsfile <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js" 
 
 ui = bootstrapPage(
 
     useShinyjs(),
-    
-    # tags$head(tags$script(src=jsfile)),
 
+    
 ## 1. MAP ____________________________________________________________
+### 1.1. Background __________________________________________________    
     tags$style(type="text/css",
                "html, body {width:100%;height:100%}"),
     leafletOutput("map", width="100%", height="100%"),
 
+### 1.2. Zoom ________________________________________________________
+    hidden(
+        fixedPanel(id='focus_panel',
+                   left=10, top=10,
+                   width="auto", height="auto",
+                   actionButtonI('focus_button',
+                                 style=smallButtonCSS,
+                                 icon_name=iconLib$focus)
+                   )
+    ),
     
+    hidden(
+        fixedPanel(id='crop_panel',
+                   left=10, top=10,
+                   width="auto", height="auto",
+                   actionButtonI('crop_button',
+                                 style=smallButtonCSS,
+                                 icon_name=iconLib$crop)
+                   )
+    ),
+
+        
 ## 2. ANALYSE ________________________________________________________
 ### 2.1. Panel _______________________________________________________
     hidden(
@@ -172,15 +192,22 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='poly_panel',
-            style="background-color: transparent",
+            style="background-color: transparent; margin: auto;",
             fixed=TRUE,
-            width="auto", height="auto",
-            left="50%", top=10,
+            width=200, height="auto",
+            left=0, top=10, right=0,
+
+            actionButtonI('polyAdd_button', label=NULL,
+                          style=polyBarStartButtonCSS,
+                          icon_name=iconLib$add),
+            
+            actionButtonI('polyRm_button', label=NULL,
+                          style=polyBarButtonCSS,
+                          icon_name=iconLib$remove),
             
             actionButtonI('polyOk_button', label=word("p.ok"),
-                          style=polyBarButtonCSS,
+                          style=polyBarEndButtonCSS,
                           icon_name=iconLib$ok)
-            
             )
         ),
 
@@ -217,18 +244,22 @@ ui = bootstrapPage(
                              icon_name=iconLib$INRAElogo)
                ),
 
+    
 ## 5. SAVE ___________________________________________________________
-### 5.1. Screenshot __________________________________________________
-    # fixedPanel(left=10, top=10,
-    #            width="auto", height="auto",
-               
-               # downloadButton("photo_button", label=NULL)
-
-               # actionButton("print", "Print Map")
-               
-               # actionButtonI('photo_button', label=NULL,
-               #               style=panelButtonCSS,
-               #               icon_name=iconLib$photo)
-               # )
+### 5.1. Download ____________________________________________________
+    fixedPanel(right=10, top=10,
+               width="auto", height="auto",
+               actionButtonI('download_button',
+                             style=smallButtonCSS,
+                             icon_name=iconLib$download)
+               ),
+    
+### 5.2. Screenshot __________________________________________________
+    fixedPanel(right=50, top=10,
+               width="auto", height="auto",
+               actionButtonI('photo_button',
+                             style=smallButtonCSS,
+                             icon_name=iconLib$photo)
+               ),
    
 )

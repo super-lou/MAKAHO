@@ -61,6 +61,7 @@ language = 'FR'
 # Localisation
 lonFR = 2.213749
 latFR = 46.727638
+zoomFR = 6
 
 # Min and max zoom of the map
 minZoom = 1

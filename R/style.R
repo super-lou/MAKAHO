@@ -34,16 +34,25 @@ infoPanelCSS =
     "background-color: rgba(100, 100, 100, 0.8); border-radius: 5px 5px 2px 5px;"
 
 panelButtonCSS =
-    "color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent"
+    "color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent;"
+
+smallButtonCSS =
+    paste0(panelButtonCSS, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
 
 polyButtonCSS =
     "margin-top: 25px; margin-bottom: 0px; background-color: #fff; border-color: transparent"
 
+polyBarStartButtonCSS =
+    "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-radius: 5px 0px 0px 5px;"
+
 polyBarButtonCSS =
-    "background-color: #fff; border-color: transparent"
+    "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-left: 1px solid #d9d9d9; border-radius: 0px 0px 0px 0px;"
+
+polyBarEndButtonCSS =
+    "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-left: 1px solid #d9d9d9; border-radius: 0px 5px 5px 0px;"
 
 infoButtonCSS =
-    "padding-left: 0px; padding-right: 0px; padding-top: 0px; padding-bottom: 0px; color: #fff; background-color: rgba(0, 0, 0, 0); border-color: transparent; font-size: 25px"
+    "padding-left: 0px; padding-right: 0px; padding-top: 0px; padding-bottom: 0px; color: #fff; background-color: transparent; border-color: transparent; font-size: 25px"
 
 
 inraeRadioCSS=
@@ -52,8 +61,6 @@ inraeRadioCSS=
     background-color: #00A5A8;
 }
 "
-
-
 
 # tags$head(tags$style(HTML('#search_input+ div>.selectize-dropdown{bottom: 100% !important; top:auto!important;}'))) # put above selectizeInput
 

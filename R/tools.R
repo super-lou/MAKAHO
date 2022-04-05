@@ -135,7 +135,8 @@ create_area = function (area_file, resources_path) {
     return (area)
 }
 
-actionButtonI = function (inputId, label, icon_name, width=NULL, ...){
+actionButtonI = function (inputId, label=NULL, icon_name=NULL,
+                          width=NULL, ...){
     actionButton(inputId,
                  div(label,
                      style="float:right; padding-left:3px;"),

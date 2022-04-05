@@ -44,6 +44,7 @@ library(tools) # file_ext
 library(data.table) # fast reading
 library(sp) # crs
 library(sf) # crs
+library(ggplot2)
 library(StatsAnalysisTrend)
 library(leaflet.extras2)
 
