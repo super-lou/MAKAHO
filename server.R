@@ -38,7 +38,9 @@ server = function (input, output, session) {
                         theme_choice_save=NULL,
                         mapHTML=NULL,
                         polyMode='false',
-                        inputPhoto=0)
+                        inputPhoto=0,
+                        defaultBounds=NULL,
+                        previewBounds=NULL)
     
 ## 1. MAP ____________________________________________________________
     observeEvent(input$theme_button, {
@@ -55,13 +57,27 @@ server = function (input, output, session) {
                     resources_path,
                     token=jawg_token)
     })
+
+    defaultLimits = reactive({
+        Lon = df_meta()$lon
+        Lat = df_meta()$lat
+        list(north=max(Lat), east=min(Lon),
+             south=min(Lat), west=max(Lon))
+    })
     
     output$map = renderLeaflet({
         map = leaflet(options=leafletOptions(minZoom=minZoom,
                                              maxZoom=maxZoom,
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
-        map = setView(map, lonFR, latFR, zoomFR)
+        # map = setView(map, lonFR, latFR, zoomFR)
+        map = fitBounds(map,
+                        lng1=defaultLimits()$east,
+                        lat1=defaultLimits()$south,
+                        lng2=defaultLimits()$west,
+                        lat2=defaultLimits()$north,
+                        options=list(padding=c(20, 20)))
+        
         map = addTiles(map, urlTemplate=urlTile())
         map = addEasyprint(map, options=easyprintOptions(
                                     sizeModes=c("Current",
@@ -73,45 +89,95 @@ server = function (input, output, session) {
         rv$mapHTML = map
     })
 
-### 1.2. Zoom ________________________________________________________
-    observeEvent(input$focus_button, {        
+    output$mapPreview = renderLeaflet({
+        mapPreview = leaflet(options=leafletOptions())
+        mapPreview = fitBounds(mapPreview,
+                               lng1=defaultLimits()$east,
+                               lat1=defaultLimits()$south,
+                               lng2=defaultLimits()$west,
+                               lat2=defaultLimits()$north,
+                               options=list(padding=c(20, 20)))
+    })
 
+### 1.2. Zoom ________________________________________________________    
+    observeEvent(input$map_bounds, {
+        if (!is.null(input$map_bounds) & is.null(rv$defaultBounds)) {
+            rv$defaultBounds = input$map_bounds
+        } 
+    })
+
+    currentLimits = reactive({
         Lon = df_meta()$lon[df_meta()$code %in% rv$CodeSample]
         Lat = df_meta()$lat[df_meta()$code %in% rv$CodeSample]
+        list(north=max(Lat), east=min(Lon),
+             south=min(Lat), west=max(Lon))
+    })
+
+    observeEvent(currentLimits(), {
+        mapPreview = leafletProxy("mapPreview")
+        mapPreview = fitBounds(mapPreview,
+                               lng1=currentLimits()$east,
+                               lat1=currentLimits()$south,
+                               lng2=currentLimits()$west,
+                               lat2=currentLimits()$north,
+                               options=list(padding=c(20, 20)))
+    })
+
+    observeEvent(input$mapPreview_bounds, {
+        rv$previewBounds = input$mapPreview_bounds
+    })
+    
+
+    observeEvent(input$focusZoom_button, {
         map = leafletProxy("map")
         map = fitBounds(map,
-                        lng1=min(Lon), lat1=min(Lat),
-                        lng2=max(Lon), lat2=max(Lat),
-                        options=list(padding=c(70, 70)))
-            
-        hide(id='focus_panel')
-        showElement(id='crop_panel')
-        
+                        lng1=currentLimits()$east,
+                        lat1=currentLimits()$south,
+                        lng2=currentLimits()$west,
+                        lat2=currentLimits()$north,
+                        options=list(padding=c(20, 20)))
     })
     
-    observeEvent(input$crop_button, {
-        Lon = df_meta()$lon[df_meta()$code %in% rv$CodeSample]
-        Lat = df_meta()$lat[df_meta()$code %in% rv$CodeSample]
+    observeEvent(input$defaultZoom_button, {
         map = leafletProxy("map")
-        map = setView(map, lonFR, latFR, zoomFR)
-
-        showElement(id='focus_panel')
-        hide(id='crop_panel')
+        map = fitBounds(map,
+                        lng1=defaultLimits()$east,
+                        lat1=defaultLimits()$south,
+                        lng2=defaultLimits()$west,
+                        lat2=defaultLimits()$north,
+                        options=list(padding=c(20, 20)))
     })
     
-
     observeEvent({
-        input$map_zoom
+        rv$previewBounds
         input$map_bounds
     }, {
-        if (!is.null(input$map_zoom)) {
-            isNotDefault = input$map_zoom != zoomFR | input$map_center$lng != lonFR | input$map_center$lat != latFR
-            if (isNotDefault) {
-                hide(id='focus_panel')
-                showElement(id='crop_panel')
-            } else {
-                showElement(id='focus_panel')
-                hide(id='crop_panel')
+        if (!is.null(input$map_bounds) & !is.null(rv$previewBounds)) {
+            digits = 1
+            
+            isDefault = all(round(unlist(input$map_bounds), digits) == round(unlist(rv$defaultBounds), digits))
+            
+            isFocus = all(round(unlist(input$map_bounds), digits) == round(unlist(rv$previewBounds), digits))
+
+            if (is.null(rv$CodeSample)) {
+                isFocus = TRUE
+            }
+                        
+            if (isDefault & isFocus) {
+                hide(id='focusZoom_panel')
+                hide(id='defaultZoom_panel')
+                
+            } else if (isDefault & !isFocus) {
+                showElement(id='focusZoom_panel')
+                hide(id='defaultZoom_panel')
+                
+            } else if (!isDefault & isFocus) {
+                hide(id='focusZoom_panel')
+                showElement(id='defaultZoom_panel')
+                
+            } else if (!isDefault & !isFocus) {
+                showElement(id='focusZoom_panel')
+                hide(id='defaultZoom_panel')
             }
         }
     })

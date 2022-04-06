@@ -62,6 +62,8 @@ language = 'FR'
 lonFR = 2.213749
 latFR = 46.727638
 zoomFR = 6
+boundsFR = list(north=51.4677, east=17.68799,
+                south=41.52503, west=-13.24951)
 
 # Min and max zoom of the map
 minZoom = 1

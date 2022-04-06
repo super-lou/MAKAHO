@@ -35,26 +35,27 @@ ui = bootstrapPage(
 ### 1.1. Background __________________________________________________    
     tags$style(type="text/css",
                "html, body {width:100%;height:100%}"),
+    
     leafletOutput("map", width="100%", height="100%"),
+    leafletOutput("mapPreview", width="100%", height="100%"),
 
 ### 1.2. Zoom ________________________________________________________
     hidden(
-        fixedPanel(id='focus_panel',
+        fixedPanel(id='focusZoom_panel',
                    left=10, top=10,
                    width="auto", height="auto",
-                   actionButtonI('focus_button',
+                   actionButtonI('focusZoom_button',
                                  style=smallButtonCSS,
                                  icon_name=iconLib$focus)
                    )
     ),
-    
     hidden(
-        fixedPanel(id='crop_panel',
+        fixedPanel(id='defaultZoom_panel',
                    left=10, top=10,
                    width="auto", height="auto",
-                   actionButtonI('crop_button',
+                   actionButtonI('defaultZoom_button',
                                  style=smallButtonCSS,
-                                 icon_name=iconLib$crop)
+                                 icon_name=iconLib$default)
                    )
     ),
 
