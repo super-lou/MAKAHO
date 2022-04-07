@@ -28,7 +28,7 @@
 
 # Work path (it normally needs to end with '\\sht' directory)
 computer_work_path = 
-    "/home/louis/Documents/bouleau/INRAE/CDD_shiny/sht"
+    "/home/louis/Documents/bouleau/INRAE/CDD_shiny/shinhydrology"
 
 # Sets working directory
 setwd(computer_work_path)
