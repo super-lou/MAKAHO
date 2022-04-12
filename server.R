@@ -86,7 +86,9 @@ server = function (input, output, session) {
     })
 
     output$mapPreview = renderLeaflet({
-        mapPreview = leaflet(options=leafletOptions())
+        mapPreview = leaflet(options=leafletOptions(
+                                 zoomControl=FALSE,
+                                 attributionControl=FALSE))
         mapPreview = fitBounds(mapPreview,
                                lng1=defaultLimits()$east,
                                lat1=defaultLimits()$south,
@@ -106,8 +108,8 @@ server = function (input, output, session) {
     })
 
     currentLimits = reactive({
-        Lon = df_meta()$lon[df_meta()$code %in% rv$CodeSample]
-        Lat = df_meta()$lat[df_meta()$code %in% rv$CodeSample]
+        Lon = df_meta()$lon[df_meta()$code %in% CodeSample()]
+        Lat = df_meta()$lat[df_meta()$code %in% CodeSample()]
         list(north=max(Lat), east=max(Lon),
              south=min(Lat), west=min(Lon))
     })
@@ -175,8 +177,8 @@ server = function (input, output, session) {
                 showElement(id='defaultZoom_panel')
                 
             } else if (!isDefault & !isFocus) {
-                showElement(id='focusZoom_panel')
-                hide(id='defaultZoom_panel')
+                hide(id='focusZoom_panel')
+                showElement(id='defaultZoom_panel')
             }
         }
     })

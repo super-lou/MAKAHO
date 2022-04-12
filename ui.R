@@ -34,11 +34,23 @@ ui = bootstrapPage(
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________    
     tags$style(type="text/css",
-               "html, body {width:100%;height:100%}"),
+               "html, body {width: 100%; height: 100%}"),
+    tags$head(tags$style(
+               ".leaflet-control-easyPrint.leaflet-bar.leaflet-control
+                   {display: none;}")),
     
-    tags$body(leafletOutput("map", width="100%", height="100%")),
-
-    tags$par(leafletOutput("mapPreview", width="100%", height="100%")),
+    tags$body(
+             tags$div(style="position: relative;
+                             height: 100%; width: 100%; opacity: 0;",
+                      leafletOutput("mapPreview", width="100%",
+                                    height="100%")),
+             
+             tags$div(style="position: absolute;
+                             top: 0; bottom: 0; left: 0; right: 0;
+                             height: 100%; width: 100%;",
+                      leafletOutput("map", width="100%",
+                                    height="100%"))
+         ),
 
 ### 1.2. Zoom ________________________________________________________
     hidden(
