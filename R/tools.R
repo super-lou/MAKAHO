@@ -221,3 +221,80 @@ get_label = function (Lon, Lat, Code, Nom) {
     )
     return (label)
 }
+
+
+## 4. SHAPEFILE MANAGEMENT ___________________________________________
+#' @title Shapefiles loading
+#' @description  Generates a list of shapefiles to draw a hydrological
+#' map of the France
+#' @param resources_path Path to the resources directory.
+#' @param bs_shpdir Directory you want to use in ash\\resources_path\\
+#' to get the hydrological basin shapefile.
+#' @param bs_shpname Name of the hydrological basin shapefile.
+#' @param rv_shpdir Directory you want to use in ash\\resources_path\\
+#' to get the hydrological network shapefile.
+#' @param rv_shpname  Name of the hydrological network shapefile.
+#' @param show_river Boolean to indicate if the shapefile of the
+#' hydrological network will be charge because it is a heavy one and
+#' that it slows down the entire process (default : TRUE)
+#' @return A list of shapefiles converted as tibbles that can be plot
+#' with 'geom_polygon' or 'geom_path'.
+#' @export
+ini_shapefile = function (resources_path, Code,
+                          bs_shpdir, bs_shpname,
+                          cbs_shpdir, cbs_shpname, cbs_coord,
+                          rv_shpdir, rv_shpname, show_river=TRUE) {
+    
+    # Path for shapefile
+    bs_shppath = file.path(resources_path, bs_shpdir, bs_shpname)
+    cbs_shppath = file.path(resources_path, cbs_shpdir, cbs_shpname)
+    rv_shppath = file.path(resources_path, rv_shpdir, rv_shpname)
+
+    # Hydrological basin
+    basin = readOGR(dsn=bs_shppath, verbose=FALSE)
+    df_basin = tibble(fortify(basin))
+
+    df_codeBasin = tibble()
+    CodeOk = c()
+    nShp = length(cbs_shppath)
+    # Hydrological stations basins
+    for (i in 1:nShp) {
+        codeBasin = readOGR(dsn=cbs_shppath[i], verbose=FALSE)
+        shpCode = as.character(codeBasin@data$Code)
+        df_tmp = tibble(fortify(codeBasin))
+        groupSample = rle(as.character(df_tmp$group))$values
+        df_tmp$code = shpCode[match(df_tmp$group, groupSample)]
+        df_tmp = df_tmp[df_tmp$code %in% Code &
+                        !(df_tmp$code %in% CodeOk),]
+        CodeOk = c(CodeOk, shpCode[!(shpCode %in% CodeOk)])
+
+        if (cbs_coord[i] == "L2") {
+            crs_rgf93 = st_crs(2154)
+            crs_l2 = st_crs(27572)
+            sf_loca = st_as_sf(df_tmp[c("long", "lat")],
+                               coords=c("long", "lat"))
+            st_crs(sf_loca) = crs_l2
+            sf_loca = st_transform(sf_loca, crs_rgf93)
+            sf_loca = st_coordinates(sf_loca$geometry)
+            df_tmp$long = sf_loca[, 1]
+            df_tmp$lat = sf_loca[, 2]
+        }
+        df_codeBasin = bind_rows(df_codeBasin, df_tmp)
+    }
+    df_codeBasin = df_codeBasin[order(df_codeBasin$code),]
+    
+    # If the river shapefile needs to be load
+    if (show_river) {
+        # Hydrographic network
+        river = readOGR(dsn=rv_shppath, verbose=FALSE) ### trop long ###
+        river = river[which(river$Classe == 1),]
+        df_river = tibble(fortify(river))
+    } else {
+        df_river = NULL
+    }
+    return (list(basin=df_basin,
+                 codeBasin=df_codeBasin,
+                 river=df_river))
+}
+
+

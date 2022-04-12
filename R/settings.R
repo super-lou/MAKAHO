@@ -36,6 +36,21 @@ resources_path = file.path(computer_work_path, 'resources')
 INRAElogo_path = file.path(resources_path,
                            "logo", "Logo-INRAE_Transparent.png")
 
+shp_dir = 'map'
+
+# Path to the shapefile for basin shape from 'computer_data_path' 
+bs_shpdir = file.path(shp_dir, 'bassin')
+bs_shpname = 'BassinHydrographique.shp'
+
+# Path to the shapefile for station basins shape from 'computer_data_path' 
+cbs_shpdir = file.path(shp_dir, 'bassin_station')
+cbs_shpname = c('BV_4207_stations.shp', '3BVs_FRANCE_L2E_2018.shp')
+cbs_coord = c("L93", "L2")
+
+# Path to the shapefile for river shape from 'computer_data_path' 
+rv_shpdir = file.path('map', 'river')
+rv_shpname = 'CoursEau_FXX.shp'
+
 # Icon directory
 icon_dir = 'icons'
 # Creates icon library 

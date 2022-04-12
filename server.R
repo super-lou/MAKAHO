@@ -61,8 +61,8 @@ server = function (input, output, session) {
     defaultLimits = reactive({
         Lon = df_meta()$lon
         Lat = df_meta()$lat
-        list(north=max(Lat), east=min(Lon),
-             south=min(Lat), west=max(Lon))
+        list(north=max(Lat), east=max(Lon),
+             south=min(Lat), west=min(Lon))
     })
     
     output$map = renderLeaflet({
@@ -70,7 +70,6 @@ server = function (input, output, session) {
                                              maxZoom=maxZoom,
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
-        # map = setView(map, lonFR, latFR, zoomFR)
         map = fitBounds(map,
                         lng1=defaultLimits()$east,
                         lat1=defaultLimits()$south,
@@ -80,9 +79,6 @@ server = function (input, output, session) {
         
         map = addTiles(map, urlTemplate=urlTile())
         map = addEasyprint(map, options=easyprintOptions(
-                                    sizeModes=c("Current",
-                                                "A4Landscape",
-                                                "A4Portrait"),
                                     exportOnly=TRUE,
                                     hidden=TRUE))
         
@@ -103,14 +99,17 @@ server = function (input, output, session) {
     observeEvent(input$map_bounds, {
         if (!is.null(input$map_bounds) & is.null(rv$defaultBounds)) {
             rv$defaultBounds = input$map_bounds
+
+            print(defaultLimits())
+            print(input$map_bounds)
         } 
     })
 
     currentLimits = reactive({
         Lon = df_meta()$lon[df_meta()$code %in% rv$CodeSample]
         Lat = df_meta()$lat[df_meta()$code %in% rv$CodeSample]
-        list(north=max(Lat), east=min(Lon),
-             south=min(Lat), west=max(Lon))
+        list(north=max(Lat), east=max(Lon),
+             south=min(Lat), west=min(Lon))
     })
 
     observeEvent(currentLimits(), {
@@ -669,11 +668,10 @@ server = function (input, output, session) {
     observe({
         if (inputPhotoDEB() == 1) {
             map = leafletProxy("map")
-            easyprintMap(map, sizeModes="A4Landscape")
+            easyprintMap(map, sizeModes="A4Landscape", dpi=300)
             rv$inputPhoto = 0
         }
     })
-
 
 } 
 
