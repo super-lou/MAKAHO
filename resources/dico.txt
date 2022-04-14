@@ -55,6 +55,7 @@ a.search.river;"cours d'eau"
 a.search.basin;bassin hydro.
 p.ok;Terminer
 c.title;Style
+c.palette;Palette
 c.theme;Fond de carte
 i.con;Contact
 i.dev;Développeur : 

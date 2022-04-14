@@ -38,7 +38,7 @@ server = function (input, output, session) {
                         theme_choice_save=NULL,
                         mapHTML=NULL,
                         polyMode='false',
-                        inputPhoto=0,
+                        inputPhoto=FALSE,
                         defaultBounds=NULL,
                         previewBounds=NULL)
     
@@ -80,11 +80,12 @@ server = function (input, output, session) {
         map = addTiles(map, urlTemplate=urlTile())
         map = addEasyprint(map, options=easyprintOptions(
                                     exportOnly=TRUE,
+                                    hideControlContainer=TRUE,
                                     hidden=TRUE))
         
         rv$mapHTML = map
     })
-
+    
     output$mapPreview = renderLeaflet({
         mapPreview = leaflet(options=leafletOptions(
                                  zoomControl=FALSE,
@@ -97,13 +98,13 @@ server = function (input, output, session) {
                                options=list(padding=c(20, 20)))
     })
 
+    
+
+
 ### 1.2. Zoom ________________________________________________________    
     observeEvent(input$map_bounds, {
         if (!is.null(input$map_bounds) & is.null(rv$defaultBounds)) {
             rv$defaultBounds = input$map_bounds
-
-            print(defaultLimits())
-            print(input$map_bounds)
         } 
     })
 
@@ -645,7 +646,15 @@ server = function (input, output, session) {
             rep(grey50COL, nCodeAll)
         }
     })
-    
+
+
+## 3. CUSTOMIZATION __________________________________________________
+    observeEvent(input$palette_button, {
+        toggle(id="palette_panel")
+    })
+
+
+
     
 ## 4. INFO ___________________________________________________________
     observeEvent(input$info_button, {
@@ -657,8 +666,28 @@ server = function (input, output, session) {
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
+
+    observe({
+        delay(500,
+              runjs('
+        $("#palette_panel").insertAfter($(".leaflet-pane.leaflet-map-pane"));
+        $("#palette_panel").css("position", "absolute");
+        $("#palette_panel").css("z-index", "999");')
+        )
+    })
+
+# removeUI(selector = 'div#mapPreview_div')
+    
+    # observe({
+    #     # if (rv$inputPhoto) {
+    #         removeUI(
+    #             selector = 'div#mapPreview_div'
+    #         )
+    #     # }
+    # })
+
     observeEvent(input$photo_button, {
-        rv$inputPhoto = 1
+        rv$inputPhoto = !rv$inputPhoto
     })
 
     inputPhotoDEB = reactive({
@@ -668,12 +697,14 @@ server = function (input, output, session) {
     inputPhotoDEB = debounce(inputPhotoDEB, 500)
 
     observe({
-        if (inputPhotoDEB() == 1) {
+        if (inputPhotoDEB()) {
             map = leafletProxy("map")
             easyprintMap(map, sizeModes="A4Landscape", dpi=300)
-            rv$inputPhoto = 0
+            rv$inputPhoto = FALSE
         }
     })
+
+
 
 } 
 

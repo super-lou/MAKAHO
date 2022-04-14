@@ -30,24 +30,23 @@
 computer_work_path = 
     "/home/louis/Documents/bouleau/INRAE/CDD_shiny/shinhydrology"
 
-# Sets working directory
+# Sets working mapdirectory
 setwd(computer_work_path)
 
 # Import library
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
-library(icons)
 library(leaflet)
+library(leaflet.extras2)
+library(StatsAnalysisTrend)
+library(icons)
 library(dplyr)
 library(tools) # file_ext
 library(data.table) # fast reading
 library(sp) # crs
 library(sf) # crs
 library(ggplot2)
-library(StatsAnalysisTrend)
-library(leaflet.extras2)
-
 
 
 # Sourcing R files

@@ -27,40 +27,40 @@
 
 
 
-menuPanelCSS =
-    "background-color: rgba(100, 100, 100, 0.8); border-radius: 5px 5px 5px 2px;"
+CSSpanel_default =
+    "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 5px 2px;"
 
-infoPanelCSS =
-    "background-color: rgba(100, 100, 100, 0.8); border-radius: 5px 5px 2px 5px;"
+CSSbutton_panel =
+    "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
 
-panelButtonCSS =
-    "color: #fff; background-color: rgba(35, 35, 35, 0.8); border-color: transparent;"
+CSSbutton_small =
+    paste0(CSSbutton_panel, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
 
-smallButtonCSS =
-    paste0(panelButtonCSS, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
+CSSbutton_palette =
+    "background-color: #fff; border-color: transparent; padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;"
 
-polyButtonCSS =
+CSSbutton_AnaPoly =
     "margin-top: 25px; margin-bottom: 0px; background-color: #fff; border-color: transparent"
 
-polyBarStartButtonCSS =
+CSSbutton_startPolyBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-radius: 5px 0px 0px 5px;"
 
-polyBarButtonCSS =
+CSSbutton_middlePolyBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-left: 1px solid #d9d9d9; border-radius: 0px 0px 0px 0px;"
 
-polyBarEndButtonCSS =
+CSSbutton_endPolyBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-left: 1px solid #d9d9d9; border-radius: 0px 5px 5px 0px;"
 
-infoButtonCSS =
+
+CSSpanel_info =
+    "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 2px 5px;"
+
+CSSbutton_info =
     "padding-left: 0px; padding-right: 0px; padding-top: 0px; padding-bottom: 0px; color: #fff; background-color: transparent; border-color: transparent; font-size: 25px"
 
 
-inraeRadioCSS=
-"
-.btn-inrae {
-    background-color: #00A5A8;
-}
-"
+#00A5A8;
+
 
 # tags$head(tags$style(HTML('#search_input+ div>.selectize-dropdown{bottom: 100% !important; top:auto!important;}'))) # put above selectizeInput
 

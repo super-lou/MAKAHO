@@ -152,7 +152,7 @@ read_FST = function (resdir, filename, filedir='fst') {
     df = tibble(fst::read_fst(outfile))
     return (df)
 }
-# df_data = read_FST(computer_data_path, 'data_QMNA_01.fst', filedir='fst')
+# df_data = read_FST(computer_data_path, 'VCN10Ex_01.fst', filedir='fst')
 # df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
 
 
@@ -298,3 +298,17 @@ ini_shapefile = function (resources_path, Code,
 }
 
 
+
+
+create_ReactiveTrigger = function() {
+  rv <- reactiveValues(a = 0)
+  list(
+    depend = function() {
+      rv$a
+      invisible()
+    },
+    trigger = function() {
+      rv$a <- isolate(rv$a + 1)
+    }
+  )
+}

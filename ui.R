@@ -29,7 +29,6 @@
 ui = bootstrapPage(
 
     useShinyjs(),
-
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________    
@@ -40,16 +39,28 @@ ui = bootstrapPage(
                    {display: none;}")),
     
     tags$body(
-             tags$div(style="position: relative;
-                             height: 100%; width: 100%; opacity: 0;",
+             
+             # tags$div(style="position: relative;
+             #                 height: 100%; width: 100%; opacity: 0;",
+             #          leafletOutput("mapPreview", width="100%",
+             #                        height="100%")),
+             
+             tags$div(id='mapPreview_div',
+                      style="position: absolute;
+                             top: 0; bottom: 0; left: 0; right: 0;
+                             height: 100%; width: 100%;",
                       leafletOutput("mapPreview", width="100%",
                                     height="100%")),
              
-             tags$div(style="position: absolute;
+             tags$div(id='map_div',
+                      style="position: absolute;
                              top: 0; bottom: 0; left: 0; right: 0;
                              height: 100%; width: 100%;",
                       leafletOutput("map", width="100%",
-                                    height="100%"))
+                                    height="100%")),
+
+
+
          ),
 
 ### 1.2. Zoom ________________________________________________________
@@ -58,32 +69,42 @@ ui = bootstrapPage(
                    left=10, top=10,
                    width="auto", height="auto",
                    actionButtonI('focusZoom_button',
-                                 style=smallButtonCSS,
+                                 style=CSSbutton_small,
                                  icon_name=iconLib$focus)
                    )
     ),
+    
     hidden(
         fixedPanel(id='defaultZoom_panel',
                    left=10, top=10,
                    width="auto", height="auto",
                    actionButtonI('defaultZoom_button',
-                                 style=smallButtonCSS,
+                                 style=CSSbutton_small,
                                  icon_name=iconLib$default)
                    )
     ),
 
         
 ## 2. ANALYSE ________________________________________________________
-### 2.1. Panel _______________________________________________________
+### 2.1. Panel button ________________________________________________
+    fixedPanel(left=10, bottom=10,
+               width="auto", height="auto",
+               actionButtonI('ana_button',
+                            HTML(paste0("<b>", word("a.title"), "</b>")),
+                            style=CSSbutton_panel,
+                            icon_name=iconLib$analytics)
+               ),
+    
+### 2.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='ana_panel',
-            style=menuPanelCSS,
+            style=CSSpanel_default,
             fixed=TRUE,
             width=310, height="auto",
             left=10, bottom=50,
             
-### 2.2. Code selection ______________________________________________
+### 2.3. Code selection ______________________________________________
             column(9, style='padding-right: 0px; margin-right: 0px; margin-top: 9px;',
                    pickerInput(
                        inputId="code_picker",
@@ -98,7 +119,7 @@ ui = bootstrapPage(
             column(2, style='margin-left: 7px; margin-top: 9px;',
                    actionButtonI('poly_button',
                                  NULL,
-                                 style=polyButtonCSS,
+                                 style=CSSbutton_AnaPoly,
                                  icon_name=iconLib$draw)),
 
             column(12,
@@ -108,7 +129,8 @@ ui = bootstrapPage(
                        multiple=TRUE,
                        choices=NULL)),
 
-### 2.3. Variable selection __________________________________________
+
+### 2.4. Variable selection __________________________________________
             column(12,
                    selectInput("varName", word('a.varT'),
                                varNameList)),
@@ -118,7 +140,7 @@ ui = bootstrapPage(
                                          choices=FALSE,
                                          selected=NULL))),
         
-### 2.4. Period selection ____________________________________________
+### 2.5. Period selection ____________________________________________
             chooseSliderSkin("Flat", "#00A5A8"),
             tags$style(type="text/css",
                        ".irs-grid-pol.small {height: 0px;}"),
@@ -138,7 +160,7 @@ ui = bootstrapPage(
                                max=as.numeric(format(today, "%Y")),
                                value=c(1968, 2020))),
 
-### 2.5. Statistical option ______________________________________________
+### 2.6. Statistical option ______________________________________________
             column(12,
                    radioGroupButtons(inputId="signif_choice",
                                      label=word("a.sig"),
@@ -154,23 +176,45 @@ ui = bootstrapPage(
                                      selected=word("a.cts")))
         )
     ),
-    
-### 2.6. Panel button ________________________________________________
-    fixedPanel(left=10, bottom=10,
-               width="auto", height="auto",
-               actionButtonI('ana_button',
-                            HTML(paste0("<b>", word("a.title"), "</b>")),
-                            style=panelButtonCSS,
-                            icon_name=iconLib$analytics)
-               ),
+
+
+    hidden(
+        absolutePanel(
+            id='poly_panel',
+            style="background-color: transparent; margin: auto;",
+            fixed=TRUE,
+            width=200, height="auto",
+            left=0, top=10, right=0,
+
+            actionButtonI('polyAdd_button', label=NULL,
+                          style=CSSbutton_startPolyBar,
+                          icon_name=iconLib$add),
+            
+            actionButtonI('polyRm_button', label=NULL,
+                          style=CSSbutton_middlePolyBar,
+                          icon_name=iconLib$remove),
+            
+            actionButtonI('polyOk_button', label=word("p.ok"),
+                          style=CSSbutton_endPolyBar,
+                          icon_name=iconLib$ok)
+        )
+    ),
 
 
 ## 3. CUSTOMIZATION __________________________________________________
-### 3.1. Panel _______________________________________________________
+### 3.1. Panel button ________________________________________________
+    fixedPanel(left=120, bottom=10,
+               width="auto", height="auto",
+               actionButtonI('theme_button', label=NULL,
+                             style=CSSbutton_panel,
+                             icon_name=iconLib$palette)
+               ),
+    
+### 3.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='theme_panel',
-            style=menuPanelCSS,
+            style=CSSpanel_default,
             fixed=TRUE,        
             width="auto", height="auto",
             left=120, bottom=50,
@@ -190,53 +234,48 @@ ui = bootstrapPage(
                                                   align="right")),
                                      choiceValues= list("light",
                                                         "terrain",
-                                                        "dark")))
+                                                        "dark"))),
+
+### 3.3. Palette button ______________________________________________
+            column(12, style='margin-bottom: 10px;',
+                   actionButtonI('palette_button',
+                                 label=word("c.palette"),
+                                 style=CSSbutton_palette)),
+            
         )
     ),
-    
-### 3.3. Panel button ________________________________________________
-    fixedPanel(left=120, bottom=10,
-               width="auto", height="auto",
-               actionButtonI('theme_button', label=NULL,
-                             style=panelButtonCSS,
-                             icon_name=iconLib$palette)
-               ),
 
-### 3.4. Polygon panel _______________________________________________
     hidden(
         absolutePanel(
-            id='poly_panel',
-            style="background-color: transparent; margin: auto;",
+            id="palette_panel",
+            style="background-color: rgba(200, 200, 200, 0.9);",
             fixed=TRUE,
-            width=200, height="auto",
-            left=0, top=10, right=0,
-
-            actionButtonI('polyAdd_button', label=NULL,
-                          style=polyBarStartButtonCSS,
-                          icon_name=iconLib$add),
-            
-            actionButtonI('polyRm_button', label=NULL,
-                          style=polyBarButtonCSS,
-                          icon_name=iconLib$remove),
-            
-            actionButtonI('polyOk_button', label=word("p.ok"),
-                          style=polyBarEndButtonCSS,
-                          icon_name=iconLib$ok)
-            )
-        ),
+            width="auto", height="auto",
+            right=50, top=50,
+            tags$h1("Title")
+        )
+    ),
 
     
 ## 4. INFO ___________________________________________________________
-### 4.1. Panel _______________________________________________________
+### 4.1. Panel button ________________________________________________ 
+    fixedPanel(right=10, bottom=0,
+               width="auto", height="auto",
+               actionButtonI('info_button', label=NULL,
+                             style=CSSbutton_info,
+                             icon_name=iconLib$INRAElogo)
+               ),
+    
+### 4.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='info_panel',
-            style=infoPanelCSS,
+            style=CSSpanel_info,
             fixed=TRUE,
             width="auto", height="auto",
             right=10, bottom=40,
 
-### 4.2. Contact info ________________________________________________
+### 4.3. Contact info ________________________________________________
             column(12,
             tags$div(tags$b(word("i.con")),
                      tags$br(),
@@ -249,22 +288,14 @@ ui = bootstrapPage(
                             "Michel Lang")))
         )
     ),
-    
-### 4.3. Panel button ________________________________________________ 
-    fixedPanel(right=10, bottom=0,
-               width="auto", height="auto",
-               actionButtonI('info_button', label=NULL,
-                             style=infoButtonCSS,
-                             icon_name=iconLib$INRAElogo)
-               ),
 
-    
+   
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Download ____________________________________________________
     fixedPanel(right=10, top=10,
                width="auto", height="auto",
                actionButtonI('download_button',
-                             style=smallButtonCSS,
+                             style=CSSbutton_small,
                              icon_name=iconLib$download)
                ),
     
@@ -272,7 +303,7 @@ ui = bootstrapPage(
     fixedPanel(right=50, top=10,
                width="auto", height="auto",
                actionButtonI('photo_button',
-                             style=smallButtonCSS,
+                             style=CSSbutton_small,
                              icon_name=iconLib$photo)
                ),
    
