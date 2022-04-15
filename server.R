@@ -670,9 +670,9 @@ server = function (input, output, session) {
     observe({
         delay(500,
               runjs('
-        $("#palette_panel").insertAfter($(".leaflet-pane.leaflet-map-pane"));
-        $("#palette_panel").css("position", "absolute");
-        $("#palette_panel").css("z-index", "999");')
+$("#palette_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
+$("#palette_panel").css("position", "absolute");
+$("#palette_panel").css("z-index", "999");')
         )
     })
 
