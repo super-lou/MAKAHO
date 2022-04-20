@@ -40,7 +40,11 @@ server = function (input, output, session) {
                         polyMode='false',
                         inputPhoto=FALSE,
                         defaultBounds=NULL,
-                        previewBounds=NULL)
+                        previewBounds=NULL,
+                        TrendValues=NULL,
+                        minTrendValue=NULL,
+                        maxTrendValue=NULL
+                        )
     
 ## 1. MAP ____________________________________________________________
     observeEvent(input$theme_button, {
@@ -613,29 +617,29 @@ server = function (input, output, session) {
 
 ### 2.6. Color _______________________________________________________
     fillList = reactive({
-        CodeSample = CodeSample()
         nCodeAll = length(CodeAll())
         
         if (!is.null(df_XEx()) | !is.null(df_trend())) {            
             res = get_trendExtremes(df_XEx(), df_trend(),
                                     CodeAll=CodeAll(),
-                                    CodeSample=CodeSample,
+                                    CodeSample=CodeSample(),
                                     toMean=TRUE)
-            TrendValues = res$values
-            minTrendValue = res$min
-            maxTrendValue = res$max
 
+            rv$TrendValues = res$values
+            rv$minTrendValue = res$min
+            rv$maxTrendValue = res$max
+            
             fillListtmp = c()
             for (k in 1:nCodeAll) {
 
                 code = CodeAll()[k]
                 
-                if (code %in% CodeSample) {
-                    trendValue = TrendValues[k]
+                if (code %in% CodeSample()) {
+                    trendValue = rv$TrendValues[k]
 
                     color = get_color(trendValue, 
-                                      minTrendValue,
-                                      maxTrendValue,
+                                      rv$minTrendValue,
+                                      rv$maxTrendValue,                  
                                       palette_name='perso',
                                       reverse=TRUE)
                 } else {
@@ -662,15 +666,24 @@ server = function (input, output, session) {
     })
 
 
-    # palette_plot = reactive({
-    #     get_palette_plot(palette_name)
-    # })
-    
-    output$colorbar_plot = renderPlot({
-        palette_plot
-    }, width=20, height=200)
-
-
+    observeEvent({
+        rv$minTrendValue
+        rv$maxTrendValue
+        input$colorbar_button
+    }, {
+        if ((input$colorbar_button+1) %% 2 == 0) {
+            output$colorbar_plot = renderPlot({
+                res = get_colorbar(rv$minTrendValue, rv$maxTrendValue,
+                                   palette_name=palette_name,
+                                   reverse=palette_reverse, nbTick=10)
+                if (is.na(res)) {
+                    NA
+                } else {
+                    res$plot
+                }
+            }, width=20, height=200)
+        }
+    })
 
     
 ## 4. INFO ___________________________________________________________

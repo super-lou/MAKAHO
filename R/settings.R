@@ -139,8 +139,8 @@ Years = 1900:as.numeric(format(today, "%Y"))
 # Level of risk
 sigP = c("1%", "5%", "10%")
 
-palette_name = PalettePerso
-palette_plot = get_palette_plot(palette_name)
+palette_name = 'perso'
+palette_reverse = TRUE
 
 # Creates all marker possibilities
 # create_marker(resources_path, widthRel=0.8, stroke=0.8,
