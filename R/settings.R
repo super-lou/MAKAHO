@@ -139,6 +139,13 @@ Years = 1900:as.numeric(format(today, "%Y"))
 # Level of risk
 sigP = c("1%", "5%", "10%")
 
+palette_name = PalettePerso
+palette_plot = get_palette_plot(palette_name)
+
 # Creates all marker possibilities
-# create_marker(resources_path)
+# create_marker(resources_path, widthRel=0.8, stroke=0.8,
+#               fill_PaletteName='perso',
+#               color=grey50COL,
+#               fillAdd=c(grey94COL, grey50COL, grey18COL),
+#               colorAdd=c(grey85COL, grey50COL, grey9COL))
 

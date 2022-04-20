@@ -93,8 +93,8 @@ create_marker = function (resources_path, widthRel=1, filedir='marker', color='g
 # create_marker(resources_path, widthRel=0.8, stroke=0.8,
 #               fill_PaletteName='perso',
 #               color=grey50COL,
-#               fillAdd=c(grey94COL, grey50COL),
-#               colorAdd=c(grey85COL, grey50COL))
+#               fillAdd=c(grey94COL, grey50COL, grey18COL),
+#               colorAdd=c(grey85COL, grey50COL, grey9COL))
 
 
 get_marker = function (shape, fill, resources_path, filedir) {

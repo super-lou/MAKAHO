@@ -125,7 +125,10 @@ server = function (input, output, session) {
                                options=list(padding=c(20, 20)))
     })
 
-    observeEvent(input$mapPreview_bounds, {
+    observeEvent({
+        input$mapPreview_bounds
+        CodeSample()
+    }, {
         rv$previewBounds = input$mapPreview_bounds
     })
     
@@ -178,8 +181,8 @@ server = function (input, output, session) {
                 showElement(id='defaultZoom_panel')
                 
             } else if (!isDefault & !isFocus) {
-                hide(id='focusZoom_panel')
-                showElement(id='defaultZoom_panel')
+                showElement(id='focusZoom_panel')
+                hide(id='defaultZoom_panel')
             }
         }
     })
@@ -636,7 +639,11 @@ server = function (input, output, session) {
                                       palette_name='perso',
                                       reverse=TRUE)
                 } else {
-                    color = grey94COL
+                    if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
+                        color = grey94COL
+                    } else if (input$theme_choice == 'dark') {
+                        color = grey18COL
+                    }
                 }
                 
                 fillListtmp = c(fillListtmp, color)
@@ -649,9 +656,19 @@ server = function (input, output, session) {
 
 
 ## 3. CUSTOMIZATION __________________________________________________
-    observeEvent(input$palette_button, {
-        toggle(id="palette_panel")
+### 3.2. Palette _____________________________________________________
+    observeEvent(input$colorbar_button, {
+        toggle(id="colorbar_panel")
     })
+
+
+    # palette_plot = reactive({
+    #     get_palette_plot(palette_name)
+    # })
+    
+    output$colorbar_plot = renderPlot({
+        palette_plot
+    }, width=20, height=200)
 
 
 
@@ -666,25 +683,14 @@ server = function (input, output, session) {
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-
     observe({
         delay(500,
               runjs('
-$("#palette_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
-$("#palette_panel").css("position", "absolute");
-$("#palette_panel").css("z-index", "999");')
+$("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
+$("#colorbar_panel").css("position", "absolute");
+$("#colorbar_panel").css("z-index", "999");')
         )
     })
-
-# removeUI(selector = 'div#mapPreview_div')
-    
-    # observe({
-    #     # if (rv$inputPhoto) {
-    #         removeUI(
-    #             selector = 'div#mapPreview_div'
-    #         )
-    #     # }
-    # })
 
     observeEvent(input$photo_button, {
         rv$inputPhoto = !rv$inputPhoto

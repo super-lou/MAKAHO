@@ -89,7 +89,7 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='ana_panel',
-            style=CSSpanel_default,
+            style=CSSpanel_left,
             fixed=TRUE,
             width=310, height="auto",
             left=10, bottom=50,
@@ -204,7 +204,7 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='theme_panel',
-            style=CSSpanel_default,
+            style=CSSpanel_left,
             fixed=TRUE,        
             width="auto", height="auto",
             left=120, bottom=50,
@@ -228,21 +228,22 @@ ui = bootstrapPage(
 
 ### 3.3. Palette button ______________________________________________
             column(12, style='margin-bottom: 10px;',
-                   actionButtonI('palette_button',
-                                 label=word("c.palette"),
-                                 style=CSSbutton_palette)),
+                   actionButtonI('colorbar_button',
+                                 label=word("c.colorbar"),
+                                 style=CSSbutton_colorbar)),
             
         )
     ),
 
     hidden(
         absolutePanel(
-            id="palette_panel",
-            style="background-color: rgba(200, 200, 200, 0.9);",
+            id="colorbar_panel",
+            style=CSSpanel_default,
             fixed=TRUE,
-            width="auto", height="auto",
-            right=50, top=50,
-            tags$h1("Title")
+            width=20, height=200,
+            right=20, top=50,
+            
+            plotOutput("colorbar_plot")
         )
     ),
 
@@ -260,7 +261,7 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='info_panel',
-            style=CSSpanel_info,
+            style=CSSpanel_right,
             fixed=TRUE,
             width="auto", height="auto",
             right=10, bottom=40,

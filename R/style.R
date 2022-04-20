@@ -26,9 +26,14 @@
 # R/style.R
 
 
-
 CSSpanel_default =
+    "background-color: rgba(140, 140, 140, 0.9); border-radius: 2px 2px 2px 2px;"
+
+CSSpanel_left =
     "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 5px 2px;"
+
+CSSpanel_floating =
+    "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 5px 5px;"
 
 CSSbutton_panel =
     "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
@@ -36,7 +41,7 @@ CSSbutton_panel =
 CSSbutton_small =
     paste0(CSSbutton_panel, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
 
-CSSbutton_palette =
+CSSbutton_colorbar =
     "background-color: #fff; border-color: transparent; padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;"
 
 CSSbutton_AnaPoly =
@@ -52,7 +57,7 @@ CSSbutton_endPolyBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-left: 1px solid #d9d9d9; border-radius: 0px 5px 5px 0px;"
 
 
-CSSpanel_info =
+CSSpanel_right =
     "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 2px 5px;"
 
 CSSbutton_info =

@@ -40,6 +40,11 @@ grey94COL = "#f0f0f0"
 grey85COL = "#d9d9d9"
 grey70COL = "#b3b3b3"
 grey50COL = "#808080"
+grey30COL = "#4d4d4d"
+grey20COL = "#333333"
+grey18COL = "#2e2e2e"
+grey15COL = "#262626"
+grey9COL = "#171717"
 
 
 ## 1. COLOR MANAGEMENT
@@ -250,21 +255,8 @@ palette_tester = function (palette_name='perso', figdir='figures', nColor=256) {
     palette = colorRampPalette(colorList)(nColor)
 
     # Open a plot
-    p = ggplot() + 
+    p = ggplot() + void
         # Make the theme blank
-        theme(
-            plot.background = element_blank(), 
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(), 
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            axis.title.x = element_blank(),
-            axis.title.y = element_blank(),
-            axis.text.x = element_blank(), 
-            axis.text.y = element_blank(),
-            axis.ticks = element_blank(),
-            axis.line = element_blank()
-        )
 
     for (x in X) {
         # Plot the palette
@@ -315,3 +307,31 @@ void = ggplot() + geom_blank(aes(1,1)) +
         axis.ticks = element_blank(),
         axis.line = element_blank()
     )
+
+
+get_palette_plot = function (palette_name, n=256) {
+    # An arbitrary x vector
+    X = 1:n
+
+    # Recreates a continuous color palette
+    palette = colorRampPalette(PalettePerso)(n)
+
+    # Open a plot
+    p = ggplot() + theme_void()
+
+    for (x in X) {
+        p = p +
+            annotate("segment",
+                     x=0, xend=1,
+                     y=x, yend=x, 
+                     color=palette[x], size=1)
+    }
+
+    p = p +
+        scale_x_continuous(limits=c(0, 1),
+                           expand=c(0, 0)) +
+        
+        scale_y_continuous(limits=c(0, n),
+                           expand=c(0, 0))
+    return (p)
+}

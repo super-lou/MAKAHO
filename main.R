@@ -61,4 +61,5 @@ source('ui.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')
 
 # Running app
-shinyApp(ui=ui, server=server)
+# shinyApp(ui=ui, server=server)
+runApp()
