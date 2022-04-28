@@ -171,7 +171,7 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='poly_panel',
-            style="background-color: transparent; margin: auto;",
+            style=CSSpanel_center,
             fixed=TRUE,
             width=200, height="auto",
             left=0, top=10, right=0,
@@ -238,10 +238,10 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id="colorbar_panel",
-            style=CSSpanel_default,
+            style=CSSpanel_center,
             fixed=TRUE,
-            width=20, height=200,
-            right=20, top=50,
+            width=40, height=200,
+            right=20, top=0, bottom=0,
             
             plotOutput("colorbar_plot")
         )

@@ -639,7 +639,8 @@ server = function (input, output, session) {
 
                     color = get_color(trendValue, 
                                       rv$minTrendValue,
-                                      rv$maxTrendValue,                  
+                                      rv$maxTrendValue,
+                                      nbTick=nbTick,
                                       palette_name='perso',
                                       reverse=TRUE)
                 } else {
@@ -673,15 +674,10 @@ server = function (input, output, session) {
     }, {
         if ((input$colorbar_button+1) %% 2 == 0) {
             output$colorbar_plot = renderPlot({
-                res = get_colorbar(rv$minTrendValue, rv$maxTrendValue,
-                                   palette_name=palette_name,
-                                   reverse=palette_reverse, nbTick=10)
-                if (is.na(res)) {
-                    NA
-                } else {
-                    res$plot
-                }
-            }, width=20, height=200)
+                get_colorbar(rv$minTrendValue, rv$maxTrendValue,
+                             palette_name=palette_name,
+                             reverse=palette_reverse, nbTick=nbTick)
+            }, width=40, height=200, res=150)
         }
     })
 

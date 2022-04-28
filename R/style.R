@@ -35,6 +35,9 @@ CSSpanel_left =
 CSSpanel_floating =
     "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 5px 5px;"
 
+CSSpanel_center =
+    "background-color: transparent; margin: auto;"
+
 CSSbutton_panel =
     "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
 

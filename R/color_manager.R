@@ -51,7 +51,7 @@ grey9COL = "#171717"
 ### 1.1. Color on colorbar ___________________________________________
 # Returns a color of a palette corresponding to a value included
 # between the min and the max of the variable
-get_color = function (value, min, max, nColor=256, palette_name='perso', reverse=FALSE) {
+get_color = function (value, min, max, nbTick, nColor=256, palette_name='perso', reverse=FALSE) {
 
     # If the value is a NA return NA color
     if (is.na(value)) {
@@ -97,8 +97,12 @@ get_color = function (value, min, max, nColor=256, palette_name='perso', reverse
     nColor_hot = length(palette_hot)
     nColor_cold = length(palette_cold)
 
+    labTick = pretty(seq(min, max, length.out=nbTick),
+                     nbTick)
+
     # Computes the absolute max
-    maxAbs = max(abs(max), abs(min))
+    maxAbs = max(abs(max), abs(min),
+                 abs(max(labTick)), abs(min(labTick)))
 
     # If the value is negative
     if (value <= 0) {
@@ -136,6 +140,13 @@ get_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FAL
     if (is.null(min) | is.null(max)) {
         return (NA)
     }
+
+    labTick = pretty(seq(min, max, length.out=nbTick),
+                     nbTick)
+    nbTickShow = length(labTick)
+
+    minAbs = min(min, min(labTick))
+    maxAbs = max(max, max(labTick))
     
     # If the palette chosen is the personal ones
     if (palette_name == 'perso') {
@@ -151,11 +162,13 @@ get_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FAL
     # Recreates a continuous color palette
     palette = colorRampPalette(colorList)(nColor)
 
-    minColor = get_color(min, min=min, max=max,
+    minColor = get_color(minAbs, min=min, max=max,
+                         nbTick=nbTick,
                          nColor=nColor,
                          palette_name=palette_name,
                          reverse=reverse)
-    maxColor = get_color(max, min=min, max=max,
+    maxColor = get_color(maxAbs, min=min, max=max,
+                         nbTick=nbTick,
                          nColor=nColor,
                          palette_name=palette_name,
                          reverse=reverse)
@@ -166,63 +179,91 @@ get_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FAL
     paletteCrop = palette[minId:maxId]
     nPaletteCrop = length(paletteCrop)
     
-    # An arbitrary x vector
-    Y = 1:nPaletteCrop
-
-    # Open a plot
-    plot = ggplot() + theme_void()
-
-    for (y in Y) {
-        plot = plot +
-            annotate("segment",
-                     x=0, xend=1,
-                     y=y, yend=y, 
-                     color=paletteCrop[y], size=1)
-    }
-    
-    plot = plot +
-        scale_x_continuous(limits=c(0, 1),
-                           expand=c(0, 0)) +
-        
-        scale_y_continuous(limits=c(0, nPaletteCrop),
-                           expand=c(0, 0))
-    
     # The position of ticks is between 0 and 1
-    posTick = seq(0, 1, length.out=nbTick)
+    posTick = labTick - min(labTick)
+    posTick = posTick/max(posTick)
+
     # Blank vector to store corresponding labels and colors
-    labTick = c()
     colTick = c()
     # For each tick
-    for (i in 1:nbTick) {
-        # Computes the graduation between the min and max
-        lab = (i-1)/(nbTick-1) * (max - min) + min
-        
+    for (lab in labTick) {        
         # Gets the associated color
         col = get_color(lab, min=min, max=max,
+                        nbTick=nbTick,
                         nColor=nColor,
                         palette_name=palette_name,
                         reverse=reverse)
         
         # Stores them
-        labTick = c(labTick, lab)
         colTick = c(colTick, col)
-        
-        
-        
-        # plot = plot +
-        #     annotate("segment",
-        #              x=0.9, xend=1.1,
-        #              y=y, yend=y,
-        #              color="grey50")
-
-        
-        
     }
+
+    yTick = match(colTick, paletteCrop)
+    xTick = rep(0, times=length(yTick))
+
+    yTickSpan = mean(diff(yTick))
     
-    # List of results
-    res = list(plot=plot, posTick=posTick,
-               labTick=labTick, colTick=colTick)
-    return(res)
+    # Open a plot
+    plot = ggplot() + theme_void() +
+        theme(plot.background=element_rect(fill="grey97", color=NA))
+
+    midLabTick = labTick[1:(nbTickShow-1)] + diff(labTick)/2
+    colMidTick = c()
+    # For each tick
+    for (lab in midLabTick) {        
+        # Gets the associated color
+        col = get_color(lab, min=min, max=max,
+                        nbTick=nbTick,
+                        nColor=nColor,
+                        palette_name=palette_name,
+                        reverse=reverse)
+        
+        # Stores them
+        colMidTick = c(colMidTick, col)
+    }
+
+    plot = plot +
+        annotate("rect",
+                 xmin=0, xmax=2,
+                 ymin=-yTickSpan/2, ymax=yTick[1], 
+                 fill=paletteCrop[1]) +
+        annotate("rect",
+                 xmin=0, xmax=2,
+                 ymin=yTick[nbTickShow],
+                 ymax=yTick[nbTickShow]+yTickSpan/2, 
+                 fill=paletteCrop[nPaletteCrop])
+    
+    for (i in 1:(nbTickShow-1)) {
+        plot = plot +
+            annotate("rect",
+                     xmin=0, xmax=2,
+                     ymin=yTick[i], ymax=yTick[i+1], 
+                     fill=colMidTick[i])
+    }
+
+    label = signif(labTick*100, 2)
+    nDec = sapply(label, count_decimal)
+    label = format(label, nsmall=max(nDec))
+    
+    plot = plot +
+        annotate("text",
+                 x=xTick+2.2,
+                 y=yTick,
+                 hjust=0, vjust=0.5,
+                 label=label,
+                 size=2,
+                 fontface="bold",
+                 color="grey40")
+    
+    plot = plot +
+        scale_x_continuous(limits=c(0, 5),
+                           expand=c(0, 0)) +
+        
+        scale_y_continuous(limits=c(-yTickSpan/2,
+                                    nPaletteCrop+yTickSpan/2),
+                           expand=c(0, 0))
+
+    return(plot)
 }
 
 ### 1.3. Palette tester ______________________________________________

@@ -141,6 +141,7 @@ sigP = c("1%", "5%", "10%")
 
 palette_name = 'perso'
 palette_reverse = TRUE
+nbTick = 10
 
 # Creates all marker possibilities
 # create_marker(resources_path, widthRel=0.8, stroke=0.8,
