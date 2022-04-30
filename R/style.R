@@ -38,6 +38,9 @@ CSSpanel_floating =
 CSSpanel_center =
     "background-color: transparent; margin: auto;"
 
+CSSpanel_colorbar =
+    paste0("background-color: ", grey98COL, "; margin-bottom: auto; margin-top: auto; border-radius: 10px 0px 0px 10px;")
+
 CSSbutton_panel =
     "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
 
@@ -47,16 +50,20 @@ CSSbutton_small =
 CSSbutton_colorbar =
     "background-color: #fff; border-color: transparent; padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;"
 
-CSSbutton_AnaPoly =
-    "margin-top: 25px; margin-bottom: 0px; background-color: #fff; border-color: transparent"
+CSSbutton_inPanel =
+    "background-color: #fff; border-color: transparent;"
 
-CSSbutton_startPolyBar =
+
+CSSbutton_soloBar =
+    "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-radius: 5px 5px 5px 5px;"
+
+CSSbutton_startBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-radius: 5px 0px 0px 5px;"
 
-CSSbutton_middlePolyBar =
+CSSbutton_middleBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-left: 1px solid #d9d9d9; border-radius: 0px 0px 0px 0px;"
 
-CSSbutton_endPolyBar =
+CSSbutton_endBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-left: 1px solid #d9d9d9; border-radius: 0px 5px 5px 0px;"
 
 

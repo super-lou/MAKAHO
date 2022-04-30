@@ -95,7 +95,8 @@ ui = bootstrapPage(
             left=10, bottom=50,
             
 ### 2.3. Code selection ______________________________________________
-            column(9, style='padding-right: 0px; margin-right: 0px; margin-top: 9px;',
+            column(7, style="padding-right: 0px; margin-right: 0px;
+                             margin-top: 9px;",
                    pickerInput(
                        inputId="code_picker",
                        label=word("a.sta"), 
@@ -105,11 +106,19 @@ ui = bootstrapPage(
                        options=list(size=7,
                                     `live-search`=TRUE,
                                     `actions-box`=TRUE))),
+
+            column(2, style="margin-left: 4px; margin-top: 34px;
+                             margin-bottom: 0px;",
+                   actionButtonI('click_button',
+                                 NULL,
+                                 style=CSSbutton_inPanel,
+                                 icon_name=iconLib$click)),
             
-            column(2, style='margin-left: 7px; margin-top: 9px;',
+            column(2, style="margin-left: 4px; margin-top: 34px;
+                             margin-bottom: 0px;",
                    actionButtonI('poly_button',
                                  NULL,
-                                 style=CSSbutton_AnaPoly,
+                                 style=CSSbutton_inPanel,
                                  icon_name=iconLib$draw)),
 
             column(12,
@@ -170,6 +179,21 @@ ui = bootstrapPage(
 
     hidden(
         absolutePanel(
+            id='click_panel',
+            style=CSSpanel_center,
+            fixed=TRUE,
+            width=200, height="auto",
+            left=0, top=10, right=0,
+
+            actionButtonI('clickOk_button', label=word("b.ok"),
+                          style=CSSbutton_soloBar,
+                          icon_name=iconLib$ok)
+        )
+    ),
+
+
+    hidden(
+        absolutePanel(
             id='poly_panel',
             style=CSSpanel_center,
             fixed=TRUE,
@@ -177,15 +201,15 @@ ui = bootstrapPage(
             left=0, top=10, right=0,
 
             actionButtonI('polyAdd_button', label=NULL,
-                          style=CSSbutton_startPolyBar,
+                          style=CSSbutton_startBar,
                           icon_name=iconLib$add),
             
             actionButtonI('polyRm_button', label=NULL,
-                          style=CSSbutton_middlePolyBar,
+                          style=CSSbutton_middleBar,
                           icon_name=iconLib$remove),
             
-            actionButtonI('polyOk_button', label=word("p.ok"),
-                          style=CSSbutton_endPolyBar,
+            actionButtonI('polyOk_button', label=word("b.ok"),
+                          style=CSSbutton_endBar,
                           icon_name=iconLib$ok)
         )
     ),
@@ -238,12 +262,13 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id="colorbar_panel",
-            style=CSSpanel_center,
+            style=CSSpanel_colorbar,
             fixed=TRUE,
-            width=40, height=200,
-            right=20, top=0, bottom=0,
-            
-            plotOutput("colorbar_plot")
+            width=75, height=270,
+            right=0, top=0, bottom=0,
+            tags$div(style="margin-bottom: 10px; margin-top: 10px;
+                            margin-left: 10px; margin-right: 10px;",
+                     plotOutput("colorbar_plot"))
         )
     ),
 

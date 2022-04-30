@@ -53,7 +53,7 @@ a.search.regime;régime hydro.
 a.search.location;lieu
 a.search.river;"cours d'eau"
 a.search.basin;bassin hydro.
-p.ok;Terminer
+b.ok;Terminer
 c.title;Style
 c.colorbar;Colorbar
 c.theme;Fond de carte
@@ -64,3 +64,5 @@ m.hov.lat;lat
 m.hov.lon;lon
 m.hov.code;code
 m.hov.name;nom
+cb.title;TENDANCES OBSERVÉES
+cb.unit;% par an

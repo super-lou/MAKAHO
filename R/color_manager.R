@@ -35,6 +35,8 @@ PalettePerso = c('#0f3b57', # cold
                  '#7e392f') # hot
 
 # Personnal colors
+grey99COL = "#fcfcfc"
+grey98COL = "#fafafa"
 grey97COL = "#f7f7f7"
 grey94COL = "#f0f0f0"
 grey85COL = "#d9d9d9"
@@ -198,14 +200,14 @@ get_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FAL
         colTick = c(colTick, col)
     }
 
-    yTick = match(colTick, paletteCrop)
-    xTick = rep(0, times=length(yTick))
+    yColor = match(colTick, paletteCrop)
+    xColor = rep(3, times=length(yColor))
 
-    yTickSpan = mean(diff(yTick))
+    dyColorSpan = mean(diff(yColor))
     
     # Open a plot
     plot = ggplot() + theme_void() +
-        theme(plot.background=element_rect(fill="grey97", color=NA))
+        theme(plot.background=element_rect(fill="grey98", color=NA))
 
     midLabTick = labTick[1:(nbTickShow-1)] + diff(labTick)/2
     colMidTick = c()
@@ -222,45 +224,62 @@ get_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FAL
         colMidTick = c(colMidTick, col)
     }
 
+    dxColor = 2.5
+    
     plot = plot +
         annotate("rect",
-                 xmin=0, xmax=2,
-                 ymin=-yTickSpan/2, ymax=yTick[1], 
+                 xmin=xColor[1], xmax=xColor[1]+dxColor,
+                 ymin=-dyColorSpan/2, ymax=yColor[1], 
                  fill=paletteCrop[1]) +
+        
         annotate("rect",
-                 xmin=0, xmax=2,
-                 ymin=yTick[nbTickShow],
-                 ymax=yTick[nbTickShow]+yTickSpan/2, 
+                 xmin=xColor[1], xmax=xColor[1]+dxColor,
+                 ymin=yColor[nbTickShow],
+                 ymax=yColor[nbTickShow]+dyColorSpan/2, 
                  fill=paletteCrop[nPaletteCrop])
     
     for (i in 1:(nbTickShow-1)) {
         plot = plot +
             annotate("rect",
-                     xmin=0, xmax=2,
-                     ymin=yTick[i], ymax=yTick[i+1], 
+                     xmin=xColor, xmax=xColor+dxColor,
+                     ymin=yColor[i], ymax=yColor[i+1], 
                      fill=colMidTick[i])
     }
 
     label = signif(labTick*100, 2)
     nDec = sapply(label, count_decimal)
     label = format(label, nsmall=max(nDec))
+
+    xtitle = 2.5
+    ytitle = -dyColorSpan/2 + 1
     
     plot = plot +
         annotate("text",
-                 x=xTick+2.2,
-                 y=yTick,
+                 x=xColor + dxColor + 1,
+                 y=yColor,
                  hjust=0, vjust=0.5,
                  label=label,
-                 size=2,
+                 size=1.3,
                  fontface="bold",
-                 color="grey40")
+                 color="grey40") +
+        
+        geom_richtext(aes(x=xtitle,
+                          y=ytitle,
+                          label=paste0("<b>", word("cb.title"), "</b>",
+                                       " ", word("cb.unit"))),
+                      hjust=0, vjust=0,
+                      angle=90,
+                      size=1.7,
+                      color="grey50",
+                      fill=NA, label.color=NA,
+                      label.padding=unit(rep(0, 4), "pt"))
     
     plot = plot +
-        scale_x_continuous(limits=c(0, 5),
+        scale_x_continuous(limits=c(0, 10),
                            expand=c(0, 0)) +
         
-        scale_y_continuous(limits=c(-yTickSpan/2,
-                                    nPaletteCrop+yTickSpan/2),
+        scale_y_continuous(limits=c(-dyColorSpan/2,
+                                    nPaletteCrop+dyColorSpan/2),
                            expand=c(0, 0))
 
     return(plot)

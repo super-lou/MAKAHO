@@ -38,6 +38,7 @@ server = function (input, output, session) {
                         theme_choice_save=NULL,
                         mapHTML=NULL,
                         polyMode='false',
+                        clickMode=FALSE,
                         inputPhoto=FALSE,
                         defaultBounds=NULL,
                         previewBounds=NULL,
@@ -359,8 +360,17 @@ server = function (input, output, session) {
     CodeSample = debounce(CodeSample, 500)
 
 #### 2.4.1. Map click ________________________________________________
+    observeEvent(input$click_button, {
+        hide(id='ana_panel')
+        hide(id='theme_panel')
+        hide(id='info_panel')
+        hide(id='poly_panel')
+        showElement(id='click_panel')
+        rv$clickMode = TRUE
+    })
+
     observeEvent(input$map_marker_click, {
-        if (is.null(rv$polyCoord)) {
+        if (rv$polyMode == 'false' & rv$clickMode) {
             codeClick = input$map_marker_click$id
             CodeSample = rv$CodeSample
             if (codeClick %in% CodeSample) {
@@ -370,6 +380,12 @@ server = function (input, output, session) {
             }
             rv$CodeSample = newCodeSample
         }
+    })
+
+    observeEvent(input$clickOk_button, {
+        rv$clickMode = FALSE
+        hide(id='click_panel')
+        showElement(id='ana_panel')
     })
 
 #### 2.4.2. Picker ___________________________________________________
@@ -397,6 +413,7 @@ server = function (input, output, session) {
         hide(id='ana_panel')
         hide(id='theme_panel')
         hide(id='info_panel')
+        hide(id='click_panel')
         showElement(id='poly_panel')
         rv$polyMode = "Add"
         rv$polyCoord = tibble()
@@ -677,7 +694,7 @@ server = function (input, output, session) {
                 get_colorbar(rv$minTrendValue, rv$maxTrendValue,
                              palette_name=palette_name,
                              reverse=palette_reverse, nbTick=nbTick)
-            }, width=40, height=200, res=150)
+            }, width=55, height=250, res=200)
         }
     })
 
