@@ -34,21 +34,41 @@ computer_work_path =
 setwd(computer_work_path)
 
 # Import library
-library(shiny)
-library(shinyjs)
-library(shinyWidgets)
-library(leaflet)
-library(leaflet.extras2)
-library(StatsAnalysisTrend)
-library(icons)
-library(dplyr)
-library(tools) # file_ext
-library(data.table) # fast reading
-library(sp) # crs
-library(sf) # crs
-library(ggplot2)
-library(ggtext)
 
+# library(shiny)
+# library(shinyjs)
+# library(shinyWidgets)
+# library(leaflet)
+# library(leaflet.extras2)
+# library(StatsAnalysisTrend)
+# library(icons)
+# library(dplyr)
+# library(tools) # file_ext
+# library(data.table) # fast reading
+# library(sp) # crs
+# library(sf) # crs
+# library(ggplot2)
+# library(ggtext)
+
+if (!require(shiny)) install.packages("shiny")
+if (!require(shinyjs)) install.packages("shinyjs")
+if (!require(shinyWidgets)) install.packages("shinyWidgets")
+if (!require(leaflet)) install.packages("leaflet")
+if (!require(leaflet.extras2)) {
+    remotes::install_github('trafficonese/leaflet.extras2@print_dpi')
+}
+if (!require(StatsAnalysisTrend)) {
+    remotes::install_github("https://github.com/benRenard/BFunk")
+    remotes::install_github("https://github.com/vmansanarez/AoTre.git")
+}
+if (!require(icons)) remotes::install_github("mitchelloharawild/icons")
+if (!require(dplyr)) install.packages("dplyr")
+if (!require(tools)) install.packages("tools")
+if (!require(data.table)) install.packages("data.table")
+if (!require(sp)) install.packages("sp")
+if (!require(sf)) install.packages("sf")
+if (!require(ggplot2)) install.packages("ggplot2")
+if (!require(ggtext)) install.packages("ggtext")
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')
