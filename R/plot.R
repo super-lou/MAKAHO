@@ -9,25 +9,25 @@ theme_ash =
         # Border of plot
         panel.border = element_rect(color="grey85",
                                     fill=NA,
-                                    size=0.7),
+                                    size=0.5),
         # Grid
         panel.grid.major.x=element_blank(),
         panel.grid.major.y=element_blank(),
         # Ticks marker
-        axis.ticks.x=element_line(color='grey75', size=0.3),
-        axis.ticks.y=element_line(color='grey75', size=0.3),
+        axis.ticks.x=element_line(color='grey75', size=0.2),
+        axis.ticks.y=element_line(color='grey75', size=0.2),
         # Ticks label
-        axis.text.x=element_text(color='grey40'),
-        axis.text.y=element_text(color='grey40'),
+        axis.text.x=element_text(size=4, color='grey40'),
+        axis.text.y=element_text(size=4, color='grey40'),
         # Ticks length
-        axis.ticks.length=unit(1.5, 'mm'),
+        axis.ticks.length=unit(0.7, 'mm'),
         # Ticks minor
         ggh4x.axis.ticks.length.minor=rel(0.5),
         # Title
         plot.title=element_blank(),
         # Axis title
         axis.title.x=element_blank(),
-        axis.title.y=element_text(size=9, vjust=1.2, 
+        axis.title.y=element_text(size=4, vjust=0.4, 
                                   hjust=0.5, color='grey20'),
         # Axis line
         axis.line.x=element_blank(),
@@ -204,14 +204,14 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         p = p +
             geom_line(aes(x=df_data_code$Date, y=df_data_code$Value),
                       color='grey20',
-                      size=0.3,
+                      size=0.2,
                       lineend="round")
     } else {
         # Plot the data as point
         p = p +
             geom_point(aes(x=df_data_code$Date, y=df_data_code$Value),
                        shape=19, color='grey50', alpha=1,
-                       stroke=0, size=1)
+                       stroke=0, size=0.75)
     }
 
     ### Missing data ###
@@ -404,12 +404,12 @@ time_panel = function (df_data_code, df_trend_code, var, type,
                      x=leg_trend$x, xend=leg_trend$xend,
                      y=leg_trend$y, yend=leg_trend$yend,
                      color=colorLine,
-                     linetype=linetypeLeg[i],
-                     lwd=0.8,
+                     linetype=linetypeLeg,
+                     lwd=0.6,
                      lineend="round") +
             
             annotate("text",
-                     label=label, size=2.8,
+                     label=label, size=1.5,
                      x=leg_trend$xt, y=leg_trend$y, 
                      hjust=0, vjust=0.5,
                      color=colorLabel) + 
@@ -419,15 +419,15 @@ time_panel = function (df_data_code, df_trend_code, var, type,
                       aes(x=abs, y=ord),
                       color='white',
                       linetype='solid',
-                      size=1.5,
+                      size=1,
                       lineend="round") +
             
             # Plot the line of trend
             geom_line(data=plot_trend, 
                       aes(x=abs, y=ord),
-                      color=color[i],
-                      linetype=linetype[i],
-                      size=0.75,
+                      color=color,
+                      linetype=linetype,
+                      size=0.5,
                       lineend="round")
     }
 
@@ -456,11 +456,7 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         position = 'bottom'
     }
 
-    if (is.null(axis_xlim)) {
-        limits = c(min(df_data_code$Date), max(df_data_code$Date))
-    } else {
-        limits = axis_xlim
-    }
+    limits = c(min(df_data_code$Date), max(df_data_code$Date))
 
     if (breakDate < 1) {
         breaks = waiver()

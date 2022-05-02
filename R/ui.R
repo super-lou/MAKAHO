@@ -220,11 +220,12 @@ ui = bootstrapPage(
             id='plot_panel',
             style=CSSpanel_plot,
             fixed=TRUE,
-            width=220, height=170,
+            width=520, height=220,
             left=0, bottom=10, right=0,
 
             tags$div(style="margin-bottom: 10px; margin-top: 10px;
                             margin-left: 10px; margin-right: 10px;",
+
                      plotOutput("trend_plot"))
         )
     ),

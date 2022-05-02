@@ -701,16 +701,16 @@ server = function (input, output, session) {
                            var=var(),
                            type='sévérité',
                            linetype='solid',
-                           alpha=input$signif_choice,
+                           alpha=input$alpha_choice,
                            missRect=TRUE,
                            trend_period=period(),
                            grid=FALSE,
                            color=color,
                            NspaceMax=NULL,
                            first=FALSE,
-                           last=FALSE,
+                           last=TRUE,
                            lim_pct=10)
-            }, width=200, height=150, res=200)
+            }, width=500, height=200, res=200)
         }
     })
 

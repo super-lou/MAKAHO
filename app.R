@@ -46,6 +46,8 @@ if (!require(sp)) install.packages("sp")
 if (!require(sf)) install.packages("sf")
 if (!require(ggplot2)) install.packages("ggplot2")
 if (!require(ggtext)) install.packages("ggtext")
+if (!require(scales)) install.packages("scales")
+if (!require(ggh4x)) install.packages("ggh4x")
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')

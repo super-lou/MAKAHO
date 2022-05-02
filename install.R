@@ -37,6 +37,7 @@ install.packages("sp") # crs
 install.packages("sf") # crs
 install.packages("ggplot2")
 install.packages("ggtext")
+install.packages("scales")
 
 remotes::install_github("mitchelloharawild/icons")
 remotes::install_github('trafficonese/leaflet.extras2@print_dpi')

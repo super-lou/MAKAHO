@@ -420,27 +420,16 @@ get_period = function (period, df_Xtrend, df_XEx) {
 
     # Converts results of trend to tibble
     df_Xtrend = tibble(df_Xtrend)
-    # Fix the period start and end of the accessible period to a
-    # default date
-    df_Xtrend$period_start = as.Date("1970-01-01")
-    df_Xtrend$period_end = as.Date("1970-01-01")
 
-    # For all the different group
-    for (g in df_XEx$group1) {
-        # Gets the analyse data associated to the group
-        df_data_code = df_XEx[df_XEx$group1 == g,]
-        # Gets the id in the trend result associated to the group
-        id = which(df_Xtrend$group1 == g)
-        
-        Date = df_data_code$datetime
-        
-        iStart = which.min(abs(Date - as.Date(period[1])))
-        iEnd = which.min(abs(Date - as.Date(period[2])))
-
-        # Stores the start and end of the trend analysis
-        df_Xtrend$period_start[id] = as.Date(Date[iStart])
-        df_Xtrend$period_end[id] = as.Date(Date[iEnd])
-    }
+    df_Start = summarise(group_by(df_XEx, group1),
+                         period_start=datetime[which.min(abs(datetime - as.Date(period[1])))])
+    
+    df_End = summarise(group_by(df_XEx, group1),
+                       period_end=datetime[which.min(abs(datetime - as.Date(period[2])))])
+    
+    df_Xtrend$period_start = df_Start$period_start
+    df_Xtrend$period_end = df_End$period_end 
+    
     return (df_Xtrend)
 }
 
@@ -450,32 +439,51 @@ get_period = function (period, df_Xtrend, df_XEx) {
 # of trends and the data on which analysis is performed.
 get_intercept = function (df_Xtrend, df_XEx, unit2day=365.25) {
 
-    # Create a column in trend full of NA
-    df_Xtrend$intercept = NA
+    # Converts results of trend to tibble
+    df_Xtrend = tibble(df_Xtrend)
+    
+    df_mu_X = summarise(group_by(df_XEx, group1),
+                        mu_X=mean(values, na.rm=TRUE))
 
-    # For all different group
-    for (g in df_XEx$group1) {
-        # Get the data and trend value linked to this group
-        df_data_code = df_XEx[df_XEx$group1 == g,]
-        df_Xtrend_code = df_Xtrend[df_Xtrend$group1 == g,]
+    df_mu_t = summarise(group_by(df_XEx, group1),
+                        mu_t=as.numeric(mean(datetime, na.rm=TRUE)) / unit2day)
 
-        # Get the time start and end of the different periods
-        Start = df_Xtrend_code$period_start
-        End = df_Xtrend_code$period_end
+    df_Xtrendtmp = tibble(group1=df_Xtrend$group1,
+                          trend=df_Xtrend$trend,
+                          mu_X=df_mu_X$mu_X,
+                          mu_t=df_mu_t$mu_t)
+    
+    df_b = summarise(group_by(df_Xtrendtmp, group1),
+                     b=mu_X - mu_t * trend)
 
-        # Get the group associated to this period
-        id = which(df_Xtrend$group1 == g 
-                   & df_Xtrend$period_start == Start
-                   & df_Xtrend$period_end == End)
+    df_Xtrend$intercept = df_b$b
 
-        # Compute mean of flow and time period
-        mu_X = mean(df_data_code$values, na.rm=TRUE)
-        mu_t = as.numeric(mean(c(Start, End), na.rm=TRUE)) / unit2day
+    # # Create a column in trend full of NA
+    # df_Xtrend$intercept = NA
 
-        # Get the intercept of the trend
-        b = mu_X - mu_t * df_Xtrend_code$trend
-        # And store it
-        df_Xtrend$intercept[id] = b
-    }
+    # # For all different group
+    # for (g in df_XEx$group1) {
+    #     # Get the data and trend value linked to this group
+    #     df_data_code = df_XEx[df_XEx$group1 == g,]
+    #     df_Xtrend_code = df_Xtrend[df_Xtrend$group1 == g,]
+
+    #     # Get the time start and end of the different periods
+    #     Start = df_Xtrend_code$period_start
+    #     End = df_Xtrend_code$period_end
+
+    #     # Get the group associated to this period
+    #     id = which(df_Xtrend$group1 == g 
+    #                & df_Xtrend$period_start == Start
+    #                & df_Xtrend$period_end == End)
+
+    #     # Compute mean of flow and time period
+    #     mu_X = mean(df_data_code$values, na.rm=TRUE)
+    #     mu_t = as.numeric(mean(c(Start, End), na.rm=TRUE)) / unit2day
+
+    #     # Get the intercept of the trend
+    #     b = mu_X - mu_t * df_Xtrend_code$trend
+    #     # And store it
+    #     df_Xtrend$intercept[id] = b
+    # }    
     return (df_Xtrend)
 }
