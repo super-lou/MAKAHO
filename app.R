@@ -26,30 +26,7 @@
 # main.R
 
 
-# Work path (it normally needs to end with '\\sht' directory)
-computer_work_path = 
-    "/home/louis/Documents/bouleau/INRAE/CDD_shiny/shinhydrology"
-
-# Sets working mapdirectory
-setwd(computer_work_path)
-
 # Import library
-
-# library(shiny)
-# library(shinyjs)
-# library(shinyWidgets)
-# library(leaflet)
-# library(leaflet.extras2)
-# library(StatsAnalysisTrend)
-# library(icons)
-# library(dplyr)
-# library(tools) # file_ext
-# library(data.table) # fast reading
-# library(sp) # crs
-# library(sf) # crs
-# library(ggplot2)
-# library(ggtext)
-
 if (!require(shiny)) install.packages("shiny")
 if (!require(shinyjs)) install.packages("shinyjs")
 if (!require(shinyWidgets)) install.packages("shinyWidgets")

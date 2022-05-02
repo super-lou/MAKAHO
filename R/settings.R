@@ -27,10 +27,10 @@
 
 
 # Path to the data
-computer_data_path = file.path(computer_work_path, 'data')            
+computer_data_path = 'data'       
 
 # Resources directory
-resources_path = file.path(computer_work_path, 'resources')
+resources_path = 'resources'
 
 # INRAE logo path
 INRAElogo_path = file.path(resources_path,
