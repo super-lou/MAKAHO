@@ -161,7 +161,7 @@ ui = bootstrapPage(
 
 ### 2.6. Statistical option ______________________________________________
             column(12,
-                   radioGroupButtons(inputId="signif_choice",
+                   radioGroupButtons(inputId="alpha_choice",
                                      label=word("a.sig"),
                                      size="sm",
                                      choices=sigP,
@@ -214,6 +214,22 @@ ui = bootstrapPage(
         )
     ),
 
+### 2.7. Trend plot __________________________________________________
+    hidden(
+        absolutePanel(
+            id='plot_panel',
+            style=CSSpanel_plot,
+            fixed=TRUE,
+            width=220, height=170,
+            left=0, bottom=10, right=0,
+
+            tags$div(style="margin-bottom: 10px; margin-top: 10px;
+                            margin-left: 10px; margin-right: 10px;",
+                     plotOutput("trend_plot"))
+        )
+    ),
+
+    
 
 ## 3. CUSTOMIZATION __________________________________________________
 ### 3.1. Panel button ________________________________________________

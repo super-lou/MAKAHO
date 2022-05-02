@@ -195,13 +195,13 @@ server = function (input, output, session) {
 ### 1.3. Marker ______________________________________________________
     observeEvent({ ### /!\
         input$theme_choice
-        input$signif_choice
+        input$alpha_choice
         df_meta()
         fillList()
     }, {
         map = leafletProxy("map")
         
-        alpha = as.numeric(sub("%", "", input$signif_choice)) / 100
+        alpha = as.numeric(sub("%", "", input$alpha_choice)) / 100
 
         CodeSample = CodeSample()
         nCodeSample = length(CodeSample)
@@ -262,16 +262,16 @@ server = function (input, output, session) {
         monthStart = formatC(month, width=2, flag=0)
         monthEnd = formatC((month-2)%%12+1, width=2, flag=0)
 
-        DateStart = as.Date(paste(input$dateYear_slider[1],
-                                  monthStart,
-                                  '01',
-                                  sep='-'))
-        DateEnd = as.Date(paste(input$dateYear_slider[2],
-                                monthStart,
-                                '01',
-                                sep='-')) - 1
-        
-        paste0(DateStart, " / ", DateEnd)
+        Start = as.Date(paste(input$dateYear_slider[1],
+                              monthStart,
+                              '01',
+                              sep='-'))
+        End = as.Date(paste(input$dateYear_slider[2],
+                            monthStart,
+                            '01',
+                            sep='-')) - 1
+        c(Start, End)
+        # paste0(DateStart, " / ", DateEnd)
     })
     period = debounce(period, 1000)
     
@@ -297,7 +297,7 @@ server = function (input, output, session) {
     })
 
     filename = reactive({
-        monthStart = substr(period(), 6, 7)
+        monthStart = substr(period()[1], 6, 7)
         filenametmp = paste0(var(), 'Ex_',
                              monthStart, '.fst')
 
@@ -314,10 +314,12 @@ server = function (input, output, session) {
             df_XExtmp = read_FST(computer_data_path,
                                  filename(),
                                  filedir='fst')
-            names(df_XExtmp)=c('datetime', 'group1', 'values', 'code')
+            
+            names(df_XExtmp) = c('datetime', 'group1', 'values', 'code')
 
-            Start = as.Date(substr(period(), 1, 10))
-            End = as.Date(substr(period(), 14, 23))
+            Start = period()[1]
+            End = period()[2]
+
             Date = as.Date(df_XExtmp$datetime) ### /!\
             
             df_XExtmp = df_XExtmp[Date >= Start & Date <= End,]
@@ -625,8 +627,10 @@ server = function (input, output, session) {
 ### 2.5. Trend analysis ______________________________________________
     df_trend = reactive({
         if (!is.null(df_XEx())) {
-            Estimate.stats(data.extract=df_XEx(),
-                           dep.option='AR1')
+            df_trendtmp = Estimate.stats(data.extract=df_XEx(),
+                                         dep.option='AR1')
+            # print(df_trendtmp)
+            clean(period(), df_trendtmp, df_XEx())
         } else {
             NULL
         }
@@ -676,6 +680,45 @@ server = function (input, output, session) {
         }
     })
 
+
+
+    
+### 2.7. Trend plot __________________________________________________
+    observeEvent(input$map_marker_click, {
+        if (rv$polyMode == 'false' & !rv$clickMode) {
+            showElement(id='plot_panel')
+            
+            codeClick = input$map_marker_click$id
+
+            df_data_code = df_XEx()[df_XEx()$code == codeClick,]
+            names(df_data_code) = c('Date', 'group', 'Value', 'code')
+            df_trend_code = df_trend()[df_trend()$code == codeClick,]
+            color = fillList()[CodeAll() == codeClick]
+            
+            output$trend_plot = renderPlot({
+                time_panel(df_data_code=df_data_code,
+                           df_trend_code=df_trend_code,
+                           var=var(),
+                           type='sévérité',
+                           linetype='solid',
+                           alpha=input$signif_choice,
+                           missRect=TRUE,
+                           trend_period=period(),
+                           grid=FALSE,
+                           color=color,
+                           NspaceMax=NULL,
+                           first=FALSE,
+                           last=FALSE,
+                           lim_pct=10)
+            }, width=200, height=150, res=200)
+        }
+    })
+
+
+
+
+
+    
 
 ## 3. CUSTOMIZATION __________________________________________________
 ### 3.2. Palette _____________________________________________________

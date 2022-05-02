@@ -26,26 +26,21 @@
 # install.R
 
 
-# sudo apt install libprotobuf-dev libmagick++-dev protobuf-compiler
-# install.packages("mapboxapi")
-
-
+install.packages("shiny")
+install.packages("shinyjs")
 install.packages("shinyWidgets")
 install.packages("leaflet")
-install.packages("shinyjs")
-install.packages("shiny")
-install.packages("data.table")
 install.packages("dplyr")
-install.packages("sp")
-install.packages("sf")
-install.packages("fst")
+install.packages("tools") # file_ext
+install.packages("data.table") # fast reading
+install.packages("sp") # crs
+install.packages("sf") # crs
+install.packages("ggplot2")
+install.packages("ggtext")
 
 remotes::install_github("mitchelloharawild/icons")
+remotes::install_github('trafficonese/leaflet.extras2@print_dpi')
+remotes::install_github("https://github.com/benRenard/BFunk") 
+remotes::install_github("https://github.com/vmansanarez/AoTre.git")
 
-install.packages("svglite")
-
-install.packages("mapview")
-sudo sh install_phantomjs.sh
-
-remotes::install_github('trafficonese/leaflet.extras2')
-
+ 

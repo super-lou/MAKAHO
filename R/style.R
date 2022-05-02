@@ -41,6 +41,9 @@ CSSpanel_center =
 CSSpanel_colorbar =
     paste0("background-color: ", grey98COL, "; margin-bottom: auto; margin-top: auto; border-radius: 10px 0px 0px 10px;")
 
+CSSpanel_plot =
+    paste0("background-color: ", grey98COL, "; margin-left: auto; margin-right: auto; border-radius: 5px 5px 5px 5px;")
+
 CSSbutton_panel =
     "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
 

@@ -323,3 +323,159 @@ count_decimal = function(x) {
         return(0)
     }
 }
+
+
+
+
+## 3. NUMBER MANAGEMENT ______________________________________________
+### 3.1. Number formatting ___________________________________________
+# Returns the power of ten of the scientific expression of a value
+get_power = function (value) {
+
+    # Do not care about the sign
+    value = abs(value)
+    
+    # If the value is greater than one
+    if (value >= 1) {
+        # The magnitude is the number of character of integer part
+        # of the value minus one
+        power = nchar(as.character(as.integer(value))) - 1
+    # If value is zero
+    } else if (value == 0) {
+        # The power is zero
+        power = 0
+    # If the value is less than one
+    } else {
+        # Extract the decimal part
+        dec = gsub('0.', '', as.character(value), fixed=TRUE)
+        # Number of decimal with zero
+        ndec = nchar(dec)
+        # Number of decimal without zero
+        nnum = nchar(as.character(as.numeric(dec)))
+        # Compute the power of ten associated
+        power = -(ndec - nnum + 1)
+    }
+    return(power)
+}
+
+### 3.2. Pourcentage of variable _____________________________________
+# Returns the value corresponding of a certain percentage of a
+# data serie
+gpct = function (pct, L, min_lim=NULL, shift=FALSE) {
+
+    # If no reference for the serie is given
+    if (is.null(min_lim)) {
+        # The minimum of the serie is computed
+        minL = min(L, na.rm=TRUE)
+    # If a reference is specified
+    } else {
+        # The reference is the minimum
+        minL = min_lim
+    }
+
+    # Gets the max
+    maxL = max(L, na.rm=TRUE)
+    # And the span
+    spanL = maxL - minL
+    # Computes the value corresponding to the percentage
+    xL = pct/100 * as.numeric(spanL)
+
+    # If the value needs to be shift by its reference
+    if (shift) {
+        xL = xL + minL
+    }
+    return (xL)
+}
+
+### 3.3. Add months __________________________________________________
+add_months = function (date, n) {
+    new_date = seq(date, by = paste (n, "months"), length = 2)[2]
+    return (new_date)
+}
+
+
+### 3.2. Cleaning ____________________________________________________
+# Cleans the trend results of the function 'Estimate.stats' in the
+# 'StatsAnalysisTrend' package. It adds the station code and the
+# intercept of the trend to the trend results. Also makes the data
+# more presentable.
+clean = function (period, df_Xtrend, df_XEx) {
+
+    df_Xtrend = get_period(period, df_Xtrend, df_XEx)
+    
+    # Adds the intercept value of trend
+    df_Xtrend = get_intercept(df_Xtrend, df_XEx)
+    
+    # Changes the position of the intercept column
+    df_Xtrend = relocate(df_Xtrend, intercept, .after=trend)
+
+    return (df_Xtrend)
+}
+
+
+### 3.1. Period of trend _____________________________________________
+# Compute the start and the end of the period for a trend analysis
+# according to the accessible data 
+get_period = function (period, df_Xtrend, df_XEx) {
+
+    # Converts results of trend to tibble
+    df_Xtrend = tibble(df_Xtrend)
+    # Fix the period start and end of the accessible period to a
+    # default date
+    df_Xtrend$period_start = as.Date("1970-01-01")
+    df_Xtrend$period_end = as.Date("1970-01-01")
+
+    # For all the different group
+    for (g in df_XEx$group1) {
+        # Gets the analyse data associated to the group
+        df_data_code = df_XEx[df_XEx$group1 == g,]
+        # Gets the id in the trend result associated to the group
+        id = which(df_Xtrend$group1 == g)
+        
+        Date = df_data_code$datetime
+        
+        iStart = which.min(abs(Date - as.Date(period[1])))
+        iEnd = which.min(abs(Date - as.Date(period[2])))
+
+        # Stores the start and end of the trend analysis
+        df_Xtrend$period_start[id] = as.Date(Date[iStart])
+        df_Xtrend$period_end[id] = as.Date(Date[iEnd])
+    }
+    return (df_Xtrend)
+}
+
+
+### 1.0. Intercept of trend __________________________________________
+# Compute intercept values of linear trends with first order values
+# of trends and the data on which analysis is performed.
+get_intercept = function (df_Xtrend, df_XEx, unit2day=365.25) {
+
+    # Create a column in trend full of NA
+    df_Xtrend$intercept = NA
+
+    # For all different group
+    for (g in df_XEx$group1) {
+        # Get the data and trend value linked to this group
+        df_data_code = df_XEx[df_XEx$group1 == g,]
+        df_Xtrend_code = df_Xtrend[df_Xtrend$group1 == g,]
+
+        # Get the time start and end of the different periods
+        Start = df_Xtrend_code$period_start
+        End = df_Xtrend_code$period_end
+
+        # Get the group associated to this period
+        id = which(df_Xtrend$group1 == g 
+                   & df_Xtrend$period_start == Start
+                   & df_Xtrend$period_end == End)
+
+        # Compute mean of flow and time period
+        mu_X = mean(df_data_code$values, na.rm=TRUE)
+        mu_t = as.numeric(mean(c(Start, End), na.rm=TRUE)) / unit2day
+
+        # Get the intercept of the trend
+        b = mu_X - mu_t * df_Xtrend_code$trend
+        # And store it
+        df_Xtrend$intercept[id] = b
+    }
+    return (df_Xtrend)
+}
