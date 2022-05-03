@@ -59,7 +59,7 @@ ui = bootstrapPage(
                    left=10, top=10,
                    width="auto", height="auto",
                    actionButtonI('focusZoom_button',
-                                 style=CSSbutton_small,
+                                 style=CSSbutton_panelSmall,
                                  icon_name=iconLib$focus)
                    )
     ),
@@ -69,7 +69,7 @@ ui = bootstrapPage(
                    left=10, top=10,
                    width="auto", height="auto",
                    actionButtonI('defaultZoom_button',
-                                 style=CSSbutton_small,
+                                 style=CSSbutton_panelSmall,
                                  icon_name=iconLib$default)
                    )
     ),
@@ -220,13 +220,19 @@ ui = bootstrapPage(
             id='plot_panel',
             style=CSSpanel_plot,
             fixed=TRUE,
+            draggable=TRUE,
             width=520, height=220,
             left=0, bottom=10, right=0,
-
-            tags$div(style="margin-bottom: 10px; margin-top: 10px;
+            
+            tags$div(style="position: absolute;
+                            margin-bottom: 10px; margin-top: 10px;
                             margin-left: 10px; margin-right: 10px;",
-
-                     plotOutput("trend_plot"))
+                     plotOutput("trend_plot")),
+            
+            tags$div(style="position: absolute;",
+                     actionButtonI('closePlot_button', label=NULL,
+                                   style=CSSbutton_inPanelSmall,
+                                   icon_name=iconLib$close))
         )
     ),
 
@@ -328,7 +334,7 @@ ui = bootstrapPage(
     fixedPanel(right=10, top=10,
                width="auto", height="auto",
                actionButtonI('download_button',
-                             style=CSSbutton_small,
+                             style=CSSbutton_panelSmall,
                              icon_name=iconLib$download)
                ),
     
@@ -336,7 +342,7 @@ ui = bootstrapPage(
     fixedPanel(right=50, top=10,
                width="auto", height="auto",
                actionButtonI('photo_button',
-                             style=CSSbutton_small,
+                             style=CSSbutton_panelSmall,
                              icon_name=iconLib$photo)
                ),
    

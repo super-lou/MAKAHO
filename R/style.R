@@ -47,7 +47,7 @@ CSSpanel_plot =
 CSSbutton_panel =
     "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
 
-CSSbutton_small =
+CSSbutton_panelSmall =
     paste0(CSSbutton_panel, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
 
 CSSbutton_colorbar =
@@ -55,6 +55,9 @@ CSSbutton_colorbar =
 
 CSSbutton_inPanel =
     "background-color: #fff; border-color: transparent;"
+
+CSSbutton_inPanelSmall =
+    paste0(CSSbutton_inPanel, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
 
 
 CSSbutton_soloBar =

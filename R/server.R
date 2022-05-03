@@ -31,6 +31,7 @@ server = function (input, output, session) {
 
 
     rv = reactiveValues(CodeSample=NULL,
+                        CodeSearch=NULL,
                         markerListAll_save=NULL,
                         CodeSample_save=NULL,
                         Search_save=NULL,
@@ -604,13 +605,20 @@ server = function (input, output, session) {
         CodeRiver = df_meta()$code[meta_river() %in% Search[searchType == "river"]]
         CodeBasin = df_meta()$code[meta_basin() %in% Search[searchType == "basin"]]
 
-        CodeSample = levels(factor(c(CodeNom,
+        selectCode = levels(factor(c(CodeNom,
                                      CodeRegion,
                                      CodeRegime,
                                      CodeLocation,
                                      CodeRiver,
                                      CodeBasin)))
-        rv$CodeSample = CodeSample
+
+        codeRm = rv$CodeSearch[!(rv$CodeSearch %in% selectCode)]        
+        rv$CodeSample = rv$CodeSample[!(rv$CodeSample %in% codeRm)]
+
+        rv$CodeSample = c(rv$CodeSample, selectCode)
+        rv$CodeSample = rv$CodeSample[!duplicated(rv$CodeSample)]
+
+        rv$CodeSearch = selectCode
     })
     
     
@@ -681,8 +689,6 @@ server = function (input, output, session) {
     })
 
 
-
-    
 ### 2.7. Trend plot __________________________________________________
     observeEvent(input$map_marker_click, {
         if (rv$polyMode == 'false' & !rv$clickMode) {
@@ -696,28 +702,28 @@ server = function (input, output, session) {
             color = fillList()[CodeAll() == codeClick]
             
             output$trend_plot = renderPlot({
-                time_panel(df_data_code=df_data_code,
-                           df_trend_code=df_trend_code,
-                           var=var(),
-                           type='sévérité',
-                           linetype='solid',
-                           alpha=input$alpha_choice,
-                           missRect=TRUE,
-                           trend_period=period(),
-                           grid=FALSE,
-                           color=color,
-                           NspaceMax=NULL,
-                           first=FALSE,
-                           last=TRUE,
-                           lim_pct=10)
-            }, width=500, height=200, res=200)
+                plot_time_panel(df_data_code=df_data_code,
+                                df_trend_code=df_trend_code,
+                                var=var(),
+                                type='sévérité',
+                                linetype='solid',
+                                alpha=input$alpha_choice,
+                                missRect=TRUE,
+                                trend_period=period(),
+                                axis_xlim=period(),
+                                grid=FALSE,
+                                color=color,
+                                NspaceMax=NULL,
+                                first=FALSE,
+                                last=TRUE,
+                                lim_pct=10)
+            }, width=500, height=200, res=300)
         }
     })
 
-
-
-
-
+    observeEvent(input$closePlot_button, {
+        hide(id='plot_panel')
+    })
     
 
 ## 3. CUSTOMIZATION __________________________________________________
@@ -726,7 +732,6 @@ server = function (input, output, session) {
         toggle(id="colorbar_panel")
     })
 
-
     observeEvent({
         rv$minTrendValue
         rv$maxTrendValue
@@ -734,10 +739,10 @@ server = function (input, output, session) {
     }, {
         if ((input$colorbar_button+1) %% 2 == 0) {
             output$colorbar_plot = renderPlot({
-                get_colorbar(rv$minTrendValue, rv$maxTrendValue,
-                             palette_name=palette_name,
-                             reverse=palette_reverse, nbTick=nbTick)
-            }, width=55, height=250, res=200)
+                plot_colorbar(rv$minTrendValue, rv$maxTrendValue,
+                              palette_name=palette_name,
+                              reverse=palette_reverse, nbTick=nbTick)
+            }, width=55, height=250, res=300)
         }
     })
 

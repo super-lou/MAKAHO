@@ -2,23 +2,24 @@
 ### 1.1. Personal theme ______________________________________________
 theme_ash =
     theme(
+        plot.background=element_rect(fill="grey98", color=NA),
         # White background
-        panel.background=element_rect(fill='white'),
+        panel.background=element_rect(fill="grey98"),
         # Font
         text=element_text(family='sans'),
         # Border of plot
-        panel.border = element_rect(color="grey85",
-                                    fill=NA,
-                                    size=0.5),
+        panel.border=element_rect(color="grey85",
+                                  fill=NA,
+                                  size=0.35),
         # Grid
-        panel.grid.major.x=element_blank(),
-        panel.grid.major.y=element_blank(),
+        panel.grid.major=element_line(color="grey98"),
+        panel.grid.minor=element_line(color="grey98"),
         # Ticks marker
-        axis.ticks.x=element_line(color='grey75', size=0.2),
-        axis.ticks.y=element_line(color='grey75', size=0.2),
+        axis.ticks.x=element_line(color='grey75', size=0.15),
+        axis.ticks.y=element_line(color='grey75', size=0.15),
         # Ticks label
-        axis.text.x=element_text(size=4, color='grey40'),
-        axis.text.y=element_text(size=4, color='grey40'),
+        axis.text.x=element_text(size=3.25, color='grey40'),
+        axis.text.y=element_text(size=3.25, color='grey40'),
         # Ticks length
         axis.ticks.length=unit(0.7, 'mm'),
         # Ticks minor
@@ -27,7 +28,7 @@ theme_ash =
         plot.title=element_blank(),
         # Axis title
         axis.title.x=element_blank(),
-        axis.title.y=element_text(size=4, vjust=0.4, 
+        axis.title.y=element_text(size=3.5, vjust=0, 
                                   hjust=0.5, color='grey20'),
         # Axis line
         axis.line.x=element_blank(),
@@ -35,12 +36,167 @@ theme_ash =
         )
 
 
+
+### 1.2. Colorbar ____________________________________________________
+# Returns the colorbar but also positions, labels and colors of some
+# ticks along it 
+plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FALSE, nbTick=10) {
+
+    # If the value is a NA return NA color
+    if (is.null(min) | is.null(max)) {
+        return (NA)
+    }
+
+    labTick = pretty(seq(min, max, length.out=nbTick),
+                     nbTick)
+    nbTickShow = length(labTick)
+
+    minAbs = min(min, min(labTick))
+    maxAbs = max(max, max(labTick))
+    
+    # If the palette chosen is the personal ones
+    if (palette_name == 'perso') {
+        colorList = PalettePerso
+    # Else takes the palette corresponding to the name given
+    } else {
+        colorList = brewer.pal(11, palette_name)
+    }
+    
+    # Gets the number of discrete colors in the palette
+    nSample = length(colorList)
+
+    # Recreates a continuous color palette
+    palette = colorRampPalette(colorList)(nColor)
+
+    minColor = get_color(minAbs, min=min, max=max,
+                         nbTick=nbTick,
+                         nColor=nColor,
+                         palette_name=palette_name,
+                         reverse=reverse)
+    maxColor = get_color(maxAbs, min=min, max=max,
+                         nbTick=nbTick,
+                         nColor=nColor,
+                         palette_name=palette_name,
+                         reverse=reverse)
+    
+    minId = which(palette == minColor)
+    maxId = which(palette == maxColor)
+    
+    paletteCrop = palette[minId:maxId]
+    nPaletteCrop = length(paletteCrop)
+    
+    # The position of ticks is between 0 and 1
+    posTick = labTick - min(labTick)
+    posTick = posTick/max(posTick)
+
+    # Blank vector to store corresponding labels and colors
+    colTick = c()
+    # For each tick
+    for (lab in labTick) {        
+        # Gets the associated color
+        col = get_color(lab, min=min, max=max,
+                        nbTick=nbTick,
+                        nColor=nColor,
+                        palette_name=palette_name,
+                        reverse=reverse)
+        
+        # Stores them
+        colTick = c(colTick, col)
+    }
+
+    yColor = match(colTick, paletteCrop)
+    xColor = rep(3, times=length(yColor))
+
+    dyColorSpan = mean(diff(yColor))
+    
+    # Open a plot
+    plot = ggplot() + theme_void() +
+        theme(plot.background=element_rect(fill="grey98", color=NA))
+
+    midLabTick = labTick[1:(nbTickShow-1)] + diff(labTick)/2
+    colMidTick = c()
+    # For each tick
+    for (lab in midLabTick) {        
+        # Gets the associated color
+        col = get_color(lab, min=min, max=max,
+                        nbTick=nbTick,
+                        nColor=nColor,
+                        palette_name=palette_name,
+                        reverse=reverse)
+        
+        # Stores them
+        colMidTick = c(colMidTick, col)
+    }
+
+    dxColor = 2.5
+    
+    plot = plot +
+        annotate("rect",
+                 xmin=xColor[1], xmax=xColor[1]+dxColor,
+                 ymin=-dyColorSpan/2, ymax=yColor[1], 
+                 fill=paletteCrop[1]) +
+        
+        annotate("rect",
+                 xmin=xColor[1], xmax=xColor[1]+dxColor,
+                 ymin=yColor[nbTickShow],
+                 ymax=yColor[nbTickShow]+dyColorSpan/2, 
+                 fill=paletteCrop[nPaletteCrop])
+    
+    for (i in 1:(nbTickShow-1)) {
+        plot = plot +
+            annotate("rect",
+                     xmin=xColor, xmax=xColor+dxColor,
+                     ymin=yColor[i], ymax=yColor[i+1], 
+                     fill=colMidTick[i])
+    }
+
+    label = signif(labTick*100, 2)
+    nDec = sapply(label, count_decimal)
+    label = format(label, nsmall=max(nDec))
+
+    xtitle = 2.5
+    ytitle = -dyColorSpan/2 + 1
+    
+    plot = plot +
+        annotate("text",
+                 x=xColor + dxColor + 1,
+                 y=yColor,
+                 hjust=0, vjust=0.5,
+                 label=label,
+                 size=1,
+                 fontface="bold",
+                 color="grey40") +
+        
+        geom_richtext(aes(x=xtitle,
+                          y=ytitle,
+                          label=paste0("<b>", word("cb.title"), "</b>",
+                                       " ", word("cb.unit"))),
+                      hjust=0, vjust=0,
+                      angle=90,
+                      size=1.1,
+                      color="grey50",
+                      fill=NA, label.color=NA,
+                      label.padding=unit(rep(0, 4), "pt"))
+    
+    plot = plot +
+        scale_x_continuous(limits=c(0, 10),
+                           expand=c(0, 0)) +
+        
+        scale_y_continuous(limits=c(-dyColorSpan/2,
+                                    nPaletteCrop+dyColorSpan/2),
+                           expand=c(0, 0))
+
+    return(plot)
+}
+
+
 ### 2.1. Time panel __________________________________________________
-time_panel = function (df_data_code, df_trend_code, var, type,
-                       linetype='solid', alpha=0.1, missRect=FALSE,
-                       unit2day=365.25, trend_period=NULL, grid=TRUE,
-                       ymin_lim=NULL, color=NULL, NspaceMax=NULL,
-                       first=FALSE, last=FALSE, lim_pct=10) {
+plot_time_panel = function (df_data_code, df_trend_code, var, type,
+                            linetype='solid', alpha=0.1, missRect=FALSE,
+                            unit2day=365.25, trend_period=NULL, axis_xlim=NULL,
+                            grid=TRUE,
+                            ymin_lim=NULL, color=NULL, NspaceMax=NULL,
+                            first=FALSE, last=FALSE, lim_pct=10) {
     
     # Compute max and min of flow
     maxQ = max(df_data_code$Value, na.rm=TRUE)
@@ -90,11 +246,19 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         maxQtmp = minQ_lim + i*breakQ
         i = i + 1
     }   
-    maxQ_lim = maxQtmp    
-        
-    minor_minDatetmp_lim = as.Date(df_data_code$Date[1]) 
-    minor_maxDatetmp_lim =
-        as.Date(df_data_code$Date[length(df_data_code$Date)])
+    maxQ_lim = maxQtmp
+
+    # If x axis limits are specified
+    if (!is.null(axis_xlim)) {
+        axis_xlim = as.Date(axis_xlim)
+        minor_minDatetmp_lim = axis_xlim[1]
+        minor_maxDatetmp_lim = axis_xlim[2]
+    # Otherwise
+    } else {
+        minor_minDatetmp_lim = as.Date(df_data_code$Date[1]) 
+        minor_maxDatetmp_lim =
+            as.Date(df_data_code$Date[length(df_data_code$Date)])
+    }
 
     minor_minDatetmp_lim = as.numeric(format(minor_minDatetmp_lim, "%Y"))
     minor_maxDatetmp_lim = as.numeric(format(minor_maxDatetmp_lim, "%Y"))
@@ -170,11 +334,18 @@ time_panel = function (df_data_code, df_trend_code, var, type,
 
     ### Grid ###
     if (grid) {
-        # The min and the max is set by
-        # the min and the max of the date data 
-        xmin = min(df_data_code$Date)
-        xmax = max(df_data_code$Date)
-            
+        # If there is no axis limit
+        if (is.null(axis_xlim)) {
+            # The min and the max is set by
+            # the min and the max of the date data 
+            xmin = min(df_data_code$Date)
+            xmax = max(df_data_code$Date)
+        } else {
+            # Min and max is set with the limit axis parameter
+            xmin = axis_xlim[1]
+            xmax = axis_xlim[2]
+        }
+
         # Create a vector for all the y grid position
         ygrid = seq(minQ_win, maxQ_win, breakQ)
         # Blank vector to store position
@@ -211,7 +382,7 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         p = p +
             geom_point(aes(x=df_data_code$Date, y=df_data_code$Value),
                        shape=19, color='grey50', alpha=1,
-                       stroke=0, size=0.75)
+                       stroke=0, size=0.6)
     }
 
     ### Missing data ###
@@ -260,6 +431,21 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         xmin = df_data_code$Date[iStart]
         xmax = df_data_code$Date[iEnd]
 
+        # If there is a x axis limit
+        if (!is.null(axis_xlim)) {
+            # If the min of the current period
+            # is smaller than the min of the x axis limit
+            if (xmin < axis_xlim[1]) {
+                # The min of the period is the min
+                # of the x axis limit
+                xmin = axis_xlim[1]
+            }
+            # Same for end
+            if (xmax > axis_xlim[2]) {
+                xmax = axis_xlim[2]
+            } 
+        }
+        
         # Create vector to store x data
         abs = c(xmin, xmax)
         # Convert the number of day to the unit of the period
@@ -271,8 +457,14 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         # Create temporary tibble with variable to plot
         plot_trend = tibble(abs=abs, ord=ord)
 
-        # The entire date data is selected
-        codeDate = df_data_code$Date
+        # If there is a x axis limit
+        if (!is.null(axis_xlim)) {
+            # The x axis limit is selected
+            codeDate = axis_xlim
+        } else {
+            # The entire date data is selected
+            codeDate = df_data_code$Date
+        }
 
         # The y limit is stored in a vector
         codeValue = c(minQ_win, maxQ_win)
@@ -292,10 +484,10 @@ time_panel = function (df_data_code, df_trend_code, var, type,
 
         # Position of the background rectangle of the legend
         xminR = x - gpct(1, codeDate)
-        yminR = y - gpct(5, codeValue, min_lim=ymin_lim)
+        yminR = y - gpct(6, codeValue, min_lim=ymin_lim)
         # If it is a flow variable
         if (type == 'sévérité') {
-            xmaxR = x + gpct(32.5, codeDate)
+            xmaxR = x + gpct(72, codeDate)
             # If it is a date variable
         } else if (type == 'saisonnalité' | type == 'pluviométrie' | type == 'température' | type == 'évapotranspiration') {
             xmaxR = x + gpct(20.5, codeDate)
@@ -391,6 +583,7 @@ time_panel = function (df_data_code, df_trend_code, var, type,
         if (type == 'sévérité') {
             # Create the name of the trend
             label = bquote(bold(.(trendC)~'x'~'10'^{.(powerC)}*.(spaceC))~'['*m^{3}*'.'*s^{-1}*'.'*an^{-1}*']'~~bold(.(trendMeanC))~'[%.'*an^{-1}*']')
+            # label = paste0("<b>", trendC, " x 10<sup>", powerC, "</sup></b>", spaceC, " [m<sup>3</sup>.s<sup>-1</sup>.an<sup>-1</sup>]", "<b>", trendMeanC, "</b> [%.an<sup>-1</sup>]")
             
             # If it is a date variable
         } else if (type == 'saisonnalité') {
@@ -405,11 +598,20 @@ time_panel = function (df_data_code, df_trend_code, var, type,
                      y=leg_trend$y, yend=leg_trend$yend,
                      color=colorLine,
                      linetype=linetypeLeg,
-                     lwd=0.6,
+                     lwd=0.4,
                      lineend="round") +
             
+            # geom_richtext(aes(x=leg_trend$xt,
+            #                   y=leg_trend$y,
+            #                   label=label),
+            #           hjust=0, vjust=0.5,
+            #           size=1.5,
+            #           color=colorLabel,
+            #           fill=NA, label.color=NA,
+            #           label.padding=unit(rep(0, 4), "pt")) +
+        
             annotate("text",
-                     label=label, size=1.5,
+                     label=label, size=1.2,
                      x=leg_trend$xt, y=leg_trend$y, 
                      hjust=0, vjust=0.5,
                      color=colorLabel) + 
@@ -419,7 +621,7 @@ time_panel = function (df_data_code, df_trend_code, var, type,
                       aes(x=abs, y=ord),
                       color='white',
                       linetype='solid',
-                      size=1,
+                      size=0.8,
                       lineend="round") +
             
             # Plot the line of trend
@@ -427,7 +629,7 @@ time_panel = function (df_data_code, df_trend_code, var, type,
                       aes(x=abs, y=ord),
                       color=color,
                       linetype=linetype,
-                      size=0.5,
+                      size=0.3,
                       lineend="round")
     }
 
@@ -455,8 +657,12 @@ time_panel = function (df_data_code, df_trend_code, var, type,
     } else {
         position = 'bottom'
     }
-
-    limits = c(min(df_data_code$Date), max(df_data_code$Date))
+    
+    if (is.null(axis_xlim)) {
+        limits = c(min(df_data_code$Date), max(df_data_code$Date))
+    } else {
+        limits = axis_xlim
+    }
 
     if (breakDate < 1) {
         breaks = waiver()
