@@ -32,6 +32,8 @@ source(file.path('R', 'dependencies.R'), encoding='UTF-8')
 
 ui = bootstrapPage(
 
+    tags$head(HTML("<title>Abigail</title> <link rel='icon' type='image/gif/png' href='abigail.png'>")),
+    
     useShinyjs(),
     
 ## 1. MAP ____________________________________________________________

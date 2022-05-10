@@ -27,6 +27,7 @@
 
 
 install.packages("shiny")
+install.packages("shinythemes")
 install.packages("shinyjs")
 install.packages("shinyWidgets")
 install.packages("leaflet")
