@@ -26,6 +26,10 @@
 # R/settings.R
 
 
+# Sourcing dependencies
+source(file.path('R', 'dependencies.R'), encoding='UTF-8')
+
+
 # Path to the data
 computer_data_path = 'data'       
 

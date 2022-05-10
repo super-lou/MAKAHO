@@ -26,6 +26,10 @@
 # R/tools.R
 
 
+# Sourcing dependencies
+source(file.path('R', 'dependencies.R'), encoding='UTF-8')
+
+
 word = function (id) {
     w = dico[[language]][dico$id == id]
     return (w)

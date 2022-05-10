@@ -26,6 +26,18 @@
 # server.R
 
 
+# Sourcing dependencies
+source(file.path('R', 'dependencies.R'), encoding='UTF-8')
+
+# Sourcing R files
+source(file.path('R', 'tools.R'), encoding='UTF-8')
+source(file.path('R', 'plot.R'), encoding='UTF-8')
+source(file.path('R', 'color_manager.R'), encoding='UTF-8')
+source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
+source(file.path('R', 'style.R'), encoding='UTF-8')
+source(file.path('R', 'settings.R'), encoding='UTF-8')
+
+
 server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 

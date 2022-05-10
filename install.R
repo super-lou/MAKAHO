@@ -43,5 +43,3 @@ remotes::install_github("mitchelloharawild/icons")
 remotes::install_github('trafficonese/leaflet.extras2@print_dpi')
 remotes::install_github("https://github.com/benRenard/BFunk") 
 remotes::install_github("https://github.com/vmansanarez/AoTre.git")
-
- 

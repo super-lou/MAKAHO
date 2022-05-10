@@ -26,6 +26,10 @@
 # ui.R
 
 
+# Sourcing dependencies
+source(file.path('R', 'dependencies.R'), encoding='UTF-8')
+
+
 ui = bootstrapPage(
 
     useShinyjs(),

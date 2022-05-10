@@ -23,15 +23,23 @@
 # ///
 #
 #
-# app.R
+# dependencies.R
 
 
-# Sourcing app
-source(file.path('R', 'server.R'), encoding='UTF-8')
-source(file.path('R', 'ui.R'), encoding='UTF-8')
-
-# Running app localy
-shinyApp(ui=ui, server=server)
-
-# Running app remotely
-# rsconnect::deployApp()
+# Import library
+library(shiny)
+library(shinyjs)
+library(shinyWidgets)
+library(leaflet)
+library(leaflet.extras2)
+library(StatsAnalysisTrend)
+library(icons)
+library(dplyr)
+library(tools) # file_ext
+library(data.table) # fast reading
+library(sp) # crs
+library(sf) # crs
+library(ggplot2)
+library(ggtext)
+library(scales)
+library(ggh4x)
