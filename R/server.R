@@ -234,7 +234,7 @@ server = function (input, output, session) {
                                        fillList(),
                                        resources_path)
 
-        if (input$theme_choice != rv$theme_choice_save) {
+        if ((input$theme_choice != rv$theme_choice_save) | is.null(unlist(rv$markerListAll_save$iconUrl))) {
             okCode = rep(TRUE, length(CodeAll()))
         } else {
             okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
@@ -250,7 +250,12 @@ server = function (input, output, session) {
         
         label = get_label(Lon, Lat, Code, Nom)
 
+
+        print(CodeSample)
+        print(CodeAll())
+        print(okCode)
         print(Code)
+        print('')
         
         map = removeMarker(map, layerId=Code)
         map = addMarkers(map,
@@ -658,7 +663,11 @@ server = function (input, output, session) {
     fillList = reactive({
         nCodeAll = length(CodeAll())
 
-        # if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {            
+
+        print(!is.null(df_XEx()) | !is.null(df_Xtrend()))
+
+        
+        if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {            
             res = get_trendExtremes(df_XEx(), df_Xtrend(),
                                     CodeAll=CodeAll(),
                                     CodeSample=CodeSample(),
@@ -693,9 +702,9 @@ server = function (input, output, session) {
                 fillListtmp = c(fillListtmp, color)
             }
             fillListtmp
-        # } else {
-        #     rep(grey50COL, nCodeAll)
-        # }
+        } else {
+            rep(grey50COL, nCodeAll)
+        }
     })
 
 
