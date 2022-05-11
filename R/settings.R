@@ -124,6 +124,30 @@ varVect = c(
     "tETI"
 )
 
+typeVect = c(
+    "sévérité",
+    "saisonnalité",
+    NA,
+    "sévérité",
+    "saisonnalité",
+    "saisonnalité",
+    "saisonnalité",
+    "saisonnalité",
+    NA,
+    "saisonnalité",
+    "sévérité",
+    "sévérité",
+    "sévérité",
+    "sévérité",
+    "sévérité",
+    "sévérité",
+    "saisonnalité",
+    "saisonnalité",
+    "saisonnalité",
+    NA,
+    "saisonnalité"
+)
+
 # Variables that need a percentage
 varP = c("fA",
          "Qp")
@@ -146,11 +170,4 @@ sigP = c("1%", "5%", "10%")
 palette_name = 'perso'
 palette_reverse = TRUE
 nbTick = 10
-
-# Creates all marker possibilities
-# create_marker(resources_path, widthRel=0.8, stroke=0.8,
-#               fill_PaletteName='perso',
-#               color=grey50COL,
-#               fillAdd=c(grey94COL, grey50COL, grey18COL),
-#               colorAdd=c(grey85COL, grey50COL, grey9COL))
 

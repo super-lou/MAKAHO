@@ -44,10 +44,9 @@ create_marker = function (resources_path, widthRel=1, filedir='marker', color='g
         dir.create(outdir)
     }
     
-    res = get_palette(-1, 1, nColor=nColor,
+    Palette = get_palette(nColor=nColor,
                       palette_name=fill_PaletteName,
                       reverse=reverse)
-    Palette = res$palette
     if (!is.null(fillAdd)) {
         Palette = c(Palette, fillAdd)
     }

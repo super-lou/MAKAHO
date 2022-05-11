@@ -222,13 +222,22 @@ plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FA
 
 
 ### 2.1. Time panel __________________________________________________
-plot_time_panel = function (df_data_code, df_trend_code, var, type,
+plot_time_panel = function (df_data_code, df_Xtrend_code, var, type,
                             linetype='solid', alpha=0.1, missRect=FALSE,
-                            unit2day=365.25, trend_period=NULL, axis_xlim=NULL,
+                            unit2day=365.25, trend_period=NULL,
+                            axis_xlim=NULL,
                             grid=TRUE,
                             ymin_lim=NULL, color=NULL, NspaceMax=NULL,
                             first=FALSE, last=FALSE, lim_pct=10) {
-    
+
+    # Issue for negative values in the y axis ticks : if Value is a
+    # number of days that can be negative, it adds a year in order
+    # to always be positive
+    if (type == 'saisonnalité') {
+        df_data_code$Value = df_data_code$Value + 365
+        df_Xtrend_code$intercept = df_Xtrend_code$intercept + 365
+    }
+
     # Compute max and min of flow
     maxQ = max(df_data_code$Value, na.rm=TRUE)
     minQ = min(df_data_code$Value, na.rm=TRUE)
@@ -342,6 +351,7 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
                                       '-01-01', sep=''))
     minor_maxDate_lim = as.Date(paste(round(minor_maxDate_lim),
                                       '-01-01', sep=''))
+
     
     # Open new plot
     p = ggplot() + theme_ash + 
@@ -398,7 +408,6 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
                       size=0.15)
     }
 
-    
     ### Data ###
     # If it is a square root flow or flow
     if (var == 'sqrt(Q)' | var == 'Q') {
@@ -439,14 +448,13 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
                       linetype=0, fill='Wheat', alpha=0.4)
     }
     
-    
     ### Trend ###
     # If there is trends
-    if (!is.null(df_trend_code)) {
+    if (!is.null(df_Xtrend_code)) {
 
         # Extract start and end of trend periods
-        Start = df_trend_code$period_start
-        End = df_trend_code$period_end
+        Start = df_Xtrend_code$period_start
+        End = df_Xtrend_code$period_end
 
         # Computes the mean of the data on the period
         dataMean = mean(df_data_code$Value,
@@ -482,8 +490,8 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
         # Convert the number of day to the unit of the period
         abs_num = as.numeric(abs) / unit2day
         # Compute the y of the trend
-        ord = abs_num * df_trend_code$trend +
-            df_trend_code$intercept
+        ord = abs_num * df_Xtrend_code$trend +
+            df_Xtrend_code$intercept
 
         # Create temporary tibble with variable to plot
         plot_trend = tibble(abs=abs, ord=ord)
@@ -526,9 +534,9 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
         ymaxR = y + gpct(5, codeValue, min_lim=ymin_lim)
 
         # Gets the trend
-        trend = df_trend_code$trend
+        trend = df_Xtrend_code$trend
         # Gets the p value
-        pVal = df_trend_code$p
+        pVal = df_Xtrend_code$p
 
         if (pVal <= alpha) {
             colorLine = color
@@ -718,7 +726,7 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
                      limits=limits,
                      position=position, 
                      expand=c(0, 0))    
-    
+
     # If it is a date variable 
     if (type == 'saisonnalité') {
         # The number of digit is 6 because months are display
@@ -773,7 +781,7 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
             accuracy = 10^(-nchar(as.character(maxtmp))+2)
         }
     }
-    
+
     # Parameters of the y axis
     # If it is a flow variable
     if (type == 'sévérité' | type == 'data' | type == 'pluviométrie' | type == 'température' | type == 'évapotranspiration') {        
@@ -785,21 +793,21 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
                                                     prefix=prefix))
     # If it is a date variable
     } else if (type == 'saisonnalité') {
-        # monthNum = as.numeric(format(seq(as.Date(minQ_lim),
-                                       # as.Date(maxQ_lim),
-                                       # by=paste(breakQ, 'days')),
-        # "%m"))
 
-        monthStart = as.Date(paste(substr(as.Date(minQ_lim), 1, 7),
+        monthStart = as.Date(paste(substr(as.Date(minQ_lim,
+                                                  origin="1970-01-01"),
+                                          1, 7),
                                    '-01', sep=''))
-        monthEnd = as.Date(paste(substr(as.Date(maxQ_lim), 1, 7),
+        monthEnd = as.Date(paste(substr(as.Date(maxQ_lim,
+                                                origin="1970-01-01"),
+                                        1, 7),
                                  '-01', sep=''))
 
         byMonth = round(breakQ/30.4, 0)
         if (byMonth == 0) {
             byMonth = 1
         }
-        
+
         breaksDate = seq(monthStart, monthEnd,
                          by=paste(byMonth, 'months'))
         breaksNum = as.numeric(breaksDate)
@@ -810,13 +818,12 @@ plot_time_panel = function (df_data_code, df_trend_code, var, type,
         monthName = paste(prefix, monthName, sep='')
         
         labels = monthName[breaksMonth]
-        
+
         p = p +
             scale_y_continuous(breaks=breaksNum,
                                limits=c(minQ_win, maxQ_win),
                                labels=labels,  
                                expand=c(0, 0))
-        
     }
     return(p)
 }

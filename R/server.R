@@ -204,9 +204,9 @@ server = function (input, output, session) {
             }
         }
     })
-    
+
 ### 1.3. Marker ______________________________________________________
-    observeEvent({ ### /!\
+    observeEvent({
         input$theme_choice
         input$alpha_choice
         df_meta()
@@ -215,16 +215,12 @@ server = function (input, output, session) {
         map = leafletProxy("map")
         
         alpha = as.numeric(sub("%", "", input$alpha_choice)) / 100
-
-        CodeSample = CodeSample()
-        nCodeSample = length(CodeSample)
-
         
         OkS = df_Xtrend()$p <= alpha
         CodeSU = df_Xtrend()$code[OkS & df_Xtrend()$trend >= 0]
         CodeSD = df_Xtrend()$code[OkS & df_Xtrend()$trend < 0]
         CodeNS = df_Xtrend()$code[!OkS]
-        
+
         shapeList = rep(1, length(fillList()))
         shapeList[match(CodeSU, CodeAll())] = '^'
         shapeList[match(CodeSD, CodeAll())] = 'v'
@@ -234,7 +230,7 @@ server = function (input, output, session) {
                                        fillList(),
                                        resources_path)
 
-        if ((input$theme_choice != rv$theme_choice_save) | is.null(unlist(rv$markerListAll_save$iconUrl))) {
+        if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
             okCode = rep(TRUE, length(CodeAll()))
         } else {
             okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
@@ -250,13 +246,6 @@ server = function (input, output, session) {
         
         label = get_label(Lon, Lat, Code, Nom)
 
-
-        print(CodeSample)
-        print(CodeAll())
-        print(okCode)
-        print(Code)
-        print('')
-        
         map = removeMarker(map, layerId=Code)
         map = addMarkers(map,
                          lng=Lon,
@@ -291,7 +280,6 @@ server = function (input, output, session) {
                             '01',
                             sep='-')) - 1
         c(Start, End)
-        # paste0(DateStart, " / ", DateEnd)
     })
     period = debounce(period, 1000)
     
@@ -299,6 +287,10 @@ server = function (input, output, session) {
 ### 2.2. Variable extration __________________________________________
     var = reactive({
         varVect[varNameVect == input$varName]
+    })
+
+    type = reactive({
+            typeVect[varNameVect == input$varName]            
     })
 
     observe({
@@ -650,22 +642,17 @@ server = function (input, output, session) {
     
 ### 2.5. Trend analysis ______________________________________________
     df_Xtrend = reactive({
-        
-        # if (!is.null(df_XEx())) {
+        if (!is.null(df_XEx())) {
             Estimate_stats_WRAP(df_XEx=df_XEx(),
                                 dep_option='AR1')
-        # } else {
-        #     NULL
-        # }
+        } else {
+            NULL
+        }
     })
 
 ### 2.6. Color _______________________________________________________
     fillList = reactive({
         nCodeAll = length(CodeAll())
-
-
-        print(!is.null(df_XEx()) | !is.null(df_Xtrend()))
-
         
         if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {            
             res = get_trendExtremes(df_XEx(), df_Xtrend(),
@@ -709,14 +696,17 @@ server = function (input, output, session) {
 
 
 ### 2.7. Trend plot __________________________________________________
-    observeEvent(input$map_marker_click, {
-        if (rv$polyMode == 'false' & !rv$clickMode) {
+    observeEvent({
+        input$map_marker_click
+        period()
+        var()
+    }, {
+        if (rv$polyMode == 'false' & !rv$clickMode & !is.null(input$map_marker_click)) {
             showElement(id='plot_panel')
             
             codeClick = input$map_marker_click$id
 
             df_data_code = df_XEx()[df_XEx()$code == codeClick,]
-            names(df_data_code) = c('Date', 'group', 'Value', 'code')
             df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == codeClick,]
             color = fillList()[CodeAll() == codeClick]
             
@@ -724,10 +714,10 @@ server = function (input, output, session) {
                 plot_time_panel(df_data_code=df_data_code,
                                 df_Xtrend_code=df_Xtrend_code,
                                 var=var(),
-                                type='sévérité',
+                                type=type(),
                                 linetype='solid',
                                 alpha=input$alpha_choice,
-                                missRect=TRUE,
+                                missRect=FALSE,
                                 trend_period=period(),
                                 axis_xlim=period(),
                                 grid=FALSE,
@@ -777,7 +767,7 @@ server = function (input, output, session) {
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
     observe({
-        delay(500,
+        delay(100,
               runjs('
 $("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
 $("#colorbar_panel").css("position", "absolute");
@@ -802,8 +792,6 @@ $("#colorbar_panel").css("z-index", "999");')
             rv$inputPhoto = FALSE
         }
     })
-
-
 
 } 
 

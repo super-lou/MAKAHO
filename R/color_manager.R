@@ -196,6 +196,25 @@ palette_tester = function (palette_name='perso', figdir='figures', nColor=256) {
 }
 
 
+get_palette = function (nColor=256, palette_name='perso', reverse=FALSE, nbTick=10) {
+
+    # If the palette chosen is the personal ones
+    if (palette_name == 'perso') {
+        colorList = PalettePerso
+    # Else takes the palette corresponding to the name given
+    } else {
+        colorList = brewer.pal(11, palette_name)
+    }
+    
+    # Gets the number of discrete colors in the palette
+    nSample = length(colorList)
+    # Recreates a continuous color palette
+    palette = colorRampPalette(colorList)(nColor)
+
+    return (palette)
+}
+
+
 ## 2. USEFUL GENERICAL PLOT __________________________________________
 ### 2.1. Void plot ___________________________________________________
 # A plot completly blank

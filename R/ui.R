@@ -32,9 +32,9 @@ source(file.path('R', 'dependencies.R'), encoding='UTF-8')
 
 ui = bootstrapPage(
 
-    tags$head(HTML("<title>MAKHO</title> <link rel='icon' type='image/gif/png' href='inrae.png'>")),
-    
     useShinyjs(),
+    
+    tags$head(HTML("<title>MAKHO</title> <link rel='icon' type='image/gif/png' href='inrae.png'>")),
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________    
