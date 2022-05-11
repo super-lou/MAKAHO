@@ -101,13 +101,13 @@ names(varNameVect) = NULL
 
 # Vector of variable abbreviations
 varVect = c(
-    "MAXAN",
-    "tMAXAN",
+    "QIXA",
+    "tQIXA",
     "fA",
-    "MAXANniv",
-    "tMAXANniv",
+    "QIXAniv",
+    "tQIXAniv",
     "tDEBfon",
-    "tMEDfon",
+    "tCENfon",
     "tFINfon",
     "VOLfon",
     "tFON",
@@ -118,7 +118,7 @@ varVect = c(
     "QMNA",
     "VCN10",
     "tDEBeti",
-    "tMEDeti",
+    "tCENeti",
     "tFINeti",
     "VOLdef",
     "tETI"

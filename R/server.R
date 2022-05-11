@@ -220,10 +220,10 @@ server = function (input, output, session) {
         nCodeSample = length(CodeSample)
 
         
-        OkS = df_trend()$p <= alpha
-        CodeSU = df_trend()$code[OkS & df_trend()$trend >= 0]
-        CodeSD = df_trend()$code[OkS & df_trend()$trend < 0]
-        CodeNS = df_trend()$code[!OkS]
+        OkS = df_Xtrend()$p <= alpha
+        CodeSU = df_Xtrend()$code[OkS & df_Xtrend()$trend >= 0]
+        CodeSD = df_Xtrend()$code[OkS & df_Xtrend()$trend < 0]
+        CodeNS = df_Xtrend()$code[!OkS]
         
         shapeList = rep(1, length(fillList()))
         shapeList[match(CodeSU, CodeAll())] = '^'
@@ -249,6 +249,8 @@ server = function (input, output, session) {
         Nom = df_meta()$nom[okCode]
         
         label = get_label(Lon, Lat, Code, Nom)
+
+        print(Code)
         
         map = removeMarker(map, layerId=Code)
         map = addMarkers(map,
@@ -327,15 +329,12 @@ server = function (input, output, session) {
             df_XExtmp = read_FST(computer_data_path,
                                  filename(),
                                  filedir='fst')
-            
-            names(df_XExtmp) = c('datetime', 'group1', 'values', 'code')
 
             Start = period()[1]
             End = period()[2]
-
-            Date = as.Date(df_XExtmp$datetime) ### /!\
             
-            df_XExtmp = df_XExtmp[Date >= Start & Date <= End,]
+            df_XExtmp = df_XExtmp[df_XExtmp$Date >= Start
+                                  & df_XExtmp$Date <= End,]
             df_XExtmp
         } else {
             NULL
@@ -645,23 +644,22 @@ server = function (input, output, session) {
     })
     
 ### 2.5. Trend analysis ______________________________________________
-    df_trend = reactive({
-        if (!is.null(df_XEx())) {
-            df_trendtmp = Estimate.stats(data.extract=df_XEx(),
-                                         dep.option='AR1')
-            # print(df_trendtmp)
-            clean(period(), df_trendtmp, df_XEx())
-        } else {
-            NULL
-        }
+    df_Xtrend = reactive({
+        
+        # if (!is.null(df_XEx())) {
+            Estimate_stats_WRAP(df_XEx=df_XEx(),
+                                dep_option='AR1')
+        # } else {
+        #     NULL
+        # }
     })
 
 ### 2.6. Color _______________________________________________________
     fillList = reactive({
         nCodeAll = length(CodeAll())
-        
-        if (!is.null(df_XEx()) | !is.null(df_trend())) {            
-            res = get_trendExtremes(df_XEx(), df_trend(),
+
+        # if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {            
+            res = get_trendExtremes(df_XEx(), df_Xtrend(),
                                     CodeAll=CodeAll(),
                                     CodeSample=CodeSample(),
                                     toMean=TRUE)
@@ -695,9 +693,9 @@ server = function (input, output, session) {
                 fillListtmp = c(fillListtmp, color)
             }
             fillListtmp
-        } else {
-            rep(grey50COL, nCodeAll)
-        }
+        # } else {
+        #     rep(grey50COL, nCodeAll)
+        # }
     })
 
 
@@ -710,12 +708,12 @@ server = function (input, output, session) {
 
             df_data_code = df_XEx()[df_XEx()$code == codeClick,]
             names(df_data_code) = c('Date', 'group', 'Value', 'code')
-            df_trend_code = df_trend()[df_trend()$code == codeClick,]
+            df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == codeClick,]
             color = fillList()[CodeAll() == codeClick]
             
             output$trend_plot = renderPlot({
                 plot_time_panel(df_data_code=df_data_code,
-                                df_trend_code=df_trend_code,
+                                df_Xtrend_code=df_Xtrend_code,
                                 var=var(),
                                 type='sévérité',
                                 linetype='solid',

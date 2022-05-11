@@ -32,7 +32,7 @@ source(file.path('R', 'dependencies.R'), encoding='UTF-8')
 
 ui = bootstrapPage(
 
-    tags$head(HTML("<title>Abigail</title> <link rel='icon' type='image/gif/png' href='abigail.png'>")),
+    tags$head(HTML("<title>MAKHO</title> <link rel='icon' type='image/gif/png' href='inrae.png'>")),
     
     useShinyjs(),
     

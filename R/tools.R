@@ -156,7 +156,7 @@ read_FST = function (resdir, filename, filedir='fst') {
     df = tibble(fst::read_fst(outfile))
     return (df)
 }
-# df_data = read_FST(computer_data_path, 'VCN10Ex_01.fst', filedir='fst')
+# df_data = read_FST(computer_data_path, 'QIXAEx_01.fst', filedir='fst')
 # df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
 
 
@@ -183,7 +183,7 @@ get_trendExtremes = function (df_data, df_trend, CodeAll,
         # If it is a flow variable
         if (toMean) {
             # Computes the mean of the data on the period
-            dataMean = mean(df_data_code$values, na.rm=TRUE) ### /!\
+            dataMean = mean(df_data_code$Value, na.rm=TRUE) ### /!\
             # Normalises the trend value by the mean of the data
             trendValue = df_trend_code$trend / dataMean
             # If it is a date variable
@@ -398,96 +398,75 @@ add_months = function (date, n) {
 }
 
 
-### 3.2. Cleaning ____________________________________________________
-# Cleans the trend results of the function 'Estimate.stats' in the
-# 'StatsAnalysisTrend' package. It adds the station code and the
-# intercept of the trend to the trend results. Also makes the data
-# more presentable.
-clean = function (period, df_Xtrend, df_XEx) {
 
-    df_Xtrend = get_period(period, df_Xtrend, df_XEx)
+Estimate_stats_WRAP = function (df_XEx, alpha, period, dep_option='AR1') {
     
-    # Adds the intercept value of trend
-    df_Xtrend = get_intercept(df_Xtrend, df_XEx)
+    df_XEx = group_by(df_XEx, code)
+    df_XEx_RAW = tibble(datetime=as.numeric(format(df_XEx$Date, "%Y")),
+                        group1=group_indices(df_XEx),
+                        values=df_XEx$Value,
+                        Na.percent=df_XEx$NA_pct/100)
+    # Gets the different value of the group
+    Gkey = group_keys(df_XEx)
+    # Creates a new tibble of info of the group
+    info = bind_cols(group=seq(1:nrow(Gkey)),
+                     Gkey)
+
+    df_Xtrend = Estimate.stats(data.extract=df_XEx_RAW,
+                               level=alpha,
+                               dep.option=dep_option)
+
     
-    # Changes the position of the intercept column
-    df_Xtrend = relocate(df_Xtrend, intercept, .after=trend)
-
-    return (df_Xtrend)
-}
-
-
-### 3.1. Period of trend _____________________________________________
-# Compute the start and the end of the period for a trend analysis
-# according to the accessible data 
-get_period = function (period, df_Xtrend, df_XEx) {
-
     # Converts results of trend to tibble
     df_Xtrend = tibble(df_Xtrend)
-
-    df_Start = summarise(group_by(df_XEx, group1),
-                         period_start=datetime[which.min(abs(datetime - as.Date(period[1])))])
-    
-    df_End = summarise(group_by(df_XEx, group1),
-                       period_end=datetime[which.min(abs(datetime - as.Date(period[2])))])
-    
-    df_Xtrend$period_start = df_Start$period_start
-    df_Xtrend$period_end = df_End$period_end 
+    colnames(df_Xtrend)[1] = 'group'
+    df_Xtrend = tibble(code=info$code[df_Xtrend$group],
+                       df_Xtrend[-1])
+        
+    df_Xtrend = get_intercept(df_Xtrend, df_XEx)
+    df_Xtrend = get_period(df_Xtrend, df_XEx)
     
     return (df_Xtrend)
 }
 
 
-### 1.0. Intercept of trend __________________________________________
+#### 2.3.2. Period of trend analysis _________________________________
+# Compute the start and the end of the period for a trend analysis
+# according to the accessible data 
+get_period = function (df_Xtrend, df_XEx) {
+
+    df_Start = summarise(group_by(df_XEx, code),
+                         Start=min(Date, na.rm=TRUE))
+    
+    df_End = summarise(group_by(df_XEx, code),
+                       End=max(Date, na.rm=TRUE))
+    
+    df_Xtrend$period_start = df_Start$Start
+    df_Xtrend$period_end = df_End$End
+    
+    return (df_Xtrend)
+}
+
+#### 2.3.3. Intercept of trend _______________________________________
 # Compute intercept values of linear trends with first order values
 # of trends and the data on which analysis is performed.
 get_intercept = function (df_Xtrend, df_XEx, unit2day=365.25) {
 
-    # Converts results of trend to tibble
-    df_Xtrend = tibble(df_Xtrend)
-    
-    df_mu_X = summarise(group_by(df_XEx, group1),
-                        mu_X=mean(values, na.rm=TRUE))
+    df_mu_X = summarise(group_by(df_XEx, code),
+                        mu_X=mean(Value, na.rm=TRUE))
 
-    df_mu_t = summarise(group_by(df_XEx, group1),
-                        mu_t=as.numeric(mean(datetime, na.rm=TRUE)) / unit2day)
+    df_mu_t = summarise(group_by(df_XEx, code),
+                        mu_t=as.numeric(mean(Date, na.rm=TRUE)) / unit2day)
 
-    df_Xtrendtmp = tibble(group1=df_Xtrend$group1,
+    df_Xtrendtmp = tibble(code=df_Xtrend$code,
                           trend=df_Xtrend$trend,
                           mu_X=df_mu_X$mu_X,
                           mu_t=df_mu_t$mu_t)
     
-    df_b = summarise(group_by(df_Xtrendtmp, group1),
+    df_b = summarise(group_by(df_Xtrendtmp, code),
                      b=mu_X - mu_t * trend)
-
+    
     df_Xtrend$intercept = df_b$b
-
-    # # Create a column in trend full of NA
-    # df_Xtrend$intercept = NA
-
-    # # For all different group
-    # for (g in df_XEx$group1) {
-    #     # Get the data and trend value linked to this group
-    #     df_data_code = df_XEx[df_XEx$group1 == g,]
-    #     df_Xtrend_code = df_Xtrend[df_Xtrend$group1 == g,]
-
-    #     # Get the time start and end of the different periods
-    #     Start = df_Xtrend_code$period_start
-    #     End = df_Xtrend_code$period_end
-
-    #     # Get the group associated to this period
-    #     id = which(df_Xtrend$group1 == g 
-    #                & df_Xtrend$period_start == Start
-    #                & df_Xtrend$period_end == End)
-
-    #     # Compute mean of flow and time period
-    #     mu_X = mean(df_data_code$values, na.rm=TRUE)
-    #     mu_t = as.numeric(mean(c(Start, End), na.rm=TRUE)) / unit2day
-
-    #     # Get the intercept of the trend
-    #     b = mu_X - mu_t * df_Xtrend_code$trend
-    #     # And store it
-    #     df_Xtrend$intercept[id] = b
-    # }    
+    
     return (df_Xtrend)
 }
