@@ -26,10 +26,6 @@
 # R/marker_manager.R
 
 
-# Sourcing dependencies
-source(file.path('R', 'dependencies.R'), encoding='UTF-8')
-
-
 create_marker = function (resources_path, widthRel=1, filedir='marker', color='grey50', fill_PaletteName='perso', nColor=256, reverse=TRUE, stroke=1.5, fillAdd=NULL, colorAdd=NULL, ...) {
 
     # Names of a temporary directory to store all the independent pages

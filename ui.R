@@ -26,15 +26,11 @@
 # ui.R
 
 
-# Sourcing dependencies
-source(file.path('R', 'dependencies.R'), encoding='UTF-8')
-
-
 ui = bootstrapPage(
 
     useShinyjs(),
     
-    tags$head(HTML("<title>MAKHO</title> <link rel='icon' type='image/gif/png' href='inrae.png'>")),
+    tags$head(HTML("<title>MAKAHO</title> <link rel='icon' type='image/gif/png' href='MAKAHO.png'>")),
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________    
@@ -343,6 +339,24 @@ ui = bootstrapPage(
                              style=CSSbutton_panelSmall,
                              icon_name=iconLib$download)
                ),
+
+    downloadLink("downloadData", label=""),
+    tags$head(tags$script(HTML('Shiny.addCustomMessageHandler("jsCode",
+                                function(message) {
+                                eval(message.value);});'))),
+    
+    hidden(
+        absolutePanel(
+            id='download_panel',
+            style=CSSpanel_center,
+            fixed=TRUE,
+            width=200, height="auto",
+            left=0, top=10, right=0,
+            actionButtonI('downloadOk_button', label=word("b.ok"),
+                          style=CSSbutton_soloBar,
+                          icon_name=iconLib$ok)
+        )
+    ),
     
 ### 5.2. Screenshot __________________________________________________
     fixedPanel(right=50, top=10,

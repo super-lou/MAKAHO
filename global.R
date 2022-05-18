@@ -23,12 +23,42 @@
 # ///
 #
 #
-# app.R
+# global.R
+
+
+# Import library
+library(shiny)
+library(shinythemes)
+library(shinyjs)
+library(shinyWidgets)
+library(leaflet)
+library(leaflet.extras2)
+library(StatsAnalysisTrend)
+library(icons)
+library(dplyr)
+library(tools) # file_ext
+library(data.table) # fast reading
+library(sp) # crs
+library(sf) # crs
+library(ggplot2)
+library(ggtext)
+library(scales)
+library(ggh4x)
+
+
+# Sourcing R files
+source(file.path('R', 'tools.R'), encoding='UTF-8')
+source(file.path('R', 'plot.R'), encoding='UTF-8')
+source(file.path('R', 'color_manager.R'), encoding='UTF-8')
+source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
+source(file.path('R', 'style.R'), encoding='UTF-8')
+source(file.path('R', 'settings.R'), encoding='UTF-8')
 
 
 # Sourcing app
-source(file.path('R', 'server.R'), encoding='UTF-8')
-source(file.path('R', 'ui.R'), encoding='UTF-8')
+source('server.R', encoding='UTF-8')
+source('ui.R', encoding='UTF-8')
+
 
 # Running app localy
 shinyApp(ui=ui, server=server)

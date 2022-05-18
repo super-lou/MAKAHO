@@ -26,10 +26,6 @@
 # R/style.R
 
 
-# Sourcing dependencies
-source(file.path('R', 'dependencies.R'), encoding='UTF-8')
-
-
 CSSpanel_default =
     "background-color: rgba(140, 140, 140, 0.9); border-radius: 2px 2px 2px 2px;"
 

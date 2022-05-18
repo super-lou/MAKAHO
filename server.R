@@ -26,18 +26,6 @@
 # server.R
 
 
-# Sourcing dependencies
-source(file.path('R', 'dependencies.R'), encoding='UTF-8')
-
-# Sourcing R files
-source(file.path('R', 'tools.R'), encoding='UTF-8')
-source(file.path('R', 'plot.R'), encoding='UTF-8')
-source(file.path('R', 'color_manager.R'), encoding='UTF-8')
-source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
-source(file.path('R', 'style.R'), encoding='UTF-8')
-source(file.path('R', 'settings.R'), encoding='UTF-8')
-
-
 server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 
@@ -52,6 +40,7 @@ server = function (input, output, session) {
                         mapHTML=NULL,
                         polyMode='false',
                         clickMode=FALSE,
+                        downloadMode=FALSE,
                         inputPhoto=FALSE,
                         defaultBounds=NULL,
                         previewBounds=NULL,
@@ -376,12 +365,13 @@ server = function (input, output, session) {
         hide(id='theme_panel')
         hide(id='info_panel')
         hide(id='poly_panel')
+        hide(id='download_panel')
         showElement(id='click_panel')
         rv$clickMode = TRUE
     })
 
     observeEvent(input$map_marker_click, {
-        if (rv$polyMode == 'false' & rv$clickMode) {
+        if (rv$polyMode == 'false' & rv$clickMode & !rv$downloadMode) {
             codeClick = input$map_marker_click$id
             CodeSample = rv$CodeSample
             if (codeClick %in% CodeSample) {
@@ -425,6 +415,7 @@ server = function (input, output, session) {
         hide(id='theme_panel')
         hide(id='info_panel')
         hide(id='click_panel')
+        hide(id='download_panel')
         showElement(id='poly_panel')
         rv$polyMode = "Add"
         rv$polyCoord = tibble()
@@ -456,7 +447,7 @@ server = function (input, output, session) {
     })
     
     observeEvent(input$map_click, {
-        if (rv$polyMode != 'false') {
+        if (rv$polyMode != 'false' & !rv$clickMode & !rv$downloadMode) {
             rv$polyCoord = bind_rows(rv$polyCoord,
                                      tibble(lng=input$map_click$lng,
                                             lat=input$map_click$lat))
@@ -701,7 +692,7 @@ server = function (input, output, session) {
         period()
         var()
     }, {
-        if (rv$polyMode == 'false' & !rv$clickMode & !is.null(input$map_marker_click)) {
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$downloadMode & !is.null(input$map_marker_click)) {
             showElement(id='plot_panel')
             
             codeClick = input$map_marker_click$id
@@ -765,7 +756,47 @@ server = function (input, output, session) {
 
     
 ## 5. SAVE ___________________________________________________________
-### 5.1. Screenshot __________________________________________________
+### 5.1. Download ____________________________________________________
+    observeEvent(input$download_button, {
+        hide(id='ana_panel')
+        hide(id='theme_panel')
+        hide(id='info_panel')
+        hide(id='poly_panel')
+        hide(id='click_panel')
+        showElement(id='download_panel')
+        rv$downloadMode = TRUE
+    })
+
+
+    observeEvent(input$map_marker_click, {
+        if (rv$polyMode == 'false' & !rv$clickMode & rv$downloadMode) {
+            codeClick = input$map_marker_click$id
+
+            output$downloadData = downloadHandler(
+                filename = function () {
+                    paste0(codeClick, ".pdf")
+                },
+                content = function (file) {
+                    name = paste0(codeClick, ".pdf")
+                    from = file.path(computer_data_path, 'pdf', name)
+                    file.copy(from, file)
+                }
+            )
+            jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+            session$sendCustomMessage(type='jsCode',
+                                      list(value=jsinject))    
+        }
+    })
+
+    observeEvent(input$downloadOk_button, {
+        rv$downloadMode = FALSE
+        hide(id='download_panel')
+    })
+    
+            
+### 5.2. Screenshot __________________________________________________
     observe({
         delay(100,
               runjs('

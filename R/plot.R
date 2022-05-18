@@ -26,10 +26,6 @@
 # plot.R
 
 
-# Sourcing dependencies
-source(file.path('R', 'dependencies.R'), encoding='UTF-8')
-
-
 ### 1.1. Personal theme ______________________________________________
 theme_ash =
     theme(

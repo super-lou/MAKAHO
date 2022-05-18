@@ -26,10 +26,6 @@
 # R/color_manager.R
 
 
-# Sourcing dependencies
-source(file.path('R', 'dependencies.R'), encoding='UTF-8')
-
-
 PalettePerso = c('#0f3b57', # cold
                  '#1d7881',
                  '#80c4a9',
