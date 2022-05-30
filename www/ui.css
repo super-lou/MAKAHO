@@ -1,0 +1,151 @@
+:root {
+
+    font-size: medium;
+    --tooltipSize: small;
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.Panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.Panel > :not(:first-child) {
+    margin-top: 0.2rem;
+}
+
+
+.card {
+    padding: 0.5rem 1rem;
+    /* background-color: rgba(140, 140, 140, 0.85); */
+    background-color: rgba(5, 5, 10, 0.85);
+    border-radius: 0.5rem/0.5rem;
+}
+
+
+
+
+a {
+    color: #979797;
+    text-decoration: none;
+}
+
+.Button {
+    font: inherit;
+    border: none;
+    border-radius: 0.25rem/0.25rem;
+    min-width: 2rem;
+    padding: 0 0.5rem;
+    margin: 0;
+    background-color: transparent;
+    cursor: pointer;
+    color: #979797;
+    touch-action: manipulation;
+}
+
+.btn:hover {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+[aria-checked="true"],
+[aria-pressed="true"],
+[aria-selected="true"],
+.selected {
+    color: #e7ca7a;
+    background: #474747;
+}
+
+Button:focus,
+Button:hover,
+a:focus,
+a:hover {
+    color: #ffffff;
+}
+
+Button[aria-disabled="true"] {
+    color: #444444;
+    background: inherit;
+}
+
+
+
+
+
+
+.actionButton.Button .btn {
+    font: inherit;
+    border: none;
+    border-radius: 0.25rem/0.25rem;
+    min-width: 2rem;
+    padding: 0 0.5rem;
+    margin: 0;
+    background-color: transparent;
+    cursor: pointer;
+    color: #979797;
+    touch-action: manipulation;
+}
+.actionButton.Button .btn:hover {
+    color: #ffffff;
+    background-color: transparent;
+}
+.actionButton.Button .btn-default.active, .actionButton.Button .btn-default:active, .actionButton.Button .open > .dropdown-toggle.btn-default {
+    color: #e7ca7a;
+    background: #474747;
+}
+
+
+
+
+.Row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.Row > .sep {
+    align-self: stretch;
+}
+
+.sep {
+    display: inline;
+    margin: 0.1rem 0.5rem;
+    border-left: 2px solid #bbb;
+    border-top: 1px solid #bbb;
+}
+
+.row-label {
+    word-break: keep-all;
+    color: #eeeeee;
+} 
+
+.bunch {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin: -1px;
+
+}
+
+.bunch > * {
+    margin: 1px;
+}
+
+.bunch > .bunch {
+    margin: 0;
+}
+
+
+.bunch > a {
+    display: inline-block;
+    min-width: 1rem;
+    padding: 0 0.5rem;
+    text-align: center;
+}
+
+

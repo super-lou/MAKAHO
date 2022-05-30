@@ -44,6 +44,10 @@ CSSpanel_colorbar =
 CSSpanel_plot =
     paste0("background-color: ", grey98COL, "; margin-left: auto; margin-right: auto; border-radius: 5px 5px 5px 5px;")
 
+CSSpanel_right =
+    "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 2px 5px;"
+
+
 CSSbutton_panel =
     "color: #fff; background-color: rgba(60, 60, 60, 0.95); border-color: transparent;"
 
@@ -59,7 +63,6 @@ CSSbutton_inPanel =
 CSSbutton_inPanelSmall =
     paste0(CSSbutton_inPanel, " padding-left: 4px; padding-right: 4px; padding-top: 2px; padding-bottom: 2px;")
 
-
 CSSbutton_soloBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-right: 1px solid #d9d9d9; border-radius: 5px 5px 5px 5px;"
 
@@ -71,10 +74,6 @@ CSSbutton_middleBar =
 
 CSSbutton_endBar =
     "background-color: #fff; border-color: transparent; margin-left: -2px; margin-right: -2px; border-left: 1px solid #d9d9d9; border-radius: 0px 5px 5px 0px;"
-
-
-CSSpanel_right =
-    "background-color: rgba(140, 140, 140, 0.9); border-radius: 5px 5px 2px 5px;"
 
 CSSbutton_info =
     "padding-left: 0px; padding-right: 0px; padding-top: 0px; padding-bottom: 0px; color: #fff; background-color: transparent; border-color: transparent; font-size: 25px"

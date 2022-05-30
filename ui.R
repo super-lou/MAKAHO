@@ -39,6 +39,8 @@ ui = bootstrapPage(
     tags$head(tags$style(
                ".leaflet-control-easyPrint.leaflet-bar.leaflet-control
                    {display: none;}")),
+
+    includeCSS("www/ui.css"),
     
     tags$body(
              
@@ -62,7 +64,7 @@ ui = bootstrapPage(
                    width="auto", height="auto",
                    actionButtonI('focusZoom_button',
                                  style=CSSbutton_panelSmall,
-                                 icon_name=iconLib$focus)
+                                 icon_name=iconLib$focus_white)
                    )
     ),
     
@@ -72,7 +74,7 @@ ui = bootstrapPage(
                    width="auto", height="auto",
                    actionButtonI('defaultZoom_button',
                                  style=CSSbutton_panelSmall,
-                                 icon_name=iconLib$default)
+                                 icon_name=iconLib$default_white)
                    )
     ),
 
@@ -84,51 +86,54 @@ ui = bootstrapPage(
                actionButtonI('ana_button',
                             HTML(paste0("<b>", word("a.title"), "</b>")),
                             style=CSSbutton_panel,
-                            icon_name=iconLib$analytics)
+                            icon_name=iconLib$show_chart_white)
                ),
     
 ### 2.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='ana_panel',
-            style=CSSpanel_left,
+            class="Panel card",
             fixed=TRUE,
-            width=310, height="auto",
+            width="auto", height="auto",
             left=10, bottom=50,
             
 ### 2.3. Code selection ______________________________________________
-            column(7, style="padding-right: 0px; margin-right: 0px;
-                             margin-top: 9px;",
-                   pickerInput(
-                       inputId="code_picker",
-                       label=word("a.sta"), 
-                       choices=NULL,
-                       multiple=TRUE,
-                       selected=NULL,
-                       options=list(size=7,
-                                    `live-search`=TRUE,
-                                    `actions-box`=TRUE))),
+            div(class="Row",
+                div(class="row-label",
+                    HTML(
+                        paste0("<span><b>",
+                               "Sélection",
+                               "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch", role="toolbar",
+                    actionButtonI(class="Button",
+                        'all_button',
+                        label="Toute",
+                        icon_name=iconLib$check_circle_white),
+                
+                    actionButtonI(class="Button",
+                        'none_button',
+                        label="Aucune",
+                        icon_name=iconLib$cross_circle_white),
+                    
+                    actionButtonI(class="Button",
+                        'click_button',
+                        NULL,
+                        icon_name=iconLib$click_white),
 
-            column(2, style="margin-left: 4px; margin-top: 34px;
-                             margin-bottom: 0px;",
-                   actionButtonI('click_button',
-                                 NULL,
-                                 style=CSSbutton_inPanel,
-                                 icon_name=iconLib$click)),
-            
-            column(2, style="margin-left: 4px; margin-top: 34px;
-                             margin-bottom: 0px;",
-                   actionButtonI('poly_button',
-                                 NULL,
-                                 style=CSSbutton_inPanel,
-                                 icon_name=iconLib$draw)),
+                    actionButtonI(class="Button",
+                        'poly_button',
+                        NULL,
+                        icon_name=iconLib$polyline_white))),
+            br(),
 
-            column(12,
-                   selectizeInput(
-                       inputId="search_input", 
-                       label=NULL,
-                       multiple=TRUE,
-                       choices=NULL)),
+            div(class="Row",
+                selectizeInput(
+                    inputId="search_input", 
+                    label=NULL,
+                    multiple=TRUE,
+                    choices=NULL)),
 
 
 ### 2.4. Variable selection __________________________________________
@@ -169,12 +174,12 @@ ui = bootstrapPage(
                                      choices=sigP,
                                      selected=sigP[3])),
             
-            column(12,
-                   radioGroupButtons(inputId="trendArea_choice",
-                                     label=word("a.ctT"),
-                                     size="sm",
-                                     choices=c(word("a.cts"), word("a.ctr")),
-                                     selected=word("a.cts")))
+            # column(12,
+            #        radioGroupButtons(inputId="trendArea_choice",
+            #                          label=word("a.ctT"),
+            #                          size="sm",
+            #                          choices=c(word("a.cts"), word("a.ctr")),
+            #                          selected=word("a.cts")))
         )
     ),
 
@@ -189,7 +194,7 @@ ui = bootstrapPage(
 
             actionButtonI('clickOk_button', label=word("b.ok"),
                           style=CSSbutton_soloBar,
-                          icon_name=iconLib$ok)
+                          icon_name=iconLib$ok_black)
         )
     ),
 
@@ -204,15 +209,15 @@ ui = bootstrapPage(
 
             actionButtonI('polyAdd_button', label=NULL,
                           style=CSSbutton_startBar,
-                          icon_name=iconLib$add),
+                          icon_name=iconLib$add_black),
             
             actionButtonI('polyRm_button', label=NULL,
                           style=CSSbutton_middleBar,
-                          icon_name=iconLib$remove),
+                          icon_name=iconLib$remove_black),
             
             actionButtonI('polyOk_button', label=word("b.ok"),
                           style=CSSbutton_endBar,
-                          icon_name=iconLib$ok)
+                          icon_name=iconLib$ok_black)
         )
     ),
 
@@ -234,7 +239,7 @@ ui = bootstrapPage(
             tags$div(style="position: absolute;",
                      actionButtonI('closePlot_button', label=NULL,
                                    style=CSSbutton_inPanelSmall,
-                                   icon_name=iconLib$close))
+                                   icon_name=iconLib$close_black))
         )
     ),
 
@@ -246,7 +251,7 @@ ui = bootstrapPage(
                width="auto", height="auto",
                actionButtonI('theme_button', label=NULL,
                              style=CSSbutton_panel,
-                             icon_name=iconLib$palette)
+                             icon_name=iconLib$segment_white)
                ),
     
 ### 3.2. Panel _______________________________________________________
@@ -265,11 +270,11 @@ ui = bootstrapPage(
                                      size="xs",
                                      selected="light",
                                      choiceNames=
-                                         list(img(iconLib$light,
+                                         list(img(iconLib$light_black,
                                                   align="right"),
-                                              img(iconLib$terrain,
+                                              img(iconLib$terrain_black,
                                                   align="right"),
-                                              img(iconLib$dark,
+                                              img(iconLib$dark_black,
                                                   align="right")),
                                      choiceValues= list("light",
                                                         "terrain",
@@ -337,7 +342,7 @@ ui = bootstrapPage(
                width="auto", height="auto",
                actionButtonI('download_button',
                              style=CSSbutton_panelSmall,
-                             icon_name=iconLib$download)
+                             icon_name=iconLib$download_white)
                ),
 
     downloadLink("downloadData", label=""),
@@ -354,7 +359,7 @@ ui = bootstrapPage(
             left=0, top=10, right=0,
             actionButtonI('downloadOk_button', label=word("b.ok"),
                           style=CSSbutton_soloBar,
-                          icon_name=iconLib$ok)
+                          icon_name=iconLib$ok_black)
         )
     ),
     
@@ -363,7 +368,7 @@ ui = bootstrapPage(
                width="auto", height="auto",
                actionButtonI('photo_button',
                              style=CSSbutton_panelSmall,
-                             icon_name=iconLib$photo)
+                             icon_name=iconLib$photo_white)
                ),
    
 )
