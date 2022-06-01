@@ -40,21 +40,21 @@ create_dico = function (dico_file, resources_path) {
     return (dico)
 }
 
-get_varNameList = function () {
-    OkPhe = as.vector(regexpr("a.var[0-9]$", dico[[1]])) != -1
-    IdPhe = which(OkPhe)
-    nbPhe = sum(as.numeric(OkPhe))
+get_varNameList = function (dico) {
+    OkEvent = as.vector(regexpr("a.var[0-9]$", dico[[1]])) != -1
+    IdEvent = which(OkEvent)
+    nbEvent = sum(as.numeric(OkEvent))
 
     OkNumVar = as.vector(regexpr("a.var[0-9].[0-9]$", dico[[1]]))
     nbVar = with(rle(OkNumVar), lengths[values == 1])
 
     IdList = list()
 
-    for (i in 1:nbPhe) {
-        nbVar_phe = nbVar[i]
+    for (i in 1:nbEvent) {
+        nbVar_event = nbVar[i]
         sub_IdList = list()
         
-        for (j in 1:nbVar_phe) {
+        for (j in 1:nbVar_event) {
             sub_IdList = append(sub_IdList,
                                    word(paste0("a.var", i, "." , j)))
         }
@@ -63,6 +63,52 @@ get_varNameList = function () {
     } 
     return (IdList)
 }
+
+
+
+get_Var = function (dico, varProba) {
+    OkEvent = as.vector(regexpr("a.var[0-9]$", dico[[1]])) != -1
+    IdEvent = which(OkEvent)
+    nbEvent = sum(as.numeric(OkEvent))
+
+    OkNumVar = as.vector(regexpr("a.var[0-9].[0-9]$", dico[[1]]))
+    nbVar = with(rle(OkNumVar), lengths[values == 1])
+
+    Var = tibble()
+
+    for (i in 1:nbEvent) {
+        nbVar_event = nbVar[i]
+        event = word(paste0("a.var", i))
+        
+        for (j in 1:nbVar_event) {
+            line = word(paste0("a.var", i, "." , j))
+            var = trimws(gsub(":.*$", "", line))
+            name = trimws(gsub("^.*:", "", line))
+            
+            if (grepl('^t.*', var)) {
+                type = 'saisonnalité'
+            } else {
+                type = 'sévérité'
+            } ### /!\ attention si y'a d'autre type
+            
+            if (var %in% names(varProba)) {
+                proba = list(varProba[[which(names(varProba) == var)]])
+            } else {
+                proba = NA
+            }
+            
+            Var = bind_rows(Var, tibble(event=event,
+                                        var=var,
+                                        name=name,
+                                        type=type,
+                                        proba=proba))
+        }
+    } 
+    return (Var)
+}
+
+
+
 
 get_urlTile = function (theme, provider, theme_file, resources_path, token=NULL) {
     

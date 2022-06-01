@@ -274,26 +274,51 @@ server = function (input, output, session) {
     
 
 ### 2.2. Variable extration __________________________________________
+    observeEvent(input$event_choice, {
+        var_event = Var$var[Var$event == input$event_choice]        
+        updateRadioGroupButtons(session, "var_choice",
+                                status="RadioButton",
+                                choices=var_event,
+                                selected=var_event[1])
+    })
+
     var = reactive({
-        varVect[varNameVect == input$varName]
+        if (is.null(input$var_choice)) {
+            Var$var[1]
+        } else {
+            input$var_choice
+        }
+    })
+
+    name = reactive({
+        Var$name[Var$var == var()]
     })
 
     type = reactive({
-            typeVect[varNameVect == input$varName]            
+        Var$type[Var$var == var()]            
     })
 
-    observe({
-        toggle(id="proba_choice",
-               condition=var() %in% varP)
+    proba = reactive({
+        id = which(Var$var == var())
+        if (!identical(id, integer(0))) {
+            Var$proba[[id]]
+        } else {
+            NULL
+        }
+    })
+    
 
-        if (var() %in% varP) {
-            choices = valP[[which(var() == varP)]]
+    observe({
+        toggle(id="proba_row",
+               condition=!is.null(proba()))
+
+        if (!is.null(proba())) {
+            choices = proba()
         } else {
             choices = FALSE
         }
         updateRadioGroupButtons(session, "proba_choice",
-                                size="sm",
-                                justified=TRUE,
+                                status="RadioButton",
                                 choices=choices)
     })
 
@@ -541,27 +566,27 @@ server = function (input, output, session) {
         htmlValues = c(
             paste0(df_meta()$nom,
                    '<i style="font-size: 9pt; color: ',
-                   grey70COL, '">&emsp;', word("a.search.name"),
+                   grey85COL, '">&emsp;', word("a.search.name"),
                    '</i>'),
             paste0(df_meta()$region_hydro,
                    '<i style="font-size: 9pt; color: ',
-                   grey70COL, '">&emsp;', word("a.search.region"),
+                   grey85COL, '">&emsp;', word("a.search.region"),
                    '</i>'),
             paste0(df_meta()$regime_hydro,
                    '<i style="font-size: 9pt; color: ',
-                   grey70COL, '">&emsp;', word("a.search.regime"),
+                   grey85COL, '">&emsp;', word("a.search.regime"),
                    '</i>'),
             paste0(meta_location(),
                    '<i style="font-size: 9pt; color: ',
-                   grey70COL, '">&emsp;', word("a.search.location"),
+                   grey85COL, '">&emsp;', word("a.search.location"),
                    '</i>'),
             paste0(meta_river(),
                    '<i style="font-size: 9pt; color: ',
-                   grey70COL, '">&emsp;', word("a.search.river"),
+                   grey85COL, '">&emsp;', word("a.search.river"),
                    '</i>'),
             paste0(meta_basin(),
                    '<i style="font-size: 9pt; color: ',
-                   grey70COL, '">&emsp;', word("a.search.basin"),
+                   grey85COL, '">&emsp;', word("a.search.basin"),
                    '</i>')
         )
         

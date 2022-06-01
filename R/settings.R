@@ -89,8 +89,14 @@ dico_file = 'dico.txt'
 # Creates the dictionnary
 dico = create_dico(dico_file, resources_path)
 
+
+
+
+varProba = list(fA=c("90%", "95%", "99%"),
+                Qp=c("10%", "25%", "50%", "75%", "90%"))
+
 # Gets the variable name list
-varNameList = get_varNameList()
+varNameList = get_varNameList(dico)
 # Converts the 2 dimensional list into a vector
 varNameVect = do.call(c, unlist(varNameList, recursive=FALSE))
 names(varNameVect) = NULL
@@ -105,7 +111,7 @@ varVect = c(
     "tDEBfon",
     "tCENfon",
     "tFINfon",
-    "VOLfon",
+    "vFON",
     "tFON",
     "QA",
     "QMA",
@@ -116,7 +122,7 @@ varVect = c(
     "tDEBeti",
     "tCENeti",
     "tFINeti",
-    "VOLdef",
+    "vDEF",
     "tETI"
 )
 
@@ -152,6 +158,12 @@ varP = c("fA",
 valP = list(c("90%", "95%", "99%"),
             c("10%", "25%", "50%", "75%", "90%"))
 
+
+
+Var = get_Var(dico, varProba)
+
+
+
 # Creates a vector of months name
 Months = c(word("a.m01"), word("a.m02"), word("a.m03"), word("a.m04"),
            word("a.m05"), word("a.m06"), word("a.m07"), word("a.m08"),
@@ -166,4 +178,5 @@ sigP = c("1%", "5%", "10%")
 palette_name = 'perso'
 palette_reverse = TRUE
 nbTick = 10
+
 

@@ -95,91 +95,128 @@ ui = bootstrapPage(
             id='ana_panel',
             class="Panel card",
             fixed=TRUE,
-            width="auto", height="auto",
+            width=460, height="auto",
             left=10, bottom=50,
             
-### 2.3. Code selection ______________________________________________
+### 2.3. Station selection ___________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("a.code"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch", role="toolbar",
+                    actionButtonI(class="Button",
+                                  'all_button',
+                                  label="Toute",
+                                  icon_name=iconLib$check_circle_white),
+                    
+                    actionButtonI(class="Button",
+                                  'none_button',
+                                  label="Aucune",
+                                  icon_name=iconLib$cross_circle_white),
+                    
+                    actionButtonI(class="Button",
+                                  'click_button',
+                                  NULL,
+                                  icon_name=iconLib$click_white),
+
+                    actionButtonI(class="Button",
+                                  'poly_button',
+                                  NULL,
+                                  icon_name=iconLib$polyline_white))),
+            br(),
+
+            div(class="Row",
+                div(style="margin-bottom: -1rem;",
+                    selectizeInput(inputId="search_input", 
+                                   label=NULL,
+                                   multiple=TRUE,
+                                   choices=NULL))),
+
+### 2.4. Variable selection __________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word('a.event'),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioGroupButtons(status="RadioButton",
+                                      inputId="event_choice",
+                                      label=NULL,
+                                      choices=rle(Var$event)$values,
+                                      selected=rle(Var$event)$values[1]))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word('a.var'),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioGroupButtons(status="RadioButton",
+                                      inputId="var_choice",
+                                      label=NULL,
+                                      choices=FALSE,
+                                      selected=NULL))),
+
+            hidden(
+                div(class="Row", id="proba_row",
+                    div(class="row-label",
+                        HTML(paste0("<span><b>",
+                                    word('a.proba'),
+                                    "</b></span>"))),
+                    div(class="sep"),
+                    div(class="bunch",
+                        radioGroupButtons(status="RadioButton",
+                                          inputId="proba_choice",
+                                          choices=FALSE,
+                                          selected=NULL)))),
+        
+### 2.5. Period selection ____________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word('a.dm'),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch textSlider",
+                    sliderTextInput(inputId="dateMonth_slider",
+                                    label=NULL,
+                                    grid=TRUE,
+                                    force_edges=FALSE,
+                                    choices=Months))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word('a.dy'),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    sliderInput("dateYear_slider",
+                                label=NULL,
+                                step=1,
+                                sep='',
+                                min=1900,
+                                max=2020,
+                                value=c(1968, 2020)))),
+
+### 2.6. Statistical option ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(
                         paste0("<span><b>",
-                               "Sélection",
+                               word("a.sig"),
                                "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch", role="toolbar",
-                    actionButtonI(class="Button",
-                        'all_button',
-                        label="Toute",
-                        icon_name=iconLib$check_circle_white),
-                
-                    actionButtonI(class="Button",
-                        'none_button',
-                        label="Aucune",
-                        icon_name=iconLib$cross_circle_white),
-                    
-                    actionButtonI(class="Button",
-                        'click_button',
-                        NULL,
-                        icon_name=iconLib$click_white),
-
-                    actionButtonI(class="Button",
-                        'poly_button',
-                        NULL,
-                        icon_name=iconLib$polyline_white))),
-            br(),
-
-            div(class="Row",
-                selectizeInput(
-                    inputId="search_input", 
-                    label=NULL,
-                    multiple=TRUE,
-                    choices=NULL)),
-
-
-### 2.4. Variable selection __________________________________________
-            column(12,
-                   selectInput("varName", word('a.varT'),
-                               varNameList)),
-            column(12, style="margin-top: -12px;",
-                   hidden(
-                       radioGroupButtons(inputId="proba_choice",
-                                         choices=FALSE,
-                                         selected=NULL))),
-        
-### 2.5. Period selection ____________________________________________
-            chooseSliderSkin("Flat", "#00A5A8"),
-            tags$style(type="text/css",
-                       ".irs-grid-pol.small {height: 0px;}"),
-
-            column(12,
-                   sliderTextInput(inputId="dateMonth_slider",
-                                   label=word("a.dm"),
-                                   grid=TRUE,
-                                   force_edges=TRUE,
-                                   choices=Months)),
-
-            column(12,
-                   sliderInput("dateYear_slider", word("a.dy"),
-                               step=1,
-                               sep='',
-                               min=1900,
-                               max=as.numeric(format(today, "%Y")),
-                               value=c(1968, 2020))),
-
-### 2.6. Statistical option ______________________________________________
-            column(12,
-                   radioGroupButtons(inputId="alpha_choice",
-                                     label=word("a.sig"),
-                                     size="sm",
-                                     choices=sigP,
-                                     selected=sigP[3])),
-            
-            # column(12,
-            #        radioGroupButtons(inputId="trendArea_choice",
-            #                          label=word("a.ctT"),
-            #                          size="sm",
-            #                          choices=c(word("a.cts"), word("a.ctr")),
-            #                          selected=word("a.cts")))
+                div(class="bunch",
+                    radioGroupButtons(status="RadioButton",
+                                      inputId="alpha_choice",
+                                      label=NULL,
+                                      choices=sigP,
+                                      selected=sigP[3])))
         )
     ),
 
@@ -197,7 +234,6 @@ ui = bootstrapPage(
                           icon_name=iconLib$ok_black)
         )
     ),
-
 
     hidden(
         absolutePanel(

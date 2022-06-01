@@ -29,7 +29,6 @@
 install.packages("shiny")
 install.packages("shinythemes")
 install.packages("shinyjs")
-install.packages("shinyWidgets")
 install.packages("leaflet")
 install.packages("dplyr")
 install.packages("tools") # file_ext
@@ -40,6 +39,7 @@ install.packages("ggplot2")
 install.packages("ggtext")
 install.packages("scales")
 
+remotes::install_github("dreamRs/shinyWidgets")
 remotes::install_github("mitchelloharawild/icons")
 remotes::install_github('trafficonese/leaflet.extras2@print_dpi')
 remotes::install_github("https://github.com/benRenard/BFunk") 

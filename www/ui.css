@@ -27,102 +27,83 @@
 
 
 
-
-a {
-    color: #979797;
-    text-decoration: none;
-}
-
+/* BUTTON */
 .Button {
-    font: inherit;
-    border: none;
-    border-radius: 0.25rem/0.25rem;
-    min-width: 2rem;
-    padding: 0 0.5rem;
-    margin: 0;
-    background-color: transparent;
-    cursor: pointer;
-    color: #979797;
-    touch-action: manipulation;
+    font: inherit !important;
+    border: none !important;
+    border-radius: 0.25rem/0.25rem !important;
+    min-width: 2rem !important;
+    padding: 0 0.5rem !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    cursor: pointer !important;
+    color: #979797 !important;
+    touch-action: manipulation !important;
 }
-
-.btn:hover {
-    color: #ffffff;
-    text-decoration: none;
-    background-color: transparent;
+/* Hover */
+.Button:hover {
+    color: #ffffff !important;
+    background-color: transparent !important;
 }
-
-[aria-checked="true"],
-[aria-pressed="true"],
-[aria-selected="true"],
-.selected {
-    color: #e7ca7a;
-    background: #474747;
-}
-
-Button:focus,
-Button:hover,
-a:focus,
-a:hover {
-    color: #ffffff;
-}
-
-Button[aria-disabled="true"] {
-    color: #444444;
-    background: inherit;
+/* Selected */
+.Button.selected {
+    color: #e7ca7a !important;
+    background: #474747 !important;
 }
 
 
-
-
-
-
-.actionButton.Button .btn {
-    font: inherit;
-    border: none;
-    border-radius: 0.25rem/0.25rem;
-    min-width: 2rem;
-    padding: 0 0.5rem;
-    margin: 0;
-    background-color: transparent;
-    cursor: pointer;
-    color: #979797;
-    touch-action: manipulation;
+/* RADIO BUTTON */
+.btn-RadioButton {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 0.25rem/0.25rem !important;
+    min-width: 2rem !important;
+    padding: 0 0.5rem !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    cursor: pointer !important;
+    color: #979797 !important;
+    touch-action: manipulation !important;
 }
-.actionButton.Button .btn:hover {
-    color: #ffffff;
-    background-color: transparent;
+/* Hover */
+.btn-RadioButton:hover {
+    color: #ffffff !important;
+    background-color: transparent !important;
 }
-.actionButton.Button .btn-default.active, .actionButton.Button .btn-default:active, .actionButton.Button .open > .dropdown-toggle.btn-default {
-    color: #e7ca7a;
-    background: #474747;
+/* Selected */
+.btn-RadioButton.active {
+    color: #e7ca7a !important;
+    background: #474747 !important;
 }
 
 
-
-
+/* ROW */
+/* Row */
 .Row {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-
 .Row > .sep {
     align-self: stretch;
 }
-
+/* Separator */
 .sep {
     display: inline;
     margin: 0.1rem 0.5rem;
-    border-left: 2px solid #bbb;
-    border-top: 1px solid #bbb;
+    /* border-left: 2px solid #bbb; */
+    /* border-top: 1px solid #bbb; */
+    border-left: 2px solid #43494c;
+    border-top: 1px solid #43494c;
 }
-
+/* Row label */
 .row-label {
     word-break: keep-all;
     color: #eeeeee;
 } 
 
+
+/* GROUP OF BUTON */
 .bunch {
     display: flex;
     flex-direction: row;
@@ -140,7 +121,6 @@ Button[aria-disabled="true"] {
     margin: 0;
 }
 
-
 .bunch > a {
     display: inline-block;
     min-width: 1rem;
@@ -149,3 +129,145 @@ Button[aria-disabled="true"] {
 }
 
 
+/* SEARCH BAR */
+/* Bar */
+.selectize-input {
+    border: 1px solid #43494c !important;
+    color: #979797 !important;
+    background: #181a1b !important;
+}
+/* Name in bar */
+.selectize-dropdown,
+.selectize-input,
+.selectize-input input {
+  color: #979797;
+}
+/* Dropdown */
+.selectize-dropdown {
+    color: #979797 !important;
+    background: #181a1b !important;
+}
+/* Dropdown Active */
+.selectize-dropdown-content .active {
+    background: #43494c !important;
+    color: #ffffff !important;
+}
+/* Multi search item */
+.selectize-control.multi .selectize-input > div {
+  cursor: pointer;
+  margin: 0 3px 3px 0;
+  padding: 2px 6px;
+  background: #474747;
+  color: #e7ca7a;
+  border: 0px solid #474747;
+}
+/* Multi search item selected */
+.selectize-control.multi .selectize-input > div.active {
+  background: #474747;
+  color: #e7ca7a;
+  border: 1px solid #e7ca7a;
+}
+/* Search highlight key word */
+.selectize-dropdown [data-selectable] .highlight {
+  background: #e7ca7a;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+}
+
+
+/* SLIDER */
+.irs {
+    margin-top: -12px;
+    margin-bottom: -8px;
+}
+/* Selection bar */
+.irs-bar {
+    height: 5px !important;
+    background: #979797 !important;
+    border-top: 0px solid transparent !important;
+    border-bottom: 0px solid transparent !important;
+}
+.textSlider .irs-bar {
+    height: 5px !important;
+    background: #474747 !important;
+    border-top: 0px solid transparent !important;
+    border-bottom: 0px solid transparent !important;
+}
+
+/* Base line */
+.irs-line {
+    height: 5px !important;
+    background: #474747 !important;
+    border: 0px solid transparent !important;
+    border-radius: 5px !important;
+}
+/* Bottom text */
+.irs-grid-text {
+    /* font-family: 'arial' !important; */
+    color: #979797 !important;
+    position: absolute !important;
+    bottom: 15px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    font-size: 9px !important;
+    line-height: 9px !important;
+    padding: 0 3px !important;
+}
+/* Major grid */
+.irs-grid-pol {
+    background: #979797 !important;
+    top: -3px !important;
+    width: 1px !important;
+    height: 5px !important;
+}
+.textSlider .irs-grid-pol {
+    background: transparent !important;
+}
+
+/* Minor grid */
+.irs-grid-pol.small {
+    background: #979797 !important;
+    height: 0px !important;
+}
+/* Max label */
+.irs-max {
+    /* font-family: 'arial' !important; */
+    background: transparent !important;
+    color: transparent !important;
+}
+/* Min label */
+.irs-min {
+    /* font-family: 'arial' !important; */
+    background: transparent !important;
+    color: transparent !important;
+}
+/* Slider label */
+.irs-from,
+.irs-to,
+.irs-single {
+    color: transparent !important;
+    background: transparent !important;
+}
+/* Handle */
+.irs-handle {
+    width: 14px !important;
+    height: 14px !important;
+    top: 21px !important;
+    color: transparent !important;
+    background: #979797 !important;
+    position: absolute !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    cursor: default !important;
+    border: 0px solid transparent !important;
+    box-shadow: 0px 0px 0px transparent !important;
+}
+
+/* /\* Handle hover *\/ */
+/* .irs-handle.state_hover, */
+/* .irs-handle:hover { */
+/*     color: transparent !important; */
+/*     background: #ffffff !important; */
+/*     border: 0px solid transparent; */
+/* } */
