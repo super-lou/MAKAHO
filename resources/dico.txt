@@ -1,6 +1,10 @@
 id;FR
 a.title;Analyse
-a.code;Sélection
+a.selec;Sélection
+a.selec.all;Toute
+a.selec.none;Aucune
+a.selec.click;Click
+a.selec.poly;Polygone
 a.event;Événement
 a.var;Variable
 a.var1;Crues
@@ -56,11 +60,13 @@ a.search.river;"cours d'eau"
 a.search.basin;bassin hydro.
 b.ok;Terminer
 c.title;Style
-c.colorbar;Colorbar
+c.cb;Colorbar
+c.cb.show;Afficher
+c.cb.none;Aucune
 c.theme;Fond de carte
-i.con;Contact
-i.dev;Développeur : 
-i.ref;Référent :
+i.dev;Développeur
+i.ref;Référent
+i.sk8;Hébergé par
 m.hov.lat;lat
 m.hov.lon;lon
 m.hov.code;code

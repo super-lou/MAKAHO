@@ -384,7 +384,16 @@ server = function (input, output, session) {
     })
     CodeSample = debounce(CodeSample, 500)
 
-#### 2.4.1. Map click ________________________________________________
+#### 2.4.1. All/none _________________________________________________
+    observeEvent(input$all_button, {
+        rv$CodeSample = CodeAll()
+    })
+
+    observeEvent(input$none_button, {
+        rv$CodeSample = c()
+    })
+    
+#### 2.4.2. Map click ________________________________________________
     observeEvent(input$click_button, {
         hide(id='ana_panel')
         hide(id='theme_panel')
@@ -413,26 +422,6 @@ server = function (input, output, session) {
         hide(id='click_panel')
         showElement(id='ana_panel')
     })
-
-#### 2.4.2. Picker ___________________________________________________
-    observeEvent(input$code_picker, {
-        rv$CodeSample = input$code_picker
-    })
-
-    observe({
-        updatePickerInput(session, "code_picker",
-                          choices=CodeAll(),
-                          selected=rv$CodeSample)
-        if (!is.null(input$code_picker)) {
-            codeNULL_obs$resume()
-        }
-    })
-
-    codeNULL_obs = observe({
-        if (is.null(input$code_picker)) {
-            rv$CodeSample = input$code_picker
-        }
-    }, suspended=TRUE)
 
 #### 2.4.3. Polygone _________________________________________________
     observeEvent(input$poly_button, {
@@ -753,16 +742,20 @@ server = function (input, output, session) {
 
 ## 3. CUSTOMIZATION __________________________________________________
 ### 3.2. Palette _____________________________________________________
-    observeEvent(input$colorbar_button, {
-        toggle(id="colorbar_panel")
+    observeEvent(input$colorbar_choice, {
+        if (input$colorbar_choice == 'show') {
+            showElement(id="colorbar_panel")
+        } else if (input$colorbar_choice == 'none') {
+            hide(id="colorbar_panel")
+        }
     })
 
     observeEvent({
         rv$minTrendValue
         rv$maxTrendValue
-        input$colorbar_button
+        input$colorbar_choice
     }, {
-        if ((input$colorbar_button+1) %% 2 == 0) {
+        if (input$colorbar_choice == 'show') {
             output$colorbar_plot = renderPlot({
                 plot_colorbar(rv$minTrendValue, rv$maxTrendValue,
                               palette_name=palette_name,

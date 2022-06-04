@@ -62,9 +62,12 @@ ui = bootstrapPage(
         fixedPanel(id='focusZoom_panel',
                    left=10, top=10,
                    width="auto", height="auto",
-                   actionButtonI('focusZoom_button',
-                                 style=CSSbutton_panelSmall,
-                                 icon_name=iconLib$focus_white)
+                   div(class="Row",
+                       div(actionButtonI(
+                           class="SmallButton-menu",
+                           'focusZoom_button',
+                           NULL,
+                           icon_name=iconLib$focus_white)))
                    )
     ),
     
@@ -72,9 +75,12 @@ ui = bootstrapPage(
         fixedPanel(id='defaultZoom_panel',
                    left=10, top=10,
                    width="auto", height="auto",
-                   actionButtonI('defaultZoom_button',
-                                 style=CSSbutton_panelSmall,
-                                 icon_name=iconLib$default_white)
+                   div(class="Row",
+                       div(actionButtonI(
+                           class="SmallButton-menu",
+                           'defaultZoom_button',
+                           NULL,
+                           icon_name=iconLib$default_white)))
                    )
     ),
 
@@ -83,10 +89,13 @@ ui = bootstrapPage(
 ### 2.1. Panel button ________________________________________________
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
-               actionButtonI('ana_button',
-                            HTML(paste0("<b>", word("a.title"), "</b>")),
-                            style=CSSbutton_panel,
-                            icon_name=iconLib$show_chart_white)
+               div(class="Row",
+                   div(actionButtonI(class="Button-menu",
+                                     'ana_button',
+                                     HTML(paste0("<b>",
+                                                 word("a.title"),
+                                                 "</b>")),
+                                     icon_name=iconLib$show_chart_white)))
                ),
     
 ### 2.2. Panel _______________________________________________________
@@ -96,39 +105,38 @@ ui = bootstrapPage(
             class="Panel card",
             fixed=TRUE,
             width=460, height="auto",
-            left=10, bottom=50,
+            left=10, bottom=49,
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("a.code"),
+                                word("a.selec"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch", role="toolbar",
-                    actionButtonI(class="Button",
+                    actionButtonI(class="Button-panel",
                                   'all_button',
-                                  label="Toute",
+                                  label=word("a.selec.all"),
                                   icon_name=iconLib$check_circle_white),
                     
-                    actionButtonI(class="Button",
+                    actionButtonI(class="Button-panel",
                                   'none_button',
-                                  label="Aucune",
+                                  label=word("a.selec.none"),
                                   icon_name=iconLib$cross_circle_white),
                     
-                    actionButtonI(class="Button",
+                    actionButtonI(class="Button-panel",
                                   'click_button',
-                                  NULL,
+                                  label=word("a.selec.click"),
                                   icon_name=iconLib$click_white),
 
-                    actionButtonI(class="Button",
+                    actionButtonI(class="Button-panel",
                                   'poly_button',
-                                  NULL,
+                                  label=word("a.selec.poly"),
                                   icon_name=iconLib$polyline_white))),
-            br(),
 
             div(class="Row",
-                div(style="margin-bottom: -1rem;",
+                div(style="margin-bottom: -1.1rem;",
                     selectizeInput(inputId="search_input", 
                                    label=NULL,
                                    multiple=TRUE,
@@ -283,44 +291,69 @@ ui = bootstrapPage(
 
 ## 3. CUSTOMIZATION __________________________________________________
 ### 3.1. Panel button ________________________________________________
-    fixedPanel(left=120, bottom=10,
+    fixedPanel(left=116, bottom=10,
                width="auto", height="auto",
-               actionButtonI('theme_button', label=NULL,
-                             style=CSSbutton_panel,
-                             icon_name=iconLib$segment_white)
+               div(class="Row",
+                   div(actionButtonI(class="Button-menu",
+                                     'theme_button',
+                                     NULL,
+                                     icon_name=iconLib$menu_white)))
                ),
     
 ### 3.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='theme_panel',
-            style=CSSpanel_left,
+            class="Panel card",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=120, bottom=50,
+            left=116, bottom=49,
             
 ### 3.2. Background theme ____________________________________________
-            column(12,
-                   radioGroupButtons(inputId="theme_choice",
-                                     label=word("c.theme"),
-                                     size="xs",
-                                     selected="light",
-                                     choiceNames=
-                                         list(img(iconLib$light_black,
-                                                  align="right"),
-                                              img(iconLib$terrain_black,
-                                                  align="right"),
-                                              img(iconLib$dark_black,
-                                                  align="right")),
-                                     choiceValues= list("light",
-                                                        "terrain",
-                                                        "dark"))),
-
+            div(class="Row",
+                div(class="row-label",
+                    HTML(
+                        paste0("<span><b>",
+                               word("c.theme"),
+                               "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioGroupButtons(
+                        status="RadioButton",
+                        inputId="theme_choice",
+                        NULL,
+                        choiceNames=
+                            list(paste0(img(iconLib$light_white,
+                                            align="right"),
+                                        'clair'),
+                                 paste0(img(iconLib$terrain_white,
+                                            align="right"),
+                                        'terrain'),
+                                 paste0(img(iconLib$dark_white,
+                                            align="right"),
+                                        'sombre')),
+                        choiceValues=
+                            list("light",
+                                 "terrain",
+                                 "dark")))),
+                
 ### 3.3. Palette button ______________________________________________
-            column(12, style='margin-bottom: 10px;',
-                   actionButtonI('colorbar_button',
-                                 label=word("c.colorbar"),
-                                 style=CSSbutton_colorbar)),
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("c.cb"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioGroupButtons(status="RadioButton",
+                                      inputId="colorbar_choice",
+                                      label=NULL,
+                                      choiceNames=
+                                          list(word("c.cb.show"),
+                                               word("c.cb.none")),
+                                      choiceValues=
+                                          list("show", "none"),
+                                      selected="none")))
             
         )
     ),
@@ -352,22 +385,46 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='info_panel',
-            style=CSSpanel_right,
+            class="Panel card",
             fixed=TRUE,
             width="auto", height="auto",
             right=10, bottom=40,
 
 ### 4.3. Contact info ________________________________________________
-            column(12,
-            tags$div(tags$b(word("i.con")),
-                     tags$br(),
-                     word("i.dev"),
-                     tags$a(href="mailto:louis.heraut@inrae.fr",
-                            "Louis Héraut"),
-                     tags$br(),
-                     word("i.ref"),
-                     tags$a(href="mailto:michel.lang@inrae.fr",
-                            "Michel Lang")))
+            div(class="Row",
+                div(class="row-label",
+                    HTML(
+                        paste0("<span><b>",
+                               word("i.dev"),
+                               "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    a(href="mailto:louis.heraut@inrae.fr",
+                      "Louis Héraut"))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(
+                        paste0("<span><b>",
+                               word("i.ref"),
+                               "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    a(href="mailto:michel.lang@inrae.fr",
+                      "Michel Lang"))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(
+                        paste0("<span><b>",
+                               word("i.sk8"),
+                               "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    a(href="https://sk8.inrae.fr",
+                      "SK8"),
+                    a(href="https://sk8.inrae.fr",
+                      img(src="SK8.png"))))
         )
     ),
 

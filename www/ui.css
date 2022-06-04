@@ -1,34 +1,88 @@
 :root {
-
-    font-size: medium;
-    --tooltipSize: small;
-    text-size-adjust: none;
-    -webkit-text-size-adjust: none;
-    -webkit-font-smoothing: subpixel-antialiased;
+    font-size: medium !important;
+    color: #ffffff !important;
+    --tooltipSize: small !important;
+    text-size-adjust: none !important;
+    -webkit-text-size-adjust: none !important;
+    -webkit-font-smoothing: subpixel-antialiased !important;
 }
 
 .Panel {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: column !important;
+    align-items: stretch !important;
 }
 
 .Panel > :not(:first-child) {
-    margin-top: 0.2rem;
+    margin-top: 0.2rem !important;
 }
 
 
 .card {
-    padding: 0.5rem 1rem;
-    /* background-color: rgba(140, 140, 140, 0.85); */
-    background-color: rgba(5, 5, 10, 0.85);
-    border-radius: 0.5rem/0.5rem;
+    padding: 0.5rem 1rem !important;
+    background-color: rgba(5, 5, 10, 0.85) !important;
+    border-radius: 0.5rem/0.5rem !important;
+}
+
+body {
+    margin: 0;
+    color: #eeeeee;
+    background: rgba(5, 5, 10, 0.85);
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 0;
+    margin: 1px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    color: #979797 !important;
+    text-decoration: none !important;
+}
+a:link {
+    color: #979797 !important;
+}
+a:hover {
+    color: #ffffff !important;
 }
 
 
+/* MENU BUTTON */
+.Button-menu {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 0.4rem/0.4rem !important;
+    padding: 0.325rem 0.75rem !important;
+    margin: 0 !important;
+    background-color: rgba(5, 5, 10, 0.85) !important;
+    color: #d9d9d9 !important;
+}
+.SmallButton-menu {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 0.4rem/0.4rem !important;
+    padding: 0.19rem 0.3rem !important;
+    margin: 0 !important;
+    background-color: rgba(5, 5, 10, 0.85) !important;
+    color: #d9d9d9 !important;
+}
+/* Hover */
+.SmallButton-menu:hover,
+.Button-menu:hover {
+    color: #ffffff !important;
+}
 
-/* BUTTON */
-.Button {
+/* PANEL BUTTON */
+.Button-panel {
     font: inherit !important;
     border: none !important;
     border-radius: 0.25rem/0.25rem !important;
@@ -41,12 +95,12 @@
     touch-action: manipulation !important;
 }
 /* Hover */
-.Button:hover {
+.Button-panel:hover {
     color: #ffffff !important;
     background-color: transparent !important;
 }
 /* Selected */
-.Button.selected {
+.Button-panel.selected {
     color: #e7ca7a !important;
     background: #474747 !important;
 }
@@ -133,6 +187,8 @@
 /* Bar */
 .selectize-input {
     border: 1px solid #43494c !important;
+    width: 378px;
+    margin-left: -2px;
     color: #979797 !important;
     background: #181a1b !important;
 }
@@ -264,10 +320,10 @@
     box-shadow: 0px 0px 0px transparent !important;
 }
 
-/* /\* Handle hover *\/ */
-/* .irs-handle.state_hover, */
-/* .irs-handle:hover { */
-/*     color: transparent !important; */
-/*     background: #ffffff !important; */
-/*     border: 0px solid transparent; */
-/* } */
+/* Handle hover */
+.irs-handle.state_hover,
+.irs-handle:hover {
+    color: transparent !important;
+    background: #b3b3b3 !important;
+    border: 0px solid transparent;
+}

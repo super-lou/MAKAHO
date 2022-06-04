@@ -57,7 +57,7 @@ source(file.path('R', 'settings.R'), encoding='UTF-8')
 
 # Sourcing app
 source('server.R', encoding='UTF-8')
-source('ui.R', encoding='UTF-8')
+source('ui.R', encoding='UTF-8')
 
 
 # Running app localy
