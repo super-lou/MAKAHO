@@ -90,78 +90,10 @@ dico_file = 'dico.txt'
 dico = create_dico(dico_file, resources_path)
 
 
-
-
 varProba = list(fA=c("90%", "95%", "99%"),
                 Qp=c("10%", "25%", "50%", "75%", "90%"))
 
-# Gets the variable name list
-varNameList = get_varNameList(dico)
-# Converts the 2 dimensional list into a vector
-varNameVect = do.call(c, unlist(varNameList, recursive=FALSE))
-names(varNameVect) = NULL
-
-# Vector of variable abbreviations
-varVect = c(
-    "QIXA",
-    "tQIXA",
-    "fA",
-    "QIXAniv",
-    "tQIXAniv",
-    "tDEBfon",
-    "tCENfon",
-    "tFINfon",
-    "vFON",
-    "tFON",
-    "QA",
-    "QMA",
-    "Qp",
-    "QNA",
-    "QMNA",
-    "VCN10",
-    "tDEBeti",
-    "tCENeti",
-    "tFINeti",
-    "vDEF",
-    "tETI"
-)
-
-typeVect = c(
-    "sévérité",
-    "saisonnalité",
-    NA,
-    "sévérité",
-    "saisonnalité",
-    "saisonnalité",
-    "saisonnalité",
-    "saisonnalité",
-    NA,
-    "saisonnalité",
-    "sévérité",
-    "sévérité",
-    "sévérité",
-    "sévérité",
-    "sévérité",
-    "sévérité",
-    "saisonnalité",
-    "saisonnalité",
-    "saisonnalité",
-    NA,
-    "saisonnalité"
-)
-
-# Variables that need a percentage
-varP = c("fA",
-         "Qp")
-
-# Possible percentages for variables that need one
-valP = list(c("90%", "95%", "99%"),
-            c("10%", "25%", "50%", "75%", "90%"))
-
-
-
 Var = get_Var(dico, varProba)
-
 
 
 # Creates a vector of months name

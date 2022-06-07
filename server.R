@@ -30,7 +30,9 @@ server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 
 
-    rv = reactiveValues(CodeSample=NULL,
+    rv = reactiveValues(width=0,
+                        height=0,
+                        CodeSample=NULL,
                         CodeSearch=NULL,
                         markerListAll_save=NULL,
                         CodeSample_save=NULL,
@@ -42,8 +44,10 @@ server = function (input, output, session) {
                         clickMode=FALSE,
                         downloadMode=FALSE,
                         inputPhoto=FALSE,
+                        currentLimits=NULL,
+                        map_bounds=NULL, 
+                        mapPreview_bounds=NULL,
                         defaultBounds=NULL,
-                        previewBounds=NULL,
                         TrendValues=NULL,
                         minTrendValue=NULL,
                         maxTrendValue=NULL
@@ -109,44 +113,58 @@ server = function (input, output, session) {
 
 
 ### 1.2. Zoom ________________________________________________________    
-    observeEvent(input$map_bounds, {
-        if (!is.null(input$map_bounds) & is.null(rv$defaultBounds)) {
-            rv$defaultBounds = input$map_bounds
-        } 
+    observeEvent({
+        input$dimension
+    }, {
+        map = leafletProxy("map")
+        map = fitBounds(map,
+                        lng1=defaultLimits()$east,
+                        lat1=defaultLimits()$south,
+                        lng2=defaultLimits()$west,
+                        lat2=defaultLimits()$north,
+                        options=list(padding=c(20, 20)))
     })
 
-    currentLimits = reactive({
-        Lon = df_meta()$lon[df_meta()$code %in% CodeSample()]
-        Lat = df_meta()$lat[df_meta()$code %in% CodeSample()]
-        list(north=max(Lat), east=max(Lon),
-             south=min(Lat), west=min(Lon))
-    })
+    observeEvent({
+        CodeSample()
+        df_meta()
+    }, {
+        if (!is.null(CodeSample())) {
+            Lon = df_meta()$lon[df_meta()$code %in% CodeSample()]
+            Lat = df_meta()$lat[df_meta()$code %in% CodeSample()]
+            rv$currentLimits = list(north=max(Lat), east=max(Lon),
+                                    south=min(Lat), west=min(Lon))
 
-    observeEvent(currentLimits(), {
-        mapPreview = leafletProxy("mapPreview")
-        mapPreview = fitBounds(mapPreview,
-                               lng1=currentLimits()$east,
-                               lat1=currentLimits()$south,
-                               lng2=currentLimits()$west,
-                               lat2=currentLimits()$north,
-                               options=list(padding=c(20, 20)))
+            if (length(CodeSample()) > 1) {
+                mapPreview = leafletProxy("mapPreview")
+                mapPreview = fitBounds(mapPreview,
+                                       lng1=rv$currentLimits$east,
+                                       lat1=rv$currentLimits$south,
+                                       lng2=rv$currentLimits$west,
+                                       lat2=rv$currentLimits$north,
+                                       options=list(padding=c(20, 20)))
+            } else {
+                rv$mapPreview_bounds = NULL
+            }
+        } else {
+            rv$currentLimits = NULL
+            rv$mapPreview_bounds = NULL
+        }        
     })
 
     observeEvent({
         input$mapPreview_bounds
-        CodeSample()
     }, {
-        rv$previewBounds = input$mapPreview_bounds
+        rv$mapPreview_bounds = input$mapPreview_bounds
     })
     
-
     observeEvent(input$focusZoom_button, {
         map = leafletProxy("map")
         map = fitBounds(map,
-                        lng1=currentLimits()$east,
-                        lat1=currentLimits()$south,
-                        lng2=currentLimits()$west,
-                        lat2=currentLimits()$north,
+                        lng1=rv$currentLimits$east,
+                        lat1=rv$currentLimits$south,
+                        lng2=rv$currentLimits$west,
+                        lat2=rv$currentLimits$north,
                         options=list(padding=c(20, 20)))
     })
     
@@ -161,36 +179,46 @@ server = function (input, output, session) {
     })
     
     observeEvent({
-        rv$previewBounds
         input$map_bounds
+        rv$mapPreview_bounds
     }, {
-        if (!is.null(input$map_bounds) & !is.null(rv$previewBounds)) {
-            digits = 1
-            
-            isDefault = all(round(unlist(input$map_bounds), digits) == round(unlist(rv$defaultBounds), digits))
-            
-            isFocus = all(round(unlist(input$map_bounds), digits) == round(unlist(rv$previewBounds), digits))
 
-            if (is.null(rv$CodeSample)) {
-                isFocus = TRUE
-            }
-                        
-            if (isDefault & isFocus) {
-                hide(id='focusZoom_panel')
-                hide(id='defaultZoom_panel')
-                
-            } else if (isDefault & !isFocus) {
-                showElement(id='focusZoom_panel')
-                hide(id='defaultZoom_panel')
-                
-            } else if (!isDefault & isFocus) {
-                hide(id='focusZoom_panel')
-                showElement(id='defaultZoom_panel')
-                
-            } else if (!isDefault & !isFocus) {
-                showElement(id='focusZoom_panel')
-                hide(id='defaultZoom_panel')
-            }
+        windowChange = input$dimension[1] != rv$width | input$dimension[2] != rv$height
+        if (windowChange) {
+            rv$defaultBounds = input$map_bounds
+            rv$width = input$dimension[1]
+            rv$height = input$dimension[2]
+        }
+
+        print('ok')
+        print(rv$defaultBounds)
+
+        error = 0.1
+        
+        isDefault = all(abs(unlist(input$map_bounds) - unlist(rv$defaultBounds)) <= error)
+        
+        isFocus = all(abs(unlist(input$map_bounds) - unlist(rv$mapPreview_bounds)) <= error)
+
+        if (windowChange) {
+            isDefault = TRUE
+            isFocus = TRUE
+        }
+        
+        if (isDefault & isFocus) {
+            hide(id='focusZoom_panel')
+            hide(id='defaultZoom_panel')
+            
+        } else if (isDefault & !isFocus) {
+            showElement(id='focusZoom_panel')
+            hide(id='defaultZoom_panel')
+            
+        } else if (!isDefault & isFocus) {
+            hide(id='focusZoom_panel')
+            showElement(id='defaultZoom_panel')
+            
+        } else if (!isDefault & !isFocus) {
+            showElement(id='focusZoom_panel')
+            hide(id='defaultZoom_panel')
         }
     })
 
@@ -271,7 +299,12 @@ server = function (input, output, session) {
         c(Start, End)
     })
     period = debounce(period, 1000)
-    
+
+    output$period = renderText({
+        start = format(period()[1], "%d-%m-%Y")
+        end = format(period()[2], "%d-%m-%Y")
+        paste0('Du ', start, ' au ', end)
+    })
 
 ### 2.2. Variable extration __________________________________________
     observeEvent(input$event_choice, {
@@ -306,7 +339,15 @@ server = function (input, output, session) {
             NULL
         }
     })
-    
+
+    output$data = renderText({
+        data = paste0(var(), ' : ', name())
+        if (!is.null(proba())) {
+            data = paste0(data, ' avec la probabilité de ',
+                          input$proba_choice)
+        }
+        data
+    })
 
     observe({
         toggle(id="proba_row",
@@ -380,7 +421,11 @@ server = function (input, output, session) {
     rv$theme_choice_save = isolate(input$theme_choice)
     
     CodeSample = reactive({
-        rv$CodeSample
+        if (identical(rv$CodeSample, character(0))) {
+            NULL
+        } else {
+            rv$CodeSample
+        }
     })
     CodeSample = debounce(CodeSample, 500)
 
@@ -390,7 +435,9 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$none_button, {
-        rv$CodeSample = c()
+        updateSelectizeInput(session, 'search_input',
+                             selected="")
+        rv$CodeSample = NULL
     })
     
 #### 2.4.2. Map click ________________________________________________
@@ -478,7 +525,6 @@ server = function (input, output, session) {
                               lat=rv$polyCoord$lat)
         }
     })
-
     
     observeEvent(input$polyOk_button, {
         if (nrow(rv$polyCoord) != 0) {
@@ -545,6 +591,7 @@ server = function (input, output, session) {
     
     searchChoices = reactive({
         Values = c(
+            paste0("code:", df_meta()$code),
             paste0("name:", df_meta()$nom),
             paste0("region:", df_meta()$region_hydro),
             paste0("regime:", df_meta()$regime_hydro),
@@ -553,6 +600,10 @@ server = function (input, output, session) {
             paste0("basin:", meta_basin())
         )
         htmlValues = c(
+            paste0(df_meta()$code,
+                   '<i style="font-size: 9pt; color: ',
+                   grey85COL, '">&emsp;', word("a.search.code"),
+                   '</i>'),
             paste0(df_meta()$nom,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("a.search.name"),
@@ -610,7 +661,8 @@ server = function (input, output, session) {
         htmlSearch = input$search_input
         Search = gsub("(.*?):", "", htmlSearch)
         searchType = gsub(":(.*)", "", htmlSearch)
-        
+
+        Code = df_meta()$code[df_meta()$code %in% Search[searchType == "code"]]
         CodeNom = df_meta()$code[df_meta()$nom %in% Search[searchType == "name"]]
         CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search[searchType == "region"]]
         CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search[searchType == "regime"]]
@@ -618,19 +670,22 @@ server = function (input, output, session) {
         CodeRiver = df_meta()$code[meta_river() %in% Search[searchType == "river"]]
         CodeBasin = df_meta()$code[meta_basin() %in% Search[searchType == "basin"]]
 
-        selectCode = levels(factor(c(CodeNom,
+        selectCode = levels(factor(c(Code,
+                                     CodeNom,
                                      CodeRegion,
                                      CodeRegime,
                                      CodeLocation,
                                      CodeRiver,
                                      CodeBasin)))
 
-        codeRm = rv$CodeSearch[!(rv$CodeSearch %in% selectCode)]        
-        rv$CodeSample = rv$CodeSample[!(rv$CodeSample %in% codeRm)]
-
-        rv$CodeSample = c(rv$CodeSample, selectCode)
-        rv$CodeSample = rv$CodeSample[!duplicated(rv$CodeSample)]
-
+        if (all(CodeAll() %in% rv$CodeSample)) {
+            rv$CodeSample = selectCode
+        } else {
+            codeRm = rv$CodeSearch[!(rv$CodeSearch %in% selectCode)]        
+            rv$CodeSample = rv$CodeSample[!(rv$CodeSample %in% codeRm)]
+            rv$CodeSample = c(rv$CodeSample, selectCode)
+            rv$CodeSample = rv$CodeSample[!duplicated(rv$CodeSample)] 
+        }
         rv$CodeSearch = selectCode
     })
     

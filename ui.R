@@ -31,6 +31,19 @@ ui = bootstrapPage(
     useShinyjs(),
     
     tags$head(HTML("<title>MAKAHO</title> <link rel='icon' type='image/gif/png' href='MAKAHO.png'>")),
+
+    tags$head(tags$script('
+    var dimension = [0, 0];
+    $(document).on("shiny:connected", function(e) {
+        dimension[0] = window.innerWidth;
+        dimension[1] = window.innerHeight;
+        Shiny.onInputChange("dimension", dimension);
+    });
+    $(window).resize(function(e) {
+        dimension[0] = window.innerWidth;
+        dimension[1] = window.innerHeight;
+        Shiny.onInputChange("dimension", dimension);
+    });')),
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________    
@@ -106,6 +119,24 @@ ui = bootstrapPage(
             fixed=TRUE,
             width=460, height="auto",
             left=10, bottom=49,
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("a.data"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch", role="toolbar",
+                    textOutput("data"))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("a.date"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch", role="toolbar",
+                    textOutput("period"))),
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",
@@ -420,11 +451,11 @@ ui = bootstrapPage(
                                word("i.sk8"),
                                "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch",
+                div(a(href="https://sk8.inrae.fr",
+                      img(src="SK8.png"))),
+                div(style="padding-top: 3px; padding-left: 5px;",
                     a(href="https://sk8.inrae.fr",
-                      "SK8"),
-                    a(href="https://sk8.inrae.fr",
-                      img(src="SK8.png"))))
+                      "SK8")))
         )
     ),
 

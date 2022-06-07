@@ -1,5 +1,7 @@
 id;FR
 a.title;Analyse
+a.data;Data
+a.date;Date
 a.selec;Sélection
 a.selec.all;Toute
 a.selec.none;Aucune
@@ -52,6 +54,7 @@ a.cm;Mode ...
 a.cms;sites
 a.cmr;régions
 a.search;Rechercher
+a.search.code;code
 a.search.name;station
 a.search.region;région hydro.
 a.search.regime;régime hydro.
