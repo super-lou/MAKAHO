@@ -202,52 +202,28 @@ read_FST = function (resdir, filename, filedir='fst') {
 # df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
 
 
-get_trendExtremes = function (df_data, df_trend, CodeAll,
-                              CodeSample, toMean=TRUE) {
+get_trendExtremes = function (df_data, df_trend, type,
+                              CodeSample) {
     
-    nCodeAll = length(CodeAll)
-    
-    # Blank array to store mean of the trend for each
-    # station, perdiod and variable
-    TrendValuesSample = c()
-    TrendValuesAll = c()
+    if (type == 'sévérité') {
+        df_mean = summarise(group_by(df_data, code),
+                            mean=mean(Value, na.rm=TRUE))
 
-    # For all the code
-    for (k in 1:nCodeAll) {
-        # Gets the code
-        code = CodeAll[k]
-        
-        # Extracts the type of the variable
-        # Extracts the data corresponding to the code
-        df_data_code = df_data[df_data$code == code,] 
-        df_trend_code = df_trend[df_trend$code == code,]
-
-        # If it is a flow variable
-        if (toMean) {
-            # Computes the mean of the data on the period
-            dataMean = mean(df_data_code$Value, na.rm=TRUE) ### /!\
-            # Normalises the trend value by the mean of the data
-            trendValue = df_trend_code$trend / dataMean
-            # If it is a date variable
-        } else {
-            trendValue = df_trend_code$trend
-        }
-        # Stores the mean trend
-        TrendValuesAll = c(TrendValuesAll, trendValue)
-        
-        if (code %in% CodeSample) {
-            TrendValuesSample = c(TrendValuesSample, trendValue)
-        } else {
-            TrendValuesSample = c(TrendValuesSample, NA)
-        }
+        df_join = full_join(df_trend, df_mean)
+        value = df_join$trend / df_join$mean
+        df_value = tibble(code=df_join$code, value=value)
+    } else {
+        df_value = tibble(code=df_trend$code,
+                          value=df_trend$trend)
     }
 
-    # Compute the min and the max of the mean trend for all the station
-    minTrendValue = min(TrendValuesSample, na.rm=TRUE)
-    maxTrendValue = max(TrendValuesSample, na.rm=TRUE)
+    df_valueSample = df_value[df_value$code %in% CodeSample,]
+    
+    minValue = quantile(df_valueSample$value, 0, na.rm=TRUE)
+    maxValue = quantile(df_valueSample$value, 1, na.rm=TRUE)
 
-    res = list(values=TrendValuesAll,
-               min=minTrendValue, max=maxTrendValue)
+    res = list(df_value=df_value,
+               min=minValue, max=maxValue)
     return (res)
 }
 

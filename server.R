@@ -48,9 +48,9 @@ server = function (input, output, session) {
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
                         defaultBounds=NULL,
-                        TrendValues=NULL,
-                        minTrendValue=NULL,
-                        maxTrendValue=NULL
+                        df_value=NULL,
+                        minValue=NULL,
+                        maxValue=NULL
                         )
     
 ## 1. MAP ____________________________________________________________
@@ -190,9 +190,6 @@ server = function (input, output, session) {
             rv$height = input$dimension[2]
         }
 
-        print('ok')
-        print(rv$defaultBounds)
-
         error = 0.1
         
         isDefault = all(abs(unlist(input$map_bounds) - unlist(rv$defaultBounds)) <= error)
@@ -232,34 +229,49 @@ server = function (input, output, session) {
         map = leafletProxy("map")
         
         alpha = as.numeric(sub("%", "", input$alpha_choice)) / 100
+
+        Code = df_Xtrend()$code ### ici c'est pas normal
+        nCode = length(Code)
         
         OkS = df_Xtrend()$p <= alpha
-        CodeSU = df_Xtrend()$code[OkS & df_Xtrend()$trend >= 0]
-        CodeSD = df_Xtrend()$code[OkS & df_Xtrend()$trend < 0]
-        CodeNS = df_Xtrend()$code[!OkS]
+        CodeSU = Code[OkS & df_Xtrend()$trend >= 0] ### ici c'est pas normal
+        CodeSD = Code[OkS & df_Xtrend()$trend < 0]
+        CodeNS = Code[!OkS]
 
-        shapeList = rep(1, length(fillList()))
-        shapeList[match(CodeSU, CodeAll())] = '^'
-        shapeList[match(CodeSD, CodeAll())] = 'v'
-        shapeList[match(CodeNS, CodeAll())] = 'o'
+        print(df_Xtrend())
+        print(fillList())
+        print(length(fillList()))
+        
+        shapeList = rep(1, nCode)
+        shapeList[match(CodeSU, Code)] = '^' ### ici c'est codeAll
+        shapeList[match(CodeSD, Code)] = 'v'
+        shapeList[match(CodeNS, Code)] = 'o'
+
+        print(shapeList)
+        print(length(shapeList))
+        print('')
 
         markerListAll = get_markerList(shapeList,
                                        fillList(),
                                        resources_path)
 
-        if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
-            okCode = rep(TRUE, length(CodeAll()))
-        } else {
-            okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
-        }
-        rv$theme_choice_save = input$theme_choice
+        ### faire en sorte que fillList soit toujours avec tous les code et que les stations manquante parce que période trop courte ait des marker différent de ceux qui ne sont pas sélectionné
+        ### cercle jaune /!\ station avec peu de donnée
+        ### cerlce rouge /!\ station sans donnée
+        
+        # if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
+        #     okCode = rep(TRUE, nCode)
+        # } else {
+        #     okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+        # }
+        # rv$theme_choice_save = input$theme_choice
 
-        Code = CodeAll()[okCode]
+        # Code = CodeAll()[okCode]
         markerList = markerListAll
-        markerList$iconUrl = markerListAll$iconUrl[okCode]
-        Lon = df_meta()$lon[okCode]
-        Lat = df_meta()$lat[okCode]
-        Nom = df_meta()$nom[okCode]
+        markerList$iconUrl = markerListAll$iconUrl#[okCode]
+        Lon = df_meta()$lon#[okCode]
+        Lat = df_meta()$lat#[okCode]
+        Nom = df_meta()$nom#[okCode]
         
         label = get_label(Lon, Lat, Code, Nom)
 
@@ -714,44 +726,35 @@ server = function (input, output, session) {
     fillList = reactive({
         nCodeAll = length(CodeAll())
         
-        if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {            
-            res = get_trendExtremes(df_XEx(), df_Xtrend(),
-                                    CodeAll=CodeAll(),
-                                    CodeSample=CodeSample(),
-                                    toMean=TRUE)
-
-            rv$TrendValues = res$values
-            rv$minTrendValue = res$min
-            rv$maxTrendValue = res$max
+        if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
             
-            fillListtmp = c()
-            for (k in 1:nCodeAll) {
+            res = get_trendExtremes(df_XEx(), df_Xtrend(),
+                                    type=type(),
+                                    CodeSample=CodeSample())
 
-                code = CodeAll()[k]
-                
-                if (code %in% CodeSample()) {
-                    trendValue = rv$TrendValues[k]
+            rv$df_value = res$df_value
+            rv$minValue = res$min
+            rv$maxValue = res$max
 
-                    color = get_color(trendValue, 
-                                      rv$minTrendValue,
-                                      rv$maxTrendValue,
-                                      nbTick=nbTick,
-                                      palette_name='perso',
-                                      reverse=TRUE)
-                } else {
-                    if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
-                        color = grey94COL
-                    } else if (input$theme_choice == 'dark') {
-                        color = grey18COL
-                    }
-                }
-                
-                fillListtmp = c(fillListtmp, color)
+            if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
+                noneColor = grey94COL
+            } else if (input$theme_choice == 'dark') {
+                noneColor = grey18COL
             }
-            fillListtmp
-        } else {
-            rep(grey50COL, nCodeAll)
+
+            fillList = get_color(rv$df_value, 
+                                 rv$minValue,
+                                 rv$maxValue,
+                                 colorList=colorList,
+                                 nColor=nColor,
+                                 reverse=reverse,
+                                 CodeSample=CodeSample(),
+                                 noneColor=noneColor)
+            fillList
         }
+        # else {
+            # rep(grey50COL, nCodeAll)
+        # }
     })
 
 
@@ -806,15 +809,15 @@ server = function (input, output, session) {
     })
 
     observeEvent({
-        rv$minTrendValue
-        rv$maxTrendValue
+        rv$minValue
+        rv$maxValue
         input$colorbar_choice
     }, {
         if (input$colorbar_choice == 'show') {
             output$colorbar_plot = renderPlot({
-                plot_colorbar(rv$minTrendValue, rv$maxTrendValue,
-                              palette_name=palette_name,
-                              reverse=palette_reverse, nbTick=nbTick)
+                plot_colorbar(rv$minValue, rv$maxValue,
+                              colorList=colorList, nColor=nColor,
+                              reverse=reverse, nbTick=nbTick)
             }, width=55, height=250, res=300)
         }
     })

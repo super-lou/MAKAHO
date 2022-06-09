@@ -107,8 +107,9 @@ Years = 1900:as.numeric(format(today, "%Y"))
 # Level of risk
 sigP = c("1%", "5%", "10%")
 
-palette_name = 'perso'
-palette_reverse = TRUE
 nbTick = 10
 
+nColor = 10
+colorList = palette_ground
+reverse = FALSE
 

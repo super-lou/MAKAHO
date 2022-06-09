@@ -26,7 +26,7 @@
 # R/marker_manager.R
 
 
-create_marker = function (resources_path, widthRel=1, filedir='marker', color='grey50', fill_PaletteName='perso', nColor=256, reverse=TRUE, stroke=1.5, fillAdd=NULL, colorAdd=NULL, ...) {
+create_marker = function (resources_path, widthRel=1, filedir='marker', color='grey50', fill_colorList, nColor=256, stroke=1.5, fillAdd=NULL, colorAdd=NULL, ...) {
 
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
@@ -41,8 +41,7 @@ create_marker = function (resources_path, widthRel=1, filedir='marker', color='g
     }
     
     Palette = get_palette(nColor=nColor,
-                      palette_name=fill_PaletteName,
-                      reverse=reverse)
+                          colorList=fill_colorList)
     if (!is.null(fillAdd)) {
         Palette = c(Palette, fillAdd)
     }
@@ -90,7 +89,8 @@ create_marker = function (resources_path, widthRel=1, filedir='marker', color='g
 }
 
 # create_marker(resources_path, widthRel=0.8, stroke=0.8,
-#               fill_PaletteName='perso',
+#               fill_colorList=colorList,
+#               nColor=nColor,
 #               color=grey50COL,
 #               fillAdd=c(grey94COL, grey50COL, grey18COL),
 #               colorAdd=c(grey85COL, grey50COL, grey9COL))

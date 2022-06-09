@@ -26,13 +26,36 @@
 # R/color_manager.R
 
 
-PalettePerso = c('#0f3b57', # cold
-                 '#1d7881',
-                 '#80c4a9',
-                 '#e2dac6', # mid
-                 '#fadfad',
-                 '#d08363',
-                 '#7e392f') # hot
+# PalettePerso = c('#0f3b57', # cold
+#                  '#1d7881',
+#                  '#80c4a9',
+#                  '#e2dac6', # mid
+#                  '#fadfad',
+#                  '#d08363',
+#                  '#7e392f') # hot
+
+
+palette_ground = c('#543005',
+                   '#8c510a',
+                   '#bf812d',
+                   '#dfc27d',
+                   '#f6e8c3',
+                   '#c7eae5',
+                   '#80cdc1',
+                   '#35978f',
+                   '#01665e',
+                   '#003c30')
+
+palette_rainbow = c('#67001f',
+                    '#b2182b',
+                    '#d6604d',
+                    '#f4a582',
+                    '#fddbc7',
+                    '#d1e5f0',
+                    '#92c5de',
+                    '#4393c3',
+                    '#2166ac',
+                    '#053061')
 
 # Personnal colors
 grey99COL = "#fcfcfc"
@@ -51,107 +74,65 @@ grey9COL = "#171717"
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________
-# Returns a color of a palette corresponding to a value included
-# between the min and the max of the variable
-get_color = function (value, min, max, nbTick, nColor=256, palette_name='perso', reverse=FALSE) {
+compute_color = function (value, min, max, colorList, nColor=256, reverse=FALSE) {
 
     # If the value is a NA return NA color
     if (is.na(value)) {
         return (NA)
     }
     
-    # If the palette chosen is the personal ones
-    if (palette_name == 'perso') {
-        colorList = PalettePerso
-    # Else takes the palette corresponding to the name given
-    } else {
-        colorList = brewer.pal(11, palette_name)
-    }
-    
     # Gets the number of discrete colors in the palette
     nSample = length(colorList)
+
+    if (reverse) {
+        colorList = rev(colorList)
+    }
     # Recreates a continuous color palette
     palette = colorRampPalette(colorList)(nColor)
 
-    midDown = round(nColor/2, 0)
-    midUp = midDown
-    if (nColor %% 2 == 0) {
-        midUp = midUp + 1
-    }
-    if (reverse) {
-        Sample_hot = 1:midDown
-        Sample_cold = midUp:nColor
-        
-        palette_hot = palette[Sample_hot]
-        palette_cold = palette[Sample_cold]
-        
-        palette = rev(palette)
-        palette_hot = rev(palette_hot)
-        palette_cold = rev(palette_cold)
-    } else {
-        Sample_hot = midUp:nColor
-        Sample_cold = 1:midDown
-        
-        palette_hot = palette[Sample_hot]
-        palette_cold = palette[Sample_cold]
-    }
-    
-    nColor_hot = length(palette_hot)
-    nColor_cold = length(palette_cold)
-
-    labTick = pretty(seq(min, max, length.out=nbTick),
-                     nbTick)
-
     # Computes the absolute max
-    maxAbs = max(abs(max), abs(min),
-                 abs(max(labTick)), abs(min(labTick)))
+    maxAbs = max(abs(max), abs(min))
 
-    # If the value is negative
-    if (value <= 0) {
-        if (maxAbs == 0) {
-            idNorm = 0
-        } else {
-            # Gets the relative position of the value in respect
-            # to its span
-            idNorm = (value + maxAbs) / maxAbs
-        }
-        # The index corresponding
-        id = round(idNorm*(nColor_cold - 1) + 1, 0)
-        # The associated color
-        color = palette_cold[id]
-    # Same if it is a positive value
+    bin = seq(-maxAbs, maxAbs, length.out=nColor-1)
+    upBin = c(bin, Inf)
+    lowBin = c(-Inf, bin)
+
+    if (value >= 0) {
+        id = which(value < upBin & value >= lowBin)
     } else {
-        if (maxAbs == 0) {
-            idNorm = 0
-        } else {
-            idNorm = value / maxAbs
-        }
-        id = round(idNorm*(nColor_hot - 1) + 1, 0)
-        # The associated color
-        color = palette_hot[id]
+        id = which(value <= upBin & value > lowBin)
     }
+    color = palette[id]
+    return(color)
+}
+
+# compute_color(39, -50, 40, colorList, nColor=10)
+
+
+get_color = function (df_value, min, max, colorList, CodeSample, nColor=256, reverse=FALSE, noneColor="black") {
+    
+    color = sapply(df_value$value, compute_color,
+                   min=min,
+                   max=max,
+                   colorList=colorList,
+                   nColor=nColor,
+                   reverse=reverse)
+
+    color[!(df_value$code %in% CodeSample)] = noneColor
+    
     return(color)
 }
 
 
-
 ### 1.3. Palette tester ______________________________________________
 # Allows to display the current personal palette
-palette_tester = function (palette_name='perso', figdir='figures', nColor=256) {
+palette_tester = function (colorList, nColor=256) {
 
-    outdir = file.path(figdir, 'palette')
+    outdir = 'palette'
     if (!(file.exists(outdir))) {
         dir.create(outdir)
     }
-    
-    # If the palette chosen is the personal ones
-    if (palette_name == 'perso') {
-        colorList = PalettePerso
-    # Else takes the palette corresponding to the name given
-    } else {
-        colorList = brewer.pal(11, palette_name)
-    }
-    
+
     # An arbitrary x vector
     X = 1:nColor
     # All the same arbitrary y position to create a colorbar
@@ -161,7 +142,7 @@ palette_tester = function (palette_name='perso', figdir='figures', nColor=256) {
     palette = colorRampPalette(colorList)(nColor)
 
     # Open a void plot
-    p = ggplot() + void
+    p = ggplot() + theme_void()
 
     for (x in X) {
         # Plot the palette
@@ -180,27 +161,21 @@ palette_tester = function (palette_name='perso', figdir='figures', nColor=256) {
                            expand=c(0, 0))
 
     # Saves the plot
+    outname = deparse(substitute(colorList))
+    
     ggsave(plot=p,
            path=outdir,
-           filename=paste(palette_name, '.pdf', sep=''),
+           filename=paste(outname, '.pdf', sep=''),
            width=10, height=10, units='cm', dpi=100)
 
     ggsave(plot=p,
            path=outdir,
-           filename=paste(palette_name, '.png', sep=''),
+           filename=paste(outname, '.png', sep=''),
            width=10, height=10, units='cm', dpi=300)
 }
 
 
-get_palette = function (nColor=256, palette_name='perso', reverse=FALSE, nbTick=10) {
-
-    # If the palette chosen is the personal ones
-    if (palette_name == 'perso') {
-        colorList = PalettePerso
-    # Else takes the palette corresponding to the name given
-    } else {
-        colorList = brewer.pal(11, palette_name)
-    }
+get_palette = function (colorList, nColor=256) {
     
     # Gets the number of discrete colors in the palette
     nSample = length(colorList)

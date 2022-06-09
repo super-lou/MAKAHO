@@ -67,7 +67,7 @@ theme_ash =
 ### 1.2. Colorbar ____________________________________________________
 # Returns the colorbar but also positions, labels and colors of some
 # ticks along it 
-plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FALSE, nbTick=10) {
+plot_colorbar = function (min, max, colorList, nColor=256, reverse=FALSE, nbTick=10) {
 
     # If the value is a NA return NA color
     if (is.null(min) | is.null(max)) {
@@ -81,14 +81,6 @@ plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FA
     minAbs = min(min, min(labTick))
     maxAbs = max(max, max(labTick))
     
-    # If the palette chosen is the personal ones
-    if (palette_name == 'perso') {
-        colorList = PalettePerso
-    # Else takes the palette corresponding to the name given
-    } else {
-        colorList = brewer.pal(11, palette_name)
-    }
-    
     # Gets the number of discrete colors in the palette
     nSample = length(colorList)
 
@@ -98,12 +90,12 @@ plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FA
     minColor = get_color(minAbs, min=min, max=max,
                          nbTick=nbTick,
                          nColor=nColor,
-                         palette_name=palette_name,
+                         colorList=colorList,
                          reverse=reverse)
     maxColor = get_color(maxAbs, min=min, max=max,
                          nbTick=nbTick,
                          nColor=nColor,
-                         palette_name=palette_name,
+                         colorList=colorList,
                          reverse=reverse)
     
     minId = which(palette == minColor)
@@ -124,7 +116,7 @@ plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FA
         col = get_color(lab, min=min, max=max,
                         nbTick=nbTick,
                         nColor=nColor,
-                        palette_name=palette_name,
+                        colorList=colorList,
                         reverse=reverse)
         
         # Stores them
@@ -148,7 +140,7 @@ plot_colorbar = function (min, max, nColor=256, palette_name='perso', reverse=FA
         col = get_color(lab, min=min, max=max,
                         nbTick=nbTick,
                         nColor=nColor,
-                        palette_name=palette_name,
+                        colorList=colorList,
                         reverse=reverse)
         
         # Stores them
