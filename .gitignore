@@ -3,3 +3,5 @@
 .Rhistory
 *.emacs*
 .directory
+.git*
+git.sh
