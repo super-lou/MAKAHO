@@ -203,7 +203,7 @@ read_FST = function (resdir, filename, filedir='fst') {
 
 
 get_trendExtremes = function (df_data, df_trend, type,
-                              CodeSample) {
+                              CodeSample=NULL) {
     
     if (type == 'sévérité') {
         df_mean = summarise(group_by(df_data, code),
@@ -211,23 +211,24 @@ get_trendExtremes = function (df_data, df_trend, type,
 
         df_join = full_join(df_trend, df_mean)
         value = df_join$trend / df_join$mean
-        df_value = tibble(code=df_join$code, value=value)
+        Code = df_join$code
     } else {
-        df_value = tibble(code=df_trend$code,
-                          value=df_trend$trend)
+        value = df_trend$trend
+        Code = df_trend$code
     }
 
-    df_valueSample = df_value[df_value$code %in% CodeSample,]
+    if (!is.null(CodeSample)) {
+        valueSample = value[Code %in% CodeSample]
+    } else {
+        valueSample = value
+    } 
     
-    minValue = quantile(df_valueSample$value, 0, na.rm=TRUE)
-    maxValue = quantile(df_valueSample$value, 1, na.rm=TRUE)
+    minValue = quantile(valueSample, 0, na.rm=TRUE)
+    maxValue = quantile(valueSample, 1, na.rm=TRUE)
 
-    res = list(df_value=df_value,
-               min=minValue, max=maxValue)
+    res = list(value=value, min=minValue, max=maxValue)
     return (res)
 }
-
-
 
 
 get_label = function (Lon, Lat, Code, Nom) {

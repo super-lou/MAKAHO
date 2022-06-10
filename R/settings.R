@@ -109,7 +109,18 @@ sigP = c("1%", "5%", "10%")
 
 nbTick = 10
 
-nColor = 10
-colorList = palette_ground
+colors = 10
+Palette = Palette_ground
 reverse = FALSE
 
+analyseMinYear = 30
+
+validColor = grey50COL
+invalidColor = yellowCOL
+missColor = redCOL
+
+none1Color_light = grey85COL
+none2Color_light = grey94COL
+
+none1Color_dark = grey9COL
+none2Color_dark = grey18COL

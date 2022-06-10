@@ -42,13 +42,14 @@ server = function (input, output, session) {
                         mapHTML=NULL,
                         polyMode='false',
                         clickMode=FALSE,
+                        warningMode=TRUE,
                         downloadMode=FALSE,
                         inputPhoto=FALSE,
                         currentLimits=NULL,
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
                         defaultBounds=NULL,
-                        df_value=NULL,
+                        value=NULL,
                         minValue=NULL,
                         maxValue=NULL
                         )
@@ -230,48 +231,52 @@ server = function (input, output, session) {
         
         alpha = as.numeric(sub("%", "", input$alpha_choice)) / 100
 
-        Code = df_Xtrend()$code ### ici c'est pas normal
-        nCode = length(Code)
+        nCodeAll = length(CodeAll())
+        
+        trendCode = df_Xtrend()$code
         
         OkS = df_Xtrend()$p <= alpha
-        CodeSU = Code[OkS & df_Xtrend()$trend >= 0] ### ici c'est pas normal
-        CodeSD = Code[OkS & df_Xtrend()$trend < 0]
-        CodeNS = Code[!OkS]
-
-        print(df_Xtrend())
-        print(fillList())
-        print(length(fillList()))
+        CodeSU = trendCode[OkS & df_Xtrend()$trend >= 0]
+        CodeSD = trendCode[OkS & df_Xtrend()$trend < 0]
+        CodeNS = trendCode[!OkS]
         
-        shapeList = rep(1, nCode)
-        shapeList[match(CodeSU, Code)] = '^' ### ici c'est codeAll
-        shapeList[match(CodeSD, Code)] = 'v'
-        shapeList[match(CodeNS, Code)] = 'o'
+        shapeList = rep(1, nCodeAll)
+        shapeList[match(CodeSU, CodeAll())] = '^'
+        shapeList[match(CodeSD, CodeAll())] = 'v'
+        shapeList[match(CodeNS, CodeAll())] = 'o'
+        shapeList[match(missCode(), CodeAll())] = 'o'
 
-        print(shapeList)
-        print(length(shapeList))
-        print('')
+        if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
+            none1Color = none1Color_light
+        } else if (input$theme_choice == 'dark') {
+            none1Color = none1Color_dark
+        }
 
+        colorList = rep(none1Color, nCodeAll)
+        colorList[match(CodeSample(), CodeAll())] = validColor
+        invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
+        colorList[match(invalidCodeSample, CodeAll())] = invalidColor
+        missCodeSample = missCode()[missCode() %in% CodeSample()]
+        colorList[match(missCodeSample, CodeAll())] = missColor
+        
         markerListAll = get_markerList(shapeList,
+                                       colorList,
                                        fillList(),
                                        resources_path)
-
-        ### faire en sorte que fillList soit toujours avec tous les code et que les stations manquante parce que période trop courte ait des marker différent de ceux qui ne sont pas sélectionné
-        ### cercle jaune /!\ station avec peu de donnée
-        ### cerlce rouge /!\ station sans donnée
         
-        # if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
-        #     okCode = rep(TRUE, nCode)
-        # } else {
-        #     okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
-        # }
-        # rv$theme_choice_save = input$theme_choice
+        if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
+            okCode = rep(TRUE, nCodeAll)
+        } else {
+            okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+        }
+        rv$theme_choice_save = input$theme_choice
 
-        # Code = CodeAll()[okCode]
+        Code = CodeAll()[okCode]
         markerList = markerListAll
-        markerList$iconUrl = markerListAll$iconUrl#[okCode]
-        Lon = df_meta()$lon#[okCode]
-        Lat = df_meta()$lat#[okCode]
-        Nom = df_meta()$nom#[okCode]
+        markerList$iconUrl = markerListAll$iconUrl[okCode]
+        Lon = df_meta()$lon[okCode]
+        Lat = df_meta()$lat[okCode]
+        Nom = df_meta()$nom[okCode]
         
         label = get_label(Lon, Lat, Code, Nom)
 
@@ -433,13 +438,21 @@ server = function (input, output, session) {
     rv$theme_choice_save = isolate(input$theme_choice)
     
     CodeSample = reactive({
-        if (identical(rv$CodeSample, character(0))) {
+
+        if (!rv$warningMode) {
+            CodeSample = rv$CodeSample[!(rv$CodeSample %in% missCode()) &
+                                       !(rv$CodeSample %in% invalidCode())]
+        } else {
+            CodeSample = rv$CodeSample
+        }
+        
+        if (identical(CodeSample, character(0))) {
             NULL
         } else {
-            rv$CodeSample
+            CodeSample
         }
     })
-    CodeSample = debounce(CodeSample, 500)
+    CodeSample = debounce(CodeSample, 250) ### /!\ ici problème de double trigger de fillList pour marker
 
 #### 2.4.1. All/none _________________________________________________
     observeEvent(input$all_button, {
@@ -570,7 +583,26 @@ server = function (input, output, session) {
         showElement(id='ana_panel')
     })
 
-#### 2.4.4. Search ___________________________________________________
+#### 2.4.4. Warning __________________________________________________
+    observeEvent(rv$warningMode, {
+        if (rv$warningMode) {
+            hide(id='warningShow_button') 
+            showElement(id='warningHide_button')
+        } else {
+            hide(id='warningHide_button')
+            showElement(id='warningShow_button')             
+        }
+    })
+
+    observeEvent(input$warningShow_button, {
+        rv$warningMode = TRUE
+    })
+
+    observeEvent(input$warningHide_button, {
+        rv$warningMode = FALSE  
+    })
+
+#### 2.4.5. Search ___________________________________________________
     meta_location = reactive({
         gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", df_meta()$nom)
     })
@@ -722,7 +754,20 @@ server = function (input, output, session) {
         }
     })
 
-### 2.6. Color _______________________________________________________
+    missCode = reactive({
+        CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
+    })
+
+    invalidCode = reactive({
+        analyseStart = df_Xtrend()$period_start
+        analyseStart[analyseStart < period()[1]] = period()[1]
+        analyseEnd = df_Xtrend()$period_end
+        analyseEnd[analyseEnd > period()[2]] = period()[2]
+        analysePeriod = (analyseEnd - analyseStart)/365.25
+        df_Xtrend()$code[analysePeriod < analyseMinYear]
+    })
+    
+### 2.6. Fill _______________________________________________________
     fillList = reactive({
         nCodeAll = length(CodeAll())
         
@@ -732,24 +777,32 @@ server = function (input, output, session) {
                                     type=type(),
                                     CodeSample=CodeSample())
 
-            rv$df_value = res$df_value
+            rv$value = res$value
             rv$minValue = res$min
             rv$maxValue = res$max
 
-            if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
-                noneColor = grey94COL
-            } else if (input$theme_choice == 'dark') {
-                noneColor = grey18COL
-            }
+            fill = get_color(rv$value, 
+                             rv$minValue,
+                             rv$maxValue,
+                             Palette=Palette,
+                             colors=colors,
+                             reverse=reverse)
 
-            fillList = get_color(rv$df_value, 
-                                 rv$minValue,
-                                 rv$maxValue,
-                                 colorList=colorList,
-                                 nColor=nColor,
-                                 reverse=reverse,
-                                 CodeSample=CodeSample(),
-                                 noneColor=noneColor)
+            if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
+                none2Color = none2Color_light
+            } else if (input$theme_choice == 'dark') {
+                none2Color = none2Color_dark
+            }
+            
+            fillList = rep(none2Color, nCodeAll)
+
+            valueCode = df_Xtrend()$code
+            okCode = valueCode %in% CodeSample()
+            valueCodeSample = valueCode[okCode]
+            fillSample = fill[okCode]
+            
+            fillList[match(valueCodeSample, CodeAll())] = fillSample
+            
             fillList
         }
         # else {
@@ -816,7 +869,7 @@ server = function (input, output, session) {
         if (input$colorbar_choice == 'show') {
             output$colorbar_plot = renderPlot({
                 plot_colorbar(rv$minValue, rv$maxValue,
-                              colorList=colorList, nColor=nColor,
+                              Palette=Palette, colors=colors,
                               reverse=reverse, nbTick=nbTick)
             }, width=55, height=250, res=300)
         }

@@ -67,7 +67,7 @@ theme_ash =
 ### 1.2. Colorbar ____________________________________________________
 # Returns the colorbar but also positions, labels and colors of some
 # ticks along it 
-plot_colorbar = function (min, max, colorList, nColor=256, reverse=FALSE, nbTick=10) {
+plot_colorbar = function (min, max, Palette, colors=256, reverse=FALSE, nbTick=10) {
 
     # If the value is a NA return NA color
     if (is.null(min) | is.null(max)) {
@@ -82,27 +82,27 @@ plot_colorbar = function (min, max, colorList, nColor=256, reverse=FALSE, nbTick
     maxAbs = max(max, max(labTick))
     
     # Gets the number of discrete colors in the palette
-    nSample = length(colorList)
+    nSample = length(Palette)
 
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(nColor)
+    Palette = colorRampPalette(Palette)(colors)
 
     minColor = get_color(minAbs, min=min, max=max,
                          nbTick=nbTick,
-                         nColor=nColor,
-                         colorList=colorList,
+                         colors=colors,
+                         Palette=Palette,
                          reverse=reverse)
     maxColor = get_color(maxAbs, min=min, max=max,
                          nbTick=nbTick,
-                         nColor=nColor,
-                         colorList=colorList,
+                         colors=colors,
+                         Palette=Palette,
                          reverse=reverse)
     
-    minId = which(palette == minColor)
-    maxId = which(palette == maxColor)
+    minId = which(Palette == minColor)
+    maxId = which(Palette == maxColor)
     
-    paletteCrop = palette[minId:maxId]
-    nPaletteCrop = length(paletteCrop)
+    PaletteCrop = Palette[minId:maxId]
+    nPaletteCrop = length(PaletteCrop)
     
     # The position of ticks is between 0 and 1
     posTick = labTick - min(labTick)
@@ -115,15 +115,15 @@ plot_colorbar = function (min, max, colorList, nColor=256, reverse=FALSE, nbTick
         # Gets the associated color
         col = get_color(lab, min=min, max=max,
                         nbTick=nbTick,
-                        nColor=nColor,
-                        colorList=colorList,
+                        colors=colors,
+                        Palette=Palette,
                         reverse=reverse)
         
         # Stores them
         colTick = c(colTick, col)
     }
 
-    yColor = match(colTick, paletteCrop)
+    yColor = match(colTick, PaletteCrop)
     xColor = rep(3, times=length(yColor))
 
     dyColorSpan = mean(diff(yColor))
@@ -139,8 +139,8 @@ plot_colorbar = function (min, max, colorList, nColor=256, reverse=FALSE, nbTick
         # Gets the associated color
         col = get_color(lab, min=min, max=max,
                         nbTick=nbTick,
-                        nColor=nColor,
-                        colorList=colorList,
+                        colors=colors,
+                        Palette=Palette,
                         reverse=reverse)
         
         # Stores them
@@ -153,13 +153,13 @@ plot_colorbar = function (min, max, colorList, nColor=256, reverse=FALSE, nbTick
         annotate("rect",
                  xmin=xColor[1], xmax=xColor[1]+dxColor,
                  ymin=-dyColorSpan/2, ymax=yColor[1], 
-                 fill=paletteCrop[1]) +
+                 fill=PaletteCrop[1]) +
         
         annotate("rect",
                  xmin=xColor[1], xmax=xColor[1]+dxColor,
                  ymin=yColor[nbTickShow],
                  ymax=yColor[nbTickShow]+dyColorSpan/2, 
-                 fill=paletteCrop[nPaletteCrop])
+                 fill=PaletteCrop[nPaletteCrop])
     
     for (i in 1:(nbTickShow-1)) {
         plot = plot +

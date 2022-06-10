@@ -35,7 +35,7 @@
 #                  '#7e392f') # hot
 
 
-palette_ground = c('#543005',
+Palette_ground = c('#543005',
                    '#8c510a',
                    '#bf812d',
                    '#dfc27d',
@@ -46,7 +46,7 @@ palette_ground = c('#543005',
                    '#01665e',
                    '#003c30')
 
-palette_rainbow = c('#67001f',
+Palette_rainbow = c('#67001f',
                     '#b2182b',
                     '#d6604d',
                     '#f4a582',
@@ -71,10 +71,13 @@ grey18COL = "#2e2e2e"
 grey15COL = "#262626"
 grey9COL = "#171717"
 
+yellowCOL = "#fcfd74"
+redCOL = "#dc343b"
+
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________
-compute_color = function (value, min, max, colorList, nColor=256, reverse=FALSE) {
+compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
 
     # If the value is a NA return NA color
     if (is.na(value)) {
@@ -82,18 +85,18 @@ compute_color = function (value, min, max, colorList, nColor=256, reverse=FALSE)
     }
     
     # Gets the number of discrete colors in the palette
-    nSample = length(colorList)
+    nSample = length(Palette)
 
     if (reverse) {
-        colorList = rev(colorList)
+        Palette = rev(Palette)
     }
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(nColor)
+    Palette = colorRampPalette(Palette)(colors)
 
     # Computes the absolute max
     maxAbs = max(abs(max), abs(min))
 
-    bin = seq(-maxAbs, maxAbs, length.out=nColor-1)
+    bin = seq(-maxAbs, maxAbs, length.out=colors-1)
     upBin = c(bin, Inf)
     lowBin = c(-Inf, bin)
 
@@ -102,31 +105,30 @@ compute_color = function (value, min, max, colorList, nColor=256, reverse=FALSE)
     } else {
         id = which(value <= upBin & value > lowBin)
     }
-    color = palette[id]
+    color = Palette[id]
     return(color)
 }
 
-# compute_color(39, -50, 40, colorList, nColor=10)
+# compute_color(39, -50, 40, Palette, colors=10)
 
 
-get_color = function (df_value, min, max, colorList, CodeSample, nColor=256, reverse=FALSE, noneColor="black") {
+get_color = function (value, min, max, Palette, CodeSample, colors=256, reverse=FALSE, noneColor="black") {
     
-    color = sapply(df_value$value, compute_color,
+    color = sapply(value, compute_color,
                    min=min,
                    max=max,
-                   colorList=colorList,
-                   nColor=nColor,
+                   Palette=Palette,
+                   colors=colors,
                    reverse=reverse)
-
-    color[!(df_value$code %in% CodeSample)] = noneColor
     
+    color[is.na(color)] = noneColor    
     return(color)
 }
 
 
 ### 1.3. Palette tester ______________________________________________
 # Allows to display the current personal palette
-palette_tester = function (colorList, nColor=256) {
+palette_tester = function (Palette, colors=256) {
 
     outdir = 'palette'
     if (!(file.exists(outdir))) {
@@ -134,12 +136,12 @@ palette_tester = function (colorList, nColor=256) {
     }
 
     # An arbitrary x vector
-    X = 1:nColor
+    X = 1:colors
     # All the same arbitrary y position to create a colorbar
-    Y = rep(0, times=nColor)
+    Y = rep(0, times=colors)
 
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(nColor)
+    Palette = colorRampPalette(Palette)(colors)
 
     # Open a void plot
     p = ggplot() + theme_void()
@@ -150,18 +152,18 @@ palette_tester = function (colorList, nColor=256) {
             annotate("segment",
                      x=x, xend=x,
                      y=0, yend=1,
-                     color=palette[x], size=1)
+                     color=Palette[x], size=1)
     }
 
     p = p +
-        scale_x_continuous(limits=c(0, nColor),
+        scale_x_continuous(limits=c(0, colors),
                            expand=c(0, 0)) +
         
         scale_y_continuous(limits=c(0, 1),
                            expand=c(0, 0))
 
     # Saves the plot
-    outname = deparse(substitute(colorList))
+    outname = deparse(substitute(Palette))
     
     ggsave(plot=p,
            path=outdir,
@@ -175,14 +177,14 @@ palette_tester = function (colorList, nColor=256) {
 }
 
 
-get_palette = function (colorList, nColor=256) {
+get_palette = function (Palette, colors=256) {
     
     # Gets the number of discrete colors in the palette
-    nSample = length(colorList)
+    nSample = length(Palette)
     # Recreates a continuous color palette
-    palette = colorRampPalette(colorList)(nColor)
+    Palette = colorRampPalette(Palette)(colors)
 
-    return (palette)
+    return (Palette)
 }
 
 

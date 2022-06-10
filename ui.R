@@ -164,7 +164,19 @@ ui = bootstrapPage(
                     actionButtonI(class="Button-panel",
                                   'poly_button',
                                   label=word("a.selec.poly"),
-                                  icon_name=iconLib$polyline_white))),
+                                  icon_name=iconLib$polyline_white),
+
+                    hidden(
+                    actionButtonI(class="Button-panel",
+                                  'warningHide_button',
+                                  label=NULL,
+                                  icon_name=iconLib$error_outline_white)),
+                    hidden(
+                    actionButtonI(class="Button-panel",
+                                  'warningShow_button',
+                                  label=NULL,
+                                  icon_name=iconLib$error_white))
+                    )),
 
             div(class="Row",
                 div(style="margin-bottom: -1.1rem;",
