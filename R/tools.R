@@ -181,8 +181,8 @@ create_area = function (area_file, resources_path) {
     return (area)
 }
 
-actionButtonI = function (inputId, label=NULL, icon_name=NULL,
-                          width=NULL, ...){
+Button = function (inputId, label=NULL, icon_name=NULL,
+                   width=NULL, ...){
     actionButton(inputId,
                  div(label,
                      style="float:right; padding-left:3px;"),
@@ -190,6 +190,38 @@ actionButtonI = function (inputId, label=NULL, icon_name=NULL,
                  width=width,
                  img(icon_name, align="right"),
                  ...)
+}
+
+selectButton = function (inputId, label=NULL, icon_name=NULL,
+                         class='', selected=FALSE, ...){
+
+    checkboxGroupButtons(
+        status=class,
+        inputId=inputId,
+        label=NULL,
+        choiceNames=
+            paste0(img(icon_name,
+                       align="right"),
+                   label),
+        choiceValues=TRUE,
+        selected=selected,
+        ...)
+}
+
+radioButton = function (class='', ...){
+
+    radioGroupButtons(
+        status=class,
+        label=NULL,
+        ...)
+}
+
+updateRadioButton = function (class='', ...){
+
+    updateRadioGroupButtons(
+        status=class,
+        label=NULL,
+        ...)
 }
 
 

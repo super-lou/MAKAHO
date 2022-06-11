@@ -109,24 +109,24 @@ create_marker = function (shapeList, colorList, fillPalette, shapeSizes, resourc
     return (Urls)
 }
 
-markerAdd = list(
-    c(color=missColor,
-      fill=none2Color_light),
-    c(color=missColor,
-      fill=none2Color_dark),
+# markerAdd = list(
+#     c(color=missColor,
+#       fill=none2Color_light),
+#     c(color=missColor,
+#       fill=none2Color_dark),
     
-    c(color=invalidColor,
-      fill=none2Color_light),
-    c(color=invalidColor,
-      fill=none2Color_dark),
+#     c(color=invalidColor,
+#       fill=none2Color_light),
+#     c(color=invalidColor,
+#       fill=none2Color_dark),
 
-    c(color=validColor,
-      fill=validColor),
-    c(color=none1Color_light,
-      fill=none2Color_light),
-    c(color=none1Color_dark,
-      fill=none2Color_dark)
-    )
+#     c(color=validColor,
+#       fill=validColor),
+#     c(color=none1Color_light,
+#       fill=none2Color_light),
+#     c(color=none1Color_dark,
+#       fill=none2Color_dark)
+#     )
 
 # create_marker(shapeList=c(21, 24, 25),
 #               colorList=c(validColor, invalidColor),

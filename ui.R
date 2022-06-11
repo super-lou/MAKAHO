@@ -50,7 +50,7 @@ ui = bootstrapPage(
     tags$style(type="text/css",
                "html, body {width: 100%; height: 100%}"),
     tags$head(tags$style(
-               ".leaflet-control-easyPrint.leaflet-bar.leaflet-control
+                       ".leaflet-control-easyPrint.leaflet-bar.leaflet-control
                    {display: none;}")),
 
     includeCSS("www/ui.css"),
@@ -68,7 +68,7 @@ ui = bootstrapPage(
                              top: 0; bottom: 0; left: 0; right: 0;",
                       leafletOutput("map", width="100%",
                                     height="100%")),
-         ),
+             ),
 
 ### 1.2. Zoom ________________________________________________________
     hidden(
@@ -76,7 +76,7 @@ ui = bootstrapPage(
                    left=10, top=10,
                    width="auto", height="auto",
                    div(class="Row",
-                       div(actionButtonI(
+                       div(Button(
                            class="SmallButton-menu",
                            'focusZoom_button',
                            NULL,
@@ -89,7 +89,7 @@ ui = bootstrapPage(
                    left=10, top=10,
                    width="auto", height="auto",
                    div(class="Row",
-                       div(actionButtonI(
+                       div(Button(
                            class="SmallButton-menu",
                            'defaultZoom_button',
                            NULL,
@@ -97,18 +97,18 @@ ui = bootstrapPage(
                    )
     ),
 
-        
+    
 ## 2. ANALYSE ________________________________________________________
 ### 2.1. Panel button ________________________________________________
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
                div(class="Row",
-                   div(actionButtonI(class="Button-menu",
-                                     'ana_button',
-                                     HTML(paste0("<b>",
-                                                 word("a.title"),
-                                                 "</b>")),
-                                     icon_name=iconLib$show_chart_white)))
+                   div(Button(class="Button-menu",
+                              'ana_button',
+                              HTML(paste0("<b>",
+                                          word("a.title"),
+                                          "</b>")),
+                              icon_name=iconLib$show_chart_white)))
                ),
     
 ### 2.2. Panel _______________________________________________________
@@ -146,44 +146,45 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch", role="toolbar",
-                    actionButtonI(class="Button-panel",
-                                  'all_button',
-                                  label=word("a.selec.all"),
-                                  icon_name=iconLib$check_circle_white),
+                    Button(class="Button",
+                           'all_button',
+                           label=word("a.selec.all"),
+                           icon_name=iconLib$check_circle_white),
                     
-                    actionButtonI(class="Button-panel",
-                                  'none_button',
-                                  label=word("a.selec.none"),
-                                  icon_name=iconLib$cross_circle_white),
+                    Button(class="Button",
+                           'none_button',
+                           label=word("a.selec.none"),
+                           icon_name=iconLib$cross_circle_white),
                     
-                    actionButtonI(class="Button-panel",
-                                  'click_button',
-                                  label=word("a.selec.click"),
-                                  icon_name=iconLib$click_white),
+                    Button(class="Button",
+                           'click_button',
+                           label=word("a.selec.click"),
+                           icon_name=iconLib$click_white),
 
-                    actionButtonI(class="Button-panel",
-                                  'poly_button',
-                                  label=word("a.selec.poly"),
-                                  icon_name=iconLib$polyline_white),
+                    # Button(class="Button",
+                    #        'poly_button',
+                    #        label=word("a.selec.poly"),
+                    #        icon_name=iconLib$polyline_white),
 
-                    hidden(
-                    actionButtonI(class="Button-panel",
-                                  'warningHide_button',
-                                  label=NULL,
-                                  icon_name=iconLib$error_outline_white)),
-                    hidden(
-                    actionButtonI(class="Button-panel",
-                                  'warningShow_button',
-                                  label=NULL,
-                                  icon_name=iconLib$error_white))
-                    )),
+                    selectButton(
+                        class="Button",
+                        inputId="poly_select",
+                        label=word("a.selec.poly"),
+                        icon_name=iconLib$polyline_white,
+                        selected=FALSE),
 
-            div(class="Row",
-                div(style="margin-bottom: -1.1rem;",
+                    selectButton(
+                        class="Button",
+                        inputId="warning_select",
+                        label=word("a.selec.warning"),
+                        icon_name=iconLib$error_outline_white,
+                        selected=TRUE),
+
                     selectizeInput(inputId="search_input", 
                                    label=NULL,
                                    multiple=TRUE,
-                                   choices=NULL))),
+                                   choices=NULL)
+                    )),
 
 ### 2.4. Variable selection __________________________________________
             div(class="Row",
@@ -193,11 +194,10 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioGroupButtons(status="RadioButton",
-                                      inputId="event_choice",
-                                      label=NULL,
-                                      choices=rle(Var$event)$values,
-                                      selected=rle(Var$event)$values[1]))),
+                    radioButton(class="Button",
+                                inputId="event_choice",
+                                choices=rle(Var$event)$values,
+                                selected=rle(Var$event)$values[1]))),
 
             div(class="Row",
                 div(class="row-label",
@@ -206,11 +206,10 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioGroupButtons(status="RadioButton",
-                                      inputId="var_choice",
-                                      label=NULL,
-                                      choices=FALSE,
-                                      selected=NULL))),
+                    radioButton(class="Button",
+                                inputId="var_choice",
+                                choices=FALSE,
+                                selected=NULL))),
 
             hidden(
                 div(class="Row", id="proba_row",
@@ -220,11 +219,11 @@ ui = bootstrapPage(
                                     "</b></span>"))),
                     div(class="sep"),
                     div(class="bunch",
-                        radioGroupButtons(status="RadioButton",
-                                          inputId="proba_choice",
-                                          choices=FALSE,
-                                          selected=NULL)))),
-        
+                        radioButton(class="Button",
+                                    inputId="proba_choice",
+                                    choices=FALSE,
+                                    selected=NULL)))),
+            
 ### 2.5. Period selection ____________________________________________
             div(class="Row",
                 div(class="row-label",
@@ -263,11 +262,10 @@ ui = bootstrapPage(
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioGroupButtons(status="RadioButton",
-                                      inputId="alpha_choice",
-                                      label=NULL,
-                                      choices=sigP,
-                                      selected=sigP[3])))
+                    radioButton(class="Button",
+                                inputId="alpha_choice",
+                                choices=sigP,
+                                selected=sigP[3])))
         )
     ),
 
@@ -280,9 +278,9 @@ ui = bootstrapPage(
             width=200, height="auto",
             left=0, top=10, right=0,
 
-            actionButtonI('clickOk_button', label=word("b.ok"),
-                          style=CSSbutton_soloBar,
-                          icon_name=iconLib$ok_black)
+            Button('clickOk_button', label=word("b.ok"),
+                   style=CSSbutton_soloBar,
+                   icon_name=iconLib$ok_black)
         )
     ),
 
@@ -294,17 +292,17 @@ ui = bootstrapPage(
             width=200, height="auto",
             left=0, top=10, right=0,
 
-            actionButtonI('polyAdd_button', label=NULL,
-                          style=CSSbutton_startBar,
-                          icon_name=iconLib$add_black),
+            Button('polyAdd_button', label=NULL,
+                   style=CSSbutton_startBar,
+                   icon_name=iconLib$add_black),
             
-            actionButtonI('polyRm_button', label=NULL,
-                          style=CSSbutton_middleBar,
-                          icon_name=iconLib$remove_black),
+            Button('polyRm_button', label=NULL,
+                   style=CSSbutton_middleBar,
+                   icon_name=iconLib$remove_black),
             
-            actionButtonI('polyOk_button', label=word("b.ok"),
-                          style=CSSbutton_endBar,
-                          icon_name=iconLib$ok_black)
+            Button('polyOk_button', label=word("b.ok"),
+                   style=CSSbutton_endBar,
+                   icon_name=iconLib$ok_black)
         )
     ),
 
@@ -324,9 +322,9 @@ ui = bootstrapPage(
                      plotOutput("trend_plot")),
             
             tags$div(style="position: absolute;",
-                     actionButtonI('closePlot_button', label=NULL,
-                                   style=CSSbutton_inPanelSmall,
-                                   icon_name=iconLib$close_black))
+                     Button('closePlot_button', label=NULL,
+                            style=CSSbutton_inPanelSmall,
+                            icon_name=iconLib$close_black))
         )
     ),
 
@@ -337,10 +335,10 @@ ui = bootstrapPage(
     fixedPanel(left=116, bottom=10,
                width="auto", height="auto",
                div(class="Row",
-                   div(actionButtonI(class="Button-menu",
-                                     'theme_button',
-                                     NULL,
-                                     icon_name=iconLib$menu_white)))
+                   div(Button(class="Button-menu",
+                              'theme_button',
+                              NULL,
+                              icon_name=iconLib$menu_white)))
                ),
     
 ### 3.2. Panel _______________________________________________________
@@ -361,10 +359,9 @@ ui = bootstrapPage(
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioGroupButtons(
-                        status="RadioButton",
+                    radioButton(
+                        class="Button",
                         inputId="theme_choice",
-                        NULL,
                         choiceNames=
                             list(paste0(img(iconLib$light_white,
                                             align="right"),
@@ -379,7 +376,7 @@ ui = bootstrapPage(
                             list("light",
                                  "terrain",
                                  "dark")))),
-                
+            
 ### 3.3. Palette button ______________________________________________
             div(class="Row",
                 div(class="row-label",
@@ -388,15 +385,14 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioGroupButtons(status="RadioButton",
-                                      inputId="colorbar_choice",
-                                      label=NULL,
-                                      choiceNames=
-                                          list(word("c.cb.show"),
-                                               word("c.cb.none")),
-                                      choiceValues=
-                                          list("show", "none"),
-                                      selected="none")))
+                    radioButton(class="Button",
+                                inputId="colorbar_choice",
+                                choiceNames=
+                                    list(word("c.cb.show"),
+                                         word("c.cb.none")),
+                                choiceValues=
+                                    list("show", "none"),
+                                selected="none")))
             
         )
     ),
@@ -419,9 +415,9 @@ ui = bootstrapPage(
 ### 4.1. Panel button ________________________________________________ 
     fixedPanel(right=10, bottom=0,
                width="auto", height="auto",
-               actionButtonI('info_button', label=NULL,
-                             style=CSSbutton_info,
-                             icon_name=iconLib$INRAElogo)
+               Button('info_button', label=NULL,
+                      style=CSSbutton_info,
+                      icon_name=iconLib$INRAElogo)
                ),
     
 ### 4.2. Panel _______________________________________________________
@@ -471,14 +467,14 @@ ui = bootstrapPage(
         )
     ),
 
-   
+    
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Download ____________________________________________________
     fixedPanel(right=10, top=10,
                width="auto", height="auto",
-               actionButtonI('download_button',
-                             style=CSSbutton_panelSmall,
-                             icon_name=iconLib$download_white)
+               Button('download_button',
+                      style=CSSbutton_panelSmall,
+                      icon_name=iconLib$download_white)
                ),
 
     downloadLink("downloadData", label=""),
@@ -493,18 +489,18 @@ ui = bootstrapPage(
             fixed=TRUE,
             width=200, height="auto",
             left=0, top=10, right=0,
-            actionButtonI('downloadOk_button', label=word("b.ok"),
-                          style=CSSbutton_soloBar,
-                          icon_name=iconLib$ok_black)
+            Button('downloadOk_button', label=word("b.ok"),
+                   style=CSSbutton_soloBar,
+                   icon_name=iconLib$ok_black)
         )
     ),
     
 ### 5.2. Screenshot __________________________________________________
     fixedPanel(right=50, top=10,
                width="auto", height="auto",
-               actionButtonI('photo_button',
-                             style=CSSbutton_panelSmall,
-                             icon_name=iconLib$photo_white)
+               Button('photo_button',
+                      style=CSSbutton_panelSmall,
+                      icon_name=iconLib$photo_white)
                ),
-   
-)
+    
+    )

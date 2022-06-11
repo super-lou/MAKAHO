@@ -82,7 +82,7 @@ a:hover {
 }
 
 /* PANEL BUTTON */
-.Button-panel {
+.Button {
     font: inherit !important;
     border: none !important;
     border-radius: 0.25rem/0.25rem !important;
@@ -95,19 +95,19 @@ a:hover {
     touch-action: manipulation !important;
 }
 /* Hover */
-.Button-panel:hover {
+.Button:hover {
     color: #ffffff !important;
     background-color: transparent !important;
 }
 /* Selected */
-.Button-panel.selected {
+.Button.selected {
     color: #e7ca7a !important;
     background: #474747 !important;
 }
 
 
 /* RADIO BUTTON */
-.btn-RadioButton {
+.btn-Button {
     font: inherit !important;
     border: none !important;
     border-radius: 0.25rem/0.25rem !important;
@@ -120,12 +120,12 @@ a:hover {
     touch-action: manipulation !important;
 }
 /* Hover */
-.btn-RadioButton:hover {
+.btn-Button:hover {
     color: #ffffff !important;
     background-color: transparent !important;
 }
 /* Selected */
-.btn-RadioButton.active {
+.btn-Button.active {
     color: #e7ca7a !important;
     background: #474747 !important;
 }
@@ -187,8 +187,10 @@ a:hover {
 /* Bar */
 .selectize-input {
     border: 1px solid #43494c !important;
-    width: 378px;
-    margin-left: -2px;
+    width: 320px !important;
+    margin-top: 0.1rem !important;
+    margin-bottom: -1.1rem !important;
+    margin-left: 0.3rem !important;
     color: #979797 !important;
     background: #181a1b !important;
 }

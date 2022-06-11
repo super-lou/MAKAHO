@@ -5,9 +5,10 @@ a.date;Date
 a.selec;Sélection
 a.selec.all;Toute
 a.selec.none;Aucune
-a.selec.click;Click
+a.selec.click;Clic
 a.selec.poly;Polygone
-a.event;Événement
+a.selec.warning;Avertissement
+a.event;Régime
 a.var;Variable
 a.var1;Crues
 a.var1.1;QIXA: Débit Max An 

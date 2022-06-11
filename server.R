@@ -299,118 +299,7 @@ server = function (input, output, session) {
         hide(id='info_panel')
     })
 
-### 2.1. Period ______________________________________________________
-    period = reactive({
-        month = which(Months == input$dateMonth_slider)
-        monthStart = formatC(month, width=2, flag=0)
-        monthEnd = formatC((month-2)%%12+1, width=2, flag=0)
-
-        Start = as.Date(paste(input$dateYear_slider[1],
-                              monthStart,
-                              '01',
-                              sep='-'))
-        End = as.Date(paste(input$dateYear_slider[2],
-                            monthStart,
-                            '01',
-                            sep='-')) - 1
-        c(Start, End)
-    })
-    period = debounce(period, 1000)
-
-    output$period = renderText({
-        start = format(period()[1], "%d-%m-%Y")
-        end = format(period()[2], "%d-%m-%Y")
-        paste0('Du ', start, ' au ', end)
-    })
-
-### 2.2. Variable extration __________________________________________
-    observeEvent(input$event_choice, {
-        var_event = Var$var[Var$event == input$event_choice]        
-        updateRadioGroupButtons(session, "var_choice",
-                                status="RadioButton",
-                                choices=var_event,
-                                selected=var_event[1])
-    })
-
-    var = reactive({
-        if (is.null(input$var_choice)) {
-            Var$var[1]
-        } else {
-            input$var_choice
-        }
-    })
-
-    name = reactive({
-        Var$name[Var$var == var()]
-    })
-
-    type = reactive({
-        Var$type[Var$var == var()]            
-    })
-
-    proba = reactive({
-        id = which(Var$var == var())
-        if (!identical(id, integer(0))) {
-            Var$proba[[id]]
-        } else {
-            NULL
-        }
-    })
-
-    output$data = renderText({
-        data = paste0(var(), ' : ', name())
-        if (!is.null(proba())) {
-            data = paste0(data, ' avec la probabilité de ',
-                          input$proba_choice)
-        }
-        data
-    })
-
-    observe({
-        toggle(id="proba_row",
-               condition=!is.null(proba()))
-
-        if (!is.null(proba())) {
-            choices = proba()
-        } else {
-            choices = FALSE
-        }
-        updateRadioGroupButtons(session, "proba_choice",
-                                status="RadioButton",
-                                choices=choices)
-    })
-
-    filename = reactive({
-        monthStart = substr(period()[1], 6, 7)
-        filenametmp = paste0(var(), 'Ex_',
-                             monthStart, '.fst')
-
-        file_path = file.path(computer_data_path, 'fst', filenametmp)
-        if (file.exists(file_path)) {
-            filenametmp
-        } else {
-            NULL
-        }
-    })
-    
-    df_XEx = reactive({
-        if (!is.null(filename())) {
-            df_XExtmp = read_FST(computer_data_path,
-                                 filename(),
-                                 filedir='fst')
-
-            Start = period()[1]
-            End = period()[2]
-            
-            df_XExtmp = df_XExtmp[df_XExtmp$Date >= Start
-                                  & df_XExtmp$Date <= End,]
-            df_XExtmp
-        } else {
-            NULL
-         }
-    })
-
-### 2.3. Station metadata ____________________________________________
+### 2.1. Station metadata ____________________________________________
     df_meta = reactive({
         df_metatmp = read_FST(computer_data_path,
                               'meta.fst',
@@ -428,7 +317,7 @@ server = function (input, output, session) {
         df_metatmp
     })
 
-### 2.4. Station selection ___________________________________________
+### 2.2. Station selection ___________________________________________
     CodeAll = reactive({
         rle(df_meta()$code)$values
     })
@@ -437,7 +326,7 @@ server = function (input, output, session) {
     rv$CodeSample_save = isolate(CodeAll())
     rv$theme_choice_save = isolate(input$theme_choice)
     
-    CodeSample = reactive({
+    CodeSampleB = reactive({
 
         if (!rv$warningMode) {
             CodeSample = rv$CodeSample[!(rv$CodeSample %in% missCode()) &
@@ -452,9 +341,9 @@ server = function (input, output, session) {
             CodeSample
         }
     })
-    CodeSample = debounce(CodeSample, 250) ### /!\ ici problème de double trigger de fillList pour marker
+    CodeSample = debounce(CodeSampleB, 100)
 
-#### 2.4.1. All/none _________________________________________________
+#### 2.2.1. All/none _________________________________________________
     observeEvent(input$all_button, {
         rv$CodeSample = CodeAll()
     })
@@ -465,7 +354,7 @@ server = function (input, output, session) {
         rv$CodeSample = NULL
     })
     
-#### 2.4.2. Map click ________________________________________________
+#### 2.2.2. Map click ________________________________________________
     observeEvent(input$click_button, {
         hide(id='ana_panel')
         hide(id='theme_panel')
@@ -495,16 +384,24 @@ server = function (input, output, session) {
         showElement(id='ana_panel')
     })
 
-#### 2.4.3. Polygone _________________________________________________
-    observeEvent(input$poly_button, {
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='click_panel')
-        hide(id='download_panel')
-        showElement(id='poly_panel')
-        rv$polyMode = "Add"
-        rv$polyCoord = tibble()
+#### 2.2.3. Polygone _________________________________________________
+    observe({
+        if (!is.null(input$poly_select)) {
+                hide(id='ana_panel')
+                hide(id='theme_panel')
+                hide(id='info_panel')
+                hide(id='click_panel')
+                hide(id='download_panel')
+                showElement(id='poly_panel')
+                rv$polyMode = "Add"
+                rv$polyCoord = tibble()
+        } else {
+            if (!is.null(rv$polyCoord)) {
+                rv$polyMode = 'false'
+                hide(id='poly_panel')
+                showElement(id='ana_panel')
+            }
+        }
     })
 
     observeEvent(input$polyAdd_button, {
@@ -583,26 +480,16 @@ server = function (input, output, session) {
         showElement(id='ana_panel')
     })
 
-#### 2.4.4. Warning __________________________________________________
-    observeEvent(rv$warningMode, {
-        if (rv$warningMode) {
-            hide(id='warningShow_button') 
-            showElement(id='warningHide_button')
+#### 2.2.4. Warning __________________________________________________
+    observe({
+        if (!is.null(input$warning_select)) {
+            rv$warningMode = TRUE
         } else {
-            hide(id='warningHide_button')
-            showElement(id='warningShow_button')             
+            rv$warningMode = FALSE
         }
     })
 
-    observeEvent(input$warningShow_button, {
-        rv$warningMode = TRUE
-    })
-
-    observeEvent(input$warningHide_button, {
-        rv$warningMode = FALSE  
-    })
-
-#### 2.4.5. Search ___________________________________________________
+#### 2.2.5. Search ___________________________________________________
     meta_location = reactive({
         gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", df_meta()$nom)
     })
@@ -743,6 +630,117 @@ server = function (input, output, session) {
         }
         rv$Search_save = input$search_input
     })
+
+### 2.3. Variable extration __________________________________________
+    observeEvent(input$event_choice, {
+        var_event = Var$var[Var$event == input$event_choice]        
+        updateRadioButton(session, class="Button",
+                          inputId="var_choice",
+                          choices=var_event,
+                          selected=var_event[1])
+    })
+
+    var = reactive({
+        if (is.null(input$var_choice)) {
+            Var$var[1]
+        } else {
+            input$var_choice
+        }
+    })
+
+    name = reactive({
+        Var$name[Var$var == var()]
+    })
+
+    type = reactive({
+        Var$type[Var$var == var()]            
+    })
+
+    proba = reactive({
+        id = which(Var$var == var())
+        if (!identical(id, integer(0))) {
+            Var$proba[[id]]
+        } else {
+            NULL
+        }
+    })
+
+    output$data = renderText({
+        data = paste0(var(), ' : ', name())
+        if (!is.null(proba())) {
+            data = paste0(data, ' avec la probabilité de ',
+                          input$proba_choice)
+        }
+        data
+    })
+
+    observe({
+        toggle(id="proba_row",
+               condition=!is.null(proba()))
+
+        if (!is.null(proba())) {
+            choices = proba()
+        } else {
+            choices = FALSE
+        }
+        updateRadioGroupButtons(session, "proba_choice",
+                                status="RadioButton",
+                                choices=choices)
+    })
+
+    filename = reactive({
+        monthStart = substr(period()[1], 6, 7)
+        filenametmp = paste0(var(), 'Ex_',
+                             monthStart, '.fst')
+
+        file_path = file.path(computer_data_path, 'fst', filenametmp)
+        if (file.exists(file_path)) {
+            filenametmp
+        } else {
+            NULL
+        }
+    })
+    
+    df_XEx = reactive({
+        if (!is.null(filename())) {
+            df_XExtmp = read_FST(computer_data_path,
+                                 filename(),
+                                 filedir='fst')
+
+            Start = period()[1]
+            End = period()[2]
+            
+            df_XExtmp = df_XExtmp[df_XExtmp$Date >= Start
+                                  & df_XExtmp$Date <= End,]
+            df_XExtmp
+        } else {
+            NULL
+         }
+    })
+
+### 2.4. Period ______________________________________________________
+    period = reactive({
+        month = which(Months == input$dateMonth_slider)
+        monthStart = formatC(month, width=2, flag=0)
+        monthEnd = formatC((month-2)%%12+1, width=2, flag=0)
+
+        Start = as.Date(paste(input$dateYear_slider[1],
+                              monthStart,
+                              '01',
+                              sep='-'))
+        End = as.Date(paste(input$dateYear_slider[2],
+                            monthStart,
+                            '01',
+                            sep='-')) - 1
+        c(Start, End)
+    })
+    period = debounce(period, 1000)
+
+    output$period = renderText({
+        start = format(period()[1], "%d-%m-%Y")
+        end = format(period()[2], "%d-%m-%Y")
+        paste0('Du ', start, ' au ', end)
+    })
     
 ### 2.5. Trend analysis ______________________________________________
     df_Xtrend = reactive({
@@ -766,9 +764,10 @@ server = function (input, output, session) {
         analysePeriod = (analyseEnd - analyseStart)/365.25
         df_Xtrend()$code[analysePeriod < analyseMinYear]
     })
+
     
 ### 2.6. Fill _______________________________________________________
-    fillList = reactive({
+    fillListB = reactive({
         nCodeAll = length(CodeAll())
         
         if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
@@ -805,11 +804,9 @@ server = function (input, output, session) {
             
             fillList
         }
-        # else {
-            # rep(grey50COL, nCodeAll)
-        # }
     })
 
+    fillList = debounce(fillListB, 100)
 
 ### 2.7. Trend plot __________________________________________________
     observeEvent({
@@ -939,14 +936,14 @@ $("#colorbar_panel").css("z-index", "999");')
         rv$inputPhoto = !rv$inputPhoto
     })
 
-    inputPhotoDEB = reactive({
+    inputPhotoB = reactive({
         rv$inputPhoto
     })
     
-    inputPhotoDEB = debounce(inputPhotoDEB, 500)
+    inputPhoto = debounce(inputPhotoB, 500)
 
     observe({
-        if (inputPhotoDEB()) {
+        if (inputPhoto()) {
             map = leafletProxy("map")
             easyprintMap(map, sizeModes="A4Landscape", dpi=300)
             rv$inputPhoto = FALSE
