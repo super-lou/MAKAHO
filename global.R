@@ -45,6 +45,8 @@ library(ggtext)
 library(scales)
 library(ggh4x)
 
+library(shinyBS)
+
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')

@@ -103,7 +103,8 @@ ui = bootstrapPage(
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
                div(class="Row",
-                   div(Button(class="Button-menu",
+                   div(title='aaa',
+                       Button(class="Button-menu",
                               'ana_button',
                               HTML(paste0("<b>",
                                           word("a.title"),
@@ -126,7 +127,7 @@ ui = bootstrapPage(
                                 word("a.data"),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch", role="toolbar",
+                div(class="bunch",
                     textOutput("data"))),
 
             div(class="Row",
@@ -135,7 +136,7 @@ ui = bootstrapPage(
                                 word("a.date"),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch", role="toolbar",
+                div(class="bunch",
                     textOutput("period"))),
             
 ### 2.3. Station selection ___________________________________________
@@ -145,7 +146,8 @@ ui = bootstrapPage(
                                 word("a.selec"),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch", role="toolbar",
+                div(class="bunch",
+                    
                     Button(class="Button",
                            'all_button',
                            label=word("a.selec.all"),
@@ -156,34 +158,47 @@ ui = bootstrapPage(
                            label=word("a.selec.none"),
                            icon_name=iconLib$cross_circle_white),
                     
-                    Button(class="Button",
-                           'click_button',
-                           label=word("a.selec.click"),
-                           icon_name=iconLib$click_white),
-
-                    # Button(class="Button",
-                    #        'poly_button',
-                    #        label=word("a.selec.poly"),
-                    #        icon_name=iconLib$polyline_white),
+                    selectButton(
+                        class="selectButton",
+                        inputId="click_select",
+                        label=word("a.selec.click"),
+                        icon_name=iconLib$click_white,
+                        selected=FALSE),
 
                     selectButton(
-                        class="Button",
+                        class="selectButton",
                         inputId="poly_select",
                         label=word("a.selec.poly"),
                         icon_name=iconLib$polyline_white,
                         selected=FALSE),
 
+
+                    # div(class="Tooltip", HTML(paste0(
+                    # selectButton(
+                    #     class="selectButton",
+                    #     inputId="warning_select",
+                    #     label=word("a.selec.warning"),
+                    #     icon_name=iconLib$error_outline_white,
+                    #     selected=TRUE),
+
+                    # '<span class="Tooltiptext">Tooltip text</span>'))),
+
+
                     selectButton(
-                        class="Button",
+                        class="selectButton",
                         inputId="warning_select",
                         label=word("a.selec.warning"),
                         icon_name=iconLib$error_outline_white,
-                        selected=TRUE),
+                        selected=TRUE,
+                        tooltip='Prise en compte des avertissements'),
+                    
+                    
 
                     selectizeInput(inputId="search_input", 
                                    label=NULL,
                                    multiple=TRUE,
-                                   choices=NULL)
+                                   choices=NULL),
+                    
                     )),
 
 ### 2.4. Variable selection __________________________________________
@@ -194,7 +209,7 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioButton(class="Button",
+                    radioButton(class="radioButton",
                                 inputId="event_choice",
                                 choices=rle(Var$event)$values,
                                 selected=rle(Var$event)$values[1]))),
@@ -206,7 +221,7 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioButton(class="Button",
+                    radioButton(class="radioButton",
                                 inputId="var_choice",
                                 choices=FALSE,
                                 selected=NULL))),
@@ -219,7 +234,7 @@ ui = bootstrapPage(
                                     "</b></span>"))),
                     div(class="sep"),
                     div(class="bunch",
-                        radioButton(class="Button",
+                        radioButton(class="radioButton",
                                     inputId="proba_choice",
                                     choices=FALSE,
                                     selected=NULL)))),
@@ -262,49 +277,59 @@ ui = bootstrapPage(
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioButton(class="Button",
+                    radioButton(class="radioButton",
                                 inputId="alpha_choice",
                                 choices=sigP,
                                 selected=sigP[3])))
         )
     ),
 
-
+#### 2.3.1. Poly bar _________________________________________________
     hidden(
         absolutePanel(
             id='click_panel',
-            style=CSSpanel_center,
-            fixed=TRUE,
-            width=200, height="auto",
-            left=0, top=10, right=0,
+            class="Panel smallCard",
+            fixed=TRUE,        
+            width="auto", height="auto",
+            left=169, bottom=10,
 
-            Button('clickOk_button', label=word("b.ok"),
-                   style=CSSbutton_soloBar,
-                   icon_name=iconLib$ok_black)
-        )
-    ),
+            div(class="bunch",
+                Button(class="Button",
+                       'clickOk_button',
+                       label=word("b.ok"),
+                       icon_name=iconLib$done_white)),
+            )
+     ),
 
-    hidden(
+#### 2.3.2. Poly bar _________________________________________________
+     hidden(
         absolutePanel(
             id='poly_panel',
-            style=CSSpanel_center,
-            fixed=TRUE,
-            width=200, height="auto",
-            left=0, top=10, right=0,
+            class="Panel smallCard",
+            fixed=TRUE,        
+            width="auto", height="auto",
+            left=169, bottom=10,
 
-            Button('polyAdd_button', label=NULL,
-                   style=CSSbutton_startBar,
-                   icon_name=iconLib$add_black),
-            
-            Button('polyRm_button', label=NULL,
-                   style=CSSbutton_middleBar,
-                   icon_name=iconLib$remove_black),
-            
-            Button('polyOk_button', label=word("b.ok"),
-                   style=CSSbutton_endBar,
-                   icon_name=iconLib$ok_black)
-        )
-    ),
+            div(class="bunch",
+                radioButton(class="radioButton",
+                            inputId="poly_choice",
+                            choiceNames=
+                                list(paste0(img(iconLib$add_white,
+                                                align="right"),
+                                            'Additive'),
+                                     paste0(img(iconLib$remove_white,
+                                                align="right"),
+                                            'Soustractive')),
+                            choiceValues=
+                                list("Add",
+                                     "Rm")),
+                
+                Button(class="Button",
+                       'polyOk_button',
+                       label=word("b.ok"),
+                       icon_name=iconLib$done_white)),
+            )
+     ),
 
 ### 2.7. Trend plot __________________________________________________
     hidden(
@@ -360,7 +385,7 @@ ui = bootstrapPage(
                 div(class="sep"),
                 div(class="bunch",
                     radioButton(
-                        class="Button",
+                        class="radioButton",
                         inputId="theme_choice",
                         choiceNames=
                             list(paste0(img(iconLib$light_white,
@@ -385,7 +410,7 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioButton(class="Button",
+                    radioButton(class="radioButton",
                                 inputId="colorbar_choice",
                                 choiceNames=
                                     list(word("c.cb.show"),
@@ -460,7 +485,7 @@ ui = bootstrapPage(
                                "</b></span>"))),
                 div(class="sep"),
                 div(a(href="https://sk8.inrae.fr",
-                      img(src="SK8.png"))),
+                      img(src="SK8.png", height="15px"))),
                 div(style="padding-top: 3px; padding-left: 5px;",
                     a(href="https://sk8.inrae.fr",
                       "SK8")))
@@ -491,7 +516,7 @@ ui = bootstrapPage(
             left=0, top=10, right=0,
             Button('downloadOk_button', label=word("b.ok"),
                    style=CSSbutton_soloBar,
-                   icon_name=iconLib$ok_black)
+                   icon_name=iconLib$done_white)
         )
     ),
     

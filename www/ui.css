@@ -18,7 +18,21 @@
 
 
 .card {
-    padding: 0.5rem 1rem !important;
+    /* padding: 0.5rem 1rem !important; */
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.6rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    background-color: rgba(5, 5, 10, 0.85) !important;
+    border-radius: 0.5rem/0.5rem !important;
+}
+
+.smallCard {
+    /* padding: 0.5rem 1rem !important; */
+    padding-top: 0.18rem !important;
+    padding-bottom: 0.33rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
     background-color: rgba(5, 5, 10, 0.85) !important;
     border-radius: 0.5rem/0.5rem !important;
 }
@@ -56,6 +70,47 @@ a:hover {
 }
 
 
+
+
+
+.Tooltip {
+    position: relative !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Tooltip text */
+.Tooltip .Tooltiptext {
+    font-size: var(--tooltipSize);
+    visibility: hidden !important;
+    background-color: rgba(5, 5, 10, 0.85) !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    border-radius: 6px !important;
+    
+    box-sizing: border-box !important;
+    padding: 0.5rem 1rem !important;
+    
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 100px !important;
+    min-width: 10rem !important;
+    max-width: calc(100vw - 7rem) !important;
+
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.Tooltip:hover .Tooltiptext {
+    visibility: visible !important;
+}
+
+
+
+
+
+
+
 /* MENU BUTTON */
 .Button-menu {
     font: inherit !important;
@@ -63,7 +118,7 @@ a:hover {
     border-radius: 0.4rem/0.4rem !important;
     padding: 0.325rem 0.75rem !important;
     margin: 0 !important;
-    background-color: rgba(5, 5, 10, 0.85) !important;
+    background-color: rgba(5, 5, 10, 0.90) !important;
     color: #d9d9d9 !important;
 }
 .SmallButton-menu {
@@ -72,7 +127,7 @@ a:hover {
     border-radius: 0.4rem/0.4rem !important;
     padding: 0.19rem 0.3rem !important;
     margin: 0 !important;
-    background-color: rgba(5, 5, 10, 0.85) !important;
+    background-color: rgba(5, 5, 10, 0.90) !important;
     color: #d9d9d9 !important;
 }
 /* Hover */
@@ -107,11 +162,13 @@ a:hover {
 
 
 /* RADIO BUTTON */
-.btn-Button {
+.btn-selectButton,
+.btn-radioButton {
     font: inherit !important;
     border: none !important;
     border-radius: 0.25rem/0.25rem !important;
     min-width: 2rem !important;
+    /* line-height: 1rem !important; */
     padding: 0 0.5rem !important;
     margin: 0 !important;
     background-color: transparent !important;
@@ -120,12 +177,14 @@ a:hover {
     touch-action: manipulation !important;
 }
 /* Hover */
-.btn-Button:hover {
+.btn-selectButton:hover,
+.btn-radioButton:hover {
     color: #ffffff !important;
     background-color: transparent !important;
 }
 /* Selected */
-.btn-Button.active {
+.btn-selectButton.active,
+.btn-radioButton.active {
     color: #e7ca7a !important;
     background: #474747 !important;
 }
@@ -135,51 +194,51 @@ a:hover {
 /* Row */
 .Row {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: row !important;
+    align-items: center !important;
 }
 .Row > .sep {
-    align-self: stretch;
+    align-self: stretch !important;
 }
 /* Separator */
 .sep {
-    display: inline;
-    margin: 0.1rem 0.5rem;
+    display: inline !important;
+    margin: 0.1rem 0.5rem !important;
     /* border-left: 2px solid #bbb; */
     /* border-top: 1px solid #bbb; */
-    border-left: 2px solid #43494c;
-    border-top: 1px solid #43494c;
+    border-left: 2px solid #43494c !important;
+    border-top: 1px solid #43494c !important;
 }
 /* Row label */
 .row-label {
-    word-break: keep-all;
-    color: #eeeeee;
+    word-break: keep-all !important;
+    color: #eeeeee !important;
 } 
 
 
 /* GROUP OF BUTON */
 .bunch {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
-    margin: -1px;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    /* align-items: baseline !important; */
+    margin: -1px !important;
 
 }
 
 .bunch > * {
-    margin: 1px;
+    margin: 1px !important;
 }
 
 .bunch > .bunch {
-    margin: 0;
+    margin: 0 !important;
 }
 
 .bunch > a {
-    display: inline-block;
-    min-width: 1rem;
-    padding: 0 0.5rem;
-    text-align: center;
+    display: inline-block !important;
+    min-width: 1rem !important;
+    padding: 0 0.5rem !important;
+    text-align: center !important;
 }
 
 
@@ -187,10 +246,11 @@ a:hover {
 /* Bar */
 .selectize-input {
     border: 1px solid #43494c !important;
-    width: 320px !important;
-    margin-top: 0.1rem !important;
-    margin-bottom: -1.1rem !important;
-    margin-left: 0.3rem !important;
+    width: 330px !important;
+    /* padding-bottom: 1rem!important; */
+    margin-top: 0.25rem !important;
+    margin-bottom: -0.8rem !important;
+    margin-left: 0 !important;
     color: #979797 !important;
     background: #181a1b !important;
 }

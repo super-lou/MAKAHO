@@ -30,7 +30,9 @@ server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 
 
-    rv = reactiveValues(width=0,
+    rv = reactiveValues(isStart=0,
+                        
+                        width=0,
                         height=0,
                         CodeSample=NULL,
                         CodeSearch=NULL,
@@ -355,14 +357,30 @@ server = function (input, output, session) {
     })
     
 #### 2.2.2. Map click ________________________________________________
-    observeEvent(input$click_button, {
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='poly_panel')
-        hide(id='download_panel')
-        showElement(id='click_panel')
-        rv$clickMode = TRUE
+    observe({
+        if (!is.null(input$click_select)) {
+            hide(id='ana_panel')
+            hide(id='theme_panel')
+            hide(id='info_panel')
+            hide(id='poly_panel')
+            hide(id='download_panel')
+            showElement(id='click_panel')
+            rv$clickMode = TRUE
+
+            updateSelectButton(
+                session=session,
+                class="selectButton",
+                inputId="poly_select",
+                selected=FALSE)
+            rv$polyMode = 'false'
+            
+        } else {
+            if (rv$clickMode) {
+                rv$clickMode = FALSE
+                hide(id='click_panel')
+                showElement(id='ana_panel')
+            }
+        }
     })
 
     observeEvent(input$map_marker_click, {
@@ -379,6 +397,13 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$clickOk_button, {
+
+        updateSelectButton(
+            session=session,
+            class="selectButton",
+            inputId="click_select",
+            selected=FALSE)
+                
         rv$clickMode = FALSE
         hide(id='click_panel')
         showElement(id='ana_panel')
@@ -395,8 +420,16 @@ server = function (input, output, session) {
                 showElement(id='poly_panel')
                 rv$polyMode = "Add"
                 rv$polyCoord = tibble()
+
+                updateSelectButton(
+                    session=session,
+                    class="selectButton",
+                    inputId="click_select",
+                    selected=FALSE)
+                rv$clickMode = FALSE
+                
         } else {
-            if (!is.null(rv$polyCoord)) {
+            if (rv$polyMode == 'Add' | rv$polyMode == 'Rm') {
                 rv$polyMode = 'false'
                 hide(id='poly_panel')
                 showElement(id='ana_panel')
@@ -404,28 +437,32 @@ server = function (input, output, session) {
         }
     })
 
-    observeEvent(input$polyAdd_button, {
-        rv$polyMode = "Add"
-        if (nrow(rv$polyCoord) != 0) {
-            map = leafletProxy("map")
-            map = clearShapes(map)
-            color = "#6d9192"
-            map = addPolygons(map,
-                              color=color,
-                              lng=rv$polyCoord$lng,
-                              lat=rv$polyCoord$lat)
-        }
-    })
-    observeEvent(input$polyRm_button, {
-        rv$polyMode = "Rm"
-        if (nrow(rv$polyCoord) != 0) {
-            map = leafletProxy("map")
-            map = clearShapes(map)
-            color = "#b35457"
-            map = addPolygons(map,
-                              color=color,
-                              lng=rv$polyCoord$lng,
-                              lat=rv$polyCoord$lat)
+    observeEvent(input$poly_choice, {
+
+        if (!is.null(input$poly_choice) & !is.null(rv$polyCoord)) {
+            if (input$poly_choice == 'Add') {
+                rv$polyMode = "Add"
+                if (nrow(rv$polyCoord) != 0) {
+                    map = leafletProxy("map")
+                    map = clearShapes(map)
+                    color = "#6d9192"
+                    map = addPolygons(map,
+                                      color=color,
+                                      lng=rv$polyCoord$lng,
+                                      lat=rv$polyCoord$lat)
+                }
+            } else if (input$poly_choice == 'Rm') {
+                rv$polyMode = "Rm"
+                if (nrow(rv$polyCoord) != 0) {
+                    map = leafletProxy("map")
+                    map = clearShapes(map)
+                    color = "#b35457"
+                    map = addPolygons(map,
+                                      color=color,
+                                      lng=rv$polyCoord$lng,
+                                      lat=rv$polyCoord$lat)
+                }
+            }
         }
     })
     
@@ -474,6 +511,12 @@ server = function (input, output, session) {
             map = clearShapes(map)
             rv$polyCoord = NULL
         }
+
+        updateSelectButton(
+            session=session,
+            class="selectButton",
+            inputId="poly_select",
+            selected=FALSE)
         
         rv$polyMode = 'false'
         hide(id='poly_panel')
@@ -634,7 +677,7 @@ server = function (input, output, session) {
 ### 2.3. Variable extration __________________________________________
     observeEvent(input$event_choice, {
         var_event = Var$var[Var$event == input$event_choice]        
-        updateRadioButton(session, class="Button",
+        updateRadioButton(session, class="radioButton",
                           inputId="var_choice",
                           choices=var_event,
                           selected=var_event[1])
@@ -675,12 +718,11 @@ server = function (input, output, session) {
     })
 
     observe({
-        toggle(id="proba_row",
-               condition=!is.null(proba()))
-
         if (!is.null(proba())) {
+            showElement(id="proba_row")
             choices = proba()
         } else {
+            hide(id="proba_row")
             choices = FALSE
         }
         updateRadioGroupButtons(session, "proba_choice",
@@ -951,4 +993,7 @@ $("#colorbar_panel").css("z-index", "999");')
     })
 
 } 
+
+
+
 

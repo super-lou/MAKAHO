@@ -193,17 +193,45 @@ Button = function (inputId, label=NULL, icon_name=NULL,
 }
 
 selectButton = function (inputId, label=NULL, icon_name=NULL,
-                         class='', selected=FALSE, ...){
+                         class='', selected=FALSE, tooltip='', ...){
 
-    checkboxGroupButtons(
+    div(class="Tooltip bunch",
+        HTML(paste0(
+            checkboxGroupButtons(
+                status=class,
+                inputId=inputId,
+                label=NULL,
+                choiceNames=
+                    paste0(img(icon_name,
+                               align="right"),
+                           label),
+                choiceValues=TRUE,
+                selected=selected,
+                ...),
+            '<span class="Tooltiptext">', tooltip, '</span>')))
+}
+
+updateSelectButton = function (session, inputId, label=NULL,
+                               icon_name=NULL, class='',
+                               selected=FALSE, ...){
+
+    if (is.null(icon_name) & is.null(label)) {
+        choiceNames = NULL
+        choiceValues = NULL
+    } else {
+        choiceNames = paste0(img(icon_name,
+                                 align="right"),
+                             label)
+        choiceValues = TRUE
+    }
+    
+    updateCheckboxGroupButtons(
+        session=session,
         status=class,
         inputId=inputId,
         label=NULL,
-        choiceNames=
-            paste0(img(icon_name,
-                       align="right"),
-                   label),
-        choiceValues=TRUE,
+        choiceNames=choiceNames,
+        choiceValues=choiceValues,
         selected=selected,
         ...)
 }
