@@ -93,8 +93,8 @@ a:hover {
     padding: 0.5rem 1rem !important;
     
     position: fixed !important;
-    bottom: 0 !important;
-    right: 100px !important;
+    top: 0 !important;
+    left: 100px !important;
     min-width: 10rem !important;
     max-width: calc(100vw - 7rem) !important;
 

@@ -45,16 +45,14 @@ library(ggtext)
 library(scales)
 library(ggh4x)
 
-library(shinyBS)
-
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')
 source(file.path('R', 'plot.R'), encoding='UTF-8')
 source(file.path('R', 'color_manager.R'), encoding='UTF-8')
+source(file.path('R', 'settings.R'), encoding='UTF-8')
 source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
 source(file.path('R', 'style.R'), encoding='UTF-8')
-source(file.path('R', 'settings.R'), encoding='UTF-8')
 
 
 # Sourcing app

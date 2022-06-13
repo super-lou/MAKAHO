@@ -71,7 +71,8 @@ grey18COL = "#2e2e2e"
 grey15COL = "#262626"
 grey9COL = "#171717"
 
-yellowCOL = "#fcfd74"
+yellowCOL = "#fddc5c"
+orangeCOL = "#ffa62b"
 redCOL = "#dc343b"
 
 

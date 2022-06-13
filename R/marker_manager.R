@@ -52,7 +52,7 @@ save_marker = function (y, shape, color, fill, size, stroke, outdir, ...) {
     return (filename)
 }
 
-create_marker = function (shapeList, colorList, fillPalette, shapeSizes, resources_path, filedir='marker', colors=256, size=1, stroke=1.5, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
+create_marker = function (shapeList, colorList, strokeList, fillPalette, shapeSizes, resources_path, filedir='marker', colors=256, size=1, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
 
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
@@ -88,7 +88,8 @@ create_marker = function (shapeList, colorList, fillPalette, shapeSizes, resourc
 
         for (j in 1:nColor) {
             color = colorList[j]
-
+            stroke = strokeList[j]
+            
             for (k in 1:nFill) {
                 fill = fillList[k]
                 filename = save_marker(y, shape, color, fill,
@@ -100,6 +101,7 @@ create_marker = function (shapeList, colorList, fillPalette, shapeSizes, resourc
         for (marker in markerAdd) {
             color = marker['color']
             fill = marker['fill']
+            stroke = as.numeric(marker['stroke'])
             filename = save_marker(y, shape, color, fill,
                                    size, stroke, outdir, ...)
             Urls = c(Urls, file.path(outdir, filename))
@@ -109,35 +111,36 @@ create_marker = function (shapeList, colorList, fillPalette, shapeSizes, resourc
     return (Urls)
 }
 
-# markerAdd = list(
-#     c(color=missColor,
-#       fill=none2Color_light),
-#     c(color=missColor,
-#       fill=none2Color_dark),
+markerAdd = list(
+    c(color=missColor,
+      fill=none2Color_light,
+      stroke=1),
+    c(color=missColor,
+      fill=none2Color_dark,
+      stroke=1),
     
-#     c(color=invalidColor,
-#       fill=none2Color_light),
-#     c(color=invalidColor,
-#       fill=none2Color_dark),
+    c(color=validColor,
+      fill=validColor,
+      stroke=0.8),
+    c(color=none1Color_light,
+      fill=none2Color_light,
+      stroke=0.8),
+    c(color=none1Color_dark,
+      fill=none2Color_dark,
+      stroke=0.8)
+    )
 
-#     c(color=validColor,
-#       fill=validColor),
-#     c(color=none1Color_light,
-#       fill=none2Color_light),
-#     c(color=none1Color_dark,
-#       fill=none2Color_dark)
-#     )
-
-# create_marker(shapeList=c(21, 24, 25),
-#               colorList=c(validColor, invalidColor),
-#               fillPalette=Palette,
-#               shapeSizes=c(6, 7, 7),
-#               resources_path=resources_path,
-#               filedir='marker',
-#               colors=colors,
-#               size=0.8, stroke=0.8,
-#               relY=c(0, -0.02, 0.02),
-#               markerAdd=markerAdd)
+create_marker(shapeList=c(21, 24, 25),
+              colorList=c(validColor, invalidColor),
+              strokeList=c(0.8, 1),
+              fillPalette=Palette,
+              shapeSizes=c(6, 7, 7),
+              resources_path=resources_path,
+              filedir='marker',
+              colors=colors,
+              size=0.8,
+              relY=c(0, -0.02, 0.02),
+              markerAdd=markerAdd)
 
 
 get_marker = function (shape, color, fill, resources_path, filedir) {
