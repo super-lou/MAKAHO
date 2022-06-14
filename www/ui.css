@@ -23,7 +23,7 @@
     padding-bottom: 0.6rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    background-color: rgba(5, 5, 10, 0.85) !important;
+    background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
 }
 
@@ -33,14 +33,14 @@
     padding-bottom: 0.33rem !important;
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
-    background-color: rgba(5, 5, 10, 0.85) !important;
+    background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
 }
 
 body {
     margin: 0;
     color: #eeeeee;
-    background: rgba(5, 5, 10, 0.85);
+    background: rgba(5, 5, 10, 0.83);
 }
 
 table {
@@ -84,17 +84,18 @@ a:hover {
 .Tooltip .Tooltiptext {
     font-size: var(--tooltipSize);
     visibility: hidden !important;
-    background-color: rgba(5, 5, 10, 0.85) !important;
+    background-color: rgba(5, 5, 10, 0.83) !important;
     color: #ffffff !important;
     text-align: center !important;
-    border-radius: 6px !important;
-    
+
+    border-radius: 0.5rem 0.5rem 0 0 !important;    
     box-sizing: border-box !important;
+    margin: 0 !important;
     padding: 0.5rem 1rem !important;
     
     position: fixed !important;
-    top: 0 !important;
-    left: 100px !important;
+    bottom: 0 !important;
+    left: 190px !important;
     min-width: 10rem !important;
     max-width: calc(100vw - 7rem) !important;
 

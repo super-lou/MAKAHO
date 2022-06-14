@@ -40,50 +40,24 @@ create_dico = function (dico_file, resources_path) {
     return (dico)
 }
 
-get_varNameList = function (dico) {
-    OkEvent = as.vector(regexpr("a.var[0-9]$", dico[[1]])) != -1
-    IdEvent = which(OkEvent)
-    nbEvent = sum(as.numeric(OkEvent))
-
-    OkNumVar = as.vector(regexpr("a.var[0-9].[0-9]$", dico[[1]]))
-    nbVar = with(rle(OkNumVar), lengths[values == 1])
-
-    IdList = list()
-
-    for (i in 1:nbEvent) {
-        nbVar_event = nbVar[i]
-        sub_IdList = list()
-        
-        for (j in 1:nbVar_event) {
-            sub_IdList = append(sub_IdList,
-                                   word(paste0("a.var", i, "." , j)))
-        }
-        IdList = append(IdList, list(sub_IdList))
-        names(IdList)[length(IdList)] = word(paste0("a.var", i))
-    } 
-    return (IdList)
-}
-
-
 
 get_Var = function (dico, varProba) {
-    OkEvent = as.vector(regexpr("a.var[0-9]$", dico[[1]])) != -1
+    OkEvent = as.vector(regexpr("^a.var[0-9]$", dico[[1]])) != -1
     IdEvent = which(OkEvent)
     nbEvent = sum(as.numeric(OkEvent))
-
-    OkNumVar = as.vector(regexpr("a.var[0-9].[0-9]$", dico[[1]]))
-    nbVar = with(rle(OkNumVar), lengths[values == 1])
 
     Var = tibble()
 
     for (i in 1:nbEvent) {
-        nbVar_event = nbVar[i]
         event = word(paste0("a.var", i))
         
-        for (j in 1:nbVar_event) {
-            line = word(paste0("a.var", i, "." , j))
-            var = trimws(gsub(":.*$", "", line))
-            name = trimws(gsub("^.*:", "", line))
+        OkNumVar = as.vector(regexpr(paste0("^a.var", i,
+                                            ".[0-9]$"), dico[[1]]))
+        nbVar = sum(OkNumVar[OkNumVar == 1])        
+        
+        for (j in 1:nbVar) {
+            var = word(paste0("a.var", i, "." , j))
+            name = word(paste0("tt.a.var", i, "." , j))
             
             if (grepl('^t.*', var)) {
                 type = 'saisonnalité'
@@ -107,7 +81,7 @@ get_Var = function (dico, varProba) {
     return (Var)
 }
 
-
+# get_Var(dico, varProba)
 
 
 get_urlTile = function (theme, provider, theme_file, resources_path, token=NULL) {
@@ -182,14 +156,18 @@ create_area = function (area_file, resources_path) {
 }
 
 Button = function (inputId, label=NULL, icon_name=NULL,
-                   width=NULL, ...){
-    actionButton(inputId,
-                 div(label,
-                     style="float:right; padding-left:3px;"),
-                 icon=NULL,
-                 width=width,
-                 img(icon_name, align="right"),
-                 ...)
+                   width=NULL, tooltip='', ...){
+
+    div(class="Tooltip bunch",
+        HTML(paste0(
+            actionButton(inputId,
+                         div(label,
+                             style="float:right; padding-left:3px;"),
+                         icon=NULL,
+                         width=width,
+                         img(icon_name, align="right"),
+                         ...),
+            '<span class="Tooltiptext">', tooltip, '</span>')))
 }
 
 selectButton = function (inputId, label=NULL, icon_name=NULL,
@@ -236,19 +214,78 @@ updateSelectButton = function (session, inputId, label=NULL,
         ...)
 }
 
-radioButton = function (class='', ...){
+radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
+                        choiceValues=NULL, choiceTooltips=NULL, ...) {
+
+    if (!is.null(choiceNames)) {
+        choiceItems = choiceNames
+
+        if (is.null(choiceValues)) {
+            choiceValues = choiceNames
+        }
+        
+    } else {
+        choiceItems = replicate(max(length(choiceTooltips),
+                                    length(choiceIcons)),
+                                "", simplify=FALSE)
+    }
+    if (!is.null(choiceIcons)) {
+        inter = lapply(choiceIcons, img, align="right")
+        choiceItems = mapply(paste0, inter, choiceItems)
+    }
+    if (!is.null(choiceTooltips)) {
+        choiceItems = lapply(paste0(choiceItems,
+                                    '<span class="Tooltiptext">',
+                                    choiceTooltips,
+                                    '</span>'), HTML)
+        choiceItems = lapply(choiceItems,
+                             div, class="Tooltip bunch")
+    }
 
     radioGroupButtons(
         status=class,
         label=NULL,
+        choiceNames=choiceItems,
+        choiceValues=choiceValues,
         ...)
 }
 
-updateRadioButton = function (class='', ...){
 
+updateRadioButton = function (session, class='', choiceIcons=NULL,
+                              choiceNames=NULL, choiceValues=NULL,
+                              choiceTooltips=NULL, ...) {
+
+    if (!is.null(choiceNames)) {
+        choiceItems = choiceNames
+
+        if (is.null(choiceValues)) {
+            choiceValues = choiceNames
+        }
+        
+    } else {
+        choiceItems = replicate(max(length(choiceTooltips),
+                                    length(choiceIcons)),
+                                "", simplify=FALSE)
+    }
+    if (!is.null(choiceIcons)) {
+        inter = lapply(choiceIcons, img, align="right")
+        choiceItems = mapply(paste0, inter, choiceItems)
+    }
+    if (!is.null(choiceTooltips)) {
+        choiceItems = lapply(paste0(choiceItems,
+                                    '<span class="Tooltiptext">',
+                                    choiceTooltips,
+                                    '</span>'), HTML)
+        choiceItems = lapply(choiceItems,
+                             div, class="Tooltip bunch")
+    }
+    
     updateRadioGroupButtons(
+        session=session,
         status=class,
         label=NULL,
+        choiceNames=choiceItems,
+        choiceValues=choiceValues,
         ...)
 }
 

@@ -78,8 +78,8 @@ ui = bootstrapPage(
                    div(class="Row",
                        div(Button(
                            class="SmallButton-menu",
-                           'focusZoom_button',
-                           NULL,
+                           inputId='focusZoom_button',
+                           label=NULL,
                            icon_name=iconLib$focus_white)))
                    )
     ),
@@ -91,8 +91,8 @@ ui = bootstrapPage(
                    div(class="Row",
                        div(Button(
                            class="SmallButton-menu",
-                           'defaultZoom_button',
-                           NULL,
+                           inputId='defaultZoom_button',
+                           label=NULL,
                            icon_name=iconLib$default_white)))
                    )
     ),
@@ -105,11 +105,12 @@ ui = bootstrapPage(
                div(class="Row",
                    div(title='aaa',
                        Button(class="Button-menu",
-                              'ana_button',
-                              HTML(paste0("<b>",
-                                          word("a.title"),
-                                          "</b>")),
-                              icon_name=iconLib$show_chart_white)))
+                              inputId='ana_button',
+                              label=HTML(paste0("<b>",
+                                                word("a.title"),
+                                                "</b>")),
+                              icon_name=iconLib$show_chart_white,
+                              tooltip=word("tt.a.title"))))
                ),
     
 ### 2.2. Panel _______________________________________________________
@@ -151,38 +152,30 @@ ui = bootstrapPage(
                     Button(class="Button",
                            'all_button',
                            label=word("a.selec.all"),
-                           icon_name=iconLib$check_circle_white),
+                           icon_name=iconLib$check_circle_white,
+                           tooltip=word("tt.a.selec.all")),
                     
                     Button(class="Button",
                            'none_button',
                            label=word("a.selec.none"),
-                           icon_name=iconLib$cross_circle_white),
+                           icon_name=iconLib$cross_circle_white,
+                           tooltip=word("tt.a.selec.none")),
                     
                     selectButton(
                         class="selectButton",
                         inputId="click_select",
                         label=word("a.selec.click"),
                         icon_name=iconLib$click_white,
-                        selected=FALSE),
+                        selected=FALSE,
+                        tooltip=word("tt.a.selec.click")),
 
                     selectButton(
                         class="selectButton",
                         inputId="poly_select",
                         label=word("a.selec.poly"),
                         icon_name=iconLib$polyline_white,
-                        selected=FALSE),
-
-
-                    # div(class="Tooltip", HTML(paste0(
-                    # selectButton(
-                    #     class="selectButton",
-                    #     inputId="warning_select",
-                    #     label=word("a.selec.warning"),
-                    #     icon_name=iconLib$error_outline_white,
-                    #     selected=TRUE),
-
-                    # '<span class="Tooltiptext">Tooltip text</span>'))),
-
+                        selected=FALSE,
+                        tooltip=word("tt.a.selec.poly")),
 
                     selectButton(
                         class="selectButton",
@@ -190,30 +183,31 @@ ui = bootstrapPage(
                         label=word("a.selec.warning"),
                         icon_name=iconLib$error_outline_white,
                         selected=TRUE,
-                        tooltip='Prise en compte des avertissements'),
-                    
-                    
-
+                        tooltip=word("tt.a.selec.warning")),
+  
                     selectizeInput(inputId="search_input", 
                                    label=NULL,
                                    multiple=TRUE,
                                    choices=NULL),
-                    
                     )),
 
 ### 2.4. Variable selection __________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('a.event'),
+                                word('a.regime'),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioButton(class="radioButton",
-                                inputId="event_choice",
-                                choices=rle(Var$event)$values,
-                                selected=rle(Var$event)$values[1]))),
-
+                    radioButton(
+                        class="radioButton",
+                        inputId="event_choice",
+                        choiceNames=rle(Var$event)$values,
+                        selected=rle(Var$event)$values[1],
+                        choiceTooltips=
+                            paste(word("tt.a.regime"),
+                                  tolower(rle(Var$event)$values))))),
+            
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -238,7 +232,7 @@ ui = bootstrapPage(
                                     inputId="proba_choice",
                                     choices=FALSE,
                                     selected=NULL)))),
-            
+
 ### 2.5. Period selection ____________________________________________
             div(class="Row",
                 div(class="row-label",
@@ -279,8 +273,12 @@ ui = bootstrapPage(
                 div(class="bunch",
                     radioButton(class="radioButton",
                                 inputId="alpha_choice",
-                                choices=sigP,
-                                selected=sigP[3])))
+                                choiceValues=sigVal,
+                                choiceNames=sigProba,
+                                choiceTooltips=
+                                    paste(word("tt.a.sig.p"),
+                                          sigProba),
+                                selected=sigVal[3])))
         )
     ),
 
@@ -291,13 +289,14 @@ ui = bootstrapPage(
             class="Panel smallCard",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=169, bottom=10,
+            left=46, top=8,
 
             div(class="bunch",
                 Button(class="Button",
                        'clickOk_button',
                        label=word("b.ok"),
-                       icon_name=iconLib$done_white)),
+                       icon_name=iconLib$done_white,
+                       tooltip=word("tt.b.ok"))),
             )
      ),
 
@@ -308,26 +307,24 @@ ui = bootstrapPage(
             class="Panel smallCard",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=169, bottom=10,
+            left=46, top=8,
 
             div(class="bunch",
                 radioButton(class="radioButton",
                             inputId="poly_choice",
-                            choiceNames=
-                                list(paste0(img(iconLib$add_white,
-                                                align="right"),
-                                            'Additive'),
-                                     paste0(img(iconLib$remove_white,
-                                                align="right"),
-                                            'Soustractive')),
-                            choiceValues=
-                                list("Add",
-                                     "Rm")),
+                            choiceValues=list("Add", "Rm"),
+                            choiceIcons=list(iconLib$add_white,
+                                             iconLib$remove_white),
+                            choiceNames=list(word("b.Add"),
+                                             word("b.Rm")),
+                            choiceTooltips=list(word("tt.b.Add"),
+                                                word("tt.b.Rm"))),
                 
                 Button(class="Button",
                        'polyOk_button',
                        label=word("b.ok"),
-                       icon_name=iconLib$done_white)),
+                       icon_name=iconLib$done_white,
+                       tooltip=word("tt.b.ok"))),
             )
      ),
 
@@ -361,9 +358,10 @@ ui = bootstrapPage(
                width="auto", height="auto",
                div(class="Row",
                    div(Button(class="Button-menu",
-                              'theme_button',
-                              NULL,
-                              icon_name=iconLib$menu_white)))
+                              inputId='theme_button',
+                              label=NULL,
+                              icon_name=iconLib$menu_white,
+                              tooltip=word("tt.c.title"))))
                ),
     
 ### 3.2. Panel _______________________________________________________
@@ -384,23 +382,23 @@ ui = bootstrapPage(
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    radioButton(
-                        class="radioButton",
-                        inputId="theme_choice",
-                        choiceNames=
-                            list(paste0(img(iconLib$light_white,
-                                            align="right"),
-                                        'clair'),
-                                 paste0(img(iconLib$terrain_white,
-                                            align="right"),
-                                        'terrain'),
-                                 paste0(img(iconLib$dark_white,
-                                            align="right"),
-                                        'sombre')),
-                        choiceValues=
-                            list("light",
-                                 "terrain",
-                                 "dark")))),
+                    radioButton(class="radioButton",
+                                inputId="theme_choice",
+                                choiceValues=list("light",
+                                                  "terrain",
+                                                  "dark"),
+                                choiceIcons=
+                                    list(iconLib$light_white,
+                                         iconLib$terrain_white,
+                                         iconLib$dark_white),
+                                choiceNames=
+                                    list(word("c.theme.light"),
+                                         word("c.theme.terrain"),
+                                         word("c.theme.dark")),
+                                choiceTooltips=
+                                    list(word("tt.c.theme.light"),
+                                         word("tt.c.theme.terrain"),
+                                         word("tt.c.theme.dark"))))),
             
 ### 3.3. Palette button ______________________________________________
             div(class="Row",
@@ -442,7 +440,8 @@ ui = bootstrapPage(
                width="auto", height="auto",
                Button('info_button', label=NULL,
                       style=CSSbutton_info,
-                      icon_name=iconLib$INRAElogo)
+                      icon_name=iconLib$INRAElogo,
+                      tooltip=word("tt.i.title"))
                ),
     
 ### 4.2. Panel _______________________________________________________
@@ -514,9 +513,11 @@ ui = bootstrapPage(
             fixed=TRUE,
             width=200, height="auto",
             left=0, top=10, right=0,
-            Button('downloadOk_button', label=word("b.ok"),
+            Button('downloadOk_button',
+                   label=word("b.ok"),
                    style=CSSbutton_soloBar,
-                   icon_name=iconLib$done_white)
+                   icon_name=iconLib$done_white,
+                   tooltip=word("tt.b.ok"))
         )
     ),
     

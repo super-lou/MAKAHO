@@ -1,79 +1,124 @@
 id;FR
-a.title;Analyse
-a.data;Data
-a.date;Date
-a.selec;Sélection
-a.selec.all;Toute
-a.selec.none;Aucune
-a.selec.click;Clic
-a.selec.poly;Polygone
-a.selec.warning;Avertissement
-a.event;Régime
-a.var;Variable
-a.var1;Crues
-a.var1.1;QIXA: Débit Max An 
-a.var1.2;tQIXA: Date Max An 
-a.var1.3;fA: Fréquence annuelle [Q > Qp]
-a.var2;Crues Nivales
-a.var2.1;QIXAniv: Débit Max An
-a.var2.2;tQIXAniv:Date Max An
-a.var2.3;tDEBfon: Date début Fonte (10% volume)
-a.var2.4;tCENfon: Date méd. Fonte (50% volume)
-a.var2.5;tFINfon: Date fin Fonte (90% volume)
-a.var2.6;vFON: Volume Fonte
-a.var2.7;tFON: Durée Fonte
-a.var3;Moyennes Eaux
-a.var3.1;QA: Débit moyen annuel QA
-a.var3.2;QMA: Débit moyen mensuel
-a.var3.3;Qp: Décile Qp (débits classés)
-a.var4;Étiages
-a.var4.1;QNA: Débit Min An
-a.var4.2;QMNA: Débit Mensuel Étiage QMNA
-a.var4.3;VCN10: Débit moyen Mini VCN10
-a.var4.4;tDEBeti: Date début Étiage (10% déficit)
-a.var4.5;tCENeti: Date méd. Étiage (50% déficit)
-a.var4.6;tFINeti: Date fin Étiage (90% déficit)
-a.var4.7;vDEF: Volume déficite
-a.var4.8;tETI: Durée Étiage
-a.proba;Probabilité
+a.title;"Analyse"
+tt.a.title;"Panneau des paramètres de l'analyse de tendance"
+a.data;"Data"
+a.date;"Date"
+a.selec;"Sélection"
+a.selec.all;"Toute"
+tt.a.selec.all;"Sélection de toutes les stations"
+a.selec.none;"Aucune"
+tt.a.selec.none;"Sélection d'aucunes des stations"
+a.selec.click;"Clic"
+tt.a.selec.click;"Sélection par clic sur la carte"
+a.selec.poly;"Polygone"
+tt.a.selec.poly;"Sélection par polygone sur la carte"
+a.selec.warning;"Avertissement"
+tt.a.selec.warning;"Sélection des stations aux chroniques inférieures à 30 ans ou manquantes"
+a.regime;"Régime"
+tt.a.regime;"Afficher les variables d'intérêt dans l'étude des"
+a.var;"Variable"
+a.var1;"Crues"
+a.var1.1;"QIXA"
+tt.a.var1.1;"Maximum annuel du débit journalier"
+a.var1.2;"tQIXA"
+tt.a.var1.2;"Date du maximum annuel du débit journalier"
+a.var1.3;"fA"
+tt.a.var1.3;"Fréquence annuelle [Q > Qp]"
+a.var2;"Crues Nivales"
+a.var2.1;"QIXAniv"
+tt.a.var2.1;"Maximum annuel du débit journalier en régime nivale"
+a.var2.2;"tQIXAniv"
+tt.a.var2.2;"Date du maximum annuel du débit journalier en régime nivale"
+a.var2.3;"tDEBfon"
+tt.a.var2.3;"Date de début de fonte (10% volume)"
+a.var2.4;"tCENfon"
+tt.a.var2.4;"Centre de la crue nivale (50% du volume de fonte est atteint)"
+a.var2.5;"tFINfon"
+tt.a.var2.5;"Date de fin de fonte (90% volume)"
+a.var2.6;"vFON"
+tt.a.var2.6;"Volume de fonte"
+a.var2.7;"tFON"
+tt.a.var2.7;"Durée de fonte"
+a.var3;"Moyennes Eaux"
+a.var3.1;"QA"
+tt.a.var3.1;"Moyenne annuel du débit journalier"
+a.var3.2;"QMA"
+tt.a.var3.2;"Moyenne annuel de la moyenne mensuelle du débit journalier"
+a.var3.3;"Qp"
+tt.a.var3.3;"Décile Qp (débits classés)"
+a.var4;"Étiages"
+a.var4.1;"QNA"
+tt.a.var4.1;"Minimum annuel du débit journalier"
+a.var4.2;"QMNA"
+tt.a.var4.2;"Minimum annuel de la moyenne mensuelle du débit journalier"
+a.var4.3;"VCN10"
+tt.a.var4.3;"Minimum annuel de la moyenne sur 10 jours du débit journalier"
+a.var4.4;"tDEBeti"
+tt.a.var4.4;"Début d'étiage (jour de l'année de la première moyenne sur 10 jours sous le maximum des VCN10)"
+a.var4.5;"tCENeti"
+tt.a.var4.5;"Centre d'étiage (jour de l'année du VCN10)"
+a.var4.6;"tFINeti"
+tt.a.var4.6;"Date de fin de l'étiage"
+a.var4.7;"vDEF"
+tt.a.var4.7;"Volume de déficite de l'étiage"
+a.var4.8;"tETI"
+tt.a.var4.8;"Durée de l'étiage"
+a.proba;"Probabilité"
 a.dm;"Année hydro."
-a.m01;Janv
-a.m02;Févr
-a.m03;Mars
-a.m04;Avr
-a.m05;Mai
-a.m06;Juin
-a.m07;Juill
-a.m08;Août
-a.m09;Sept
-a.m10;Oct
-a.m11;Nov
-a.m12;Déc
+tt.a.dm;"Mois de début de l'année hydrologique"
+a.m01;"Janv"
+a.m02;"Févr"
+a.m03;"Mars"
+a.m04;"Avr"
+a.m05;"Mai"
+a.m06;"Juin"
+a.m07;"Juill"
+a.m08;"Août"
+a.m09;"Sept"
+a.m10;"Oct"
+a.m11;"Nov"
+a.m12;"Déc"
 a.dy;"Période"
-a.sig;Significativité
-a.cm;Mode ...
-a.cms;sites
-a.cmr;régions
-a.search;Rechercher
-a.search.code;code
-a.search.name;station
-a.search.region;région hydro.
-a.search.regime;régime hydro.
-a.search.location;lieu
+tt.a.dy;"Année de début et de fin de l'analyse de tendance"
+a.sig;"Significativité"
+tt.a.sig.p;"Test statistique significatif à un risque de"
+a.cm;"Mode ..."
+a.cms;"sites"
+a.cmr;"régions"
+a.search;"Rechercher"
+tt.a.search;"Sélection par recherche textuelle d'infomation sur les stations"
+a.search.code;"code"
+a.search.name;"station"
+a.search.region;"région hydro."
+a.search.regime;"régime hydro."
+a.search.location;"lieu"
 a.search.river;"cours d'eau"
-a.search.basin;bassin hydro.
-b.ok;Terminer
-c.title;Style
-c.cb;Colorbar
-c.cb.show;Afficher
-c.cb.none;Aucune
-c.theme;Fond de carte
-i.dev;Développeur
-i.ref;Référent
-i.sk8;Hébergé par
-m.hov.lat;lat
-m.hov.lon;lon
-m.hov.code;code
-m.hov.name;nom
-cb.title;TENDANCES OBSERVÉES
-cb.unit;% par an
+a.search.basin;"bassin hydro."
+b.Add;"Additive"
+tt.b.Add;"Sélection additive à la sélection pré-existante"
+b.Rm;"Soustractive"
+tt.b.Rm;"Sélection soustractive à la sélection pré-existante"
+b.ok;"Terminer"
+tt.b.ok;"Fin du mode de sélection en cours"
+c.title;"Style"
+tt.c.title;"Panneau de personnalisation de l'interface"
+c.cb;"Colorbar"
+c.cb.show;"Afficher"
+c.cb.none;"Aucune"
+c.theme;"Fond de carte"
+c.theme.light;"Clair"
+tt.c.theme.light;"Fond de carte de couleurs blanches"
+c.theme.terrain;"Terrain"
+tt.c.theme.terrain;"Fond de carte de couleurs en lien avec les reliefs"
+c.theme.dark;"Sombre"
+tt.c.theme.dark;"Fond de carte de couleurs gris sombres"
+tt.i.title;"Panneau d'information et de contact"
+i.dev;"Développeur"
+i.ref;"Référent"
+i.sk8;"Hébergé par"
+m.hov.lat;"lat"
+m.hov.lon;"lon"
+m.hov.code;"code"
+m.hov.name;"nom"
+cb.title;"TENDANCES OBSERVÉES"
+cb.unit;"% par an"

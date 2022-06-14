@@ -105,7 +105,8 @@ Months = c(word("a.m01"), word("a.m02"), word("a.m03"), word("a.m04"),
 Years = 1900:as.numeric(format(today, "%Y"))
 
 # Level of risk
-sigP = c("1%", "5%", "10%")
+sigProba = c("1%", "5%", "10%")
+sigVal = as.numeric(gsub('%', '' , sigProba))/100
 
 nbTick = 10
 

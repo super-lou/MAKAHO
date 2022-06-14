@@ -111,36 +111,36 @@ create_marker = function (shapeList, colorList, strokeList, fillPalette, shapeSi
     return (Urls)
 }
 
-markerAdd = list(
-    c(color=missColor,
-      fill=none2Color_light,
-      stroke=1),
-    c(color=missColor,
-      fill=none2Color_dark,
-      stroke=1),
+# markerAdd = list(
+#     c(color=missColor,
+#       fill=none2Color_light,
+#       stroke=1),
+#     c(color=missColor,
+#       fill=none2Color_dark,
+#       stroke=1),
     
-    c(color=validColor,
-      fill=validColor,
-      stroke=0.8),
-    c(color=none1Color_light,
-      fill=none2Color_light,
-      stroke=0.8),
-    c(color=none1Color_dark,
-      fill=none2Color_dark,
-      stroke=0.8)
-    )
+#     c(color=validColor,
+#       fill=validColor,
+#       stroke=0.8),
+#     c(color=none1Color_light,
+#       fill=none2Color_light,
+#       stroke=0.8),
+#     c(color=none1Color_dark,
+#       fill=none2Color_dark,
+#       stroke=0.8)
+#     )
 
-create_marker(shapeList=c(21, 24, 25),
-              colorList=c(validColor, invalidColor),
-              strokeList=c(0.8, 1),
-              fillPalette=Palette,
-              shapeSizes=c(6, 7, 7),
-              resources_path=resources_path,
-              filedir='marker',
-              colors=colors,
-              size=0.8,
-              relY=c(0, -0.02, 0.02),
-              markerAdd=markerAdd)
+# create_marker(shapeList=c(21, 24, 25),
+#               colorList=c(validColor, invalidColor),
+#               strokeList=c(0.8, 1),
+#               fillPalette=Palette,
+#               shapeSizes=c(6, 7, 7),
+#               resources_path=resources_path,
+#               filedir='marker',
+#               colors=colors,
+#               size=0.8,
+#               relY=c(0, -0.02, 0.02),
+#               markerAdd=markerAdd)
 
 
 get_marker = function (shape, color, fill, resources_path, filedir) {

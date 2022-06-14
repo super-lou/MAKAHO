@@ -231,13 +231,11 @@ server = function (input, output, session) {
     }, {
         map = leafletProxy("map")
         
-        alpha = as.numeric(sub("%", "", input$alpha_choice)) / 100
-
         nCodeAll = length(CodeAll())
         
         trendCode = df_Xtrend()$code
         
-        OkS = df_Xtrend()$p <= alpha
+        OkS = df_Xtrend()$p <= input$alpha_choice
         CodeSU = trendCode[OkS & df_Xtrend()$trend >= 0]
         CodeSD = trendCode[OkS & df_Xtrend()$trend < 0]
         CodeNS = trendCode[!OkS]
@@ -676,11 +674,22 @@ server = function (input, output, session) {
 
 ### 2.3. Variable extration __________________________________________
     observeEvent(input$event_choice, {
-        var_event = Var$var[Var$event == input$event_choice]        
+        
+        var_event = Var$var[Var$event == input$event_choice]
+        name_event = Var$name[Var$event == input$event_choice]
+        
         updateRadioButton(session, class="radioButton",
                           inputId="var_choice",
                           choices=var_event,
                           selected=var_event[1])
+
+        updateRadioButton(session,
+                          class="radioButton",
+                          inputId="var_choice",
+                          choiceNames=var_event,
+                          choiceTooltips=name_event,
+                          selected=var_event[1])
+        
     })
 
     var = reactive({
