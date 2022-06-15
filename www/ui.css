@@ -18,7 +18,6 @@
 
 
 .card {
-    /* padding: 0.5rem 1rem !important; */
     padding-top: 0.5rem !important;
     padding-bottom: 0.6rem !important;
     padding-left: 1rem !important;
@@ -28,7 +27,6 @@
 }
 
 .smallCard {
-    /* padding: 0.5rem 1rem !important; */
     padding-top: 0.18rem !important;
     padding-bottom: 0.33rem !important;
     padding-left: 0.5rem !important;
@@ -70,9 +68,6 @@ a:hover {
 }
 
 
-
-
-
 .Tooltip {
     position: relative !important;
     display: inline-block !important;
@@ -105,11 +100,6 @@ a:hover {
 .Tooltip:hover .Tooltiptext {
     visibility: visible !important;
 }
-
-
-
-
-
 
 
 /* MENU BUTTON */
@@ -162,6 +152,47 @@ a:hover {
 }
 
 
+/* INFO BUTTON */
+.Button-info {
+    font-size: 25px !important;
+    border: none !important;
+    border-radius: 0.4rem/0.4rem !important;
+    padding-top: 0.65rem !important;
+    padding-bottom: 0rem !important;
+    padding-left: 0.7rem !important;
+    padding-right: 0rem !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    color: transparent !important;
+}
+/* Hover */
+.Button-info:hover {
+    background-image: url("INRAEback.svg") !important; /* The image used */
+    background-color: transparent !important; /* Used if the image is unavailable */
+    background-repeat: no-repeat !important; /* Do not repeat the image */
+    background-size: cover !important;
+}
+
+
+/* HELP BUTTON */
+.Button-help {
+    font-size: 16px !important;
+    border: none !important;
+    border-radius: 0.8rem/0.8rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 0.1rem !important;
+    padding-right: 0.1rem !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    color: transparent !important;
+}
+/* Hover */
+.Button-help:hover {
+    background-color: rgba(180, 180, 180, 0.30) !important;
+}
+
+
 /* RADIO BUTTON */
 .btn-selectButton,
 .btn-radioButton {
@@ -169,7 +200,6 @@ a:hover {
     border: none !important;
     border-radius: 0.25rem/0.25rem !important;
     min-width: 2rem !important;
-    /* line-height: 1rem !important; */
     padding: 0 0.5rem !important;
     margin: 0 !important;
     background-color: transparent !important;

@@ -160,9 +160,10 @@ Button = function (inputId, label=NULL, icon_name=NULL,
 
     div(class="Tooltip bunch",
         HTML(paste0(
-            actionButton(inputId,
-                         div(label,
-                             style="float:right; padding-left:3px;"),
+            actionButton(inputId=inputId,
+                         label=div(label,
+                                   style="float:right;
+                                          padding-left:3px;"),
                          icon=NULL,
                          width=width,
                          img(icon_name, align="right"),

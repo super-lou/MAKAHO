@@ -80,7 +80,8 @@ ui = bootstrapPage(
                            class="SmallButton-menu",
                            inputId='focusZoom_button',
                            label=NULL,
-                           icon_name=iconLib$focus_white)))
+                           icon_name=iconLib$focus_white,
+                           tooltip=word("tt.z.focus"))))
                    )
     ),
     
@@ -93,7 +94,8 @@ ui = bootstrapPage(
                            class="SmallButton-menu",
                            inputId='defaultZoom_button',
                            label=NULL,
-                           icon_name=iconLib$default_white)))
+                           icon_name=iconLib$default_white,
+                           tooltip=word("tt.z.default"))))
                    )
     ),
 
@@ -103,8 +105,7 @@ ui = bootstrapPage(
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
                div(class="Row",
-                   div(title='aaa',
-                       Button(class="Button-menu",
+                   div(Button(class="Button-menu",
                               inputId='ana_button',
                               label=HTML(paste0("<b>",
                                                 word("a.title"),
@@ -282,49 +283,62 @@ ui = bootstrapPage(
         )
     ),
 
-#### 2.3.1. Poly bar _________________________________________________
+#### 2.3.1. Click bar ________________________________________________
     hidden(
         absolutePanel(
-            id='click_panel',
+            id='click_bar',
             class="Panel smallCard",
             fixed=TRUE,        
             width="auto", height="auto",
             left=46, top=8,
 
-            div(class="bunch",
-                Button(class="Button",
-                       'clickOk_button',
-                       label=word("b.ok"),
-                       icon_name=iconLib$done_white,
-                       tooltip=word("tt.b.ok"))),
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("a.selec.click"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    Button(class="Button",
+                           'clickOk_button',
+                           label=word("b.ok"),
+                           icon_name=iconLib$done_white,
+                           tooltip=word("tt.b.ok")))),
             )
      ),
 
 #### 2.3.2. Poly bar _________________________________________________
      hidden(
         absolutePanel(
-            id='poly_panel',
+            id='poly_bar',
             class="Panel smallCard",
             fixed=TRUE,        
             width="auto", height="auto",
             left=46, top=8,
 
-            div(class="bunch",
-                radioButton(class="radioButton",
-                            inputId="poly_choice",
-                            choiceValues=list("Add", "Rm"),
-                            choiceIcons=list(iconLib$add_white,
-                                             iconLib$remove_white),
-                            choiceNames=list(word("b.Add"),
-                                             word("b.Rm")),
-                            choiceTooltips=list(word("tt.b.Add"),
-                                                word("tt.b.Rm"))),
-                
-                Button(class="Button",
-                       'polyOk_button',
-                       label=word("b.ok"),
-                       icon_name=iconLib$done_white,
-                       tooltip=word("tt.b.ok"))),
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("a.selec.poly"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioButton(class="radioButton",
+                                inputId="poly_choice",
+                                choiceValues=list("Add", "Rm"),
+                                choiceIcons=list(iconLib$add_white,
+                                                 iconLib$remove_white),
+                                choiceNames=list(word("b.Add"),
+                                                 word("b.Rm")),
+                                choiceTooltips=list(word("tt.b.Add"),
+                                                    word("tt.b.Rm")),
+                                selected="Add"),
+                    
+                    Button(class="Button",
+                           'polyOk_button',
+                           label=word("b.ok"),
+                           icon_name=iconLib$done_white,
+                       tooltip=word("tt.b.ok")))),
             )
      ),
 
@@ -436,10 +450,11 @@ ui = bootstrapPage(
     
 ## 4. INFO ___________________________________________________________
 ### 4.1. Panel button ________________________________________________ 
-    fixedPanel(right=10, bottom=0,
+    fixedPanel(right=10, bottom=2,
                width="auto", height="auto",
-               Button('info_button', label=NULL,
-                      style=CSSbutton_info,
+               Button(class="Button-info",
+                      inputId='info_button',
+                      label=NULL,
                       icon_name=iconLib$INRAElogo,
                       tooltip=word("tt.i.title"))
                ),
@@ -456,10 +471,9 @@ ui = bootstrapPage(
 ### 4.3. Contact info ________________________________________________
             div(class="Row",
                 div(class="row-label",
-                    HTML(
-                        paste0("<span><b>",
-                               word("i.dev"),
-                               "</b></span>"))),
+                    HTML(paste0("<span><b>",
+                                word("i.dev"),
+                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     a(href="mailto:louis.heraut@inrae.fr",
@@ -467,10 +481,9 @@ ui = bootstrapPage(
 
             div(class="Row",
                 div(class="row-label",
-                    HTML(
-                        paste0("<span><b>",
-                               word("i.ref"),
-                               "</b></span>"))),
+                    HTML(paste0("<span><b>",
+                                word("i.ref"),
+                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     a(href="mailto:michel.lang@inrae.fr",
@@ -478,55 +491,159 @@ ui = bootstrapPage(
 
             div(class="Row",
                 div(class="row-label",
-                    HTML(
-                        paste0("<span><b>",
-                               word("i.sk8"),
-                               "</b></span>"))),
+                    HTML(paste0("<span><b>",
+                                word("i.sk8"),
+                                "</b></span>"))),
                 div(class="sep"),
                 div(a(href="https://sk8.inrae.fr",
-                      img(src="SK8.png", height="15px"))),
+                      img(src="SK8.png", height="17px"))),
                 div(style="padding-top: 3px; padding-left: 5px;",
                     a(href="https://sk8.inrae.fr",
-                      "SK8")))
+                      "SK8"))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("i.ui"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div("inspirée de ",
+                    a(href="https://earth.nullschool.net/",
+                      "earth.nullschool.net")))
         )
     ),
 
+
+## 5. HELP ___________________________________________________________
+    fixedPanel(right=95, bottom=8,
+               width="auto", height="auto",
+               Button(class="Button-help",
+                      inputId='help_button',
+                      label=NULL,
+                      icon_name=iconLib$help_outline_grey,
+                      tooltip=word("tt.h.title"))
+               ),
+
     
-## 5. SAVE ___________________________________________________________
-### 5.1. Download ____________________________________________________
+## 6. SAVE ___________________________________________________________
+### 6.1. Screenshot __________________________________________________
     fixedPanel(right=10, top=10,
                width="auto", height="auto",
-               Button('download_button',
-                      style=CSSbutton_panelSmall,
-                      icon_name=iconLib$download_white)
+               div(class="Row",
+                   div(Button(
+                       class="SmallButton-menu",
+                       inputId='photo_button',
+                       label=NULL,
+                       icon_name=iconLib$photo_white,
+                       tooltip=word("tt.p.title"))))
+               ),
+
+    hidden(
+        absolutePanel(
+            id='photo_panel',
+            class="Panel smallCard",
+            fixed=TRUE, 
+            width="auto", height="auto",
+            right=45, top=8,
+
+            div(class="Row",
+                div(class="bunch",
+                    radioButton(class="radioButton",
+                                inputId="photo_choice",
+                                choiceValues=list("A4Landscape",
+                                                  "A4Portrait"),
+                                choiceIcons=
+                                    list(iconLib$crop_landscape_white,
+                                         iconLib$crop_portrait_white),
+                                choiceNames=list(word("p.A4l"),
+                                                 word("p.A4p")),
+                                choiceTooltips=list(word("tt.p.A4l"),
+                                                    word("tt.p.A4p")),
+                                selected="A4Landscape"),
+                    
+                    Button(class="Button",
+                           'photoOk_button',
+                           label=word("b.ok"),
+                           icon_name=iconLib$done_white,
+                           tooltip=word("tt.b.ok"))))
+        )
+    ),
+    
+### 6.2. Download ____________________________________________________
+    fixedPanel(right=10, top=45,
+               width="auto", height="auto",
+               div(class="Row",
+                   div(Button(
+                       class="SmallButton-menu",
+                       inputId='download_button',
+                       label=NULL,
+                       icon_name=iconLib$download_white,
+                       tooltip=word("tt.d.title"))))
                ),
 
     downloadLink("downloadData", label=""),
     tags$head(tags$script(HTML('Shiny.addCustomMessageHandler("jsCode",
                                 function(message) {
                                 eval(message.value);});'))),
-    
+
     hidden(
         absolutePanel(
             id='download_panel',
-            style=CSSpanel_center,
+            class="Panel card",
             fixed=TRUE,
-            width=200, height="auto",
-            left=0, top=10, right=0,
-            Button('downloadOk_button',
-                   label=word("b.ok"),
-                   style=CSSbutton_soloBar,
-                   icon_name=iconLib$done_white,
-                   tooltip=word("tt.b.ok"))
+            width="auto", height="auto",
+            right=45, top=45,
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("d.dl"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+
+                    selectButton(class="selectButton",
+                                 inputId="dlClick_select",
+                                 label=word("d.click"),
+                                 icon_name=iconLib$click_white,
+                                 selected=FALSE,
+                                 tooltip=word("tt.d.click")),
+
+                    Button(class="Button",
+                           inputId="dlSelec_button",
+                           label=word("d.selec"),
+                           icon_name=iconLib$scatter_plot_white,
+                           tooltip=word("tt.d.selec")),
+
+                    Button(class="Button",
+                           inputId="dlAll_button",
+                           label=word("d.all"),
+                           icon_name=iconLib$check_circle_white,
+                           tooltip=word("tt.d.all"))))
         )
     ),
-    
-### 5.2. Screenshot __________________________________________________
-    fixedPanel(right=50, top=10,
-               width="auto", height="auto",
-               Button('photo_button',
-                      style=CSSbutton_panelSmall,
-                      icon_name=iconLib$photo_white)
-               ),
+
+    hidden(
+        absolutePanel(
+            id='dlClick_bar',
+            class="Panel smallCard",
+            fixed=TRUE, 
+            width="auto", height="auto",
+            left=46, top=8,
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("d.dl"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    Button(class="Button",
+                           'dlClickOk_button',
+                           label=word("b.ok"),
+                           icon_name=iconLib$done_white,
+                           tooltip=word("tt.b.ok"))))
+        )
+    ),
     
     )

@@ -45,8 +45,7 @@ server = function (input, output, session) {
                         polyMode='false',
                         clickMode=FALSE,
                         warningMode=TRUE,
-                        downloadMode=FALSE,
-                        inputPhoto=FALSE,
+                        dlClickMode=FALSE,
                         currentLimits=NULL,
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
@@ -360,9 +359,11 @@ server = function (input, output, session) {
             hide(id='ana_panel')
             hide(id='theme_panel')
             hide(id='info_panel')
-            hide(id='poly_panel')
+            hide(id='photo_panel')
             hide(id='download_panel')
-            showElement(id='click_panel')
+            hide(id='poly_bar')
+            hide(id='dlClick_bar')
+            showElement(id='click_bar')
             rv$clickMode = TRUE
 
             updateSelectButton(
@@ -371,18 +372,25 @@ server = function (input, output, session) {
                 inputId="poly_select",
                 selected=FALSE)
             rv$polyMode = 'false'
+
+            updateSelectButton(
+                session=session,
+                class="selectButton",
+                inputId="dlClick_select",
+                selected=FALSE)
+            rv$dlClickMode = FALSE
             
         } else {
             if (rv$clickMode) {
                 rv$clickMode = FALSE
-                hide(id='click_panel')
+                hide(id='click_bar')
                 showElement(id='ana_panel')
             }
         }
     })
 
     observeEvent(input$map_marker_click, {
-        if (rv$polyMode == 'false' & rv$clickMode & !rv$downloadMode) {
+        if (rv$polyMode == 'false' & rv$clickMode & !rv$dlClickMode) {
             codeClick = input$map_marker_click$id
             CodeSample = rv$CodeSample
             if (codeClick %in% CodeSample) {
@@ -403,7 +411,8 @@ server = function (input, output, session) {
             selected=FALSE)
                 
         rv$clickMode = FALSE
-        hide(id='click_panel')
+        hide(id='click_bar')
+        hide(id='theme_panel')
         showElement(id='ana_panel')
     })
 
@@ -413,9 +422,11 @@ server = function (input, output, session) {
                 hide(id='ana_panel')
                 hide(id='theme_panel')
                 hide(id='info_panel')
-                hide(id='click_panel')
+                hide(id='photo_panel')
                 hide(id='download_panel')
-                showElement(id='poly_panel')
+                hide(id='click_bar')
+                hide(id='dlClick_bar')
+                showElement(id='poly_bar')
                 rv$polyMode = "Add"
                 rv$polyCoord = tibble()
 
@@ -425,11 +436,18 @@ server = function (input, output, session) {
                     inputId="click_select",
                     selected=FALSE)
                 rv$clickMode = FALSE
+
+                updateSelectButton(
+                    session=session,
+                    class="selectButton",
+                    inputId="dlClick_select",
+                    selected=FALSE)
+                rv$dlClickMode = FALSE
                 
         } else {
             if (rv$polyMode == 'Add' | rv$polyMode == 'Rm') {
                 rv$polyMode = 'false'
-                hide(id='poly_panel')
+                hide(id='poly_bar')
                 showElement(id='ana_panel')
             }
         }
@@ -465,7 +483,7 @@ server = function (input, output, session) {
     })
     
     observeEvent(input$map_click, {
-        if (rv$polyMode != 'false' & !rv$clickMode & !rv$downloadMode) {
+        if (rv$polyMode != 'false' & !rv$clickMode & !rv$dlClickMode) {
             rv$polyCoord = bind_rows(rv$polyCoord,
                                      tibble(lng=input$map_click$lng,
                                             lat=input$map_click$lat))
@@ -517,7 +535,8 @@ server = function (input, output, session) {
             selected=FALSE)
         
         rv$polyMode = 'false'
-        hide(id='poly_panel')
+        hide(id='poly_bar')
+        hide(id='theme_panel')
         showElement(id='ana_panel')
     })
 
@@ -865,7 +884,7 @@ server = function (input, output, session) {
         period()
         var()
     }, {
-        if (rv$polyMode == 'false' & !rv$clickMode & !rv$downloadMode & !is.null(input$map_marker_click)) {
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(input$map_marker_click)) {
             showElement(id='plot_panel')
             
             codeClick = input$map_marker_click$id
@@ -933,20 +952,80 @@ server = function (input, output, session) {
 
     
 ## 5. SAVE ___________________________________________________________
-### 5.1. Download ____________________________________________________
+### 5.1. Screenshot __________________________________________________
+    observe({
+        delay(100,
+              runjs('
+$("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
+$("#colorbar_panel").css("position", "absolute");
+$("#colorbar_panel").css("z-index", "999");')
+        )
+    })
+    
+    observeEvent(input$photo_button, {
+        toggle(id='photo_panel')
+    })
+
+    observeEvent(input$photoOk_button, {
+        hide(id='photo_panel')
+        map = leafletProxy("map")
+        easyprintMap(map, sizeModes=input$photo_choice, dpi=300)
+        rv$inputPhoto = FALSE
+    })
+    
+### 5.2. Download ____________________________________________________
     observeEvent(input$download_button, {
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='poly_panel')
-        hide(id='click_panel')
-        showElement(id='download_panel')
-        rv$downloadMode = TRUE
+        toggle(id='download_panel')
+    })
+
+
+
+    observe({
+        if (!is.null(input$dlClick_select)) {
+            hide(id='ana_panel')
+            hide(id='theme_panel')
+            hide(id='info_panel')
+            hide(id='photo_panel')
+            hide(id='download_panel')
+            hide(id='click_bar')
+            hide(id='poly_bar')
+            showElement(id='dlClick_bar')
+            rv$dlClickMode = TRUE
+
+            updateSelectButton(
+                session=session,
+                class="selectButton",
+                inputId="poly_select",
+                selected=FALSE)
+            rv$polyMode = 'false'
+
+            updateSelectButton(
+                session=session,
+                class="selectButton",
+                inputId="click_select",
+                selected=FALSE)
+            rv$clickMode = FALSE
+            
+        } else {
+            if (rv$dlClickMode) {
+                rv$dlClickMode = FALSE
+                hide(id='dlClick_bar')
+                showElement(id='download_panel')
+            }
+        }
+    })
+
+    observeEvent(input$dlSelec_button, {
+        
+    })
+
+    observeEvent(input$dlAll_button, {
+        
     })
 
 
     observeEvent(input$map_marker_click, {
-        if (rv$polyMode == 'false' & !rv$clickMode & rv$downloadMode) {
+        if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode) {
             codeClick = input$map_marker_click$id
 
             output$downloadData = downloadHandler(
@@ -967,38 +1046,17 @@ server = function (input, output, session) {
         }
     })
 
-    observeEvent(input$downloadOk_button, {
-        rv$downloadMode = FALSE
-        hide(id='download_panel')
-    })
-    
-            
-### 5.2. Screenshot __________________________________________________
-    observe({
-        delay(100,
-              runjs('
-$("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
-$("#colorbar_panel").css("position", "absolute");
-$("#colorbar_panel").css("z-index", "999");')
-        )
-    })
-
-    observeEvent(input$photo_button, {
-        rv$inputPhoto = !rv$inputPhoto
-    })
-
-    inputPhotoB = reactive({
-        rv$inputPhoto
-    })
-    
-    inputPhoto = debounce(inputPhotoB, 500)
-
-    observe({
-        if (inputPhoto()) {
-            map = leafletProxy("map")
-            easyprintMap(map, sizeModes="A4Landscape", dpi=300)
-            rv$inputPhoto = FALSE
-        }
+    observeEvent(input$dlClickOk_button, {
+        
+        updateSelectButton(
+            session=session,
+            class="selectButton",
+            inputId="dlClick_select",
+            selected=FALSE)
+        rv$dlClickMode = FALSE
+        
+        hide(id='dlClick_bar')
+        showElement(id='download_panel')
     })
 
 } 
