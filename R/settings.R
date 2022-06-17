@@ -97,9 +97,10 @@ Var = get_Var(dico, varProba)
 
 
 # Creates a vector of months name
-Months = c(word("a.m01"), word("a.m02"), word("a.m03"), word("a.m04"),
-           word("a.m05"), word("a.m06"), word("a.m07"), word("a.m08"),
-           word("a.m09"), word("a.m10"), word("a.m11"), word("a.m12"))
+Months = c(word("ana.m01"), word("ana.m02"), word("ana.m03"),
+           word("ana.m04"), word("ana.m05"), word("ana.m06"),
+           word("ana.m07"), word("ana.m08"), word("ana.m09"),
+           word("ana.m10"), word("ana.m11"), word("ana.m12"))
 
 # Creates a vector of years
 Years = 1900:as.numeric(format(today, "%Y"))
@@ -125,3 +126,7 @@ none2Color_light = grey94COL
 
 none1Color_dark = grey9COL
 none2Color_dark = grey18COL
+
+N_helpPage = 8
+helpBase = 300
+stepH = 25

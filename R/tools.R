@@ -42,22 +42,22 @@ create_dico = function (dico_file, resources_path) {
 
 
 get_Var = function (dico, varProba) {
-    OkEvent = as.vector(regexpr("^a.var[0-9]$", dico[[1]])) != -1
+    OkEvent = as.vector(regexpr("^ana.var[0-9]$", dico[[1]])) != -1
     IdEvent = which(OkEvent)
     nbEvent = sum(as.numeric(OkEvent))
 
     Var = tibble()
 
     for (i in 1:nbEvent) {
-        event = word(paste0("a.var", i))
+        event = word(paste0("ana.var", i))
         
-        OkNumVar = as.vector(regexpr(paste0("^a.var", i,
+        OkNumVar = as.vector(regexpr(paste0("^ana.var", i,
                                             ".[0-9]$"), dico[[1]]))
         nbVar = sum(OkNumVar[OkNumVar == 1])        
         
         for (j in 1:nbVar) {
-            var = word(paste0("a.var", i, "." , j))
-            name = word(paste0("tt.a.var", i, "." , j))
+            var = word(paste0("ana.var", i, "." , j))
+            name = word(paste0("tt.ana.var", i, "." , j))
             
             if (grepl('^t.*', var)) {
                 type = 'saisonnalité'
@@ -156,38 +156,63 @@ create_area = function (area_file, resources_path) {
 }
 
 Button = function (inputId, label=NULL, icon_name=NULL,
-                   width=NULL, tooltip='', ...){
+                   width=NULL, tooltip=NULL, ...){
 
-    div(class="Tooltip bunch",
-        HTML(paste0(
-            actionButton(inputId=inputId,
-                         label=div(label,
-                                   style="float:right;
+    if (is.null(tooltip)) {
+        actionButton(inputId=inputId,
+                     label=div(label,
+                               style="float:right;
                                           padding-left:3px;"),
-                         icon=NULL,
-                         width=width,
-                         img(icon_name, align="right"),
-                         ...),
-            '<span class="Tooltiptext">', tooltip, '</span>')))
+                     icon=NULL,
+                     width=width,
+                     img(icon_name, align="right"),
+                     ...)
+    } else {
+        div(class="Tooltip bunch",
+            HTML(paste0(
+                actionButton(inputId=inputId,
+                             label=div(label,
+                                       style="float:right;
+                                          padding-left:3px;"),
+                             icon=NULL,
+                             width=width,
+                             img(icon_name, align="right"),
+                             ...),
+                '<span class="Tooltiptext">', tooltip, '</span>')))
+    }
 }
 
 selectButton = function (inputId, label=NULL, icon_name=NULL,
-                         class='', selected=FALSE, tooltip='', ...){
+                         class='', selected=FALSE, tooltip=NULL, ...){
 
-    div(class="Tooltip bunch",
-        HTML(paste0(
-            checkboxGroupButtons(
-                status=class,
-                inputId=inputId,
-                label=NULL,
-                choiceNames=
-                    paste0(img(icon_name,
-                               align="right"),
-                           label),
-                choiceValues=TRUE,
-                selected=selected,
-                ...),
-            '<span class="Tooltiptext">', tooltip, '</span>')))
+    if (is.null(tooltip)) {
+        div(class="Tooltip bunch",
+            HTML(paste0(
+                checkboxGroupButtons(
+                    status=class,
+                    inputId=inputId,
+                    label=NULL,
+                    choiceNames=
+                        paste0(img(icon_name,
+                                   align="right"),
+                               label),
+                    choiceValues=TRUE,
+                    selected=selected,
+                    ...),
+                '<span class="Tooltiptext">', tooltip, '</span>')))
+    } else {
+        checkboxGroupButtons(
+            status=class,
+            inputId=inputId,
+            label=NULL,
+            choiceNames=
+                paste0(img(icon_name,
+                           align="right"),
+                       label),
+            choiceValues=TRUE,
+            selected=selected,
+            ...)
+    }
 }
 
 updateSelectButton = function (session, inputId, label=NULL,
@@ -289,6 +314,66 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
         choiceValues=choiceValues,
         ...)
 }
+
+
+page_circle = function (n, left=75, bottom=100, stepH=25) {
+    hidden(
+        fixedPanel(id=paste0("c", n,"_panelButton"),
+                   left=left+stepH*(n-1), bottom=bottom,
+                   width="auto", height="auto",
+
+                   hidden(
+                       div(id=paste0("c", n,"U_panelButton"),
+                           Button(class="Button-icon",
+                                  inputId=paste0("c", n, "U_button"),
+                                  label=NULL,
+                                  icon_name=iconLib$circle_unchecked_white))
+                   ),
+                   hidden(
+                       div(id=paste0("c", n,"C_panelButton"),
+                           Button(class="Button-icon",
+                                  inputId=paste0("c", n, "C_button"),
+                                  label=NULL,
+                                  icon_name=iconLib$circle_checked_white))
+                   )
+                   )
+    )
+}
+
+show_page = function (n, N) {
+    
+    for (i in 1:N) {
+        if (i == n) {
+            showElement(id=paste0('help', i, '_panel'))
+        } else {
+            hide(id=paste0('help', i, '_panel'))
+        }
+
+        showElement(id=paste0('c', i, '_panelButton'))
+        if (i <= n) {
+            hide(id=paste0('c', i, 'U_panelButton'))
+            showElement(id=paste0('c', i, 'C_panelButton'))
+        } else {
+            showElement(id=paste0('c', i, 'U_panelButton'))
+            hide(id=paste0('c', i, 'C_panelButton'))
+        }
+    }
+}
+
+observePage = function (input, rv, n, N) {
+    observeEvent(input[[paste0("c", n ,"U_button")]], {
+        rv$helpPage = n
+        show_page(n=n, N=N)
+    })    
+    observeEvent(input[[paste0("c", n ,"C_button")]], {
+        rv$helpPage = n
+        show_page(n=n, N=N)
+    })
+}
+
+
+
+
 
 
 read_FST = function (resdir, filename, filedir='fst') {

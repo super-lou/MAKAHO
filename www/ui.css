@@ -35,6 +35,32 @@
     border-radius: 0.5rem/0.5rem !important;
 }
 
+.card-blur {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(5, 5, 10, 0.8) !important;
+}
+.card-opaque {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: transparent !important;
+}
+
+.card-text {
+    background-color: transparent !important;
+    /* transform: translate(-50%, -50%) !important; */
+    transform: translateY(-50%) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
 body {
     margin: 0;
     color: #eeeeee;
@@ -127,28 +153,22 @@ a:hover {
     color: #ffffff !important;
 }
 
-/* PANEL BUTTON */
-.Button {
-    font: inherit !important;
+/* SMALL WHITE MENU BUTTON */
+.Button-icon {
+    font-size: 16px !important;
     border: none !important;
-    border-radius: 0.25rem/0.25rem !important;
-    min-width: 2rem !important;
-    padding: 0 0.5rem !important;
+    border-radius: 10rem/10rem !important;
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+    padding-left: 0.12rem !important;
+    padding-right: 0.12rem !important;
     margin: 0 !important;
     background-color: transparent !important;
-    cursor: pointer !important;
-    color: #979797 !important;
-    touch-action: manipulation !important;
+    color: transparent !important;
 }
 /* Hover */
-.Button:hover {
-    color: #ffffff !important;
-    background-color: transparent !important;
-}
-/* Selected */
-.Button.selected {
-    color: #e7ca7a !important;
-    background: #474747 !important;
+.Button-icon:hover {
+    background-color: rgba(180, 180, 180, 0.30) !important;
 }
 
 
@@ -174,22 +194,61 @@ a:hover {
 }
 
 
-/* HELP BUTTON */
-.Button-help {
-    font-size: 16px !important;
+/* MASK BUTTON */
+.maskButton-menu {
+    font: inherit !important;
     border: none !important;
-    border-radius: 0.8rem/0.8rem !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    padding-left: 0.1rem !important;
-    padding-right: 0.1rem !important;
+    border-radius: 0.4rem/0.4rem !important;
+    padding: 0.325rem 0.75rem !important;
+    margin: 0 !important;
+    background-color: rgba(5, 5, 10, 0.8) !important;
+    color: transparent !important;
+}
+.maskSmallButton-menu {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 0.4rem/0.4rem !important;
+    padding: 0.19rem 0.3rem !important;
+    margin: 0 !important;
+    background-color: rgba(5, 5, 10, 0.8) !important;
+    color: transparent !important;
+}
+.maskButton-info {
+    font-size: 25px !important;
+    border: none !important;
+    border-radius: 0.4rem/0.4rem !important;
+    padding-top: 0.65rem !important;
+    padding-bottom: 0rem !important;
+    padding-left: 0.7rem !important;
+    padding-right: 0rem !important;
     margin: 0 !important;
     background-color: transparent !important;
     color: transparent !important;
 }
+
+
+/* PANEL BUTTON */
+.Button {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 0.25rem/0.25rem !important;
+    min-width: 2rem !important;
+    padding: 0 0.5rem !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    cursor: pointer !important;
+    color: #979797 !important;
+    touch-action: manipulation !important;
+}
 /* Hover */
-.Button-help:hover {
-    background-color: rgba(180, 180, 180, 0.30) !important;
+.Button:hover {
+    color: #ffffff !important;
+    background-color: transparent !important;
+}
+/* Selected */
+.Button.selected {
+    color: #e7ca7a !important;
+    background: #474747 !important;
 }
 
 
@@ -420,3 +479,5 @@ a:hover {
     background: #b3b3b3 !important;
     border: 0px solid transparent;
 }
+
+

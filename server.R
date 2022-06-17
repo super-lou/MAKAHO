@@ -52,14 +52,17 @@ server = function (input, output, session) {
                         defaultBounds=NULL,
                         value=NULL,
                         minValue=NULL,
-                        maxValue=NULL
+                        maxValue=NULL,
+                        helpPage=1,
                         )
     
 ## 1. MAP ____________________________________________________________
     observeEvent(input$theme_button, {
-        toggle(id='theme_panel')
         hide(id='ana_panel')
+        toggle(id='theme_panel')
         hide(id='info_panel')
+        hide(id='photo_panel')
+        hide(id='download_panel')
     })
 
 ### 1.1. Background __________________________________________________
@@ -204,20 +207,20 @@ server = function (input, output, session) {
         }
         
         if (isDefault & isFocus) {
-            hide(id='focusZoom_panel')
-            hide(id='defaultZoom_panel')
+            hide(id='focusZoom_panelButton')
+            hide(id='defaultZoom_panelButton')
             
         } else if (isDefault & !isFocus) {
-            showElement(id='focusZoom_panel')
-            hide(id='defaultZoom_panel')
+            showElement(id='focusZoom_panelButton')
+            hide(id='defaultZoom_panelButton')
             
         } else if (!isDefault & isFocus) {
-            hide(id='focusZoom_panel')
-            showElement(id='defaultZoom_panel')
+            hide(id='focusZoom_panelButton')
+            showElement(id='defaultZoom_panelButton')
             
         } else if (!isDefault & !isFocus) {
-            showElement(id='focusZoom_panel')
-            hide(id='defaultZoom_panel')
+            showElement(id='focusZoom_panelButton')
+            hide(id='defaultZoom_panelButton')
         }
     })
 
@@ -296,6 +299,8 @@ server = function (input, output, session) {
         toggle(id='ana_panel')
         hide(id='theme_panel')
         hide(id='info_panel')
+        hide(id='photo_panel')
+        hide(id='download_panel')
     })
 
 ### 2.1. Station metadata ____________________________________________
@@ -593,31 +598,31 @@ server = function (input, output, session) {
         htmlValues = c(
             paste0(df_meta()$code,
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.code"),
+                   grey85COL, '">&emsp;', word("ana.search.code"),
                    '</i>'),
             paste0(df_meta()$nom,
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.name"),
+                   grey85COL, '">&emsp;', word("ana.search.name"),
                    '</i>'),
             paste0(df_meta()$region_hydro,
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.region"),
+                   grey85COL, '">&emsp;', word("ana.search.region"),
                    '</i>'),
             paste0(df_meta()$regime_hydro,
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.regime"),
+                   grey85COL, '">&emsp;', word("ana.search.regime"),
                    '</i>'),
             paste0(meta_location(),
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.location"),
+                   grey85COL, '">&emsp;', word("ana.search.location"),
                    '</i>'),
             paste0(meta_river(),
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.river"),
+                   grey85COL, '">&emsp;', word("ana.search.river"),
                    '</i>'),
             paste0(meta_basin(),
                    '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("a.search.basin"),
+                   grey85COL, '">&emsp;', word("ana.search.basin"),
                    '</i>')
         )
         
@@ -631,7 +636,7 @@ server = function (input, output, session) {
                              server=TRUE,
                              options=list(
                                  create=FALSE,
-                                 placeholder=word("a.search"),
+                                 placeholder=word("ana.search"),
                                  render=I('{
                  item: function(item, escape) {
                     return "<div>" + item.html + "</div>";
@@ -945,9 +950,11 @@ server = function (input, output, session) {
     
 ## 4. INFO ___________________________________________________________
     observeEvent(input$info_button, {
-        toggle(id='info_panel')
         hide(id='ana_panel')
         hide(id='theme_panel')
+        toggle(id='info_panel')
+        hide(id='photo_panel')
+        hide(id='download_panel')
     })
 
     
@@ -955,30 +962,41 @@ server = function (input, output, session) {
 ### 5.1. Screenshot __________________________________________________
     observe({
         delay(100,
-              runjs('
-$("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
+              runjs(
+'$("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
 $("#colorbar_panel").css("position", "absolute");
 $("#colorbar_panel").css("z-index", "999");')
         )
     })
-    
+
     observeEvent(input$photo_button, {
+        hide(id='ana_panel')
+        hide(id='theme_panel')
+        hide(id='info_panel')
         toggle(id='photo_panel')
+        hide(id='download_panel')
     })
 
-    observeEvent(input$photoOk_button, {
+    observeEvent(input$photoA4l_button, {
         hide(id='photo_panel')
         map = leafletProxy("map")
-        easyprintMap(map, sizeModes=input$photo_choice, dpi=300)
-        rv$inputPhoto = FALSE
+        easyprintMap(map, sizeModes="A4Landscape", dpi=300)
+    })
+
+    observeEvent(input$photoA4p_button, {
+        hide(id='photo_panel')
+        map = leafletProxy("map")
+        easyprintMap(map, sizeModes="A4Portrait", dpi=300)
     })
     
 ### 5.2. Download ____________________________________________________
     observeEvent(input$download_button, {
+        hide(id='ana_panel')
+        hide(id='theme_panel')
+        hide(id='info_panel')
+        hide(id='photo_panel')
         toggle(id='download_panel')
     })
-
-
 
     observe({
         if (!is.null(input$dlClick_select)) {
@@ -1058,6 +1076,86 @@ $("#colorbar_panel").css("z-index", "999");')
         hide(id='dlClick_bar')
         showElement(id='download_panel')
     })
+
+## 6. HELP ___________________________________________________________
+    startOBS = observe({
+        showElement(id='help_panelButton')
+        startOBS$destroy()
+    })
+    
+
+    observeEvent(input$help_button, {
+        hide(id='help_panelButton')
+        showElement(id='closeHelp_panelButton')
+
+        hide(id='ana_panel')
+        hide(id='theme_panel')
+        hide(id='info_panel')
+        hide(id='photo_panel')
+        hide(id='download_panel')
+        hide(id='click_bar')
+        hide(id='dlClick_bar')
+        hide(id='poly_bar')
+        
+        showElement(id='focusZoom_panelButton')
+        
+        showElement(id='maskZoom_panelButton')
+        showElement(id='maskAna_panelButton')
+        showElement(id='maskTheme_panelButton')
+        showElement(id='maskInfo_panelButton')
+        showElement(id='maskPhoto_panelButton')
+        showElement(id='maskDownload_panelButton')
+        showElement(id='blur_panel')
+        showElement(id='opaque_panel')
+        
+        showElement(id='before_panelButton')
+        show_page(n=1, N=N_helpPage)
+        showElement(id='next_panelButton')
+        
+    })
+
+    observeEvent(input$before_button, {
+        if (rv$helpPage > 1) {
+            show_page(n=rv$helpPage - 1, N=N_helpPage)
+            rv$helpPage = rv$helpPage - 1
+        }
+    })
+    
+    observePage(input, rv, n=1, N=N_helpPage)
+    observePage(input, rv, n=2, N=N_helpPage)
+    observePage(input, rv, n=3, N=N_helpPage)
+    observePage(input, rv, n=4, N=N_helpPage)
+    observePage(input, rv, n=5, N=N_helpPage)
+    observePage(input, rv, n=6, N=N_helpPage)
+    observePage(input, rv, n=7, N=N_helpPage)
+    observePage(input, rv, n=8, N=N_helpPage)
+
+    observeEvent(input$next_button, {
+        if (rv$helpPage < N_helpPage) {
+            show_page(n=rv$helpPage + 1, N=N_helpPage)
+            rv$helpPage = rv$helpPage + 1
+        }
+    })
+    
+
+    observeEvent(input$closeHelp_button, {
+        hide(id='closeHelp_panelButton')     
+        showElement(id='help_panelButton')
+
+        hide(id='focusZoom_panelButton')
+        
+        hide(id='maskZoom_panelButton')
+        hide(id='maskAna_panelButton')
+        hide(id='maskTheme_panelButton')
+        hide(id='maskInfo_panelButton')
+        hide(id='maskPhoto_panelButton')
+        hide(id='maskDownload_panelButton')
+        hide(id='blur_panel')
+        hide(id='opaque_panel')
+    })
+    
+
+    
 
 } 
 

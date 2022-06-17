@@ -57,45 +57,62 @@ ui = bootstrapPage(
     
     tags$body(
              
-             tags$div(id='mapPreview_div',
-                      style="position: absolute;
+             div(id='mapPreview_div',
+                 style="position: absolute;
                              top: 0; bottom: 0; left: 0; right: 0;",
-                      leafletOutput("mapPreview", width="100%",
+                 leafletOutput("mapPreview", width="100%",
                                     height="100%")),
              
-             tags$div(id='map_div',
-                      style="position: absolute;
+             div(id='map_div',
+                 style="position: absolute;
                              top: 0; bottom: 0; left: 0; right: 0;",
-                      leafletOutput("map", width="100%",
-                                    height="100%")),
+                 leafletOutput("map", width="100%",
+                               height="100%")),
              ),
+
+
+## 6. HELP ___________________________________________________________
+    hidden(
+        fixedPanel(id='help_panelButton',
+                   right=95, bottom=8,
+                   width="auto", height="auto",
+                   Button(class="Button-icon",
+                          inputId='help_button',
+                          label=NULL,
+                          icon_name=iconLib$help_outline_grey,
+                          tooltip=word("tt.help"))
+                   )
+    ),
+
+    hidden(
+        fixedPanel(id='blur_panel',
+                   class="Panel card-blur"   
+        )
+    ),
+    
 
 ### 1.2. Zoom ________________________________________________________
     hidden(
-        fixedPanel(id='focusZoom_panel',
+        fixedPanel(id='focusZoom_panelButton',
                    left=10, top=10,
                    width="auto", height="auto",
-                   div(class="Row",
-                       div(Button(
-                           class="SmallButton-menu",
-                           inputId='focusZoom_button',
-                           label=NULL,
-                           icon_name=iconLib$focus_white,
-                           tooltip=word("tt.z.focus"))))
+                   Button(class="SmallButton-menu",
+                          inputId='focusZoom_button',
+                          label=NULL,
+                          icon_name=iconLib$focus_white,
+                          tooltip=word("tt.z.focus"))
                    )
     ),
     
     hidden(
-        fixedPanel(id='defaultZoom_panel',
+        fixedPanel(id='defaultZoom_panelButton',
                    left=10, top=10,
                    width="auto", height="auto",
-                   div(class="Row",
-                       div(Button(
-                           class="SmallButton-menu",
-                           inputId='defaultZoom_button',
-                           label=NULL,
-                           icon_name=iconLib$default_white,
-                           tooltip=word("tt.z.default"))))
+                   Button(class="SmallButton-menu",
+                          inputId='defaultZoom_button',
+                          label=NULL,
+                          icon_name=iconLib$default_white,
+                          tooltip=word("tt.z.default"))
                    )
     ),
 
@@ -104,14 +121,13 @@ ui = bootstrapPage(
 ### 2.1. Panel button ________________________________________________
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
-               div(class="Row",
-                   div(Button(class="Button-menu",
-                              inputId='ana_button',
-                              label=HTML(paste0("<b>",
-                                                word("a.title"),
-                                                "</b>")),
-                              icon_name=iconLib$show_chart_white,
-                              tooltip=word("tt.a.title"))))
+               Button(class="Button-menu",
+                      inputId='ana_button',
+                      label=HTML(paste0("<b>",
+                                        word("ana.title"),
+                                        "</b>")),
+                      icon_name=iconLib$show_chart_white,
+                      tooltip=word("tt.ana.title"))
                ),
     
 ### 2.2. Panel _______________________________________________________
@@ -126,7 +142,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("a.data"),
+                                word("ana.data"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -135,7 +151,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("a.date"),
+                                word("ana.date"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -145,46 +161,46 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("a.selec"),
+                                word("ana.selec"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     
                     Button(class="Button",
                            'all_button',
-                           label=word("a.selec.all"),
+                           label=word("ana.selec.all"),
                            icon_name=iconLib$check_circle_white,
-                           tooltip=word("tt.a.selec.all")),
+                           tooltip=word("tt.ana.selec.all")),
                     
                     Button(class="Button",
                            'none_button',
-                           label=word("a.selec.none"),
+                           label=word("ana.selec.none"),
                            icon_name=iconLib$cross_circle_white,
-                           tooltip=word("tt.a.selec.none")),
+                           tooltip=word("tt.ana.selec.none")),
                     
                     selectButton(
                         class="selectButton",
                         inputId="click_select",
-                        label=word("a.selec.click"),
+                        label=word("ana.selec.click"),
                         icon_name=iconLib$click_white,
                         selected=FALSE,
-                        tooltip=word("tt.a.selec.click")),
+                        tooltip=word("tt.ana.selec.click")),
 
                     selectButton(
                         class="selectButton",
                         inputId="poly_select",
-                        label=word("a.selec.poly"),
+                        label=word("ana.selec.poly"),
                         icon_name=iconLib$polyline_white,
                         selected=FALSE,
-                        tooltip=word("tt.a.selec.poly")),
+                        tooltip=word("tt.ana.selec.poly")),
 
                     selectButton(
                         class="selectButton",
                         inputId="warning_select",
-                        label=word("a.selec.warning"),
+                        label=word("ana.selec.warning"),
                         icon_name=iconLib$error_outline_white,
                         selected=TRUE,
-                        tooltip=word("tt.a.selec.warning")),
+                        tooltip=word("tt.ana.selec.warning")),
   
                     selectizeInput(inputId="search_input", 
                                    label=NULL,
@@ -196,7 +212,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('a.regime'),
+                                word('ana.regime'),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -206,13 +222,13 @@ ui = bootstrapPage(
                         choiceNames=rle(Var$event)$values,
                         selected=rle(Var$event)$values[1],
                         choiceTooltips=
-                            paste(word("tt.a.regime"),
+                            paste(word("tt.ana.regime"),
                                   tolower(rle(Var$event)$values))))),
             
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('a.var'),
+                                word('ana.var'),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -225,7 +241,7 @@ ui = bootstrapPage(
                 div(class="Row", id="proba_row",
                     div(class="row-label",
                         HTML(paste0("<span><b>",
-                                    word('a.proba'),
+                                    word('ana.proba'),
                                     "</b></span>"))),
                     div(class="sep"),
                     div(class="bunch",
@@ -238,7 +254,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('a.dm'),
+                                word('ana.dm'),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch textSlider",
@@ -251,7 +267,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('a.dy'),
+                                word('ana.dy'),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -268,7 +284,7 @@ ui = bootstrapPage(
                 div(class="row-label",
                     HTML(
                         paste0("<span><b>",
-                               word("a.sig"),
+                               word("ana.sig"),
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -277,7 +293,7 @@ ui = bootstrapPage(
                                 choiceValues=sigVal,
                                 choiceNames=sigProba,
                                 choiceTooltips=
-                                    paste(word("tt.a.sig.p"),
+                                    paste(word("tt.ana.sig.p"),
                                           sigProba),
                                 selected=sigVal[3])))
         )
@@ -295,15 +311,15 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("a.selec.click"),
+                                word("click.bar"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     Button(class="Button",
                            'clickOk_button',
-                           label=word("b.ok"),
+                           label=word("bar.ok"),
                            icon_name=iconLib$done_white,
-                           tooltip=word("tt.b.ok")))),
+                           tooltip=word("tt.bar.ok")))),
             )
      ),
 
@@ -319,26 +335,27 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("a.selec.poly"),
+                                word("poly.bar"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     radioButton(class="radioButton",
                                 inputId="poly_choice",
-                                choiceValues=list("Add", "Rm"),
+                                choiceValues=list("Add",
+                                                  "Rm"),
                                 choiceIcons=list(iconLib$add_white,
                                                  iconLib$remove_white),
-                                choiceNames=list(word("b.Add"),
-                                                 word("b.Rm")),
-                                choiceTooltips=list(word("tt.b.Add"),
-                                                    word("tt.b.Rm")),
+                                choiceNames=list(word("poly.bar.Add"),
+                                                 word("poly.bar.Rm")),
+                                choiceTooltips=list(word("tt.poly.bar.Add"),
+                                                    word("tt.poly.bar.Rm")),
                                 selected="Add"),
                     
                     Button(class="Button",
                            'polyOk_button',
-                           label=word("b.ok"),
+                           label=word("bar.ok"),
                            icon_name=iconLib$done_white,
-                       tooltip=word("tt.b.ok")))),
+                       tooltip=word("tt.bar.ok")))),
             )
      ),
 
@@ -352,15 +369,18 @@ ui = bootstrapPage(
             width=520, height=220,
             left=0, bottom=10, right=0,
             
-            tags$div(style="position: absolute;
+            div(style="position: absolute;
                             margin-bottom: 10px; margin-top: 10px;
                             margin-left: 10px; margin-right: 10px;",
-                     plotOutput("trend_plot")),
+                plotOutput("trend_plot")),
             
-            tags$div(style="position: absolute;",
-                     Button('closePlot_button', label=NULL,
-                            style=CSSbutton_inPanelSmall,
-                            icon_name=iconLib$close_black))
+            div(Button(class="Button-icon",
+                       style="position: absolute;
+                              top: 0.15rem;
+                              left: 0.15rem;",
+                       inputId='closePlot_button',
+                       label=NULL,
+                       icon_name=iconLib$close_black))
         )
     ),
 
@@ -370,12 +390,11 @@ ui = bootstrapPage(
 ### 3.1. Panel button ________________________________________________
     fixedPanel(left=116, bottom=10,
                width="auto", height="auto",
-               div(class="Row",
-                   div(Button(class="Button-menu",
-                              inputId='theme_button',
-                              label=NULL,
-                              icon_name=iconLib$menu_white,
-                              tooltip=word("tt.c.title"))))
+               Button(class="Button-menu",
+                      inputId='theme_button',
+                      label=NULL,
+                      icon_name=iconLib$menu_white,
+                      tooltip=word("tt.c.title"))
                ),
     
 ### 3.2. Panel _______________________________________________________
@@ -513,72 +532,56 @@ ui = bootstrapPage(
         )
     ),
 
-
-## 5. HELP ___________________________________________________________
-    fixedPanel(right=95, bottom=8,
-               width="auto", height="auto",
-               Button(class="Button-help",
-                      inputId='help_button',
-                      label=NULL,
-                      icon_name=iconLib$help_outline_grey,
-                      tooltip=word("tt.h.title"))
-               ),
-
     
-## 6. SAVE ___________________________________________________________
-### 6.1. Screenshot __________________________________________________
+## 5. SAVE ___________________________________________________________
+### 5.1. Screenshot __________________________________________________
     fixedPanel(right=10, top=10,
                width="auto", height="auto",
-               div(class="Row",
-                   div(Button(
-                       class="SmallButton-menu",
-                       inputId='photo_button',
-                       label=NULL,
-                       icon_name=iconLib$photo_white,
-                       tooltip=word("tt.p.title"))))
+               Button(class="SmallButton-menu",
+                      inputId='photo_button',
+                      label=NULL,
+                      icon_name=iconLib$photo_white,
+                      tooltip=word("tt.p.title"))
                ),
 
     hidden(
         absolutePanel(
             id='photo_panel',
-            class="Panel smallCard",
+            class="Panel card",
             fixed=TRUE, 
             width="auto", height="auto",
-            right=45, top=8,
+            right=45, top=10,
 
             div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("p.format"),
+                                "</b></span>"))),
+                div(class="sep"),
                 div(class="bunch",
-                    radioButton(class="radioButton",
-                                inputId="photo_choice",
-                                choiceValues=list("A4Landscape",
-                                                  "A4Portrait"),
-                                choiceIcons=
-                                    list(iconLib$crop_landscape_white,
-                                         iconLib$crop_portrait_white),
-                                choiceNames=list(word("p.A4l"),
-                                                 word("p.A4p")),
-                                choiceTooltips=list(word("tt.p.A4l"),
-                                                    word("tt.p.A4p")),
-                                selected="A4Landscape"),
-                    
+
                     Button(class="Button",
-                           'photoOk_button',
-                           label=word("b.ok"),
-                           icon_name=iconLib$done_white,
-                           tooltip=word("tt.b.ok"))))
+                           inputId="photoA4l_button",
+                           label=word("p.format.A4l"),
+                           icon_name=iconLib$crop_landscape_white,
+                           tooltip=word("tt.p.format.A4l")),
+
+                    Button(class="Button",
+                           inputId="photoA4p_button",
+                           label=word("p.format.A4p"),
+                           icon_name=iconLib$crop_landscape_white,
+                           tooltip=word("tt.p.format.A4p"))))
         )
     ),
     
-### 6.2. Download ____________________________________________________
+### 5.2. Download ____________________________________________________
     fixedPanel(right=10, top=45,
                width="auto", height="auto",
-               div(class="Row",
-                   div(Button(
-                       class="SmallButton-menu",
-                       inputId='download_button',
-                       label=NULL,
-                       icon_name=iconLib$download_white,
-                       tooltip=word("tt.d.title"))))
+               Button(class="SmallButton-menu",
+                      inputId='download_button',
+                      label=NULL,
+                      icon_name=iconLib$download_white,
+                      tooltip=word("tt.d.title"))
                ),
 
     downloadLink("downloadData", label=""),
@@ -634,16 +637,211 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("d.dl"),
+                                word("dl.bar"),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     Button(class="Button",
                            'dlClickOk_button',
-                           label=word("b.ok"),
+                           label=word("bar.ok"),
                            icon_name=iconLib$done_white,
-                           tooltip=word("tt.b.ok"))))
+                           tooltip=word("tt.bar.ok"))))
         )
     ),
+
+
+
+
+## 6. HELP ___________________________________________________________
+### 6.2. Opaque panel ________________________________________________    
+    hidden(
+        fixedPanel(id='opaque_panel',
+                   class="Panel card-opaque"   
+                   )
+    ),
+
+### 6.3. Button mask ________________________________________________    
+    hidden(
+        fixedPanel(id='closeHelp_panelButton',
+                   left=helpBase+(N_helpPage+1)*stepH, bottom=100,
+                   width="auto", height="auto",
+                   Button(class="Button-icon",
+                          inputId='closeHelp_button',
+                          label=NULL,
+                          icon_name=iconLib$close_white,
+                          tooltip=word("tt.help.close")) 
+                   )
+    ),
+
+    hidden(
+        fixedPanel(id='maskZoom_panelButton',
+                   left=10, top=10,
+                   width="auto", height="auto",
+                   Button(class="maskSmallButton-menu",
+                          inputId='mask',
+                          label=NULL,
+                          icon_name=iconLib$none)
+                   )
+    ),
     
+    hidden(
+        fixedPanel(id='maskAna_panelButton',
+                   left=10, bottom=10,
+                   width="auto", height="auto",
+                   Button(class="maskButton-menu",
+                          inputId='mask',
+                          label=HTML(paste0("<b>",
+                                            word("ana.title"),
+                                            "</b>")),
+                          icon_name=iconLib$none)
+                   )
+    ),
+
+    hidden(
+        fixedPanel(id="maskTheme_panelButton",
+                   left=116, bottom=10,
+                   width="auto", height="auto",
+                   Button(class="maskButton-menu",
+                          inputId='mask',
+                          label=NULL,
+                          icon_name=iconLib$none)
+                   )
+    ),
+
+    hidden(
+        fixedPanel(id="maskInfo_panelButton",
+                   right=10, bottom=2,
+                   width="auto", height="auto",
+                   Button(class="maskButton-info",
+                          inputId='mask',
+                          label=NULL,
+                          icon_name=iconLib$noneINRAElogo)
+                   )
+       ),
+    
+
+
+    hidden(
+        fixedPanel(id="maskPhoto_panelButton",
+                   right=10, top=10,
+                   width="auto", height="auto",
+                   Button(class="maskSmallButton-menu",
+                          inputId='mask',
+                          label=NULL,
+                          icon_name=iconLib$none)
+                   )
+    ),
+
+    hidden(
+        fixedPanel(id="maskDownload_panelButton",
+                   right=10, top=45,
+                   width="auto", height="auto",
+                   Button(class="maskSmallButton-menu",
+                          inputId='mask',
+                          label=NULL,
+                          icon_name=iconLib$none)
+               )
+    ),
+
+### 6.4. Pages _______________________________________________________
+#### 6.4.1. Page 1 ___________________________________________________
+    page_circle(n=1, left=helpBase, bottom=100, stepH=stepH),
+    
+    hidden(
+        fixedPanel(id="help1_panel",
+                   class="Panel card-text",
+                   left=helpBase-stepH, top="50%",
+                   width=350, height="auto",
+                   
+                   h1(HTML(
+                       "<b>MAKAHO</b>"
+                   )),
+                   
+                   p(HTML(
+                       "MAKAHO (pour MAnn-Kendall Analysis of Hydrological Observations) est un système de <b>visualisation cartographique interactif</b> permettant d’examiner les <b>tendances</b> présentes dans les données des <b>stations hydrométriques aux débits peu influencés</b> par les actions humaines. Le test de <b>Mann-Kendall</b> permet d’analyser la significativité des tendances de variables hydrologiques sur les différentes composantes du régime des cours d'eau (étiages, moyennes-eaux, crues), à mettre ensuite en relation avec les impacts du <b>changement climatique</b> sur l’hydrologie de surface."
+                   )),                   
+                   )
+        
+    ),
+
+#### 6.4.2. Page 2 ___________________________________________________
+    page_circle(n=2, left=helpBase, bottom=100, stepH=stepH),
+
+    hidden(
+        fixedPanel(id="help2_panel",
+                   class="Panel card-text",
+                   left=helpBase-stepH, top="50%",
+                   width=350, height="auto",
+                   
+                   h1(HTML(
+                       "<b>FOND DE CARTE</b>"
+                   )),
+                   
+                   p(HTML(
+                       "L’interface de MAKAHO se concentre autour d’une <b>carte Leaflet interactive</b>. Le planisphère est recouvert de cercles et de triangles de couleur différentes qui permettent de situer les stations hydrométriques et de donner une idée de l’intensité de la tendance estimée. Un <b>cercle</b> indique que la tendance n’est <b>pas significative</b> alors qu’un triangle indique que la tendance est significative. Un <b>triangle pointant vers le haut</b> indique que la tendance est à la <b>hausse</b> alors qu’un <b>triangle dont la pointe est vers le bas</b> indique une tendance à la <b>baisse</b>."
+                   ))
+                   )
+        
+    ),
+
+#### 6.4.3. Page 3 ___________________________________________________
+    page_circle(n=3, left=helpBase, bottom=100, stepH=stepH),
+
+
+
+
+
+
+                   p(HTML(
+                       "Le fond de carte est interactif, cela veut dire qu’il est possible de se déplacer sur le planisphère en
+effectuant un click gauche glisser. De la même manière, il est aussi possible de zoomer en effectuant
+un roulement de la molette de souris."
+                   )), 
+
+    
+#### 6.4.4. Page 4 ___________________________________________________
+    page_circle(n=4, left=helpBase, bottom=100, stepH=stepH),
+
+#### 6.4.5. Page 5 ___________________________________________________
+    page_circle(n=5, left=helpBase, bottom=100, stepH=stepH),
+    
+#### 6.4.6. Page 6 ___________________________________________________
+    page_circle(n=6, left=helpBase, bottom=100, stepH=stepH),
+    
+#### 6.4.7. Page 7 ___________________________________________________
+    page_circle(n=7, left=helpBase, bottom=100, stepH=stepH),
+
+#### 6.4.8. Page 8 ___________________________________________________
+    page_circle(n=8, left=helpBase, bottom=100, stepH=stepH),
+
+
+
+
+    
+    
+#### 6.4.x. Nave button ______________________________________________
+    hidden(
+        fixedPanel(id="before_panelButton",
+                   left=helpBase-stepH, bottom=100,
+                   width="auto", height="auto",
+                   Button(class="Button-icon",
+                          inputId='before_button',
+                          label=NULL,
+                          icon_name=iconLib$navigate_before_white)
+                   )
+    ),
+
+
+    hidden(
+        fixedPanel(id="next_panelButton",
+                   left=helpBase+N_helpPage*stepH, bottom=100,
+                   width="auto", height="auto",
+                   Button(class="Button-icon",
+                          inputId='next_button',
+                          label=NULL,
+                          icon_name=iconLib$navigate_next_white)
+                   )
+        ),
+    
+
     )
