@@ -316,10 +316,13 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
 }
 
 
-page_circle = function (n, left=75, bottom=100, stepH=25) {
+page_circle = function (n, leftBase, widthHelp, top, dh) {
     hidden(
         fixedPanel(id=paste0("c", n,"_panelButton"),
-                   left=left+stepH*(n-1), bottom=bottom,
+                   left=paste0("calc(", leftBase,
+                               " - ", 0.5*widthHelp, "px",
+                               " + ", dh*(n-1), "px)"),
+                   top=top,
                    width="auto", height="auto",
 
                    hidden(
@@ -389,6 +392,16 @@ maskAll = function () {
     showElement(id='maskDownload_panelButton')
 }
 
+hideAll = function () {
+    hide(id='ana_panel')
+    hide(id='theme_panel')
+    hide(id='info_panel')
+    hide(id='photo_panel')
+    hide(id='download_panel')
+    hide(id='click_bar')
+    hide(id='dlClick_bar')
+    hide(id='poly_bar')
+}
 
 
 

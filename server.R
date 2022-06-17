@@ -1089,20 +1089,12 @@ $("#colorbar_panel").css("z-index", "999");')
         hide(id='help_panelButton')
         showElement(id='closeHelp_panelButton')
 
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='photo_panel')
-        hide(id='download_panel')
-        hide(id='click_bar')
-        hide(id='dlClick_bar')
-        hide(id='poly_bar')
-        
-        showElement(id='focusZoom_panelButton')
-
+        hideAll()
         maskAll()
         showElement(id='blur_panel')
         showElement(id='opaque_panel')
+        
+        showElement(id='focusZoom_panelButton')
         
         showElement(id='before_panelButton')
         show_page(n=1, N=N_helpPage)
@@ -1125,16 +1117,55 @@ $("#colorbar_panel").css("z-index", "999");')
     observePage(input, rv, n=6, N=N_helpPage)
     observePage(input, rv, n=7, N=N_helpPage)
     observePage(input, rv, n=8, N=N_helpPage)
+    observePage(input, rv, n=9, N=N_helpPage)
+    observePage(input, rv, n=10, N=N_helpPage)
+    observePage(input, rv, n=11, N=N_helpPage)
+    observePage(input, rv, n=12, N=N_helpPage)
+    observePage(input, rv, n=13, N=N_helpPage)
+    observePage(input, rv, n=14, N=N_helpPage)
 
     observeEvent(rv$helpPage, {
         if (!is.null(rv$helpPage)) {
+            hideAll()
             maskAll()
+            
             if (rv$helpPage == 4) {
                 hide(id='maskZoom_panelButton')
                 rv$CodeSample = CodeAll()[substr(CodeAll(), 1, 1) == "O"]
             } else {
                 rv$CodeSample = CodeAll()
             }
+                
+            if (rv$helpPage == 5 | rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8 | rv$helpPage == 9) {
+                hide(id='maskAna_panelButton')
+                showElement(id='ana_panel')
+            }
+            if (rv$helpPage == 5) {
+                showElement(id='poly_bar')
+            }
+
+            if (rv$helpPage == 10) {
+                hide(id='maskTheme_panelButton')
+                showElement(id='theme_panel')
+            }
+
+            if (rv$helpPage == 11) {
+                hide(id='maskPhoto_panelButton')
+                showElement(id='photo_panel')
+            }
+
+            if (rv$helpPage == 12) {
+                hide(id='maskDownload_panelButton')
+                showElement(id='download_panel')
+                showElement(id='dlClick_bar')
+            }
+
+            if (rv$helpPage == 14) {
+                hide(id='maskInfo_panelButton')
+                showElement(id='info_panel')
+            }
+            
+
         }
     })
 

@@ -54,8 +54,7 @@
 
 .card-text {
     background-color: transparent !important;
-    /* transform: translate(-50%, -50%) !important; */
-    transform: translateY(-50%) !important;
+    transform: translate(-50%, -50%) !important;
     padding: 0 !important;
     margin: 0 !important;
 }

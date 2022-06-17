@@ -127,6 +127,14 @@ none2Color_light = grey94COL
 none1Color_dark = grey9COL
 none2Color_dark = grey18COL
 
-N_helpPage = 8
-helpBase = 300
-stepH = 25
+
+N_helpPage = 14
+widthHelp = 350
+leftHelp = "52%"
+topHelp = "50%"
+dyNavHelp = 250
+dhNavHelp = 25
+
+# helpX = 550
+# helpY = 100
+# stepH = 25
