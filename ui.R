@@ -653,12 +653,18 @@ ui = bootstrapPage(
 
 
 ## 6. HELP ___________________________________________________________
-### 6.2. Opaque panel ________________________________________________    
-    hidden(
-        fixedPanel(id='opaque_panel',
-                   class="Panel card-opaque"   
-                   )
-    ),
+### 6.2. Opaque panel ________________________________________________
+
+
+
+    # /!\ À REPRENDRE POUR CHAQUE BOUTON AVEC LE MASK
+
+    
+    # hidden( 
+    #     fixedPanel(id='opaque_panel',
+    #                class="Panel card-opaque"   
+    #                )
+    # ),
 
 ### 6.3. Button mask ________________________________________________    
     hidden(
@@ -753,13 +759,14 @@ ui = bootstrapPage(
                    left=helpBase-stepH, top="50%",
                    width=350, height="auto",
                    
-                   h1(HTML(
+                   h1(style="font-size: 4em;",
+                      HTML(
                        "<b>MAKAHO</b>"
                    )),
                    
                    p(HTML(
                        "MAKAHO (pour MAnn-Kendall Analysis of Hydrological Observations) est un système de <b>visualisation cartographique interactif</b> permettant d’examiner les <b>tendances</b> présentes dans les données des <b>stations hydrométriques aux débits peu influencés</b> par les actions humaines. Le test de <b>Mann-Kendall</b> permet d’analyser la significativité des tendances de variables hydrologiques sur les différentes composantes du régime des cours d'eau (étiages, moyennes-eaux, crues), à mettre ensuite en relation avec les impacts du <b>changement climatique</b> sur l’hydrologie de surface."
-                   )),                   
+                   ))
                    )
         
     ),
@@ -776,6 +783,10 @@ ui = bootstrapPage(
                    h1(HTML(
                        "<b>FOND DE CARTE</b>"
                    )),
+
+                   h4(HTML(
+                       "<b>STRUCTURE</b>"
+                   )),
                    
                    p(HTML(
                        "L’interface de MAKAHO se concentre autour d’une <b>carte Leaflet interactive</b>. Le planisphère est recouvert de cercles et de triangles de couleur différentes qui permettent de situer les stations hydrométriques et de donner une idée de l’intensité de la tendance estimée. Un <b>cercle</b> indique que la tendance n’est <b>pas significative</b> alors qu’un triangle indique que la tendance est significative. Un <b>triangle pointant vers le haut</b> indique que la tendance est à la <b>hausse</b> alors qu’un <b>triangle dont la pointe est vers le bas</b> indique une tendance à la <b>baisse</b>."
@@ -787,20 +798,54 @@ ui = bootstrapPage(
 #### 6.4.3. Page 3 ___________________________________________________
     page_circle(n=3, left=helpBase, bottom=100, stepH=stepH),
 
-
-
-
-
+    hidden(
+        fixedPanel(id="help3_panel",
+                   class="Panel card-text",
+                   left=helpBase-stepH, top="50%",
+                   width=350, height="auto",
+                   
+                   h1(HTML(
+                       "<b>FOND DE CARTE</b>"
+                   )),
+                   
+                   h4(HTML(
+                       "<b>INTERACTION</b>"
+                   )),
+                   
+                   p(HTML(
+                       "Le fond de carte est interactif, cela veut dire qu’il est possible de se <b>déplacer</b> sur le planisphère en effectuant un <b>click gauche glisser</b>. De la même manière, il est aussi possible de <b>zoomer</b> en effectuant un <b>roulement de la molette de souris</b>."
+                   )),
 
                    p(HTML(
-                       "Le fond de carte est interactif, cela veut dire qu’il est possible de se déplacer sur le planisphère en
-effectuant un click gauche glisser. De la même manière, il est aussi possible de zoomer en effectuant
-un roulement de la molette de souris."
-                   )), 
-
+                       "Les <b>cercles et triangles</b> sont aussi cliquables. Par défaut, le <b>clic</b> sur une station permet d’afficher le <b>graphique détaillé de l’analyse de tendance</b> de la variable étudiée."
+                   ))
+                   )
+        
+    ),
     
 #### 6.4.4. Page 4 ___________________________________________________
     page_circle(n=4, left=helpBase, bottom=100, stepH=stepH),
+
+        hidden(
+        fixedPanel(id="help4_panel",
+                   class="Panel card-text",
+                   left=helpBase-stepH, top="50%",
+                   width=350, height="auto",
+                   
+                   h1(HTML(
+                       "<b>ZOOM</b>"
+                   )),
+                   
+                   p(HTML(
+                       "Les interactions avec le fond de carte font apparaître le <b>bouton de zoom en haut à gauche</b> qui permet de re‐faire le <b>focus</b> sur l’ensemble des stations sélectionnées. Ainsi, si la sélection de station est réduite, ce même bouton peut apparaître afin de laisser la possibilité à l’utilisateur de laisser l’application choisir le zoom et le <b>positionnement de carte le plus adapté</b>. Lorsque le positionnement est optimale sur une sélection, un bouton de zoom différent apparaît à la même place. Ce nouveau bouton permet alors de <b>re‐faire le focus</b> non pas sur la sélection de station mais <b>sur la France</b> entière."
+                   )),
+
+                   p(HTML(
+                       "Le mieux c'est d'essayer !"
+                   ))
+                   )
+        
+    ),
 
 #### 6.4.5. Page 5 ___________________________________________________
     page_circle(n=5, left=helpBase, bottom=100, stepH=stepH),

@@ -53,7 +53,7 @@ server = function (input, output, session) {
                         value=NULL,
                         minValue=NULL,
                         maxValue=NULL,
-                        helpPage=1,
+                        helpPage=NULL,
                         )
     
 ## 1. MAP ____________________________________________________________
@@ -206,7 +206,7 @@ server = function (input, output, session) {
             isFocus = TRUE
         }
         
-        if (isDefault & isFocus) {
+        if (isDefault & isFocus & is.null(rv$helpPage)) {
             hide(id='focusZoom_panelButton')
             hide(id='defaultZoom_panelButton')
             
@@ -1085,6 +1085,7 @@ $("#colorbar_panel").css("z-index", "999");')
     
 
     observeEvent(input$help_button, {
+        rv$helpPage = 1
         hide(id='help_panelButton')
         showElement(id='closeHelp_panelButton')
 
@@ -1098,13 +1099,8 @@ $("#colorbar_panel").css("z-index", "999");')
         hide(id='poly_bar')
         
         showElement(id='focusZoom_panelButton')
-        
-        showElement(id='maskZoom_panelButton')
-        showElement(id='maskAna_panelButton')
-        showElement(id='maskTheme_panelButton')
-        showElement(id='maskInfo_panelButton')
-        showElement(id='maskPhoto_panelButton')
-        showElement(id='maskDownload_panelButton')
+
+        maskAll()
         showElement(id='blur_panel')
         showElement(id='opaque_panel')
         
@@ -1130,15 +1126,27 @@ $("#colorbar_panel").css("z-index", "999");')
     observePage(input, rv, n=7, N=N_helpPage)
     observePage(input, rv, n=8, N=N_helpPage)
 
+    observeEvent(rv$helpPage, {
+        if (!is.null(rv$helpPage)) {
+            maskAll()
+            if (rv$helpPage == 4) {
+                hide(id='maskZoom_panelButton')
+                rv$CodeSample = CodeAll()[substr(CodeAll(), 1, 1) == "O"]
+            } else {
+                rv$CodeSample = CodeAll()
+            }
+        }
+    })
+
     observeEvent(input$next_button, {
         if (rv$helpPage < N_helpPage) {
             show_page(n=rv$helpPage + 1, N=N_helpPage)
             rv$helpPage = rv$helpPage + 1
         }
     })
-    
 
     observeEvent(input$closeHelp_button, {
+        rv$helpPage = NULL
         hide(id='closeHelp_panelButton')     
         showElement(id='help_panelButton')
 
@@ -1152,6 +1160,10 @@ $("#colorbar_panel").css("z-index", "999");')
         hide(id='maskDownload_panelButton')
         hide(id='blur_panel')
         hide(id='opaque_panel')
+
+        hide(id='before_panelButton')
+        hide_page(N=N_helpPage)
+        hide(id='next_panelButton')
     })
     
 

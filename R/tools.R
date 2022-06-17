@@ -360,6 +360,15 @@ show_page = function (n, N) {
     }
 }
 
+hide_page = function (N) {
+    for (i in 1:N) {
+        hide(id=paste0('help', i, '_panel'))
+        hide(id=paste0('c', i, 'U_panelButton'))
+        hide(id=paste0('c', i, 'C_panelButton'))
+    }
+}
+
+
 observePage = function (input, rv, n, N) {
     observeEvent(input[[paste0("c", n ,"U_button")]], {
         rv$helpPage = n
@@ -371,7 +380,14 @@ observePage = function (input, rv, n, N) {
     })
 }
 
-
+maskAll = function () {
+    showElement(id='maskZoom_panelButton')
+    showElement(id='maskAna_panelButton')
+    showElement(id='maskTheme_panelButton')
+    showElement(id='maskInfo_panelButton')
+    showElement(id='maskPhoto_panelButton')
+    showElement(id='maskDownload_panelButton')
+}
 
 
 
