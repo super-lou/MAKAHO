@@ -54,6 +54,7 @@ server = function (input, output, session) {
                         minValue=NULL,
                         maxValue=NULL,
                         helpPage=NULL,
+                        helpPage_prev=NULL,
                         )
     
 ## 1. MAP ____________________________________________________________
@@ -1086,6 +1087,7 @@ $("#colorbar_panel").css("z-index", "999");')
 
     observeEvent(input$help_button, {
         rv$helpPage = 1
+        rv$helpPage_save = 0
         hide(id='help_panelButton')
         showElement(id='closeHelp_panelButton')
 
@@ -1126,46 +1128,49 @@ $("#colorbar_panel").css("z-index", "999");')
 
     observeEvent(rv$helpPage, {
         if (!is.null(rv$helpPage)) {
-            hideAll()
-            maskAll()
             
             if (rv$helpPage == 4) {
-                hide(id='maskZoom_panelButton')
+                hideAll()
+                maskOnly(id="maskZoom_panelButton")
                 rv$CodeSample = CodeAll()[substr(CodeAll(), 1, 1) == "O"]
             } else {
                 rv$CodeSample = CodeAll()
             }
-                
-            if (rv$helpPage == 5 | rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8 | rv$helpPage == 9) {
-                hide(id='maskAna_panelButton')
-                showElement(id='ana_panel')
-            }
+
             if (rv$helpPage == 5) {
-                showElement(id='poly_bar')
+                showOnly(id=c("ana_panel", "poly_bar"))
+                maskOnly(id="maskAna_panelButton")
+            }
+                
+            if (rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8 | rv$helpPage == 9) {
+                showOnly(id="ana_panel")
+                maskOnly(id="maskAna_panelButton")
             }
 
             if (rv$helpPage == 10) {
-                hide(id='maskTheme_panelButton')
-                showElement(id='theme_panel')
+                showOnly(id="theme_panel")
+                maskOnly(id="maskTheme_panelButton")
             }
 
             if (rv$helpPage == 11) {
-                hide(id='maskPhoto_panelButton')
-                showElement(id='photo_panel')
+                showOnly(id="photo_panel")
+                maskOnly(id="maskPhoto_panelButton")
             }
 
             if (rv$helpPage == 12) {
-                hide(id='maskDownload_panelButton')
-                showElement(id='download_panel')
-                showElement(id='dlClick_bar')
+                showOnly(id=c("download_panel", "dlClick_bar"))
+                maskOnly(id="maskDownload_panelButton")
+            }
+
+            if (rv$helpPage == 13) {
+                showOnly(id="download_panel")
+                maskOnly(id="maskDownload_panelButton")
             }
 
             if (rv$helpPage == 14) {
-                hide(id='maskInfo_panelButton')
-                showElement(id='info_panel')
+                showOnly(id="info_panel")
+                maskOnly(id="maskInfo_panelButton")
             }
-            
-
         }
     })
 
@@ -1178,6 +1183,7 @@ $("#colorbar_panel").css("z-index", "999");')
 
     observeEvent(input$closeHelp_button, {
         rv$helpPage = NULL
+        rv$helpPage_save = NULL
         hide(id='closeHelp_panelButton')     
         showElement(id='help_panelButton')
 
@@ -1189,12 +1195,13 @@ $("#colorbar_panel").css("z-index", "999");')
         hide(id='maskInfo_panelButton')
         hide(id='maskPhoto_panelButton')
         hide(id='maskDownload_panelButton')
-        hide(id='blur_panel')
-        hide(id='opaque_panel')
 
         hide(id='before_panelButton')
         hide_page(N=N_helpPage)
         hide(id='next_panelButton')
+
+        hide(id='blur_panel')
+        hide(id='opaque_panel')
     })
     
 

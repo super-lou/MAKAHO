@@ -383,26 +383,65 @@ observePage = function (input, rv, n, N) {
     })
 }
 
-maskAll = function () {
-    showElement(id='maskZoom_panelButton')
-    showElement(id='maskAna_panelButton')
-    showElement(id='maskTheme_panelButton')
-    showElement(id='maskInfo_panelButton')
-    showElement(id='maskPhoto_panelButton')
-    showElement(id='maskDownload_panelButton')
+maskAll = function (except=NULL, IdList=c("maskZoom_panelButton",
+                                          "maskAna_panelButton",
+                                          "maskTheme_panelButton",
+                                          "maskInfo_panelButton",
+                                          "maskPhoto_panelButton",
+                                          "maskDownload_panelButton")) {
+    for (Id in IdList) {
+        if (!(Id %in% except)) {
+            showElement(id=Id)
+        }
+    }
 }
 
-hideAll = function () {
-    hide(id='ana_panel')
-    hide(id='theme_panel')
-    hide(id='info_panel')
-    hide(id='photo_panel')
-    hide(id='download_panel')
-    hide(id='click_bar')
-    hide(id='dlClick_bar')
-    hide(id='poly_bar')
+maskOnly = function (id, IdList=c("maskZoom_panelButton",
+                                  "maskAna_panelButton",
+                                  "maskTheme_panelButton",
+                                  "maskInfo_panelButton",
+                                  "maskPhoto_panelButton",
+                                  "maskDownload_panelButton")) {
+    for (Id in IdList) {
+        if (Id %in% id) {
+            hide(id=Id)
+        } else {
+            showElement(id=Id)
+        }
+    }
 }
 
+hideAll = function (except=NULL, IdList=c('ana_panel',
+                                          'theme_panel',
+                                          'info_panel',
+                                          'photo_panel',
+                                          'download_panel',
+                                          'click_bar',
+                                          'dlClick_bar',
+                                          'poly_bar')) {
+    for (Id in IdList) {
+        if (!(Id %in% except)) {
+            hide(id=Id)
+        }
+    }
+}
+
+showOnly = function (id, IdList=c('ana_panel',
+                                  'theme_panel',
+                                  'info_panel',
+                                  'photo_panel',
+                                  'download_panel',
+                                  'click_bar',
+                                  'dlClick_bar',
+                                  'poly_bar')) {
+    for (Id in IdList) {
+        if (Id %in% id) {
+            showElement(id=Id)
+        } else {
+            hide(id=Id)
+        }
+    }
+}
 
 
 read_FST = function (resdir, filename, filedir='fst') {

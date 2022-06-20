@@ -75,6 +75,11 @@ yellowCOL = "#fddc5c"
 orangeCOL = "#ffa62b"
 redCOL = "#dc343b"
 
+lightCyanCOL = "#66c1bf"
+midCyanCOL = "#008c8e"
+darkCyanCOL = "#275662"
+INRAECyanCOL = "#00a3a6"
+
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________
