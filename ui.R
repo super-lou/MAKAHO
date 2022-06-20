@@ -134,9 +134,9 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='ana_panel',
-            class="Panel card",
+            class="Panel card-ana",
             fixed=TRUE,
-            width=460, height="auto",
+            height="auto",
             left=10, bottom=49,
 
             div(class="Row",
@@ -257,7 +257,7 @@ ui = bootstrapPage(
                                 word('ana.dm'),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch textSlider",
+                div(class="bunch textSlider size1Slider",
                     sliderTextInput(inputId="dateMonth_slider",
                                     label=NULL,
                                     grid=TRUE,
@@ -270,7 +270,7 @@ ui = bootstrapPage(
                                 word('ana.dy'),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch",
+                div(class="bunch size2Slider",
                     sliderInput("dateYear_slider",
                                 label=NULL,
                                 step=1,
@@ -303,10 +303,10 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='click_bar',
-            class="Panel smallCard",
+            class="Panel card-bar",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=46, top=8,
+            left=0, top=80,
 
             div(class="Row",
                 div(class="row-label",
@@ -327,10 +327,10 @@ ui = bootstrapPage(
      hidden(
         absolutePanel(
             id='poly_bar',
-            class="Panel smallCard",
+            class="Panel card-bar",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=46, top=8,
+            left=0, top=80,
 
             div(class="Row",
                 div(class="row-label",
@@ -401,7 +401,7 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='theme_panel',
-            class="Panel card",
+            class="Panel card-theme",
             fixed=TRUE,        
             width="auto", height="auto",
             left=116, bottom=49,
@@ -485,7 +485,7 @@ ui = bootstrapPage(
             class="Panel card",
             fixed=TRUE,
             width="auto", height="auto",
-            right=10, bottom=40,
+            right=10, bottom=49,
 
 ### 4.3. Contact info ________________________________________________
             div(class="Row",
@@ -629,10 +629,10 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='dlClick_bar',
-            class="Panel smallCard",
+            class="Panel card-bar",
             fixed=TRUE, 
             width="auto", height="auto",
-            left=46, top=8,
+            left=0, top=80,
 
             div(class="Row",
                 div(class="row-label",
@@ -653,20 +653,7 @@ ui = bootstrapPage(
 
 
 ## 6. HELP ___________________________________________________________
-### 6.2. Opaque panel ________________________________________________
-
-
-
-    # /!\ À REPRENDRE POUR CHAQUE BOUTON AVEC LE MASK
-
-    
-    # hidden( 
-    #     fixedPanel(id='opaque_panel',
-    #                class="Panel card-opaque"   
-    #                )
-    # ),
-
-### 6.3. Button mask ________________________________________________
+### 6.2. Button mask ________________________________________________
     hidden(
         fixedPanel(id='maskZoom_panelButton',
                    left=10, top=10,
@@ -737,11 +724,11 @@ ui = bootstrapPage(
                )
     ),
 
-### 6.4. Pages _______________________________________________________
-#### 6.4.1. Page 1 ___________________________________________________
+### 6.3. Pages _______________________________________________________
+#### 6.3.1. Page 1 ___________________________________________________
     page_circle(n=1, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p1")),
     
     hidden(
         fixedPanel(id="help1_panel",
@@ -756,10 +743,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.2. Page 2 ___________________________________________________
+#### 6.3.2. Page 2 ___________________________________________________
     page_circle(n=2, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p2")),
 
     hidden(
         fixedPanel(id="help2_panel",
@@ -775,10 +762,10 @@ ui = bootstrapPage(
                    )
     ),
     
-#### 6.4.3. Page 3 ___________________________________________________
+#### 6.3.3. Page 3 ___________________________________________________
     page_circle(n=3, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p3")),
 
     hidden(
         fixedPanel(id="help3_panel",
@@ -796,10 +783,10 @@ ui = bootstrapPage(
                    )  
     ),
     
-#### 6.4.4. Page 4 ___________________________________________________
+#### 6.3.4. Page 4 ___________________________________________________
     page_circle(n=4, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p4")),
 
     hidden(
         fixedPanel(id="help4_panel",
@@ -815,10 +802,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.5. Page 5 ___________________________________________________
+#### 6.3.5. Page 5 ___________________________________________________
     page_circle(n=5, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p5")),
 
     hidden(
         fixedPanel(id="help5_panel",
@@ -838,10 +825,10 @@ ui = bootstrapPage(
                    )
     ),
     
-#### 6.4.6. Page 6 ___________________________________________________
+#### 6.3.6. Page 6 ___________________________________________________
     page_circle(n=6, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p6")),
 
     hidden(
         fixedPanel(id="help6_panel",
@@ -860,10 +847,10 @@ ui = bootstrapPage(
     ),
 
     
-#### 6.4.7. Page 7 ___________________________________________________
+#### 6.3.7. Page 7 ___________________________________________________
     page_circle(n=7, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p7")),
 
     hidden(
         fixedPanel(id="help7_panel",
@@ -883,10 +870,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.8. Page 8 ___________________________________________________
+#### 6.3.8. Page 8 ___________________________________________________
     page_circle(n=8, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p8")),
 
     hidden(
         fixedPanel(id="help8_panel",
@@ -906,10 +893,10 @@ ui = bootstrapPage(
                    ) 
     ),
 
-#### 6.4.9. Page 9 ___________________________________________________
+#### 6.3.9. Page 9 ___________________________________________________
     page_circle(n=9, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p9")),
     
     hidden(
         fixedPanel(id="help9_panel",
@@ -925,10 +912,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.10. Page 10 _________________________________________________
+#### 6.3.10. Page 10 _________________________________________________
     page_circle(n=10, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p10")),
 
     hidden(
         fixedPanel(id="help10_panel",
@@ -948,10 +935,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.11. Page 11 _________________________________________________
+#### 6.3.11. Page 11 _________________________________________________
     page_circle(n=11, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p11")),
     
     hidden(
         fixedPanel(id="help11_panel",
@@ -965,10 +952,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.12. Page 12 _________________________________________________
+#### 6.3.12. Page 12 _________________________________________________
     page_circle(n=12, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p12")),
     
     hidden(
         fixedPanel(id="help12_panel",
@@ -984,10 +971,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.13. Page 13 _________________________________________________
+#### 6.3.13. Page 13 _________________________________________________
     page_circle(n=13, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p13")),
     
     hidden(
         fixedPanel(id="help13_panel",
@@ -1001,10 +988,10 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.4.14. Page 14 _________________________________________________
+#### 6.3.14. Page 14 _________________________________________________
     page_circle(n=14, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                dh=dhNavHelp),
+                dh=dhNavHelp, tooltip=word("tt.help.p14")),
     
     hidden(
         fixedPanel(id="help14_panel",
@@ -1018,7 +1005,7 @@ ui = bootstrapPage(
                    )
         ),
 
-#### 6.4.x. Nave button ______________________________________________
+#### 6.4. Nave button ______________________________________________
     hidden(
         fixedPanel(id="before_panelButton",
                    left=paste0("calc(", leftHelp,
@@ -1029,7 +1016,8 @@ ui = bootstrapPage(
                    Button(class="Button-icon",
                           inputId='before_button',
                           label=NULL,
-                          icon_name=iconLib$navigate_before_white)
+                          icon_name=iconLib$navigate_before_white,
+                          tooltip=word("tt.help.pb"))
                    )
     ),
 
@@ -1044,7 +1032,8 @@ ui = bootstrapPage(
                    Button(class="Button-icon",
                           inputId='next_button',
                           label=NULL,
-                          icon_name=iconLib$navigate_next_white)
+                          icon_name=iconLib$navigate_next_white,
+                          tooltip=word("tt.help.pn"))
                    )
     ),
 

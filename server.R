@@ -1094,7 +1094,6 @@ $("#colorbar_panel").css("z-index", "999");')
         hideAll()
         maskAll()
         showElement(id='blur_panel')
-        showElement(id='opaque_panel')
         
         showElement(id='focusZoom_panelButton')
         
@@ -1128,6 +1127,11 @@ $("#colorbar_panel").css("z-index", "999");')
 
     observeEvent(rv$helpPage, {
         if (!is.null(rv$helpPage)) {
+
+            if (rv$helpPage == 1 | rv$helpPage == 2 | rv$helpPage == 3) {
+                hideAll()
+                maskAll()
+            }
             
             if (rv$helpPage == 4) {
                 hideAll()
@@ -1184,24 +1188,20 @@ $("#colorbar_panel").css("z-index", "999");')
     observeEvent(input$closeHelp_button, {
         rv$helpPage = NULL
         rv$helpPage_save = NULL
-        hide(id='closeHelp_panelButton')     
-        showElement(id='help_panelButton')
 
+        hideAll()
+        
         hide(id='focusZoom_panelButton')
         
-        hide(id='maskZoom_panelButton')
-        hide(id='maskAna_panelButton')
-        hide(id='maskTheme_panelButton')
-        hide(id='maskInfo_panelButton')
-        hide(id='maskPhoto_panelButton')
-        hide(id='maskDownload_panelButton')
+        demaskAll()
 
         hide(id='before_panelButton')
         hide_page(N=N_helpPage)
         hide(id='next_panelButton')
+        hide(id='closeHelp_panelButton')     
+        showElement(id='help_panelButton')
 
         hide(id='blur_panel')
-        hide(id='opaque_panel')
     })
     
 

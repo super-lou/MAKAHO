@@ -26,13 +26,39 @@
     border-radius: 0.5rem/0.5rem !important;
 }
 
-.smallCard {
+.card-ana {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.6rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    background-color: rgba(5, 5, 10, 0.83) !important;
+    border-radius: 0.5rem/0.5rem !important;
+    min-width: 350px !important;
+    width: 460px !important;
+    max-width: calc(100vw - 2rem) !important;
+}
+
+.card-theme {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.6rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    background-color: rgba(5, 5, 10, 0.83) !important;
+    border-radius: 0.5rem/0.5rem !important;
+    min-width: 235px !important;
+    max-width: calc(100vw - 8.5rem) !important;
+}
+
+.card-bar {
     padding-top: 0.18rem !important;
     padding-bottom: 0.33rem !important;
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
-    border-radius: 0.5rem/0.5rem !important;
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+    /* border-radius: 0.5rem 0 0 0.5rem !important; */
+    min-width: 13rem !important;
+    max-width: calc(100vw - 65vw) !important;
 }
 
 .card-blur {
@@ -42,14 +68,6 @@
     width: 100% !important;
     height: 100% !important;
     background-color: rgba(5, 5, 10, 0.8) !important;
-}
-.card-opaque {
-    padding: 0 !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background-color: transparent !important;
 }
 
 .card-text {
@@ -102,20 +120,22 @@ a:hover {
 
 /* Tooltip text */
 .Tooltip .Tooltiptext {
-    font-size: var(--tooltipSize);
+    font-size: var(--tooltipSize) !important;
     visibility: hidden !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
     color: #ffffff !important;
     text-align: center !important;
 
-    border-radius: 0.5rem 0.5rem 0 0 !important;    
+    border-radius: 0 0 0.5rem 0.5rem !important;
     box-sizing: border-box !important;
     margin: 0 !important;
     padding: 0.5rem 1rem !important;
     
     position: fixed !important;
-    bottom: 0 !important;
-    left: 190px !important;
+    top: 0 !important;
+    left: 47px !important;
+    /* height: 36px !important; */
+    min-height: 2.25rem !important;
     min-width: 10rem !important;
     max-width: calc(100vw - 7rem) !important;
 
@@ -335,11 +355,13 @@ a:hover {
 /* Bar */
 .selectize-input {
     border: 1px solid #43494c !important;
-    width: 330px !important;
-    /* padding-bottom: 1rem!important; */
+    min-width: 14.8rem !important;
+    width: 20.5rem !important;
+    max-width: calc(100vw - 9rem) !important;
     margin-top: 0.25rem !important;
     margin-bottom: -0.8rem !important;
     margin-left: 0 !important;
+    margin-right: 0 !important;
     color: #979797 !important;
     background: #181a1b !important;
 }
@@ -384,10 +406,26 @@ a:hover {
 
 
 /* SLIDER */
+
 .irs {
-    margin-top: -12px;
-    margin-bottom: -8px;
+    margin-top: -12px !important;
+    margin-bottom: -8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
+
+.size1Slider .irs {
+    min-width: 16rem !important;
+    width: 19rem !important;
+    max-width: calc(100vw - 9rem) !important;
+}
+
+.size2Slider .irs {
+    min-width: 15rem !important;
+    width: 20.5rem !important;
+    max-width: calc(100vw - 9rem) !important;
+}
+
 /* Selection bar */
 .irs-bar {
     height: 5px !important;
@@ -395,7 +433,7 @@ a:hover {
     border-top: 0px solid transparent !important;
     border-bottom: 0px solid transparent !important;
 }
-.textSlider .irs-bar {
+.texSlider .irs-bar {
     height: 5px !important;
     background: #474747 !important;
     border-top: 0px solid transparent !important;

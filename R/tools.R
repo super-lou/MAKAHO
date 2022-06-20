@@ -162,7 +162,7 @@ Button = function (inputId, label=NULL, icon_name=NULL,
         actionButton(inputId=inputId,
                      label=div(label,
                                style="float:right;
-                                          padding-left:3px;"),
+                                          padding-left:0.2rem;"),
                      icon=NULL,
                      width=width,
                      img(icon_name, align="right"),
@@ -173,7 +173,7 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                 actionButton(inputId=inputId,
                              label=div(label,
                                        style="float:right;
-                                          padding-left:3px;"),
+                                          padding-left:0.2rem;"),
                              icon=NULL,
                              width=width,
                              img(icon_name, align="right"),
@@ -316,7 +316,7 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
 }
 
 
-page_circle = function (n, leftBase, widthHelp, top, dh) {
+page_circle = function (n, leftBase, widthHelp, top, dh, tooltip=NULL) {
     hidden(
         fixedPanel(id=paste0("c", n,"_panelButton"),
                    left=paste0("calc(", leftBase,
@@ -330,14 +330,16 @@ page_circle = function (n, leftBase, widthHelp, top, dh) {
                            Button(class="Button-icon",
                                   inputId=paste0("c", n, "U_button"),
                                   label=NULL,
-                                  icon_name=iconLib$circle_unchecked_white))
+                                  icon_name=iconLib$circle_unchecked_white,
+                                  tooltip=tooltip))
                    ),
                    hidden(
                        div(id=paste0("c", n,"C_panelButton"),
                            Button(class="Button-icon",
                                   inputId=paste0("c", n, "C_button"),
                                   label=NULL,
-                                  icon_name=iconLib$circle_checked_white))
+                                  icon_name=iconLib$circle_checked_white,
+                                  tooltip=tooltip))
                    )
                    )
     )
@@ -383,12 +385,15 @@ observePage = function (input, rv, n, N) {
     })
 }
 
-maskAll = function (except=NULL, IdList=c("maskZoom_panelButton",
-                                          "maskAna_panelButton",
-                                          "maskTheme_panelButton",
-                                          "maskInfo_panelButton",
-                                          "maskPhoto_panelButton",
-                                          "maskDownload_panelButton")) {
+IdList_mask = c("maskZoom_panelButton",
+                "maskAna_panelButton",
+                "maskTheme_panelButton",
+                "maskInfo_panelButton",
+                "maskPhoto_panelButton",
+                "maskDownload_panelButton")
+
+maskAll = function (except=NULL, None=FALSE,
+                    IdList=IdList_mask) {
     for (Id in IdList) {
         if (!(Id %in% except)) {
             showElement(id=Id)
@@ -396,12 +401,16 @@ maskAll = function (except=NULL, IdList=c("maskZoom_panelButton",
     }
 }
 
-maskOnly = function (id, IdList=c("maskZoom_panelButton",
-                                  "maskAna_panelButton",
-                                  "maskTheme_panelButton",
-                                  "maskInfo_panelButton",
-                                  "maskPhoto_panelButton",
-                                  "maskDownload_panelButton")) {
+demaskAll = function (except=NULL, None=FALSE,
+                      IdList=IdList_mask) {
+    for (Id in IdList) {
+        if (!(Id %in% except)) {
+            hide(id=Id)
+        }
+    }
+}
+
+maskOnly = function (id, IdList=IdList_mask) {
     for (Id in IdList) {
         if (Id %in% id) {
             hide(id=Id)
@@ -411,14 +420,16 @@ maskOnly = function (id, IdList=c("maskZoom_panelButton",
     }
 }
 
-hideAll = function (except=NULL, IdList=c('ana_panel',
-                                          'theme_panel',
-                                          'info_panel',
-                                          'photo_panel',
-                                          'download_panel',
-                                          'click_bar',
-                                          'dlClick_bar',
-                                          'poly_bar')) {
+IdList_panel = c('ana_panel',
+                 'theme_panel',
+                 'info_panel',
+                 'photo_panel',
+                 'download_panel',
+                 'click_bar',
+                 'dlClick_bar',
+                 'poly_bar')
+
+hideAll = function (except=NULL, IdList=IdList_panel) {
     for (Id in IdList) {
         if (!(Id %in% except)) {
             hide(id=Id)
@@ -426,14 +437,7 @@ hideAll = function (except=NULL, IdList=c('ana_panel',
     }
 }
 
-showOnly = function (id, IdList=c('ana_panel',
-                                  'theme_panel',
-                                  'info_panel',
-                                  'photo_panel',
-                                  'download_panel',
-                                  'click_bar',
-                                  'dlClick_bar',
-                                  'poly_bar')) {
+showOnly = function (id, IdList=IdList_panel) {
     for (Id in IdList) {
         if (Id %in% id) {
             showElement(id=Id)
