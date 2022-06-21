@@ -38,6 +38,7 @@ install.packages("sf") # crs
 install.packages("ggplot2")
 install.packages("ggtext")
 install.packages("scales")
+install.packages("plotly")
 
 remotes::install_github("dreamRs/shinyWidgets")
 remotes::install_github("mitchelloharawild/icons")

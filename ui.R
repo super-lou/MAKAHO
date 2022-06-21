@@ -303,17 +303,17 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='click_bar',
-            class="Panel card-bar",
+            class="Panel card-smallbar-l",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=0, top=80,
+            left=0, top=62,
 
             div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("click.bar"),
-                                "</b></span>"))),
-                div(class="sep"),
+                # div(class="row-label",
+                #     HTML(paste0("<span><b>",
+                #                 word("click.bar"),
+                #                 "</b></span>"))),
+                # div(class="sep"),
                 div(class="bunch",
                     Button(class="Button",
                            'clickOk_button',
@@ -327,17 +327,17 @@ ui = bootstrapPage(
      hidden(
         absolutePanel(
             id='poly_bar',
-            class="Panel card-bar",
+            class="Panel card-bar-l",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=0, top=80,
+            left=0, top=62,
 
             div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("poly.bar"),
-                                "</b></span>"))),
-                div(class="sep"),
+                # div(class="row-label",
+                #     HTML(paste0("<span><b>",
+                #                 word("poly.bar"),
+                #                 "</b></span>"))),
+                # div(class="sep"),
                 div(class="bunch",
                     radioButton(class="radioButton",
                                 inputId="poly_choice",
@@ -448,7 +448,7 @@ ui = bootstrapPage(
                                          word("c.cb.none")),
                                 choiceValues=
                                     list("show", "none"),
-                                selected="none")))
+                                selected="show")))
             
         )
     ),
@@ -456,13 +456,14 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id="colorbar_panel",
-            style=CSSpanel_colorbar,
+            class="Panel card-insert-r",
             fixed=TRUE,
             width=75, height=270,
-            right=0, top=0, bottom=0,
+            right=0, bottom=100,
             tags$div(style="margin-bottom: 10px; margin-top: 10px;
                             margin-left: 10px; margin-right: 10px;",
-                     plotOutput("colorbar_plot"))
+                     # plotOutput("colorbar_plot")
+                     plotlyOutput("colorbar_plot"))
         )
     ),
 
@@ -535,7 +536,7 @@ ui = bootstrapPage(
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    fixedPanel(right=10, top=10,
+    fixedPanel(right=45, top=10,
                width="auto", height="auto",
                Button(class="SmallButton-menu",
                       inputId='photo_button',
@@ -546,11 +547,11 @@ ui = bootstrapPage(
 
     hidden(
         absolutePanel(
-            id='photo_panel',
-            class="Panel card",
+            id='photo_bar',
+            class="Panel card-bar-r",
             fixed=TRUE, 
             width="auto", height="auto",
-            right=45, top=10,
+            right=0, top=62,
 
             div(class="Row",
                 div(class="row-label",
@@ -575,7 +576,7 @@ ui = bootstrapPage(
     ),
     
 ### 5.2. Download ____________________________________________________
-    fixedPanel(right=10, top=45,
+    fixedPanel(right=10, top=10,
                width="auto", height="auto",
                Button(class="SmallButton-menu",
                       inputId='download_button',
@@ -591,11 +592,11 @@ ui = bootstrapPage(
 
     hidden(
         absolutePanel(
-            id='download_panel',
-            class="Panel card",
+            id='download_bar',
+            class="Panel card-bar-r",
             fixed=TRUE,
             width="auto", height="auto",
-            right=45, top=45,
+            right=0, top=62,
 
             div(class="Row",
                 div(class="row-label",
@@ -629,17 +630,17 @@ ui = bootstrapPage(
     hidden(
         absolutePanel(
             id='dlClick_bar',
-            class="Panel card-bar",
+            class="Panel card-smallbar-r",
             fixed=TRUE, 
             width="auto", height="auto",
-            left=0, top=80,
+            right=0, top=62,
 
             div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("dl.bar"),
-                                "</b></span>"))),
-                div(class="sep"),
+                # div(class="row-label",
+                #     HTML(paste0("<span><b>",
+                #                 word("dl.bar"),
+                #                 "</b></span>"))),
+                # div(class="sep"),
                 div(class="bunch",
                     Button(class="Button",
                            'dlClickOk_button',
@@ -648,8 +649,6 @@ ui = bootstrapPage(
                            tooltip=word("tt.bar.ok"))))
         )
     ),
-
-
 
 
 ## 6. HELP ___________________________________________________________
@@ -704,7 +703,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="maskPhoto_panelButton",
-                   right=10, top=10,
+                   right=45, top=10,
                    width="auto", height="auto",
                    Button(class="maskSmallButton-menu",
                           inputId='mask',
@@ -715,7 +714,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="maskDownload_panelButton",
-                   right=10, top=45,
+                   right=10, top=10,
                    width="auto", height="auto",
                    Button(class="maskSmallButton-menu",
                           inputId='mask',

@@ -65,6 +65,7 @@ grey94COL = "#f0f0f0"
 grey85COL = "#d9d9d9"
 grey70COL = "#b3b3b3"
 grey50COL = "#808080"
+grey40COL = "#666666"
 grey30COL = "#4d4d4d"
 grey20COL = "#333333"
 grey18COL = "#2e2e2e"
@@ -83,13 +84,9 @@ INRAECyanCOL = "#00a3a6"
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________
-compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
+compute_colorBin = function (min, max, Palette, colors=256,
+                             reverse=FALSE) {
 
-    # If the value is a NA return NA color
-    if (is.na(value)) {
-        return (NA)
-    }
-    
     # Gets the number of discrete colors in the palette
     nSample = length(Palette)
 
@@ -97,7 +94,7 @@ compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
         Palette = rev(Palette)
     }
     # Recreates a continuous color palette
-    Palette = colorRampPalette(Palette)(colors)
+    PaletteColors = colorRampPalette(Palette)(colors)
 
     # Computes the absolute max
     maxAbs = max(abs(max), abs(min))
@@ -106,16 +103,33 @@ compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
     upBin = c(bin, Inf)
     lowBin = c(-Inf, bin)
 
+    res = list(Palette=PaletteColors, bin=bin, upBin=upBin, lowBin=lowBin)
+    return (res)
+}
+
+compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
+
+    # If the value is a NA return NA color
+    if (is.na(value)) {
+        return (NA)
+    }
+    
+    res = compute_colorBin(min=min, max=max, Palette=Palette,
+                           colors=colors, reverse=reverse)
+    upBin = res$upBin
+    lowBin = res$lowBin
+    PaletteColors = res$Palette
+
     if (value >= 0) {
         id = which(value < upBin & value >= lowBin)
     } else {
         id = which(value <= upBin & value > lowBin)
     }
-    color = Palette[id]
+    color = PaletteColors[id]
     return(color)
 }
 
-# compute_color(39, -50, 40, Palette, colors=10)
+# compute_color(-51, -50, 40, Palette, colors=10)
 
 
 get_color = function (value, min, max, Palette, CodeSample, colors=256, reverse=FALSE, noneColor="black") {

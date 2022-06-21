@@ -44,6 +44,7 @@ library(ggplot2)
 library(ggtext)
 library(scales)
 library(ggh4x)
+library(plotly)
 
 
 # Sourcing R files

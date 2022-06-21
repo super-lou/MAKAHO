@@ -56,16 +56,14 @@ server = function (input, output, session) {
                         helpPage=NULL,
                         helpPage_prev=NULL,
                         )
+
+    startOBS = observe({
+        showElement(id='help_panelButton')
+        showElement(id="colorbar_panel")
+        startOBS$destroy()
+    })
     
 ## 1. MAP ____________________________________________________________
-    observeEvent(input$theme_button, {
-        hide(id='ana_panel')
-        toggle(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='photo_panel')
-        hide(id='download_panel')
-    })
-
 ### 1.1. Background __________________________________________________
     urlTile = reactive({
         get_urlTile(input$theme_choice,
@@ -297,11 +295,8 @@ server = function (input, output, session) {
 
 ## 2. ANALYSE ________________________________________________________
     observeEvent(input$ana_button, {
-        toggle(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='photo_panel')
-        hide(id='download_panel')
+        toggleOnly(id="ana_panel")
+        deselect_mode(session, rv)
     })
 
 ### 2.1. Station metadata ____________________________________________
@@ -365,27 +360,12 @@ server = function (input, output, session) {
             hide(id='ana_panel')
             hide(id='theme_panel')
             hide(id='info_panel')
-            hide(id='photo_panel')
-            hide(id='download_panel')
+            hide(id='photo_bar')
+            hide(id='download_bar')
             hide(id='poly_bar')
             hide(id='dlClick_bar')
             showElement(id='click_bar')
             rv$clickMode = TRUE
-
-            updateSelectButton(
-                session=session,
-                class="selectButton",
-                inputId="poly_select",
-                selected=FALSE)
-            rv$polyMode = 'false'
-
-            updateSelectButton(
-                session=session,
-                class="selectButton",
-                inputId="dlClick_select",
-                selected=FALSE)
-            rv$dlClickMode = FALSE
-            
         } else {
             if (rv$clickMode) {
                 rv$clickMode = FALSE
@@ -428,27 +408,13 @@ server = function (input, output, session) {
                 hide(id='ana_panel')
                 hide(id='theme_panel')
                 hide(id='info_panel')
-                hide(id='photo_panel')
-                hide(id='download_panel')
+                hide(id='photo_bar')
+                hide(id='download_bar')
                 hide(id='click_bar')
                 hide(id='dlClick_bar')
                 showElement(id='poly_bar')
                 rv$polyMode = "Add"
                 rv$polyCoord = tibble()
-
-                updateSelectButton(
-                    session=session,
-                    class="selectButton",
-                    inputId="click_select",
-                    selected=FALSE)
-                rv$clickMode = FALSE
-
-                updateSelectButton(
-                    session=session,
-                    class="selectButton",
-                    inputId="dlClick_select",
-                    selected=FALSE)
-                rv$dlClickMode = FALSE
                 
         } else {
             if (rv$polyMode == 'Add' | rv$polyMode == 'Rm') {
@@ -925,6 +891,11 @@ server = function (input, output, session) {
     
 
 ## 3. CUSTOMIZATION __________________________________________________
+    observeEvent(input$theme_button, {
+        toggleOnly(id="theme_panel")
+        deselect_mode(session, rv)
+    })
+    
 ### 3.2. Palette _____________________________________________________
     observeEvent(input$colorbar_choice, {
         if (input$colorbar_choice == 'show') {
@@ -940,22 +911,113 @@ server = function (input, output, session) {
         input$colorbar_choice
     }, {
         if (input$colorbar_choice == 'show') {
-            output$colorbar_plot = renderPlot({
-                plot_colorbar(rv$minValue, rv$maxValue,
-                              Palette=Palette, colors=colors,
-                              reverse=reverse, nbTick=nbTick)
-            }, width=55, height=250, res=300)
+
+            output$colorbar_plot = renderPlotly({
+                res = compute_colorBin(min=rv$minValue,
+                                       max=rv$maxValue,
+                                       Palette=Palette,
+                                       colors=colors,
+                                       reverse=reverse)
+
+                bin = res$bin
+                upBin = res$upBin
+                Y1 = upBin / max(upBin[is.finite(upBin)])
+                dY = mean(diff(Y1[is.finite(Y1)]))
+                Y1[Y1 == Inf] = 1 + dY
+                
+                lowBin = res$lowBin
+                Y0 = lowBin / max(lowBin[is.finite(lowBin)])
+                Y0[Y0 == -Inf] = -1 - dY
+
+                PaletteColors = res$Palette
+                X0 = rep(0, colors)
+                X1 = rep(1, colors)
+                
+                shapes = list()
+                for (i in 2:(colors-1)) {
+                    shapes = append(shapes,
+                                    list(list(
+                                        type="rect",
+                                        fillcolor=PaletteColors[i], 
+                                        line=list(width=0),
+                                        x0=X0[i], x1=X1[i],
+                                        y0=Y0[i], y1=Y1[i])))
+                }
+                
+                fig = plotly_empty(width=55, height=250)
+                fig = layout(fig,
+                             shapes=shapes,
+                             xaxis=list(range=c(-1.5, 3.4),
+                                        showticklabels=FALSE,
+                                        fixedrange=TRUE),
+                             yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
+                                        showticklabels=FALSE,
+                                        fixedrange=TRUE),
+                             margin=list(l=0,
+                                         r=0,
+                                         b=0,
+                                         t=0,
+                                         pad=0),
+                             autosize=FALSE,
+                             plot_bgcolor='transparent',
+                             paper_bgcolor='transparent',
+                             showlegend=FALSE
+                             )
+                fig = add_polygons(fig,
+                                   x=c(0, 1, 0.5),
+                                   y=c(1, 1, 1+dY*2/3),
+                                   fillcolor=PaletteColors[colors],
+                                   line=list(width=0))
+                fig = add_polygons(fig,
+                                   x=c(0, 1, 0.5),
+                                   y=c(-1, -1, -1-dY*2/3),
+                                   fillcolor=PaletteColors[1],
+                                   line=list(width=0))
+
+                Xlab = rep(1.2, colors)
+                Ylab = bin / max(bin)
+                label = round(bin*100, 1)
+                label = paste0("<b>", label, "</b>")
+                
+                fig = add_annotations(fig,
+                                      x=Xlab,
+                                      y=Ylab,
+                                      text=label,
+                                      showarrow=FALSE,
+                                      xanchor='left',
+                                      font=list(color=grey40COL,
+                                                size=12))
+
+                title = paste0("<b>", word("cb.title"), "</b>",
+                               " ", word("cb.unit"))
+                
+                fig = add_annotations(fig,
+                                      x=-0.1,
+                                      y=0,
+                                      text=title,
+                                      textangle=-90,
+                                      showarrow=FALSE,
+                                      xanchor='right',
+                                      yanchor='center',
+                                      font=list(color=grey50COL,
+                                                size=13.5))
+                
+                fig = config(fig,
+                             displaylogo=FALSE,
+                             displayModeBar=FALSE,
+                             doubleClick=FALSE)                
+                fig  
+            })
+
+            
         }
     })
 
     
 ## 4. INFO ___________________________________________________________
     observeEvent(input$info_button, {
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        toggle(id='info_panel')
-        hide(id='photo_panel')
-        hide(id='download_panel')
+        toggleOnly(id="info_panel")
+        deselect_mode(session, rv)
     })
 
     
@@ -971,32 +1033,26 @@ $("#colorbar_panel").css("z-index", "999");')
     })
 
     observeEvent(input$photo_button, {
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        toggle(id='photo_panel')
-        hide(id='download_panel')
+        toggleOnly(id="photo_bar")
+        deselect_mode(session, rv)
     })
 
     observeEvent(input$photoA4l_button, {
-        hide(id='photo_panel')
+        hide(id='photo_bar')
         map = leafletProxy("map")
         easyprintMap(map, sizeModes="A4Landscape", dpi=300)
     })
 
     observeEvent(input$photoA4p_button, {
-        hide(id='photo_panel')
+        hide(id='photo_bar')
         map = leafletProxy("map")
         easyprintMap(map, sizeModes="A4Portrait", dpi=300)
     })
     
 ### 5.2. Download ____________________________________________________
     observeEvent(input$download_button, {
-        hide(id='ana_panel')
-        hide(id='theme_panel')
-        hide(id='info_panel')
-        hide(id='photo_panel')
-        toggle(id='download_panel')
+        toggleOnly(id="download_bar")
+        deselect_mode(session, rv)
     })
 
     observe({
@@ -1004,32 +1060,17 @@ $("#colorbar_panel").css("z-index", "999");')
             hide(id='ana_panel')
             hide(id='theme_panel')
             hide(id='info_panel')
-            hide(id='photo_panel')
-            hide(id='download_panel')
+            hide(id='photo_bar')
+            hide(id='download_bar')
             hide(id='click_bar')
             hide(id='poly_bar')
             showElement(id='dlClick_bar')
             rv$dlClickMode = TRUE
-
-            updateSelectButton(
-                session=session,
-                class="selectButton",
-                inputId="poly_select",
-                selected=FALSE)
-            rv$polyMode = 'false'
-
-            updateSelectButton(
-                session=session,
-                class="selectButton",
-                inputId="click_select",
-                selected=FALSE)
-            rv$clickMode = FALSE
-            
         } else {
             if (rv$dlClickMode) {
                 rv$dlClickMode = FALSE
                 hide(id='dlClick_bar')
-                showElement(id='download_panel')
+                showElement(id='download_bar')
             }
         }
     })
@@ -1075,16 +1116,10 @@ $("#colorbar_panel").css("z-index", "999");')
         rv$dlClickMode = FALSE
         
         hide(id='dlClick_bar')
-        showElement(id='download_panel')
+        showElement(id='download_bar')
     })
 
 ## 6. HELP ___________________________________________________________
-    startOBS = observe({
-        showElement(id='help_panelButton')
-        startOBS$destroy()
-    })
-    
-
     observeEvent(input$help_button, {
         rv$helpPage = 1
         rv$helpPage_save = 0
@@ -1092,6 +1127,8 @@ $("#colorbar_panel").css("z-index", "999");')
         showElement(id='closeHelp_panelButton')
 
         hideAll()
+        deselect_mode(session, rv)
+        
         maskAll()
         showElement(id='blur_panel')
         
@@ -1125,12 +1162,20 @@ $("#colorbar_panel").css("z-index", "999");')
     observePage(input, rv, n=13, N=N_helpPage)
     observePage(input, rv, n=14, N=N_helpPage)
 
-    observeEvent(rv$helpPage, {
+    observeEvent({
+        rv$helpPage
+        rv$width
+    }, {
         if (!is.null(rv$helpPage)) {
 
             if (rv$helpPage == 1 | rv$helpPage == 2 | rv$helpPage == 3) {
                 hideAll()
                 maskAll()
+            }
+
+            width_lim = 1260
+            if (rv$width <= width_lim) {
+                hideAll()
             }
             
             if (rv$helpPage == 4) {
@@ -1142,37 +1187,51 @@ $("#colorbar_panel").css("z-index", "999");')
             }
 
             if (rv$helpPage == 5) {
-                showOnly(id=c("ana_panel", "poly_bar"))
+                if (rv$width > width_lim) {
+                    showOnly(id=c("ana_panel", "poly_bar"))
+                }
                 maskOnly(id="maskAna_panelButton")
             }
                 
             if (rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8 | rv$helpPage == 9) {
-                showOnly(id="ana_panel")
+                if (rv$width > width_lim) {
+                    showOnly(id="ana_panel")
+                }
                 maskOnly(id="maskAna_panelButton")
             }
 
             if (rv$helpPage == 10) {
-                showOnly(id="theme_panel")
+                if (rv$width > width_lim) {
+                    showOnly(id="theme_panel")
+                }
                 maskOnly(id="maskTheme_panelButton")
             }
 
             if (rv$helpPage == 11) {
-                showOnly(id="photo_panel")
+                if (rv$width > width_lim) {
+                    showOnly(id="photo_bar")
+                }
                 maskOnly(id="maskPhoto_panelButton")
             }
 
             if (rv$helpPage == 12) {
-                showOnly(id=c("download_panel", "dlClick_bar"))
+                if (rv$width > width_lim) {
+                    showOnly(id=c("download_bar", "dlClick_bar"))
+                }
                 maskOnly(id="maskDownload_panelButton")
             }
 
             if (rv$helpPage == 13) {
-                showOnly(id="download_panel")
+                if (rv$width > width_lim) {
+                    showOnly(id="download_bar")
+                }
                 maskOnly(id="maskDownload_panelButton")
             }
 
             if (rv$helpPage == 14) {
-                showOnly(id="info_panel")
+                if (rv$width > width_lim) {
+                    showOnly(id="info_panel")
+                }
                 maskOnly(id="maskInfo_panelButton")
             }
         }

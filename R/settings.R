@@ -133,7 +133,7 @@ widthHelp = 350
 leftHelp = "52%"
 topHelp = "50%"
 dyNavHelp = 250
-dhNavHelp = 25
+dhNavHelp = 22
 
 # helpX = 550
 # helpY = 100

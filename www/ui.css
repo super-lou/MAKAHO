@@ -33,9 +33,9 @@
     padding-right: 1rem !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
-    min-width: 350px !important;
-    width: 460px !important;
-    max-width: calc(100vw - 2rem) !important;
+    min-width: 20rem !important;
+    width: 28rem !important;
+    max-width: calc(100vw - 3rem) !important;
 }
 
 .card-theme {
@@ -45,21 +45,47 @@
     padding-right: 1rem !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
-    min-width: 235px !important;
-    max-width: calc(100vw - 8.5rem) !important;
+    min-width: 13rem !important;
+    max-width: calc(100vw - 7.8rem) !important;
 }
 
-.card-bar {
+.card-bar-l,
+.card-smallbar-l,
+.card-bar-r,
+.card-smallbar-r {
     padding-top: 0.18rem !important;
     padding-bottom: 0.33rem !important;
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0 0.5rem 0.5rem 0 !important;
-    /* border-radius: 0.5rem 0 0 0.5rem !important; */
     min-width: 13rem !important;
-    max-width: calc(100vw - 65vw) !important;
+    max-width: calc(100vw - 55vw) !important;
 }
+.card-bar-l,
+.card-smallbar-l {
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+.card-smallbar-l {
+    min-width: 8rem !important;
+}
+.card-bar-r,
+.card-smallbar-r,
+.card-insert-r {
+    border-radius: 0.5rem 0 0 0.5rem !important;
+}
+.card-smallbar-r {
+    min-width: 8rem !important;
+}
+
+.card-insert-r {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: rgba(252, 253, 254, 0.95) !important;
+    /* border: 1px solid rgba(5, 5, 10, 0.8) !important; */
+}
+
+
 
 .card-blur {
     padding: 0 !important;
@@ -137,7 +163,7 @@ a:hover {
     /* height: 36px !important; */
     min-height: 2.25rem !important;
     min-width: 10rem !important;
-    max-width: calc(100vw - 7rem) !important;
+    max-width: calc(100vw - 8rem) !important;
 
 }
 
@@ -355,15 +381,15 @@ a:hover {
 /* Bar */
 .selectize-input {
     border: 1px solid #43494c !important;
-    min-width: 14.8rem !important;
-    width: 20.5rem !important;
-    max-width: calc(100vw - 9rem) !important;
     margin-top: 0.25rem !important;
     margin-bottom: -0.8rem !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
     color: #979797 !important;
     background: #181a1b !important;
+    min-width: 13rem !important;
+    width: 20rem !important;
+    max-width: calc(100vw - 10rem) !important;
 }
 /* Name in bar */
 .selectize-dropdown,
@@ -415,13 +441,13 @@ a:hover {
 }
 
 .size1Slider .irs {
-    min-width: 16rem !important;
+    min-width: 14rem !important;
     width: 19rem !important;
     max-width: calc(100vw - 9rem) !important;
 }
 
 .size2Slider .irs {
-    min-width: 15rem !important;
+    min-width: 13.5rem !important;
     width: 20.5rem !important;
     max-width: calc(100vw - 9rem) !important;
 }

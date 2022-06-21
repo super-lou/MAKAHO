@@ -423,8 +423,8 @@ maskOnly = function (id, IdList=IdList_mask) {
 IdList_panel = c('ana_panel',
                  'theme_panel',
                  'info_panel',
-                 'photo_panel',
-                 'download_panel',
+                 'photo_bar',
+                 'download_bar',
                  'click_bar',
                  'dlClick_bar',
                  'poly_bar')
@@ -445,6 +445,43 @@ showOnly = function (id, IdList=IdList_panel) {
             hide(id=Id)
         }
     }
+}
+
+toggleOnly = function (id, IdList=IdList_panel) {
+    for (Id in IdList) {
+        if (Id %in% id) {
+            toggle(id=Id)
+        } else {
+            hide(id=Id)
+        }
+    }
+}
+
+
+deselect_mode = function (session, rv) {
+    updateSelectButton(
+        session=session,
+        class="selectButton",
+        inputId="click_select",
+        selected=FALSE)
+    rv$clickMode = FALSE
+
+    updateSelectButton(
+        session=session,
+        class="selectButton",
+        inputId="poly_select",
+        selected=FALSE)
+    rv$polyMode = 'false'
+    map = leafletProxy("map")
+    map = clearShapes(map)
+    rv$polyCoord = NULL
+
+    updateSelectButton(
+        session=session,
+        class="selectButton",
+        inputId="dlClick_select",
+        selected=FALSE)
+    rv$dlClickMode = FALSE
 }
 
 
