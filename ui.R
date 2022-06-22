@@ -366,13 +366,13 @@ ui = bootstrapPage(
             style=CSSpanel_plot,
             fixed=TRUE,
             draggable=TRUE,
-            width=520, height=220,
+            width=500, height=200,
             left=0, bottom=10, right=0,
             
             div(style="position: absolute;
                             margin-bottom: 10px; margin-top: 10px;
                             margin-left: 10px; margin-right: 10px;",
-                plotOutput("trend_plot")),
+                plotlyOutput("trend_plot")),
             
             div(Button(class="Button-icon",
                        style="position: absolute;
@@ -462,7 +462,6 @@ ui = bootstrapPage(
             right=0, bottom=100,
             tags$div(style="margin-bottom: 10px; margin-top: 10px;
                             margin-left: 10px; margin-right: 10px;",
-                     # plotOutput("colorbar_plot")
                      plotlyOutput("colorbar_plot"))
         )
     ),

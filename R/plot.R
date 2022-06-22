@@ -67,7 +67,7 @@ theme_ash =
 ### 1.2. Colorbar ____________________________________________________
 # Returns the colorbar but also positions, labels and colors of some
 # ticks along it 
-plot_colorbar = function (rv, Palette, colors=256, reverse=FALSE) {
+plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
     
     res = compute_colorBin(min=rv$minValue,
                            max=rv$maxValue,
@@ -174,7 +174,13 @@ plot_colorbar = function (rv, Palette, colors=256, reverse=FALSE) {
 
     Xlab = rep(1.2, colors)
     Ylab = bin / max(bin)
-    label = round(bin*100, 1)
+    
+    if (type == 'sévérité') {
+        label = round(bin*100, 1)
+    } else if (type == 'saisonnalité') {
+        label = round(bin, 1)
+    }
+
     label = paste0("<b>", label, "</b>")
     
     fig = add_annotations(fig,
@@ -186,8 +192,13 @@ plot_colorbar = function (rv, Palette, colors=256, reverse=FALSE) {
                           font=list(color=grey40COL,
                                     size=12))
 
-    title = paste0("<b>", word("cb.title"), "</b>",
-                   " ", word("cb.unit"))
+    if (type == 'sévérité') {
+        title = paste0("<b>", word("cb.title"), "</b>",
+                       " ", word("cb.unit.Q"))
+    } else if (type == 'saisonnalité') {
+        title = paste0("<b>", word("cb.title"), "</b>",
+                       " ", word("cb.unit.t"))
+    }
     
     fig = add_annotations(fig,
                           x=-0.1,
