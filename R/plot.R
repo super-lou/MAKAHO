@@ -67,145 +67,146 @@ theme_ash =
 ### 1.2. Colorbar ____________________________________________________
 # Returns the colorbar but also positions, labels and colors of some
 # ticks along it 
-plot_colorbar = function (min, max, Palette, colors=256, reverse=FALSE, nbTick=10) {
+plot_colorbar = function (rv, Palette, colors=256, reverse=FALSE) {
+    
+    res = compute_colorBin(min=rv$minValue,
+                           max=rv$maxValue,
+                           Palette=Palette,
+                           colors=colors,
+                           reverse=reverse)
 
-    # If the value is a NA return NA color
-    if (is.null(min) | is.null(max)) {
-        return (NA)
+    bin = res$bin
+    upBin = res$upBin
+    Y1 = upBin / max(upBin[is.finite(upBin)])
+    dY = mean(diff(Y1[is.finite(Y1)]))
+    Y1[Y1 == Inf] = 1 + dY
+    
+    lowBin = res$lowBin
+    Y0 = lowBin / max(lowBin[is.finite(lowBin)])
+    Y0[Y0 == -Inf] = -1 - dY
+
+    PaletteColors = res$Palette
+    X0 = rep(0, colors)
+    X1 = rep(1, colors)
+    
+    # Computes the histogram of values
+    res = hist(rv$value,
+               breaks=c(-Inf, bin, Inf),
+               plot=FALSE)
+    # Extracts the number of counts per cells
+    counts = res$counts
+
+    fig = plotly_empty(width=55, height=250)
+    
+    for (i in 2:(colors-1)) {
+        fig = add_trace(fig,
+                        type="scatter",
+                        mode="lines",
+                        x=c(X0[i], X0[i], X1[i], X1[i], X0[i]),
+                        y=c(Y0[i], Y1[i], Y1[i], Y0[i], Y0[i]),
+                        fill="toself",
+                        fillcolor=PaletteColors[i],
+                        line=list(width=0),
+                        text=paste0("<b>",
+                                    counts[i],
+                                    "</b>",
+                                    "<br>stations"),
+                        hoverinfo="text",
+                        hoveron="fills",
+                        hoverlabel=list(bgcolor=counts[i],
+                                        font=list(color="white",
+                                                  size=12),
+                                        bordercolor="white"))
     }
-
-    labTick = pretty(seq(min, max, length.out=nbTick),
-                     nbTick)
-    nbTickShow = length(labTick)
-
-    minAbs = min(min, min(labTick))
-    maxAbs = max(max, max(labTick))
     
-    # Gets the number of discrete colors in the palette
-    nSample = length(Palette)
-
-    # Recreates a continuous color palette
-    Palette = colorRampPalette(Palette)(colors)
-
-    minColor = get_color(minAbs, min=min, max=max,
-                         nbTick=nbTick,
-                         colors=colors,
-                         Palette=Palette,
-                         reverse=reverse)
-    maxColor = get_color(maxAbs, min=min, max=max,
-                         nbTick=nbTick,
-                         colors=colors,
-                         Palette=Palette,
-                         reverse=reverse)
+    fig = layout(fig,
+                 xaxis=list(range=c(-1.5, 3.4),
+                            showticklabels=FALSE,
+                            fixedrange=TRUE),
+                 yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
+                            showticklabels=FALSE,
+                            fixedrange=TRUE),
+                 margin=list(l=0,
+                             r=0,
+                             b=0,
+                             t=0,
+                             pad=0),
+                 autosize=FALSE,
+                 plot_bgcolor='transparent',
+                 paper_bgcolor='transparent',
+                 showlegend=FALSE)
     
-    minId = which(Palette == minColor)
-    maxId = which(Palette == maxColor)
+    fig = add_trace(fig,
+                    type="scatter",
+                    mode="lines",
+                    x=c(0, 1, 0.5, 0),
+                    y=c(1, 1, 1+dY*2/3, 1),
+                    fill="toself",
+                    fillcolor=PaletteColors[colors],
+                    line=list(width=0),
+                    text=paste0("<b>",
+                                counts[colors],
+                                "</b>",
+                                "<br>stations"),
+                    hoverinfo="text",
+                    hoveron="fills",
+                    hoverlabel=list(bgcolor=counts[colors],
+                                    font=list(size=12),
+                                    bordercolor="white"))
     
-    PaletteCrop = Palette[minId:maxId]
-    nPaletteCrop = length(PaletteCrop)
+    fig = add_trace(fig,
+                    type="scatter",
+                    mode="lines",
+                    x=c(0, 1, 0.5, 0),
+                    y=c(-1, -1, -1-dY*2/3, -1),
+                    fill="toself",
+                    fillcolor=PaletteColors[1],
+                    line=list(width=0),
+                    text=paste0("<b>",
+                                counts[1],
+                                "</b>",
+                                "<br>stations"),
+                    hoverinfo="text",
+                    hoveron="fills",
+                    hoverlabel=list(bgcolor=counts[1],
+                                    font=list(size=12),
+                                    bordercolor="white"))
+
+    Xlab = rep(1.2, colors)
+    Ylab = bin / max(bin)
+    label = round(bin*100, 1)
+    label = paste0("<b>", label, "</b>")
     
-    # The position of ticks is between 0 and 1
-    posTick = labTick - min(labTick)
-    posTick = posTick/max(posTick)
+    fig = add_annotations(fig,
+                          x=Xlab,
+                          y=Ylab,
+                          text=label,
+                          showarrow=FALSE,
+                          xanchor='left',
+                          font=list(color=grey40COL,
+                                    size=12))
 
-    # Blank vector to store corresponding labels and colors
-    colTick = c()
-    # For each tick
-    for (lab in labTick) {        
-        # Gets the associated color
-        col = get_color(lab, min=min, max=max,
-                        nbTick=nbTick,
-                        colors=colors,
-                        Palette=Palette,
-                        reverse=reverse)
-        
-        # Stores them
-        colTick = c(colTick, col)
-    }
-
-    yColor = match(colTick, PaletteCrop)
-    xColor = rep(3, times=length(yColor))
-
-    dyColorSpan = mean(diff(yColor))
+    title = paste0("<b>", word("cb.title"), "</b>",
+                   " ", word("cb.unit"))
     
-    # Open a plot
-    plot = ggplot() + theme_void() +
-        theme(plot.background=element_rect(fill="grey98", color=NA))
-
-    midLabTick = labTick[1:(nbTickShow-1)] + diff(labTick)/2
-    colMidTick = c()
-    # For each tick
-    for (lab in midLabTick) {        
-        # Gets the associated color
-        col = get_color(lab, min=min, max=max,
-                        nbTick=nbTick,
-                        colors=colors,
-                        Palette=Palette,
-                        reverse=reverse)
-        
-        # Stores them
-        colMidTick = c(colMidTick, col)
-    }
-
-    dxColor = 2.5
+    fig = add_annotations(fig,
+                          x=-0.1,
+                          y=0,
+                          text=title,
+                          textangle=-90,
+                          showarrow=FALSE,
+                          xanchor='right',
+                          yanchor='center',
+                          font=list(color=grey50COL,
+                                    size=13.5))
     
-    plot = plot +
-        annotate("rect",
-                 xmin=xColor[1], xmax=xColor[1]+dxColor,
-                 ymin=-dyColorSpan/2, ymax=yColor[1], 
-                 fill=PaletteCrop[1]) +
-        
-        annotate("rect",
-                 xmin=xColor[1], xmax=xColor[1]+dxColor,
-                 ymin=yColor[nbTickShow],
-                 ymax=yColor[nbTickShow]+dyColorSpan/2, 
-                 fill=PaletteCrop[nPaletteCrop])
-    
-    for (i in 1:(nbTickShow-1)) {
-        plot = plot +
-            annotate("rect",
-                     xmin=xColor, xmax=xColor+dxColor,
-                     ymin=yColor[i], ymax=yColor[i+1], 
-                     fill=colMidTick[i])
-    }
+    fig = config(fig,
+                 displaylogo=FALSE,
+                 displayModeBar=FALSE,
+                 doubleClick=FALSE)                
+    fig  
 
-    label = signif(labTick*100, 2)
-    nDec = sapply(label, count_decimal)
-    label = format(label, nsmall=max(nDec))
-
-    xtitle = 2.5
-    ytitle = -dyColorSpan/2 + 1
-    
-    plot = plot +
-        annotate("text",
-                 x=xColor + dxColor + 1,
-                 y=yColor,
-                 hjust=0, vjust=0.5,
-                 label=label,
-                 size=1,
-                 fontface="bold",
-                 color="grey40") +
-        
-        geom_richtext(aes(x=xtitle,
-                          y=ytitle,
-                          label=paste0("<b>", word("cb.title"), "</b>",
-                                       " ", word("cb.unit"))),
-                      hjust=0, vjust=0,
-                      angle=90,
-                      size=1.1,
-                      color="grey50",
-                      fill=NA, label.color=NA,
-                      label.padding=unit(rep(0, 4), "pt"))
-    
-    plot = plot +
-        scale_x_continuous(limits=c(0, 10),
-                           expand=c(0, 0)) +
-        
-        scale_y_continuous(limits=c(-dyColorSpan/2,
-                                    nPaletteCrop+dyColorSpan/2),
-                           expand=c(0, 0))
-
-    return(plot)
+    return(fig)
 }
 
 

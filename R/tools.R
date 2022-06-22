@@ -495,7 +495,7 @@ read_FST = function (resdir, filename, filedir='fst') {
 
 
 get_trendExtremes = function (df_data, df_trend, type,
-                              CodeSample=NULL) {
+                              minQprob=0, maxQprob=1) {
     
     if (type == 'sévérité') {
         df_mean = summarise(group_by(df_data, code),
@@ -509,14 +509,8 @@ get_trendExtremes = function (df_data, df_trend, type,
         Code = df_trend$code
     }
 
-    if (!is.null(CodeSample)) {
-        valueSample = value[Code %in% CodeSample]
-    } else {
-        valueSample = value
-    } 
-    
-    minValue = quantile(valueSample, 0, na.rm=TRUE)
-    maxValue = quantile(valueSample, 1, na.rm=TRUE)
+    minValue = quantile(value, minQprob, na.rm=TRUE)
+    maxValue = quantile(value, maxQprob, na.rm=TRUE)
 
     res = list(value=value, min=minValue, max=maxValue)
     return (res)

@@ -26,15 +26,6 @@
 # R/color_manager.R
 
 
-# PalettePerso = c('#0f3b57', # cold
-#                  '#1d7881',
-#                  '#80c4a9',
-#                  '#e2dac6', # mid
-#                  '#fadfad',
-#                  '#d08363',
-#                  '#7e392f') # hot
-
-
 Palette_ground = c('#543005',
                    '#8c510a',
                    '#bf812d',

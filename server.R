@@ -59,7 +59,6 @@ server = function (input, output, session) {
 
     startOBS = observe({
         showElement(id='help_panelButton')
-        showElement(id="colorbar_panel")
         startOBS$destroy()
     })
     
@@ -112,9 +111,6 @@ server = function (input, output, session) {
                                lat2=defaultLimits()$north,
                                options=list(padding=c(20, 20)))
     })
-
-    
-
 
 ### 1.2. Zoom ________________________________________________________    
     observeEvent({
@@ -224,57 +220,99 @@ server = function (input, output, session) {
     })
 
 ### 1.3. Marker ______________________________________________________
-    observeEvent({
-        input$theme_choice
-        input$alpha_choice
-        df_meta()
-        fillList()
-    }, {
-        map = leafletProxy("map")
-        
-        nCodeAll = length(CodeAll())
-        
-        trendCode = df_Xtrend()$code
-        
-        OkS = df_Xtrend()$p <= input$alpha_choice
-        CodeSU = trendCode[OkS & df_Xtrend()$trend >= 0]
-        CodeSD = trendCode[OkS & df_Xtrend()$trend < 0]
-        CodeNS = trendCode[!OkS]
-        
-        shapeList = rep(1, nCodeAll)
-        shapeList[match(CodeSU, CodeAll())] = '^'
-        shapeList[match(CodeSD, CodeAll())] = 'v'
-        shapeList[match(CodeNS, CodeAll())] = 'o'
-        shapeList[match(missCode(), CodeAll())] = 'o'
+    markerListAll = reactive({
+
+        print('marker')
 
         if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
             none1Color = none1Color_light
         } else if (input$theme_choice == 'dark') {
             none1Color = none1Color_dark
         }
-
-        colorList = rep(none1Color, nCodeAll)
-        colorList[match(CodeSample(), CodeAll())] = validColor
-        invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
-        colorList[match(invalidCodeSample, CodeAll())] = invalidColor
-        missCodeSample = missCode()[missCode() %in% CodeSample()]
-        colorList[match(missCodeSample, CodeAll())] = missColor
         
-        markerListAll = get_markerList(shapeList,
-                                       colorList,
-                                       fillList(),
-                                       resources_path)
+        if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
+            none2Color = none2Color_light
+        } else if (input$theme_choice == 'dark') {
+            none2Color = none2Color_dark
+        }
+        
+        if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
+
+            trendCode = df_Xtrend()$code
+            
+            OkS = df_Xtrend()$p <= input$alpha_choice
+            CodeSU = trendCode[OkS & df_Xtrend()$trend >= 0]
+            CodeSD = trendCode[OkS & df_Xtrend()$trend < 0]
+            CodeNS = trendCode[!OkS]
+            
+            shapeList = rep('o', nCodeAll())
+            shapeList[match(CodeSU, CodeAll())] = '^'
+            shapeList[match(CodeSD, CodeAll())] = 'v'
+            shapeList[match(CodeNS, CodeAll())] = 'o'
+            shapeList[match(missCode(), CodeAll())] = 'o'
+
+            colorList = rep(none1Color, nCodeAll())
+            colorList[match(CodeSample(), CodeAll())] = validColor
+            invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
+            colorList[match(invalidCodeSample, CodeAll())] = invalidColor
+            missCodeSample = missCode()[missCode() %in% CodeSample()]
+            colorList[match(missCodeSample, CodeAll())] = missColor
+
+            res = get_trendExtremes(df_XEx(), df_Xtrend(),
+                                    type=type(),
+                                    minQprob=0, maxQprob=1)
+            
+            rv$value = res$value
+            rv$minValue = res$min
+            rv$maxValue = res$max
+
+            fill = get_color(rv$value,
+                             rv$minValue,
+                             rv$maxValue,
+                             Palette=Palette,
+                             colors=colors,
+                             reverse=reverse)
+            
+            fillList = rep(none2Color, nCodeAll())
+
+            valueCode = df_Xtrend()$code
+            okCode = valueCode %in% CodeSample()
+            valueCodeSample = valueCode[okCode]
+            fillSample = fill[okCode]
+            
+            fillList[match(valueCodeSample, CodeAll())] = fillSample
+            
+        } else {
+            shapeList = rep('o', nCodeAll())                        
+            colorList = rep(none1Color, nCodeAll())            
+            fillList = rep(none2Color, nCodeAll())
+        }
+        
+        get_markerList(shapeList,
+                       colorList,
+                       fillList,
+                       resources_path)
+    })
+
+    
+    observeEvent({
+        input$theme_choice
+        input$alpha_choice
+        df_meta()
+        markerListAll()
+    }, {
+        map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
-            okCode = rep(TRUE, nCodeAll)
+            okCode = rep(TRUE, nCodeAll())
         } else {
-            okCode = unlist(markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+            okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
         rv$theme_choice_save = input$theme_choice
 
         Code = CodeAll()[okCode]
-        markerList = markerListAll
-        markerList$iconUrl = markerListAll$iconUrl[okCode]
+        markerList = markerListAll()
+        markerList$iconUrl = markerListAll()$iconUrl[okCode]
         Lon = df_meta()$lon[okCode]
         Lat = df_meta()$lat[okCode]
         Nom = df_meta()$nom[okCode]
@@ -289,7 +327,7 @@ server = function (input, output, session) {
                          label=lapply(label, HTML),
                          layerId=Code)
 
-        rv$markerListAll_save = markerListAll
+        rv$markerListAll_save = markerListAll()
     })    
     
 
@@ -322,6 +360,10 @@ server = function (input, output, session) {
         rle(df_meta()$code)$values
     })
 
+    nCodeAll = reactive({
+        length(CodeAll())
+    })
+
     rv$CodeSample = isolate(CodeAll())
     rv$CodeSample_save = isolate(CodeAll())
     rv$theme_choice_save = isolate(input$theme_choice)
@@ -341,7 +383,7 @@ server = function (input, output, session) {
             CodeSample
         }
     })
-    CodeSample = debounce(CodeSampleB, 100)
+    CodeSample = debounce(CodeSampleB, 10)
 
 #### 2.2.1. All/none _________________________________________________
     observeEvent(input$all_button, {
@@ -743,21 +785,27 @@ server = function (input, output, session) {
         }
     })
     
-    df_XEx = reactive({
+    df_XExAll = reactive({
         if (!is.null(filename())) {
-            df_XExtmp = read_FST(computer_data_path,
-                                 filename(),
-                                 filedir='fst')
+            read_FST(computer_data_path,
+                     filename(),
+                     filedir='fst')
+        } else {
+            NULL
+         }
+    })
 
+    df_XEx = reactive({
+        if (!is.null(filename()) & !is.null(CodeSample())) {
+            df_XExtmp = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
             Start = period()[1]
             End = period()[2]
-            
             df_XExtmp = df_XExtmp[df_XExtmp$Date >= Start
                                   & df_XExtmp$Date <= End,]
             df_XExtmp
         } else {
             NULL
-         }
+        }
     })
 
 ### 2.4. Period ______________________________________________________
@@ -786,7 +834,7 @@ server = function (input, output, session) {
     
 ### 2.5. Trend analysis ______________________________________________
     df_Xtrend = reactive({
-        if (!is.null(df_XEx())) {
+        if (!is.null(df_XEx())) {            
             Estimate_stats_WRAP(df_XEx=df_XEx(),
                                 dep_option='AR1')
         } else {
@@ -795,62 +843,27 @@ server = function (input, output, session) {
     })
 
     missCode = reactive({
-        CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
-    })
-
-    invalidCode = reactive({
-        analyseStart = df_Xtrend()$period_start
-        analyseStart[analyseStart < period()[1]] = period()[1]
-        analyseEnd = df_Xtrend()$period_end
-        analyseEnd[analyseEnd > period()[2]] = period()[2]
-        analysePeriod = (analyseEnd - analyseStart)/365.25
-        df_Xtrend()$code[analysePeriod < analyseMinYear]
-    })
-
-    
-### 2.6. Fill _______________________________________________________
-    fillListB = reactive({
-        nCodeAll = length(CodeAll())
-        
-        if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
-            
-            res = get_trendExtremes(df_XEx(), df_Xtrend(),
-                                    type=type(),
-                                    CodeSample=CodeSample())
-
-            rv$value = res$value
-            rv$minValue = res$min
-            rv$maxValue = res$max
-
-            fill = get_color(rv$value, 
-                             rv$minValue,
-                             rv$maxValue,
-                             Palette=Palette,
-                             colors=colors,
-                             reverse=reverse)
-
-            if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
-                none2Color = none2Color_light
-            } else if (input$theme_choice == 'dark') {
-                none2Color = none2Color_dark
-            }
-            
-            fillList = rep(none2Color, nCodeAll)
-
-            valueCode = df_Xtrend()$code
-            okCode = valueCode %in% CodeSample()
-            valueCodeSample = valueCode[okCode]
-            fillSample = fill[okCode]
-            
-            fillList[match(valueCodeSample, CodeAll())] = fillSample
-            
-            fillList
+        if (!is.null(df_Xtrend())) {
+            CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
+        } else {
+            c()
         }
     })
 
-    fillList = debounce(fillListB, 100)
+    invalidCode = reactive({        
+        if (!is.null(df_Xtrend())) {
+            analyseStart = df_Xtrend()$period_start
+            analyseStart[analyseStart < period()[1]] = period()[1]
+            analyseEnd = df_Xtrend()$period_end
+            analyseEnd[analyseEnd > period()[2]] = period()[2]
+            analysePeriod = (analyseEnd - analyseStart)/365.25
+            df_Xtrend()$code[analysePeriod < analyseMinYear]
+        } else {
+            c()
+        }
+    })  
 
-### 2.7. Trend plot __________________________________________________
+### 2.6. Trend plot __________________________________________________
     observeEvent({
         input$map_marker_click
         period()
@@ -897,10 +910,13 @@ server = function (input, output, session) {
     })
     
 ### 3.2. Palette _____________________________________________________
-    observeEvent(input$colorbar_choice, {
-        if (input$colorbar_choice == 'show') {
+    observeEvent({
+        input$colorbar_choice
+        df_Xtrend()
+    }, {        
+        if (input$colorbar_choice == 'show' & !is.null(df_Xtrend())) {
             showElement(id="colorbar_panel")
-        } else if (input$colorbar_choice == 'none') {
+        } else if (input$colorbar_choice == 'none' | is.null(df_Xtrend())) {
             hide(id="colorbar_panel")
         }
     })
@@ -910,106 +926,13 @@ server = function (input, output, session) {
         rv$maxValue
         input$colorbar_choice
     }, {
-        if (input$colorbar_choice == 'show') {
-
+        if (input$colorbar_choice == 'show' & !is.null(df_Xtrend())) {
             output$colorbar_plot = renderPlotly({
-                res = compute_colorBin(min=rv$minValue,
-                                       max=rv$maxValue,
-                                       Palette=Palette,
-                                       colors=colors,
-                                       reverse=reverse)
-
-                bin = res$bin
-                upBin = res$upBin
-                Y1 = upBin / max(upBin[is.finite(upBin)])
-                dY = mean(diff(Y1[is.finite(Y1)]))
-                Y1[Y1 == Inf] = 1 + dY
-                
-                lowBin = res$lowBin
-                Y0 = lowBin / max(lowBin[is.finite(lowBin)])
-                Y0[Y0 == -Inf] = -1 - dY
-
-                PaletteColors = res$Palette
-                X0 = rep(0, colors)
-                X1 = rep(1, colors)
-                
-                shapes = list()
-                for (i in 2:(colors-1)) {
-                    shapes = append(shapes,
-                                    list(list(
-                                        type="rect",
-                                        fillcolor=PaletteColors[i], 
-                                        line=list(width=0),
-                                        x0=X0[i], x1=X1[i],
-                                        y0=Y0[i], y1=Y1[i])))
-                }
-                
-                fig = plotly_empty(width=55, height=250)
-                fig = layout(fig,
-                             shapes=shapes,
-                             xaxis=list(range=c(-1.5, 3.4),
-                                        showticklabels=FALSE,
-                                        fixedrange=TRUE),
-                             yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
-                                        showticklabels=FALSE,
-                                        fixedrange=TRUE),
-                             margin=list(l=0,
-                                         r=0,
-                                         b=0,
-                                         t=0,
-                                         pad=0),
-                             autosize=FALSE,
-                             plot_bgcolor='transparent',
-                             paper_bgcolor='transparent',
-                             showlegend=FALSE
-                             )
-                fig = add_polygons(fig,
-                                   x=c(0, 1, 0.5),
-                                   y=c(1, 1, 1+dY*2/3),
-                                   fillcolor=PaletteColors[colors],
-                                   line=list(width=0))
-                fig = add_polygons(fig,
-                                   x=c(0, 1, 0.5),
-                                   y=c(-1, -1, -1-dY*2/3),
-                                   fillcolor=PaletteColors[1],
-                                   line=list(width=0))
-
-                Xlab = rep(1.2, colors)
-                Ylab = bin / max(bin)
-                label = round(bin*100, 1)
-                label = paste0("<b>", label, "</b>")
-                
-                fig = add_annotations(fig,
-                                      x=Xlab,
-                                      y=Ylab,
-                                      text=label,
-                                      showarrow=FALSE,
-                                      xanchor='left',
-                                      font=list(color=grey40COL,
-                                                size=12))
-
-                title = paste0("<b>", word("cb.title"), "</b>",
-                               " ", word("cb.unit"))
-                
-                fig = add_annotations(fig,
-                                      x=-0.1,
-                                      y=0,
-                                      text=title,
-                                      textangle=-90,
-                                      showarrow=FALSE,
-                                      xanchor='right',
-                                      yanchor='center',
-                                      font=list(color=grey50COL,
-                                                size=13.5))
-                
-                fig = config(fig,
-                             displaylogo=FALSE,
-                             displayModeBar=FALSE,
-                             doubleClick=FALSE)                
-                fig  
+                plot_colorbar(rv,
+                              Palette=Palette,
+                              colors=colors,
+                              reverse=reverse)
             })
-
-            
         }
     })
 
