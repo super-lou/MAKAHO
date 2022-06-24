@@ -30,9 +30,7 @@ server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 
 
-    rv = reactiveValues(isStart=0,
-                        
-                        width=0,
+    rv = reactiveValues(width=0,
                         height=0,
                         CodeSample=NULL,
                         CodeSearch=NULL,
@@ -57,7 +55,8 @@ server = function (input, output, session) {
                         helpPage_prev=NULL,
                         shapeList=NULL,
                         colorList=NULL,
-                        fillList=NULL
+                        fillList=NULL,
+                        codeClick=NULL
                         )
 
     startOBS = observe({
@@ -874,32 +873,41 @@ server = function (input, output, session) {
     })  
 
 ### 2.6. Trend plot __________________________________________________
+    observeEvent(input$map_marker_click, {
+        rv$codeClick = input$map_marker_click$id
+    })
+
+    observeEvent(rv$codeClick, {
+        Lon = df_meta()$lon[df_meta()$code == rv$codeClick]
+        Lat = df_meta()$lat[df_meta()$code == rv$codeClick]
+        names(Lon) = NULL
+        names(Lat) = NULL
+        
+        map = leafletProxy("map")
+        map = fitBounds(map,
+                        lng1=Lon+1,
+                        lat1=Lat+1,
+                        lng2=Lon-1,
+                        lat2=Lat-1,
+                        options=list(padding=c(20, 20)))
+    })
+
     observeEvent({
-        input$map_marker_click
+        rv$codeClick
         period()
         var()
         rv$width
     }, {
-
-        # RESET INPUT$MAP_MARKER_CLICK
         
-        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(input$map_marker_click)) {
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(rv$codeClick)) {
+            
             showElement(id='plot_panel')
             
-            code = input$map_marker_click$id
-            name = df_meta()$nom[df_meta()$code == code]
+            name = df_meta()$nom[df_meta()$code == rv$codeClick]
 
-            df_XEx_code = df_XEx()[df_XEx()$code == code,]
-            df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == code,]
-            color = rv$fillList[CodeAll() == code]
-
-            # # Issue for negative values in the y axis ticks : if Value is a
-            # # number of days that can be negative, it adds a year in order
-            # # to always be positive
-            # if (type() == 'saisonnalité') {
-            #     df_XEx_code$Value = df_XEx_code$Value + 365
-            #     df_Xtrend_code$intercept = df_Xtrend_code$intercept + 365
-            # }
+            df_XEx_code = df_XEx()[df_XEx()$code == rv$codeClick,]
+            df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == rv$codeClick,]
+            color = rv$fillList[CodeAll() == rv$codeClick]
             
             output$trend_plot = renderPlotly({
                 
@@ -935,11 +943,12 @@ server = function (input, output, session) {
                                 x=x,
                                 y=y,
                                 marker=list(color=grey50COL),
-                                # text=paste0("<b>",
-                                #             counts[colors],
-                                #             "</b>",
-                                #             "<br>stations"),
-                                hoverinfo="text",
+                                xhoverformat="%Y",
+                                hovertemplate = paste0(
+                                    "année %{x}<br>",
+                                    "<b>", var(), "</b> %{y}",
+                                    " [m<sup>3</sup>.s<sup>-1</sup>]<br>",
+                                    "<extra></extra>"),
                                 hoverlabel=list(bgcolor=color,
                                                 font=list(size=12),
                                                 bordercolor="white"))
@@ -950,7 +959,7 @@ server = function (input, output, session) {
                                 x=period(),
                                 y=ord,
                                 line=list(color='white', width=6),
-                                hoverinfo="text")
+                                hoverinfo="none")
                 
                 fig = add_trace(fig,
                                 type="scatter",
@@ -958,14 +967,7 @@ server = function (input, output, session) {
                                 x=period(),
                                 y=ord,
                                 line=list(color=color, width=3),
-                                # text=paste0("<b>",
-                                #             counts[colors],
-                                #             "</b>",
-                                #             "<br>stations"),
-                                hoverinfo="text",
-                                hoverlabel=list(bgcolor=color,
-                                                font=list(size=12),
-                                                bordercolor="white"))
+                                hoverinfo="none")
 
                 
                 # Computes the mean of the data on the period
@@ -1059,7 +1061,7 @@ server = function (input, output, session) {
                                       xref="paper",
                                       yref="paper",
                                       text=paste0("<b>",
-                                                  code,
+                                                  rv$codeClick,
                                                   "</b> - ",
                                                   name),
                                       showarrow=FALSE,
@@ -1137,13 +1139,22 @@ server = function (input, output, session) {
                                       "hoverCompareCartesian",
                                       "hoverClosestCartesian")
                              )
-                
                 fig
             })
         }
     })
 
     observeEvent(input$closePlot_button, {
+
+        map = leafletProxy("map")
+        map = fitBounds(map,
+                        lng1=defaultLimits()$east,
+                        lat1=defaultLimits()$south,
+                        lng2=defaultLimits()$west,
+                        lat2=defaultLimits()$north,
+                        options=list(padding=c(20, 20)))
+        
+        rv$codeClick = NULL
         hide(id='plot_panel')
     })
     

@@ -118,6 +118,30 @@ ui = bootstrapPage(
 
     
 ## 2. ANALYSE ________________________________________________________
+### 2.7. Trend plot __________________________________________________
+    hidden(
+        absolutePanel(
+            id='plot_panel',
+            class="Panel card-insert-c",
+            fixed=TRUE,
+            width=500, height=200,
+            bottom=10,
+            
+            div(style="position: absolute;
+                       margin-bottom: 10px; margin-top: 10px;
+                       margin-left: 10px; margin-right: 10px;",
+                plotlyOutput("trend_plot")),
+            
+            div(Button(class="Button-icon",
+                       style="position: absolute;
+                              top: 0.15rem;
+                              left: 0.15rem;",
+                       inputId='closePlot_button',
+                       label=NULL,
+                       icon_name=iconLib$close_black))
+        )
+    ),
+
 ### 2.1. Panel button ________________________________________________
     fixedPanel(left=10, bottom=10,
                width="auto", height="auto",
@@ -503,31 +527,6 @@ ui = bootstrapPage(
                 div("inspirée de ",
                     a(href="https://earth.nullschool.net/",
                       "earth.nullschool.net")))
-        )
-    ),
-
-    
-### 2.7. Trend plot __________________________________________________
-    hidden(
-        absolutePanel(
-            id='plot_panel',
-            class="Panel card-insert-c",
-            fixed=TRUE,
-            width=500, height=200,
-            bottom=10,
-            
-            div(style="position: absolute;
-                       margin-bottom: 10px; margin-top: 10px;
-                       margin-left: 10px; margin-right: 10px;",
-                plotlyOutput("trend_plot")),
-            
-            div(Button(class="Button-icon",
-                       style="position: absolute;
-                              top: 0.15rem;
-                              left: 0.15rem;",
-                       inputId='closePlot_button',
-                       label=NULL,
-                       icon_name=iconLib$close_black))
         )
     ),
 
