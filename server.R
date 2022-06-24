@@ -55,6 +55,9 @@ server = function (input, output, session) {
                         maxValue=NULL,
                         helpPage=NULL,
                         helpPage_prev=NULL,
+                        shapeList=NULL,
+                        colorList=NULL,
+                        fillList=NULL
                         )
 
     startOBS = observe({
@@ -222,8 +225,6 @@ server = function (input, output, session) {
 ### 1.3. Marker ______________________________________________________
     markerListAll = reactive({
 
-        print('marker')
-
         if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
             none1Color = none1Color_light
         } else if (input$theme_choice == 'dark') {
@@ -251,12 +252,18 @@ server = function (input, output, session) {
             shapeList[match(CodeNS, CodeAll())] = 'o'
             shapeList[match(missCode(), CodeAll())] = 'o'
 
+            rv$shapeList = shapeList
+
+            
             colorList = rep(none1Color, nCodeAll())
             colorList[match(CodeSample(), CodeAll())] = validColor
             invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
             colorList[match(invalidCodeSample, CodeAll())] = invalidColor
             missCodeSample = missCode()[missCode() %in% CodeSample()]
             colorList[match(missCodeSample, CodeAll())] = missColor
+
+            rv$colorList = colorList
+            
 
             res = get_trendExtremes(df_XEx(), df_Xtrend(),
                                     type=type(),
@@ -281,6 +288,9 @@ server = function (input, output, session) {
             fillSample = fill[okCode]
             
             fillList[match(valueCodeSample, CodeAll())] = fillSample
+
+            rv$fillList = fillList
+            
             
         } else {
             shapeList = rep('o', nCodeAll())                        
@@ -806,7 +816,7 @@ server = function (input, output, session) {
         } else {
             NULL
         }
-    })
+    })    
 
 ### 2.4. Period ______________________________________________________
     period = reactive({
@@ -868,173 +878,266 @@ server = function (input, output, session) {
         input$map_marker_click
         period()
         var()
+        rv$width
     }, {
+
+        # RESET INPUT$MAP_MARKER_CLICK
+        
         if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(input$map_marker_click)) {
             showElement(id='plot_panel')
             
-            codeClick = input$map_marker_click$id
+            code = input$map_marker_click$id
+            name = df_meta()$nom[df_meta()$code == code]
 
-            df_data_code = df_XEx()[df_XEx()$code == codeClick,]
-            df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == codeClick,]
-            color = fillList()[CodeAll() == codeClick]
+            df_XEx_code = df_XEx()[df_XEx()$code == code,]
+            df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == code,]
+            color = rv$fillList[CodeAll() == code]
+
+            # # Issue for negative values in the y axis ticks : if Value is a
+            # # number of days that can be negative, it adds a year in order
+            # # to always be positive
+            # if (type() == 'saisonnalité') {
+            #     df_XEx_code$Value = df_XEx_code$Value + 365
+            #     df_Xtrend_code$intercept = df_Xtrend_code$intercept + 365
+            # }
             
             output$trend_plot = renderPlotly({
-
-
-
-
-                # if (type == 'saisonnalité') {
-                #     df_data_code$Value = df_data_code$Value + 365
-                #     df_Xtrend_code$intercept = df_Xtrend_code$intercept + 365
-                # }
-
-
-                p = p +
-                    geom_point(aes(x=df_data_code$Date, y=df_data_code$Value),
-                               shape=19, color='grey50', alpha=1,
-                               stroke=0, size=0.6)
-
-
-                    # If it is a flow variable
-                    if (type == 'sévérité') {
-                        # Create the name of the trend
-                        label = bquote(bold(.(trendC)~'x'~'10'^{.(powerC)}*.(spaceC))~'['*m^{3}*'.'*s^{-1}*'.'*an^{-1}*']'~~bold(.(trendMeanC))~'[%.'*an^{-1}*']')
-                        
-                        # If it is a date variable
-                    } else if (type == 'saisonnalité') {
-                        # Create the name of the trend
-                        label = bquote(bold(.(trendC)~'x'~'10'^{.(powerC)}*.(spaceC))~'[jour.'*an^{-1}*']')
-                    }
-                    
-                    # Plot the trend symbole and value of the legend
-                    p = p +
-                        annotate("segment",
-                                 x=leg_trend$x, xend=leg_trend$xend,
-                                 y=leg_trend$y, yend=leg_trend$yend,
-                                 color=colorLine,
-                                 linetype=linetypeLeg,
-                                 lwd=0.4,
-                                 lineend="round") +
-                        
-                        annotate("text",
-                                 label=label, size=1.2,
-                                 x=leg_trend$xt, y=leg_trend$y, 
-                                 hjust=0, vjust=0.5,
-                                 color=colorLabel) + 
-                        
-                        # Plot the line of white background of each trend
-                        geom_line(data=plot_trend, 
-                                  aes(x=abs, y=ord),
-                                  color='white',
-                                  linetype='solid',
-                                  size=0.8,
-                                  lineend="round") +
-                        
-                        # Plot the line of trend
-                        geom_line(data=plot_trend, 
-                                  aes(x=abs, y=ord),
-                                  color=color,
-                                  linetype=linetype,
-                                  size=0.3,
-                                  lineend="round")
+                
+                # Convert the number of day to the unit of the period
+                abs_num = as.numeric(period()) / 365.25
+                # Compute the y of the trend
+                if (type() == 'sévérité') {
+                    ord = abs_num * df_Xtrend_code$trend +
+                        df_Xtrend_code$intercept
+                } else if (type() == 'saisonnalité') {
+                    ord = as.Date(abs_num * df_Xtrend_code$trend +
+                        df_Xtrend_code$intercept, origin="1970-01-01")
                 }
 
-                # Y axis title
+                plotWidth = 480
+                shift = 40
+                if (plotWidth < rv$width - shift) {
+                    fig = plot_ly(width=plotWidth, height=180)
+                } else {
+                    fig = plot_ly(width=rv$width-shift, height=180)
+                }
+
+                x = df_XEx_code$Date
+                if (type() == 'sévérité') {
+                    y = df_XEx_code$Value
+                } else if (type() == 'saisonnalité') { ### /!\ À VÉRIF
+                    y = as.Date(df_XEx_code$Value, origin="1970-01-01")
+                }
+                
+                fig = add_trace(fig,
+                                type="scatter",
+                                mode="markers",
+                                x=x,
+                                y=y,
+                                marker=list(color=grey50COL),
+                                # text=paste0("<b>",
+                                #             counts[colors],
+                                #             "</b>",
+                                #             "<br>stations"),
+                                hoverinfo="text",
+                                hoverlabel=list(bgcolor=color,
+                                                font=list(size=12),
+                                                bordercolor="white"))
+
+                fig = add_trace(fig,
+                                type="scatter",
+                                mode="lines",
+                                x=period(),
+                                y=ord,
+                                line=list(color='white', width=6),
+                                hoverinfo="text")
+                
+                fig = add_trace(fig,
+                                type="scatter",
+                                mode="lines",
+                                x=period(),
+                                y=ord,
+                                line=list(color=color, width=3),
+                                # text=paste0("<b>",
+                                #             counts[colors],
+                                #             "</b>",
+                                #             "<br>stations"),
+                                hoverinfo="text",
+                                hoverlabel=list(bgcolor=color,
+                                                font=list(size=12),
+                                                bordercolor="white"))
+
+                
+                # Computes the mean of the data on the period
+                dataMean = mean(df_XEx_code$Value,
+                                na.rm=TRUE)
+                   
+                # Gets the trend
+                trend = df_Xtrend_code$trend
+                # Gets the p value
+                pVal = df_Xtrend_code$p
+
+                if (pVal <= input$alpha_choice) {
+                    colorLine = color
+                    colorLabel = color
+                } else {
+                    colorLine = 'grey85'
+                    colorLabel = 'grey85'
+                }
+
+                # Computes the mean trend
+                trendMean = trend/dataMean
+                # Computes the magnitude of the trend
+                power = get_power(trend)
+                # Converts it to character
+                powerC = as.character(power)
+                # If the power is positive
+                if (power >= 0) {
+                    # Adds a space in order to compensate for the minus
+                    # sign that sometimes is present for the other periods
+                    spaceC = '  '
+                    # Otherwise
+                } else {
+                    # No space is added
+                    spaceC = ''
+                }
+
+                # Gets the power of ten of magnitude
+                brk = 10^power
+                # Converts trend to character for sientific expression
+                trendC = as.character(format(round(trend / brk, 2),
+                                             nsmall=2))
+                # If the trend is positive
+                if (trend >= 0) {
+                    # Adds two space in order to compensate for the minus
+                    # sign that sometimes is present for the other periods
+                    trendC = paste(' ', trendC, sep='')
+                }
+                # Converts mean trend to character
+                trendMeanC = as.character(format(round(trendMean*100, 2),
+                                                 nsmall=2))
+                if (trendMean >= 0) {
+                    # Adds two space in order to compensate for the minus
+                    # sign that sometimes is present for the other periods
+                    trendMeanC = paste(' ', trendMeanC, sep='')
+                }
+                
                 # If it is a flow variable
-                if (type == 'sévérité') {
-                    p = p +
-                        ylab(bquote(bold(.(var))~~'['*m^{3}*'.'*s^{-1}*']'))
-
-                } else if (type == 'saisonnalité') {
-                    p = p +
-                        ylab(bquote(bold(.(var))~~"[jour de l'année]"))
-                }
-
-
-
-
-
-
-                
-
-                fig = plotly_empty(width=480, height=180)
-                
-                fig = add_trace(fig,
-                                type="scatter",
-                                mode="lines",
-                                x=c(0, 1, 0.5, 0),
-                                y=c(1, 1, 1+dY*2/3, 1),
-                                fill="toself",
-                                fillcolor=PaletteColors[colors],
-                                line=list(width=0),
-                                text=paste0("<b>",
-                                            counts[colors],
-                                            "</b>",
-                                            "<br>stations"),
-                                hoverinfo="text",
-                                hoveron="fills",
-                                hoverlabel=list(bgcolor=counts[colors],
-                                                font=list(size=12),
-                                                bordercolor="white"))
-                
-                fig = add_trace(fig,
-                                type="scatter",
-                                mode="lines",
-                                x=c(0, 1, 0.5, 0),
-                                y=c(-1, -1, -1-dY*2/3, -1),
-                                fill="toself",
-                                fillcolor=PaletteColors[1],
-                                line=list(width=0),
-                                text=paste0("<b>",
-                                            counts[1],
-                                            "</b>",
-                                            "<br>stations"),
-                                hoverinfo="text",
-                                hoveron="fills",
-                                hoverlabel=list(bgcolor=counts[1],
-                                                font=list(size=12),
-                                                bordercolor="white"))
-
-                fig = layout(fig,
-                             xaxis=list(range=c(-1.5, 3.4),
-                                        showticklabels=FALSE,
-                                        fixedrange=TRUE),
-                             yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
-                                        showticklabels=FALSE,
-                                        fixedrange=TRUE),
-                             margin=list(l=0,
-                                         r=0,
-                                         b=0,
-                                         t=0,
-                                         pad=0),
-                             autosize=FALSE,
-                             plot_bgcolor='transparent',
-                             paper_bgcolor='transparent',
-                             showlegend=FALSE)
-
-                
-                if (type == 'sévérité') {
+                if (type() == 'sévérité') {
+                    # Create the name of the trend
+                    label = paste0(
+                        "<b>", trendC, " x ",
+                        "10<sup>", powerC, "</sup></b>", spaceC,
+                        " [m<sup>3</sup>.s<sup>-1</sup>.an<sup>-1</sup>]",
+                        "   <b>",
+                        trendMeanC, "</b> [%.an<sup>-1</sup>]")
                     
-                } else if (type == 'saisonnalité') {
-
+                    # If it is a date variable
+                } else if (type() == 'saisonnalité') {
+                    # Create the name of the trend
+                    label = paste0(
+                        "<b>", trendC, " x ",
+                        "10<sup>", powerC, "</sup></b>", spaceC,
+                        " [jour.an<sup>-1</sup>]")
                 }
-
-                label = paste0("<b>", label, "</b>")
                 
                 fig = add_annotations(fig,
-                                      x=Xlab,
-                                      y=Ylab,
+                                      x=0.01,
+                                      y=1.01,
+                                      xref="paper",
+                                      yref="paper",
                                       text=label,
                                       showarrow=FALSE,
                                       xanchor='left',
-                                      font=list(color=grey40COL,
+                                      yanchor='bottom',
+                                      font=list(color=color,
                                                 size=12))
 
+                fig = add_annotations(fig,
+                                      x=0.01,
+                                      y=1.13,
+                                      xref="paper",
+                                      yref="paper",
+                                      text=paste0("<b>",
+                                                  code,
+                                                  "</b> - ",
+                                                  name),
+                                      showarrow=FALSE,
+                                      xanchor='left',
+                                      yanchor='bottom',
+                                      font=list(color=INRAECyanCOL,
+                                                size=12))
+
+                # If it is a flow variable
+                if (type() == 'sévérité') {
+                    title = paste0("<b> ", var(), "</b>",
+                                   " ", "[m<sup>3</sup>.s<sup>-1</sup>]")
+
+                } else if (type() == 'saisonnalité') {
+                    title = paste0("<b> ", var(), "</b>",
+                                   " ", "[jour]")
+                }
                 
-                # fig = config(fig,
-                #              displaylogo=FALSE,
-                #              displayModeBar=FALSE,
-                #              doubleClick=FALSE)                
+                fig = layout(fig,
+                             
+                             xaxis=list(range=period(),
+                                        showgrid=FALSE,
+                                        ticks="outside",
+                                        tickcolor=grey75COL,
+                                        tickfont=list(color=grey40COL),
+                                        showline=TRUE,
+                                        linewidth=2,
+                                        linecolor=grey85COL,
+                                        mirror=TRUE),
+                             
+                             yaxis=list(
+                                 title=list(text=paste0(title,
+                                                        "\n&nbsp;"),
+                                            font=list(color=grey20COL)),
+                                 showgrid=FALSE,
+                                 ticks="outside",
+                                 tickcolor=grey75COL,
+                                 tickfont=list(color=grey40COL),
+                                 showline=TRUE,
+                                 linewidth=2,
+                                 linecolor=grey85COL,
+                                 mirror=TRUE,
+                                 fixedrange=TRUE),
+                             
+                             margin=list(l=0,
+                                         r=0,
+                                         b=0,
+                                         t=30,
+                                         pad=0),
+                             autosize=FALSE,
+                             plot_bgcolor=grey97COL,
+                             paper_bgcolor='transparent',
+                             showlegend=FALSE)
+
+                if (type() == 'sévérité') {
+                    fig = layout(fig,
+                                 yaxis=list(rangemode="tozero"))
+                    
+                } else if (type() == 'saisonnalité') {
+                    fig = layout(fig,
+                                 yaxis=list(tickformat="%b"))
+                }
+                
+                fig = config(fig,
+                             displaylogo=FALSE,
+                             toImageButtonOptions =
+                                 list(format="svg"),
+                             modeBarButtonsToRemove =
+                                 list("lasso2d",
+                                      "select2d",
+                                      "drawline",
+                                      "zoom2d",
+                                      "drawrect",
+                                      "autoScale2d",
+                                      "hoverCompareCartesian",
+                                      "hoverClosestCartesian")
+                             )
+                
                 fig
             })
         }

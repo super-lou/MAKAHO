@@ -512,10 +512,6 @@ get_trendExtremes = function (df_data, df_trend, type,
     minValue = quantile(value, minQprob, na.rm=TRUE)
     maxValue = quantile(value, maxQprob, na.rm=TRUE)
 
-    print(value)
-    print(minValue)
-    print(maxValue)
-
     res = list(value=value, min=minValue, max=maxValue)
     return (res)
 }
