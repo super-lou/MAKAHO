@@ -26,11 +26,14 @@
 # R/marker_manager.R
 
 
-save_marker = function (y, shape, color, fill, size, stroke, outdir, ...) {
+save_marker = function (y, shape, color, fill, size, sizeName,
+                        svgSize, stroke, outdir, ...) {
 
-    filename = paste0(shape, '_',
+    filename = paste0(sizeName, '_',
+                      shape, '_',
                       color, '_',
-                      fill, '.svg')
+                      fill,
+                      '.svg')
     
     p = ggplot() + theme_void() +
         geom_point(aes(x=0, y=y),
@@ -48,11 +51,11 @@ save_marker = function (y, shape, color, fill, size, stroke, outdir, ...) {
     ggsave(plot=p,
            path=outdir,
            filename=filename,
-           width=100, height=100, units='px') # 100 px = 24 pt
+           width=svgSize, height=svgSize, units='px') # 100 px = 24 pt
     return (filename)
 }
 
-create_marker = function (shapeList, colorList, strokeList, fillPalette, shapeSizes, resources_path, filedir='marker', colors=256, size=1, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
+create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, sizeList, strokeSizeList, nameSizeList, svgSizeList, fillPalette, resources_path, filedir='marker', colors=256, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
 
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
@@ -66,8 +69,8 @@ create_marker = function (shapeList, colorList, strokeList, fillPalette, shapeSi
         dir.create(outdir)
     }
 
+    nSize = length(sizeList)
     nShape = length(shapeList)
-    Sizes = shapeSizes*size
     if (length(relY) != nShape) {
         relY = rep(relY[1], times=nShape)
     }
@@ -81,32 +84,41 @@ create_marker = function (shapeList, colorList, strokeList, fillPalette, shapeSi
     nAdd = length(fillAdd)
     
     Urls = c()
-    for (i in 1:nShape) {
-        y = relY[i]
-        shape = shapeList[i]
-        size = Sizes[i]
+    for (l in 1:nSize) {
+        Sizes = sizeList[l]*sizeShapeList
+        strokeSize = strokeSizeList[l]
+        sizeName = nameSizeList[l]
+        svgSize = svgSizeList[l]
+        
+        for (i in 1:nShape) {
+            y = relY[i]
+            shape = shapeList[i]
+            size = Sizes[i]
 
-        for (j in 1:nColor) {
-            color = colorList[j]
-            stroke = strokeList[j]
-            
-            for (k in 1:nFill) {
-                fill = fillList[k]
+            for (j in 1:nColor) {
+                color = colorList[j]
+                stroke = strokeColorList[j]*strokeSize
+                
+                for (k in 1:nFill) {
+                    fill = fillList[k]
+                    filename = save_marker(y, shape, color, fill,
+                                           size, sizeName, svgSize,
+                                           stroke, outdir, ...)
+                    Urls = c(Urls, file.path(outdir, filename))
+                }
+            }
+
+            for (marker in markerAdd) {
+                color = marker['color']
+                fill = marker['fill']
+                stroke = as.numeric(marker['stroke'])*strokeSize
                 filename = save_marker(y, shape, color, fill,
-                                       size, stroke, outdir, ...)
+                                       size, sizeName, svgSize,
+                                       stroke, outdir, ...)
                 Urls = c(Urls, file.path(outdir, filename))
             }
         }
-
-        for (marker in markerAdd) {
-            color = marker['color']
-            fill = marker['fill']
-            stroke = as.numeric(marker['stroke'])
-            filename = save_marker(y, shape, color, fill,
-                                   size, stroke, outdir, ...)
-            Urls = c(Urls, file.path(outdir, filename))
-        }
-    }   
+    }
     
     return (Urls)
 }
@@ -131,19 +143,23 @@ create_marker = function (shapeList, colorList, strokeList, fillPalette, shapeSi
 #     )
 
 # create_marker(shapeList=c(21, 24, 25),
+#               sizeShapeList=c(6, 7, 7),
 #               colorList=c(validColor, invalidColor),
-#               strokeList=c(0.8, 1),
+#               strokeColorList=c(0.8, 1),
+#               sizeList=c(0.8, 1.2),
+#               strokeSizeList=c(1, 1.4),
+#               nameSizeList=c('small', 'big'),
+#               svgSizeList=c(100, 125),
 #               fillPalette=Palette,
-#               shapeSizes=c(6, 7, 7),
 #               resources_path=resources_path,
 #               filedir='marker',
 #               colors=colors,
-#               size=0.8,
 #               relY=c(0, -0.02, 0.02),
 #               markerAdd=markerAdd)
 
 
-get_marker = function (shape, color, fill, resources_path, filedir) {
+get_marker = function (size, shape, color, fill,
+                       resources_path, filedir) {
 
     if (shape == 'o') {
         shape = 21
@@ -153,20 +169,20 @@ get_marker = function (shape, color, fill, resources_path, filedir) {
         shape = 25
     }
     
-    filename = paste0(shape, '_', color, '_', fill, '.svg')
+    filename = paste0(size, '_', shape, '_', color, '_', fill, '.svg')
     marker = makeIcon(file.path(resources_path, filedir, filename))
     return (marker)
 }
 
 
-get_markerList = function (shapeList, colorList, fillList, resources_path, filedir='marker', width=20) {
+get_markerList = function (sizeList, shapeList, colorList, fillList, resources_path, filedir='marker', width=20) {
 
     nMark = length(fillList)
     
     markerList = list()
     for (i in 1:nMark) {
-        marker = get_marker(shapeList[i], colorList[i], fillList[i],
-                            resources_path, filedir)
+        marker = get_marker(sizeList[i], shapeList[i], colorList[i],
+                            fillList[i], resources_path, filedir)
         markerList = append(markerList, marker)
     }
     # Not possible to resize with svg but 32 is the default

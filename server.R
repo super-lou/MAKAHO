@@ -53,6 +53,7 @@ server = function (input, output, session) {
                         maxValue=NULL,
                         helpPage=NULL,
                         helpPage_prev=NULL,
+                        sizeList=NULL,
                         shapeList=NULL,
                         colorList=NULL,
                         fillList=NULL,
@@ -239,6 +240,11 @@ server = function (input, output, session) {
         if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
 
             trendCode = df_Xtrend()$code
+
+            sizeList = rep('small', nCodeAll())
+            sizeList[match(rv$codeClick, CodeAll())] = 'big'
+
+            rv$sizeList = sizeList
             
             OkS = df_Xtrend()$p <= input$alpha_choice
             CodeSU = trendCode[OkS & df_Xtrend()$trend >= 0]
@@ -292,12 +298,14 @@ server = function (input, output, session) {
             
             
         } else {
+            sizeList = rep('small', nCodeAll())
             shapeList = rep('o', nCodeAll())                        
             colorList = rep(none1Color, nCodeAll())            
             fillList = rep(none2Color, nCodeAll())
         }
         
-        get_markerList(shapeList,
+        get_markerList(sizeList,
+                       shapeList,
                        colorList,
                        fillList,
                        resources_path)
@@ -874,7 +882,30 @@ server = function (input, output, session) {
 
 ### 2.6. Trend plot __________________________________________________
     observeEvent(input$map_marker_click, {
-        rv$codeClick = input$map_marker_click$id
+
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode) {
+        
+            if (!is.null(input$map_marker_click) & !is.null(rv$codeClick)) {
+                if (input$map_marker_click$id == rv$codeClick) {
+
+                    map = leafletProxy("map")
+                    map = fitBounds(map,
+                                    lng1=defaultLimits()$east,
+                                    lat1=defaultLimits()$south,
+                                    lng2=defaultLimits()$west,
+                                    lat2=defaultLimits()$north,
+                                    options=list(padding=c(20, 20)))
+                    
+                    rv$codeClick = NULL
+                    hide(id='plot_panel')
+                    
+                } else {
+                    rv$codeClick = input$map_marker_click$id
+                }
+            } else {
+                rv$codeClick = input$map_marker_click$id
+            }
+        }
     })
 
     observeEvent(rv$codeClick, {
@@ -888,7 +919,7 @@ server = function (input, output, session) {
                         lng1=Lon+1,
                         lat1=Lat+1,
                         lng2=Lon-1,
-                        lat2=Lat-1,
+                        lat2=Lat-2,
                         options=list(padding=c(20, 20)))
     })
 
@@ -1145,7 +1176,6 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$closePlot_button, {
-
         map = leafletProxy("map")
         map = fitBounds(map,
                         lng1=defaultLimits()$east,

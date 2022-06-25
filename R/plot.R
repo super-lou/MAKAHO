@@ -136,11 +136,15 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
 
     Xlab = rep(1.2, colors)
     Ylab = bin / max(bin)
-    
+
+    ncharLim = 4
     if (type == 'sévérité') {
-        label = round(bin*100, 1)
+        label2 = signif(bin*100, 2)
+        label1 = signif(bin*100, 1)
+        label = label2
+        label[nchar(label2) > ncharLim] = label1[nchar(label2) > ncharLim]
     } else if (type == 'saisonnalité') {
-        label = round(bin, 1)
+        label = signif(bin, 2)
     }
 
     label = paste0("<b>", label, "</b>")

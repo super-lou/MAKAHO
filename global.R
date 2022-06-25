@@ -47,7 +47,7 @@ library(ggh4x)
 library(plotly)
 
 
-# Sourcing R filesœ
+# Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')
 source(file.path('R', 'plot.R'), encoding='UTF-8')
 source(file.path('R', 'color_manager.R'), encoding='UTF-8')
