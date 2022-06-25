@@ -127,9 +127,7 @@ ui = bootstrapPage(
             width=500, height=200,
             bottom=10,
             
-            div(style="position: absolute;
-                       margin-bottom: 10px; margin-top: 10px;
-                       margin-left: 10px; margin-right: 10px;",
+            div(style="position: absolute; margin: 10px;",
                 plotlyOutput("trend_plot")),
             
             div(Button(class="Button-icon",
@@ -442,12 +440,27 @@ ui = bootstrapPage(
                     radioButton(class="radioButton",
                                 inputId="colorbar_choice",
                                 choiceNames=
-                                    list(word("c.cb.show"),
-                                         word("c.cb.none")),
+                                    list(word("c.show"),
+                                         word("c.none")),
+                                choiceValues=
+                                    list("show", "none"),
+                                selected="show"))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("c.resume"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioButton(class="radioButton",
+                                inputId="resume_choice",
+                                choiceNames=
+                                    list(word("c.show"),
+                                         word("c.none")),
                                 choiceValues=
                                     list("show", "none"),
                                 selected="show")))
-            
         )
     ),
 
@@ -458,9 +471,31 @@ ui = bootstrapPage(
             fixed=TRUE,
             width=75, height=270,
             right=0, bottom=100,
-            tags$div(style="margin-bottom: 10px; margin-top: 10px;
-                            margin-left: 10px; margin-right: 10px;",
-                     plotlyOutput("colorbar_plot"))
+            
+            div(style="margin: 10px;",
+                plotlyOutput("colorbar_plot"))
+        )
+    ),
+
+    hidden(
+        absolutePanel(
+            id='resume_panel',
+            class="Panel card-insert-r",
+            fixed=TRUE,
+            width=120, height=150,
+            top=100, right=0,
+            
+            div(class="card-insert-text",
+                
+                h4(class="no-margin-v",
+                   HTML(paste0(
+                       "<b>", textOutput("var"), "</b>"
+                   ))),
+                
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       textOutput("name")
+                   ))))
         )
     ),
 

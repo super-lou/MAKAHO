@@ -139,14 +139,16 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
 
     ncharLim = 4
     if (type == 'sévérité') {
-        label2 = signif(bin*100, 2)
-        label1 = signif(bin*100, 1)
-        label = label2
-        label[nchar(label2) > ncharLim] = label1[nchar(label2) > ncharLim]
+        labelRaw = bin*100
     } else if (type == 'saisonnalité') {
-        label = signif(bin, 2)
+        labelRaw = bin
     }
-
+    label2 = signif(labelRaw, 2)
+    label2[label2 >= 0] = paste0(" ", label2[label2 >= 0])
+    label1 = signif(labelRaw, 1)
+    label1[label1 >= 0] = paste0(" ", label1[label1 >= 0])
+    label = label2        
+    label[nchar(label2) > ncharLim] = label1[nchar(label2) > ncharLim]
     label = paste0("<b>", label, "</b>")
     
     fig = add_annotations(fig,

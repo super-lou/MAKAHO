@@ -749,9 +749,15 @@ server = function (input, output, session) {
             input$var_choice
         }
     })
+    output$var = renderText({
+        var()
+    })
 
     name = reactive({
         Var$name[Var$var == var()]
+    })
+    output$name = renderText({
+        name()
     })
 
     type = reactive({
@@ -823,7 +829,7 @@ server = function (input, output, session) {
         } else {
             NULL
         }
-    })    
+    })
 
 ### 2.4. Period ______________________________________________________
     period = reactive({
@@ -1220,6 +1226,15 @@ server = function (input, output, session) {
                               colors=colors,
                               reverse=reverse)
             })
+        }
+    })
+
+### 3.3. Resume panel ________________________________________________
+    observeEvent(input$resume_choice, {
+        if (input$resume_choice == 'show') {
+            showElement(id="resume_panel")
+        } else if (input$resume_choice == 'none') {
+            hide(id="resume_panel")
         }
     })
 

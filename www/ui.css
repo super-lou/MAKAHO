@@ -114,6 +114,25 @@
     margin: 0 !important;
 }
 
+.card-insert-text {
+    background-color: transparent !important;
+    height: auto !important;
+    width: auto !important;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translate(0, -50%) !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    padding: 0 !important;
+    color: #00a3a6 !important;
+}
+
+.no-margin-v {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
 
 body {
     margin: 0;
