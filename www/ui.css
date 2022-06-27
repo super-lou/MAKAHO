@@ -68,7 +68,6 @@
     border-radius: 0.5rem 0 0 0.5rem !important;
 }
 
-
 .card-bar-l,
 .card-smallbar-l,
 .card-bar-r,
@@ -116,13 +115,8 @@
 
 .card-insert-text {
     background-color: transparent !important;
-    height: auto !important;
-    width: auto !important;
-    position: absolute !important;
-    top: 50% !important;
-    transform: translate(0, -50%) !important;
-    margin-top: auto !important;
-    margin-bottom: auto !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
     margin-left: 10px !important;
     margin-right: 10px !important;
     padding: 0 !important;

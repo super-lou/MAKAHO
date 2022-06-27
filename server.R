@@ -44,6 +44,7 @@ server = function (input, output, session) {
                         clickMode=FALSE,
                         warningMode=TRUE,
                         dlClickMode=FALSE,
+                        photoMode=FALSE,
                         currentLimits=NULL,
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
@@ -61,6 +62,11 @@ server = function (input, output, session) {
                         )
 
     startOBS = observe({
+        showElement(id="zoom_panelButton")
+        showElement(id='ana_panelButton')
+        showElement(id='theme_panelButton')
+        showElement(id='photo_panelButton')
+        showElement(id='download_panelButton')
         showElement(id='help_panelButton')
         startOBS$destroy()
     })
@@ -435,7 +441,7 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$map_marker_click, {
-        if (rv$polyMode == 'false' & rv$clickMode & !rv$dlClickMode) {
+        if (rv$polyMode == 'false' & rv$clickMode & !rv$dlClickMode & !rv$photoMode) {
             codeClick = input$map_marker_click$id
             CodeSample = rv$CodeSample
             if (codeClick %in% CodeSample) {
@@ -514,7 +520,7 @@ server = function (input, output, session) {
     })
     
     observeEvent(input$map_click, {
-        if (rv$polyMode != 'false' & !rv$clickMode & !rv$dlClickMode) {
+        if (rv$polyMode != 'false' & !rv$clickMode & !rv$dlClickMode & !rv$photoMode) {
             rv$polyCoord = bind_rows(rv$polyCoord,
                                      tibble(lng=input$map_click$lng,
                                             lat=input$map_click$lat))
@@ -832,7 +838,7 @@ server = function (input, output, session) {
     })
 
 ### 2.4. Period ______________________________________________________
-    period = reactive({
+    periodB = reactive({
         month = which(Months == input$dateMonth_slider)
         monthStart = formatC(month, width=2, flag=0)
         monthEnd = formatC((month-2)%%12+1, width=2, flag=0)
@@ -847,15 +853,32 @@ server = function (input, output, session) {
                             sep='-')) - 1
         c(Start, End)
     })
-    period = debounce(period, 1000)
+    period = debounce(periodB, 1000)
 
     output$period = renderText({
-        start = format(period()[1], "%d-%m-%Y")
-        end = format(period()[2], "%d-%m-%Y")
+        start = format(periodB()[1], "%d/%m/%Y")
+        end = format(periodB()[2], "%d/%m/%Y")
         paste0('Du ', start, ' au ', end)
     })
+
+    output$period_resume = renderText({
+        start = format(period()[1], "%Y")
+        end = format(period()[2], "%Y")
+        paste0('Période ', start, ' - ', end)
+    })
+    
     
 ### 2.5. Trend analysis ______________________________________________
+    # output$confiance = renderText({
+    #     confiance = round(100 -  as.numeric(input$alpha_choice)*100)
+    #     paste0('Niveau de confiance de ', confiance, '%')
+    # })
+
+    output$significativite = renderText({
+        paste0('Significativité de ',
+               as.numeric(input$alpha_choice)*100, '%')
+    })
+
     df_Xtrend = reactive({
         if (!is.null(df_XEx())) {            
             Estimate_stats_WRAP(df_XEx=df_XEx(),
@@ -1230,8 +1253,11 @@ server = function (input, output, session) {
     })
 
 ### 3.3. Resume panel ________________________________________________
-    observeEvent(input$resume_choice, {
-        if (input$resume_choice == 'show') {
+    observeEvent({
+        input$resume_choice
+        df_Xtrend()
+    }, {
+        if (input$resume_choice == 'show' & !is.null(df_Xtrend())) {
             showElement(id="resume_panel")
         } else if (input$resume_choice == 'none') {
             hide(id="resume_panel")
@@ -1248,32 +1274,33 @@ server = function (input, output, session) {
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    observe({
-        delay(100,
-              runjs(
-'$("#colorbar_panel").insertAfter($("#map_div .leaflet-pane.leaflet-map-pane"));
-$("#colorbar_panel").css("position", "absolute");
-$("#colorbar_panel").css("z-index", "999");')
-        )
-    })
-
     observeEvent(input$photo_button, {
-        toggleOnly(id="photo_bar")
+        hide(id="zoom_panelButton")
+        hide(id="ana_panelButton")
+        hide(id="theme_panelButton")
+        hide(id="photo_panelButton")
+        hide(id="download_panelButton")
+        hide(id="help_panelButton")
+
+        hideAll()
+        
         deselect_mode(session, rv)
+        rv$photoMode = TRUE
     })
 
-    observeEvent(input$photoA4l_button, {
-        hide(id='photo_bar')
-        map = leafletProxy("map")
-        easyprintMap(map, sizeModes="A4Landscape", dpi=300)
-    })
-
-    observeEvent(input$photoA4p_button, {
-        hide(id='photo_bar')
-        map = leafletProxy("map")
-        easyprintMap(map, sizeModes="A4Portrait", dpi=300)
+    observeEvent(input$map_click, {
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & rv$photoMode) {
+            showElement(id="zoom_panelButton")
+            showElement(id="ana_panelButton")
+            showElement(id="theme_panelButton")
+            showElement(id="photo_panelButton")
+            showElement(id="download_panelButton")
+            showElement(id="help_panelButton")
+            rv$photoMode = FALSE
+        }
     })
     
+
 ### 5.2. Download ____________________________________________________
     observeEvent(input$download_button, {
         toggleOnly(id="download_bar")
@@ -1310,7 +1337,7 @@ $("#colorbar_panel").css("z-index", "999");')
 
 
     observeEvent(input$map_marker_click, {
-        if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode) {
+        if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode & !rv$photoMode) {
             codeClick = input$map_marker_click$id
 
             output$downloadData = downloadHandler(

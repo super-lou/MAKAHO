@@ -93,27 +93,31 @@ ui = bootstrapPage(
 
 ### 1.2. Zoom ________________________________________________________
     hidden(
-        fixedPanel(id='focusZoom_panelButton',
-                   left=10, top=10,
-                   width="auto", height="auto",
-                   Button(class="SmallButton-menu",
-                          inputId='focusZoom_button',
-                          label=NULL,
-                          icon_name=iconLib$focus_white,
-                          tooltip=word("tt.z.focus"))
-                   )
-    ),
-    
-    hidden(
-        fixedPanel(id='defaultZoom_panelButton',
-                   left=10, top=10,
-                   width="auto", height="auto",
-                   Button(class="SmallButton-menu",
-                          inputId='defaultZoom_button',
-                          label=NULL,
-                          icon_name=iconLib$default_white,
-                          tooltip=word("tt.z.default"))
-                   )
+        fixedPanel(id="zoom_panelButton",
+            hidden(
+                fixedPanel(id='focusZoom_panelButton',
+                           left=10, top=10,
+                           width="auto", height="auto",
+                           Button(class="SmallButton-menu",
+                                  inputId='focusZoom_button',
+                                  label=NULL,
+                                  icon_name=iconLib$focus_white,
+                                  tooltip=word("tt.z.focus"))
+                           )
+            ),
+            
+            hidden(
+                fixedPanel(id='defaultZoom_panelButton',
+                           left=10, top=10,
+                           width="auto", height="auto",
+                           Button(class="SmallButton-menu",
+                                  inputId='defaultZoom_button',
+                                  label=NULL,
+                                  icon_name=iconLib$default_white,
+                                  tooltip=word("tt.z.default"))
+                           )
+            )
+        )
     ),
 
     
@@ -141,16 +145,19 @@ ui = bootstrapPage(
     ),
 
 ### 2.1. Panel button ________________________________________________
-    fixedPanel(left=10, bottom=10,
-               width="auto", height="auto",
-               Button(class="Button-menu",
+    hidden(
+        fixedPanel(id='ana_panelButton',
+                   left=10, bottom=10,
+                   width="auto", height="auto",
+                   Button(class="Button-menu",
                       inputId='ana_button',
                       label=HTML(paste0("<b>",
                                         word("ana.title"),
                                         "</b>")),
                       icon_name=iconLib$show_chart_white,
                       tooltip=word("tt.ana.title"))
-               ),
+                   )
+    ),
     
 ### 2.2. Panel _______________________________________________________
     hidden(
@@ -384,14 +391,17 @@ ui = bootstrapPage(
 
 ## 3. CUSTOMIZATION __________________________________________________
 ### 3.1. Panel button ________________________________________________
-    fixedPanel(left=116, bottom=10,
-               width="auto", height="auto",
-               Button(class="Button-menu",
-                      inputId='theme_button',
-                      label=NULL,
-                      icon_name=iconLib$menu_white,
-                      tooltip=word("tt.c.title"))
-               ),
+    hidden(
+        fixedPanel(id='theme_panelButton',
+                   left=116, bottom=10,
+                   width="auto", height="auto",
+                   Button(class="Button-menu",
+                          inputId='theme_button',
+                          label=NULL,
+                          icon_name=iconLib$menu_white,
+                          tooltip=word("tt.c.title"))
+                   )
+    ),
     
 ### 3.2. Panel _______________________________________________________
     hidden(
@@ -468,22 +478,25 @@ ui = bootstrapPage(
         absolutePanel(
             id="colorbar_panel",
             class="Panel card-insert-r",
+            style="transform: translate(0, 50%);",
             fixed=TRUE,
             width=75, height=270,
-            right=0, bottom=100,
+            right=0, bottom="30%",
             
             div(style="margin: 10px;",
                 plotlyOutput("colorbar_plot"))
         )
     ),
 
+### 3.4. Resume button _______________________________________________
     hidden(
         absolutePanel(
             id='resume_panel',
             class="Panel card-insert-r",
+            style="transform: translate(0, -50%);",
             fixed=TRUE,
-            width=120, height=150,
-            top=100, right=0,
+            width=130, height="auto",
+            top="30%", right=0,
             
             div(class="card-insert-text",
                 
@@ -491,18 +504,38 @@ ui = bootstrapPage(
                    HTML(paste0(
                        "<b>", textOutput("var"), "</b>"
                    ))),
+
+                hr(style="margin-top: 0.1rem;
+                          margin-bottom: 0.1rem;
+                          border-top: 2px solid #00a3a6;"),
                 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
-                       textOutput("name")
-                   ))))
+                       "<b>", textOutput("name"), "</b>"
+                   ))),
+
+                hr(style="margin-top: 0.1rem;
+                          margin-bottom: 0.1rem;
+                          border-top: 2px solid #00a3a6;"),
+
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       textOutput("period_resume")
+                   ))),
+                
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       textOutput("significativite")
+                   )))
+                )
         )
     ),
 
     
 ## 4. INFO ___________________________________________________________
 ### 4.1. Panel button ________________________________________________ 
-    fixedPanel(right=10, bottom=2,
+    fixedPanel(id="info_panelButton",
+               right=10, bottom=2,
                width="auto", height="auto",
                Button(class="Button-info",
                       inputId='info_button',
@@ -568,54 +601,30 @@ ui = bootstrapPage(
     
 ## 5. SAVE ___________________________________________________________
 ### 5.1. Screenshot __________________________________________________
-    fixedPanel(right=45, top=10,
-               width="auto", height="auto",
-               Button(class="SmallButton-menu",
-                      inputId='photo_button',
-                      label=NULL,
-                      icon_name=iconLib$photo_white,
-                      tooltip=word("tt.p.title"))
-               ),
-
     hidden(
-        absolutePanel(
-            id='photo_bar',
-            class="Panel card-bar-r",
-            fixed=TRUE, 
-            width="auto", height="auto",
-            right=0, top=62,
-
-            div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("p.format"),
-                                "</b></span>"))),
-                div(class="sep"),
-                div(class="bunch",
-
-                    Button(class="Button",
-                           inputId="photoA4l_button",
-                           label=word("p.format.A4l"),
-                           icon_name=iconLib$crop_landscape_white,
-                           tooltip=word("tt.p.format.A4l")),
-
-                    Button(class="Button",
-                           inputId="photoA4p_button",
-                           label=word("p.format.A4p"),
-                           icon_name=iconLib$crop_landscape_white,
-                           tooltip=word("tt.p.format.A4p"))))
-        )
+        fixedPanel(id='photo_panelButton',
+                   right=45, top=10,
+                   width="auto", height="auto",
+                   Button(class="SmallButton-menu",
+                          inputId='photo_button',
+                          label=NULL,
+                          icon_name=iconLib$photo_white,
+                          tooltip=word("tt.p.title"))
+                   )
     ),
     
 ### 5.2. Download ____________________________________________________
-    fixedPanel(right=10, top=10,
-               width="auto", height="auto",
-               Button(class="SmallButton-menu",
-                      inputId='download_button',
-                      label=NULL,
-                      icon_name=iconLib$download_white,
-                      tooltip=word("tt.d.title"))
-               ),
+    hidden(
+        fixedPanel(id='download_panelButton',
+                   right=10, top=10,
+                   width="auto", height="auto",
+                   Button(class="SmallButton-menu",
+                          inputId='download_button',
+                          label=NULL,
+                          icon_name=iconLib$download_white,
+                          tooltip=word("tt.d.title"))
+                   )
+    ),
 
     downloadLink("downloadData", label=""),
     tags$head(tags$script(HTML('Shiny.addCustomMessageHandler("jsCode",
