@@ -58,7 +58,9 @@ server = function (input, output, session) {
                         shapeList=NULL,
                         colorList=NULL,
                         fillList=NULL,
-                        codeClick=NULL
+                        codeClick=NULL,
+                        missCode=c(),
+                        invalidCode=c()
                         )
 
     startOBS = observe({
@@ -229,7 +231,13 @@ server = function (input, output, session) {
     })
 
 ### 1.3. Marker ______________________________________________________
-    markerListAll = reactive({
+    observeEvent({
+        input$theme_choice
+        df_Xtrend()
+        input$alpha_choice
+        invalidCode()
+        missCode()
+    }, {
 
         if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
             none1Color = none1Color_light
@@ -244,7 +252,7 @@ server = function (input, output, session) {
         }
         
         if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
-
+            
             trendCode = df_Xtrend()$code
 
             sizeList = rep('small', nCodeAll())
@@ -310,37 +318,88 @@ server = function (input, output, session) {
             fillList = rep(none2Color, nCodeAll())
         }
         
-        get_markerList(sizeList,
-                       shapeList,
-                       colorList,
-                       fillList,
-                       resources_path)
+        rv$markerListAll = get_markerList(sizeList,
+                                          shapeList,
+                                          colorList,
+                                          fillList,
+                                          resources_path)
     })
+
+
+    
 
     
     observeEvent({
         input$theme_choice
         input$alpha_choice
         df_meta()
-        markerListAll()
+        rv$markerListAll
     }, {
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
             okCode = rep(TRUE, nCodeAll())
         } else {
-            okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+            okCode = unlist(rv$markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
         rv$theme_choice_save = input$theme_choice
 
         Code = CodeAll()[okCode]
-        markerList = markerListAll()
-        markerList$iconUrl = markerListAll()$iconUrl[okCode]
+        markerList = rv$markerListAll
+        markerList$iconUrl = rv$markerListAll$iconUrl[okCode]
         Lon = df_meta()$lon[okCode]
         Lat = df_meta()$lat[okCode]
         Nom = df_meta()$nom[okCode]
+        Sup = df_meta()$surface_km2_BH[okCode]
+        Alt = df_meta()$altitude_m_BH[okCode]
         
-        label = get_label(Lon, Lat, Code, Nom)
+        if (!is.null(df_XEx()) & !is.null(df_Xtrend())) {            
+            trendLabel = sapply(Code, get_trendLabel,
+                                df_XEx=df_XEx(),
+                                df_Xtrend=df_Xtrend(),
+                                type=type())
+        } else {
+            trendLabel = NA
+        }
+        Br = rep("<br>", times=length(Code))
+        Br[is.na(trendLabel)] = ""
+        trendLabel[is.na(trendLabel)] = ""
+
+        trendColor = rv$fillList[match(Code, CodeAll())]
+        
+        n = 4
+        label = paste0(
+            '<b style="color:#00a3a6">', Code," </b>", ' - ',
+            '<span style="color:#00a3a6">', Nom," </span>",
+            '<br>',
+            '<span style="color:',  trendColor,'">', trendLabel, "</span>",
+            Br,
+
+            '<table>',
+            "<tr>",
+            "<td>",
+            '<b style="color:',  grey20COL,'">',
+            word('m.hov.lat'), " : ", format(signif(Lat, n), nsmall=n), "</b>",
+            "&emsp;", "</td>",
+            "<td>",
+            '<b style="color:',  grey20COL,'">',
+            word('m.hov.sup'), " : ", round(Sup),
+            " km<sup>2</sup></b>",
+            "</td>",
+            "</tr>",
+
+            "<tr>",
+            "<td>",
+            '<b style="color:',  grey20COL,'">',
+            word('m.hov.lon'), " : ", format(signif(Lon, n), nsmall=n), "</b>",
+            "&emsp;", "</td>",
+            "<td>",
+            '<b style="color:',  grey20COL,'">',
+            word('m.hov.alt'), " : ", round(Alt), " m</b>",
+            "</td>",
+            "</tr>",
+            "</table>"
+        )
 
         map = removeMarker(map, layerId=Code)
         map = addMarkers(map,
@@ -350,7 +409,7 @@ server = function (input, output, session) {
                          label=lapply(label, HTML),
                          layerId=Code)
 
-        rv$markerListAll_save = markerListAll()
+        rv$markerListAll_save = rv$markerListAll
     })    
     
 
@@ -390,9 +449,16 @@ server = function (input, output, session) {
     rv$CodeSample = isolate(CodeAll())
     rv$CodeSample_save = isolate(CodeAll())
     rv$theme_choice_save = isolate(input$theme_choice)
+
+
     
     CodeSampleB = reactive({
 
+        # print(period())
+        # print(rv$CodeSample)
+        # print(missCode())
+        # print("")
+        
         if (!rv$warningMode) {
             CodeSample = rv$CodeSample[!(rv$CodeSample %in% missCode()) &
                                        !(rv$CodeSample %in% invalidCode())]
@@ -578,13 +644,45 @@ server = function (input, output, session) {
     })
 
 #### 2.2.4. Warning __________________________________________________
-    observe({
+    observe({        
         if (!is.null(input$warning_select)) {
             rv$warningMode = TRUE
         } else {
             rv$warningMode = FALSE
         }
     })
+
+    observeEvent({
+        df_Xtrend()
+        period()
+    }, {
+
+        print(period())
+        print('change')
+        
+        if (!is.null(df_Xtrend())) {
+            rv$missCode = CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
+        } else {
+            rv$missCode = c()
+        }
+        
+        if (!is.null(df_Xtrend())) {
+            analyseStart = df_Xtrend()$period_start
+            analyseStart[analyseStart < period()[1]] = period()[1]
+            analyseEnd = df_Xtrend()$period_end
+            analyseEnd[analyseEnd > period()[2]] = period()[2]
+            analysePeriod = (analyseEnd - analyseStart)/365.25
+            rv$invalidCode = df_Xtrend()$code[analysePeriod < analyseMinYear]
+        } else {
+            rv$invalidCode = c()
+        }
+    })
+
+    missCodeB = reactive({rv$missCode})
+    missCode = debounce(missCodeB, 10)
+
+    invalidCodeB = reactive({rv$invalidCode})
+    invalidCode = debounce(invalidCodeB, 10)
 
 #### 2.2.5. Search ___________________________________________________
     meta_location = reactive({
@@ -745,7 +843,6 @@ server = function (input, output, session) {
                           choiceNames=var_event,
                           choiceTooltips=name_event,
                           selected=var_event[1])
-        
     })
 
     var = reactive({
@@ -826,6 +923,12 @@ server = function (input, output, session) {
 
     df_XEx = reactive({
         if (!is.null(filename()) & !is.null(CodeSample())) {
+
+
+            # ///!!!!!!\\\ IL FAUT FAIRE MISS ET INVALID ICI
+
+
+            
             df_XExtmp = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
             Start = period()[1]
             End = period()[2]
@@ -881,33 +984,70 @@ server = function (input, output, session) {
 
     df_Xtrend = reactive({
         if (!is.null(df_XEx())) {            
-            Estimate_stats_WRAP(df_XEx=df_XEx(),
-                                dep_option='AR1')
+            df_Xtrend = Estimate_stats_WRAP(df_XEx=df_XEx(),
+                                            dep_option='AR1')
         } else {
-            NULL
+            df_Xtrend = NULL
         }
+        df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
+
+        print(period())
+        print(df_Xtrend)
+
+        df_Xtrend
     })
 
-    missCode = reactive({
+  
+    observeEvent({
+        df_Xtrend()
+        period()
+    }, {
         if (!is.null(df_Xtrend())) {
-            CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
+            rv$missCode = CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
         } else {
-            c()
+            rv$missCode = c()
         }
-    })
-
-    invalidCode = reactive({        
+                
         if (!is.null(df_Xtrend())) {
             analyseStart = df_Xtrend()$period_start
             analyseStart[analyseStart < period()[1]] = period()[1]
             analyseEnd = df_Xtrend()$period_end
             analyseEnd[analyseEnd > period()[2]] = period()[2]
             analysePeriod = (analyseEnd - analyseStart)/365.25
-            df_Xtrend()$code[analysePeriod < analyseMinYear]
+            rv$invalidCode = df_Xtrend()$code[analysePeriod < analyseMinYear]
         } else {
-            c()
+            rv$invalidCode = c()
         }
-    })  
+    })
+
+    # missCode = reactive({
+    #     if (!is.null(df_Xtrend())) {
+    #         CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
+    #     } else {
+    #         c()
+    #     }
+    # })
+
+    # invalidCode = reactive({   
+    #     if (!is.null(df_Xtrend())) {
+    #         analyseStart = df_Xtrend()$period_start
+    #         analyseStart[analyseStart < period()[1]] = period()[1]
+    #         analyseEnd = df_Xtrend()$period_end
+    #         analyseEnd[analyseEnd > period()[2]] = period()[2]
+    #         analysePeriod = (analyseEnd - analyseStart)/365.25
+    #         df_Xtrend()$code[analysePeriod < analyseMinYear]
+    #     } else {
+    #         c()
+    #     }
+    # })
+
+    # missCode = reactive({
+    #     c()
+    # })
+
+    # invalidCode = reactive({   
+    #     c()
+    # })  
 
 ### 2.6. Trend plot __________________________________________________
     observeEvent(input$map_marker_click, {
@@ -1028,14 +1168,7 @@ server = function (input, output, session) {
                                 y=ord,
                                 line=list(color=color, width=3),
                                 hoverinfo="none")
-
                 
-                # Computes the mean of the data on the period
-                dataMean = mean(df_XEx_code$Value,
-                                na.rm=TRUE)
-                   
-                # Gets the trend
-                trend = df_Xtrend_code$trend
                 # Gets the p value
                 pVal = df_Xtrend_code$p
 
@@ -1047,68 +1180,18 @@ server = function (input, output, session) {
                     colorLabel = 'grey85'
                 }
 
-                # Computes the mean trend
-                trendMean = trend/dataMean
-                # Computes the magnitude of the trend
-                power = get_power(trend)
-                # Converts it to character
-                powerC = as.character(power)
-                # If the power is positive
-                if (power >= 0) {
-                    # Adds a space in order to compensate for the minus
-                    # sign that sometimes is present for the other periods
-                    spaceC = '  '
-                    # Otherwise
-                } else {
-                    # No space is added
-                    spaceC = ''
-                }
-
-                # Gets the power of ten of magnitude
-                brk = 10^power
-                # Converts trend to character for sientific expression
-                trendC = as.character(format(round(trend / brk, 2),
-                                             nsmall=2))
-                # If the trend is positive
-                if (trend >= 0) {
-                    # Adds two space in order to compensate for the minus
-                    # sign that sometimes is present for the other periods
-                    trendC = paste(' ', trendC, sep='')
-                }
-                # Converts mean trend to character
-                trendMeanC = as.character(format(round(trendMean*100, 2),
-                                                 nsmall=2))
-                if (trendMean >= 0) {
-                    # Adds two space in order to compensate for the minus
-                    # sign that sometimes is present for the other periods
-                    trendMeanC = paste(' ', trendMeanC, sep='')
-                }
-                
-                # If it is a flow variable
-                if (type() == 'sévérité') {
-                    # Create the name of the trend
-                    label = paste0(
-                        "<b>", trendC, " x ",
-                        "10<sup>", powerC, "</sup></b>", spaceC,
-                        " [m<sup>3</sup>.s<sup>-1</sup>.an<sup>-1</sup>]",
-                        "   <b>",
-                        trendMeanC, "</b> [%.an<sup>-1</sup>]")
-                    
-                    # If it is a date variable
-                } else if (type() == 'saisonnalité') {
-                    # Create the name of the trend
-                    label = paste0(
-                        "<b>", trendC, " x ",
-                        "10<sup>", powerC, "</sup></b>", spaceC,
-                        " [jour.an<sup>-1</sup>]")
-                }
+                trendLabel = get_trendLabel(code=rv$codeClick,
+                                            df_XEx=df_XEx(),
+                                            df_Xtrend=df_Xtrend(),
+                                            type=type(),
+                                            space=TRUE)
                 
                 fig = add_annotations(fig,
                                       x=0.01,
                                       y=1.01,
                                       xref="paper",
                                       yref="paper",
-                                      text=label,
+                                      text=trendLabel,
                                       showarrow=FALSE,
                                       xanchor='left',
                                       yanchor='bottom',
@@ -1328,11 +1411,61 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$dlSelec_button, {
+        outdir = file.path(computer_data_path, "zip")        
+        if (!(file.exists(outdir))) {
+            dir.create(outdir)
+        }
+        outfile = "fiches_stations.zip"
+        outpath = file.path(outdir, outfile)
         
+        files = file.path(computer_data_path, "pdf",
+                          paste0(CodeSample(), ".pdf"))
+        zip(zipfile=outpath, files=files, flags = '-r9Xj')
+
+        output$downloadData = downloadHandler(
+            filename = function () {
+                outfile
+            },
+            content = function (file) {
+                from = outpath
+                file.copy(from, file)
+            }
+        )
+        jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+        session$sendCustomMessage(type='jsCode',
+                                  list(value=jsinject))  
     })
 
     observeEvent(input$dlAll_button, {
-        
+        outdir = file.path(computer_data_path, "zip")        
+        if (!(file.exists(outdir))) {
+            dir.create(outdir)
+        }
+        outfile = "fiches_stations_ALL.zip"
+        outpath = file.path(outdir, outfile)
+
+        if (!(file.exists(outpath))) {
+            files = dir(file.path(computer_data_path, "pdf") ,
+                        full.names=TRUE)            
+            zip(zipfile=outpath, files=files, flags = '-r9Xj')
+        }
+
+        output$downloadData = downloadHandler(
+            filename = function () {
+                outfile
+            },
+            content = function (file) {
+                from = outpath
+                file.copy(from, file)
+            }
+        )
+        jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+        session$sendCustomMessage(type='jsCode',
+                                  list(value=jsinject))
     })
 
 

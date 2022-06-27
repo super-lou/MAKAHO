@@ -517,21 +517,6 @@ get_trendExtremes = function (df_data, df_trend, type,
 }
 
 
-get_label = function (Lon, Lat, Code, Nom) {
-    label = paste0(
-        "<b>", word('m.hov.lat'),". </b>",
-        signif(Lat, 6),
-        " / <b>", word('m.hov.lon'),". </b>",
-        signif(Lon, 6), '<br>',
-        "<b>", word('m.hov.code')," </b>",
-        Code, '<br>',
-        "<b>", word('m.hov.name')," </b>",
-        Nom, '<br>'
-    )
-    return (label)
-}
-
-
 ## 4. SHAPEFILE MANAGEMENT ___________________________________________
 #' @title Shapefiles loading
 #' @description  Generates a list of shapefiles to draw a hydrological

@@ -54,6 +54,7 @@ source(file.path('R', 'color_manager.R'), encoding='UTF-8')
 source(file.path('R', 'settings.R'), encoding='UTF-8')
 source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
 source(file.path('R', 'style.R'), encoding='UTF-8')
+source(file.path('R', 'server', 'short.R'), encoding='UTF-8')
 
 
 # Sourcing app
