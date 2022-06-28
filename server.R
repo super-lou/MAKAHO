@@ -33,9 +33,10 @@ server = function (input, output, session) {
     rv = reactiveValues(width=0,
                         height=0,
                         CodeSample=NULL,
+                        CodeSample_save=NULL,
+                        CodeSampleCheck=NULL,
                         CodeSearch=NULL,
                         markerListAll_save=NULL,
-                        CodeSample_save=NULL,
                         Search_save=NULL,
                         polyCoord=NULL,
                         theme_choice_save=NULL,
@@ -60,7 +61,11 @@ server = function (input, output, session) {
                         fillList=NULL,
                         codeClick=NULL,
                         missCode=c(),
-                        invalidCode=c()
+                        invalidCode=c(),
+                        badCode=c(),
+                        df_XExAll=NULL,
+                        df_XEx=NULL,
+                        df_XExSample=NULL
                         )
 
     startOBS = observe({
@@ -231,14 +236,7 @@ server = function (input, output, session) {
     })
 
 ### 1.3. Marker ______________________________________________________
-    observeEvent({
-        input$theme_choice
-        df_Xtrend()
-        input$alpha_choice
-        invalidCode()
-        missCode()
-    }, {
-
+    markerListAll = reactive({
         if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
             none1Color = none1Color_light
         } else if (input$theme_choice == 'dark') {
@@ -288,25 +286,27 @@ server = function (input, output, session) {
                                     type=type(),
                                     minQprob=0.01, maxQprob=0.99)
             
-            rv$value = res$value
+            rv$df_value = res$df_value
             rv$minValue = res$min
             rv$maxValue = res$max
 
-            fill = get_color(rv$value,
+
+            fill = get_color(rv$df_value$value,
                              rv$minValue,
                              rv$maxValue,
                              Palette=Palette,
                              colors=colors,
-                             reverse=reverse)
+                             reverse=reverse,
+                             noneColor=none2Color)
             
             fillList = rep(none2Color, nCodeAll())
-
-            valueCode = df_Xtrend()$code
-            okCode = valueCode %in% CodeSample()
-            valueCodeSample = valueCode[okCode]
-            fillSample = fill[okCode]
+            fillCode = rv$df_value$code
             
-            fillList[match(valueCodeSample, CodeAll())] = fillSample
+            okCodeSample = fillCode %in% CodeSample()
+            fillCodeSample = fillCode[okCodeSample]
+            fillSample = fill[okCodeSample]
+
+            fillList[match(fillCodeSample, CodeAll())] = fillSample
 
             rv$fillList = fillList
             
@@ -318,41 +318,37 @@ server = function (input, output, session) {
             fillList = rep(none2Color, nCodeAll())
         }
         
-        rv$markerListAll = get_markerList(sizeList,
-                                          shapeList,
-                                          colorList,
-                                          fillList,
-                                          resources_path)
+        get_markerList(sizeList,
+                       shapeList,
+                       colorList,
+                       fillList,
+                       resources_path)
     })
-
-
-    
-
     
     observeEvent({
         input$theme_choice
         input$alpha_choice
         df_meta()
-        rv$markerListAll
+        markerListAll()
     }, {
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
             okCode = rep(TRUE, nCodeAll())
         } else {
-            okCode = unlist(rv$markerListAll$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+            okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
         rv$theme_choice_save = input$theme_choice
 
         Code = CodeAll()[okCode]
-        markerList = rv$markerListAll
-        markerList$iconUrl = rv$markerListAll$iconUrl[okCode]
+        markerList = markerListAll()
+        markerList$iconUrl = markerListAll()$iconUrl[okCode]
         Lon = df_meta()$lon[okCode]
         Lat = df_meta()$lat[okCode]
         Nom = df_meta()$nom[okCode]
         Sup = df_meta()$surface_km2_BH[okCode]
         Alt = df_meta()$altitude_m_BH[okCode]
-        
+
         if (!is.null(df_XEx()) & !is.null(df_Xtrend())) {            
             trendLabel = sapply(Code, get_trendLabel,
                                 df_XEx=df_XEx(),
@@ -361,6 +357,7 @@ server = function (input, output, session) {
         } else {
             trendLabel = NA
         }
+
         Br = rep("<br>", times=length(Code))
         Br[is.na(trendLabel)] = ""
         trendLabel[is.na(trendLabel)] = ""
@@ -409,7 +406,7 @@ server = function (input, output, session) {
                          label=lapply(label, HTML),
                          layerId=Code)
 
-        rv$markerListAll_save = rv$markerListAll
+        rv$markerListAll_save = markerListAll()
     })    
     
 
@@ -451,28 +448,60 @@ server = function (input, output, session) {
     rv$theme_choice_save = isolate(input$theme_choice)
 
 
-    
-    CodeSampleB = reactive({
+    # observeEvent({
+    #     rv$badCode
+    #     rv$warningMode
+    # }, {
+    #     if (!rv$warningMode) {
+    #         rv$CodeSampleCheck =
+    #             rv$CodeSample[!(rv$CodeSample %in% rv$badCode)]
+    #     } else {
+    #         rv$CodeSampleCheck = rv$CodeSample
+    #     }
+    # })
 
-        # print(period())
-        # print(rv$CodeSample)
-        # print(missCode())
-        # print("")
-        
+    CodeSampleCheck = reactive({
         if (!rv$warningMode) {
-            CodeSample = rv$CodeSample[!(rv$CodeSample %in% missCode()) &
-                                       !(rv$CodeSample %in% invalidCode())]
+            rv$CodeSample[!(rv$CodeSample %in% badCode())]
         } else {
-            CodeSample = rv$CodeSample
-        }
-        
-        if (identical(CodeSample, character(0))) {
-            NULL
-        } else {
-            CodeSample
+            rv$CodeSample
         }
     })
-    CodeSample = debounce(CodeSampleB, 10)
+
+    CodeSample = reactive({
+
+        print('code')
+        print(CodeSampleCheck())
+        
+        if (identical(CodeSampleCheck(), character(0))) {
+            NULL
+        } else {
+            CodeSampleCheck()
+        }
+    })
+    # CodeSample = debounce(CodeSampleB, 100)
+    
+    
+    # CodeSampleB = reactive({
+    #     if (!rv$warningMode) {
+    #         CodeSample = rv$CodeSample[!(rv$CodeSample %in% rv$missCode) &
+    #                                    !(rv$CodeSample %in% rv$invalidCode)]
+    #         # CodeSample = rv$CodeSample[!(rv$CodeSample %in% missCode()) &
+    #         #                            !(rv$CodeSample %in% invalidCode())]
+    #     } else {
+    #         CodeSample = rv$CodeSample
+    #     }
+        
+    #     if (identical(CodeSample, character(0))) {
+    #         NULL
+    #     } else {
+    #         CodeSample
+    #     }
+    # })
+    # CodeSample = debounce(CodeSampleB, 10)
+
+
+    
 
 #### 2.2.1. All/none _________________________________________________
     observeEvent(input$all_button, {
@@ -651,38 +680,6 @@ server = function (input, output, session) {
             rv$warningMode = FALSE
         }
     })
-
-    observeEvent({
-        df_Xtrend()
-        period()
-    }, {
-
-        print(period())
-        print('change')
-        
-        if (!is.null(df_Xtrend())) {
-            rv$missCode = CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
-        } else {
-            rv$missCode = c()
-        }
-        
-        if (!is.null(df_Xtrend())) {
-            analyseStart = df_Xtrend()$period_start
-            analyseStart[analyseStart < period()[1]] = period()[1]
-            analyseEnd = df_Xtrend()$period_end
-            analyseEnd[analyseEnd > period()[2]] = period()[2]
-            analysePeriod = (analyseEnd - analyseStart)/365.25
-            rv$invalidCode = df_Xtrend()$code[analysePeriod < analyseMinYear]
-        } else {
-            rv$invalidCode = c()
-        }
-    })
-
-    missCodeB = reactive({rv$missCode})
-    missCode = debounce(missCodeB, 10)
-
-    invalidCodeB = reactive({rv$invalidCode})
-    invalidCode = debounce(invalidCodeB, 10)
 
 #### 2.2.5. Search ___________________________________________________
     meta_location = reactive({
@@ -898,10 +895,17 @@ server = function (input, output, session) {
                                 choices=choices)
     })
 
+    monthStart = reactive({
+        month = which(Months == input$dateMonth_slider)
+        formatC(month, width=2, flag=0)
+    })
+    
     filename = reactive({
-        monthStart = substr(period()[1], 6, 7)
+
+        print('filename')
+        
         filenametmp = paste0(var(), 'Ex_',
-                             monthStart, '.fst')
+                             monthStart(), '.fst')
 
         file_path = file.path(computer_data_path, 'fst', filenametmp)
         if (file.exists(file_path)) {
@@ -910,8 +914,11 @@ server = function (input, output, session) {
             NULL
         }
     })
-    
+ 
     df_XExAll = reactive({
+
+        print('XExAll')
+        
         if (!is.null(filename())) {
             read_FST(computer_data_path,
                      filename(),
@@ -921,24 +928,28 @@ server = function (input, output, session) {
          }
     })
 
+
     df_XEx = reactive({
-        if (!is.null(filename()) & !is.null(CodeSample())) {
 
+        print('XEx')
+        
+        if (!is.null(df_XExAll()) & !is.null(CodeSample())) {
 
-            # ///!!!!!!\\\ IL FAUT FAIRE MISS ET INVALID ICI
+            df_XEx = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
 
-
-            
-            df_XExtmp = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
             Start = period()[1]
             End = period()[2]
-            df_XExtmp = df_XExtmp[df_XExtmp$Date >= Start
-                                  & df_XExtmp$Date <= End,]
-            df_XExtmp
+            
+            df_XEx = df_XEx[df_XEx$Date >= Start
+                            & df_XEx$Date <= End,]
+            df_XEx
+            
         } else {
             NULL
         }
     })
+
+    
 
 ### 2.4. Period ______________________________________________________
     periodB = reactive({
@@ -983,71 +994,101 @@ server = function (input, output, session) {
     })
 
     df_Xtrend = reactive({
-        if (!is.null(df_XEx())) {            
+        if (!is.null(df_XEx())) {
             df_Xtrend = Estimate_stats_WRAP(df_XEx=df_XEx(),
                                             dep_option='AR1')
         } else {
             df_Xtrend = NULL
         }
         df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
-
-        print(period())
-        print(df_Xtrend)
-
         df_Xtrend
     })
 
-  
-    observeEvent({
-        df_Xtrend()
-        period()
-    }, {
-        if (!is.null(df_Xtrend())) {
-            rv$missCode = CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
+
+    # observeEvent({
+    #     df_XExAll()
+    #     period()
+    # }, {
+    #     if (!is.null(df_XExAll())) {
+    #         Start = period()[1]
+    #         End = period()[2]
+    #         df_XEx = df_XExAll()[df_XExAll()$Date >= Start
+    #                              & df_XExAll()$Date <= End,]
+
+    #         CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
+            
+    #         df_Start = summarise(group_by(df_XEx, code),
+    #                              Start=min(Date, na.rm=TRUE))
+    #         analyseStart = df_Start$Start
+    #         df_End = summarise(group_by(df_XEx, code),
+    #                            End=max(Date, na.rm=TRUE))            
+    #         analyseEnd = df_End$End
+            
+    #         rv$missCode = CodeAll()[!(CodeAll() %in% CodeEx)]
+            
+    #         analyseStart[analyseStart < Start] = Start
+    #         analyseEnd[analyseEnd > End] = End
+    #         analysePeriod = (analyseEnd - analyseStart) / 365.25
+    #         rv$invalidCode = CodeEx[analysePeriod < analyseMinYear]
+
+    #         rv$badCode = c(rv$missCode, rv$invalidCode)
+    #         rv$badCode = rv$badCode[!duplicated(rv$badCode)]
+            
+    #     } else {
+    #         rv$missCode = c()
+    #         rv$invalidCode = c()
+    #         rv$badCode = c()
+    #     }
+    # })
+
+
+    
+    missCode = reactive({
+        if (!is.null(df_XExAll())) {
+            Start = period()[1]
+            End = period()[2]
+            df_XEx = df_XExAll()[df_XExAll()$Date >= Start
+                                 & df_XExAll()$Date <= End,]
+            CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
+            
+            CodeAll()[!(CodeAll() %in% CodeEx)]
+            
         } else {
-            rv$missCode = c()
-        }
-                
-        if (!is.null(df_Xtrend())) {
-            analyseStart = df_Xtrend()$period_start
-            analyseStart[analyseStart < period()[1]] = period()[1]
-            analyseEnd = df_Xtrend()$period_end
-            analyseEnd[analyseEnd > period()[2]] = period()[2]
-            analysePeriod = (analyseEnd - analyseStart)/365.25
-            rv$invalidCode = df_Xtrend()$code[analysePeriod < analyseMinYear]
-        } else {
-            rv$invalidCode = c()
+            c()
         }
     })
 
-    # missCode = reactive({
-    #     if (!is.null(df_Xtrend())) {
-    #         CodeAll()[!(CodeAll() %in% df_Xtrend()$code)]
-    #     } else {
-    #         c()
-    #     }
-    # })
+    invalidCode = reactive({
+        if (!is.null(df_XExAll())) {
+            Start = period()[1]
+            End = period()[2]
+            df_XEx = df_XExAll()[df_XExAll()$Date >= Start
+                                 & df_XExAll()$Date <= End,]
+            CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
+            
+            df_Start = summarise(group_by(df_XEx, code),
+                                 Start=min(Date, na.rm=TRUE))
+            analyseStart = df_Start$Start
+            df_End = summarise(group_by(df_XEx, code),
+                               End=max(Date, na.rm=TRUE))            
+            analyseEnd = df_End$End
+                        
+            analyseStart[analyseStart < Start] = Start
+            analyseEnd[analyseEnd > End] = End
+            analysePeriod = (analyseEnd - analyseStart) / 365.25
+            
+            CodeEx[analysePeriod < analyseMinYear]
+            
+        } else {
+            c()
+        }
+    })
 
-    # invalidCode = reactive({   
-    #     if (!is.null(df_Xtrend())) {
-    #         analyseStart = df_Xtrend()$period_start
-    #         analyseStart[analyseStart < period()[1]] = period()[1]
-    #         analyseEnd = df_Xtrend()$period_end
-    #         analyseEnd[analyseEnd > period()[2]] = period()[2]
-    #         analysePeriod = (analyseEnd - analyseStart)/365.25
-    #         df_Xtrend()$code[analysePeriod < analyseMinYear]
-    #     } else {
-    #         c()
-    #     }
-    # })
-
-    # missCode = reactive({
-    #     c()
-    # })
-
-    # invalidCode = reactive({   
-    #     c()
-    # })  
+    
+    badCode = reactive({
+        badCode = c(missCode(), invalidCode())
+        badCode[!duplicated(badCode)]
+    })
 
 ### 2.6. Trend plot __________________________________________________
     observeEvent(input$map_marker_click, {

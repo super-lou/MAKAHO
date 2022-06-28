@@ -501,7 +501,7 @@ get_trendExtremes = function (df_data, df_trend, type,
         df_mean = summarise(group_by(df_data, code),
                             mean=mean(Value, na.rm=TRUE))
 
-        df_join = full_join(df_trend, df_mean)
+        df_join = full_join(df_trend, df_mean, by="code")
         value = df_join$trend / df_join$mean
         Code = df_join$code
     } else {
@@ -512,7 +512,9 @@ get_trendExtremes = function (df_data, df_trend, type,
     minValue = quantile(value, minQprob, na.rm=TRUE)
     maxValue = quantile(value, maxQprob, na.rm=TRUE)
 
-    res = list(value=value, min=minValue, max=maxValue)
+    df_value = tibble(code=Code, value=value)
+    
+    res = list(df_value=df_value, min=minValue, max=maxValue)
     return (res)
 }
 

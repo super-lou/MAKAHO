@@ -52,7 +52,7 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
     X1 = rep(1, colors)
     
     # Computes the histogram of values
-    res = hist(rv$value,
+    res = hist(rv$df_value$value,
                breaks=c(-Inf, bin, Inf),
                plot=FALSE)
     # Extracts the number of counts per cells

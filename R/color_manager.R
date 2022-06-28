@@ -125,7 +125,7 @@ compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
 # compute_color(-51, -50, 40, Palette, colors=10)
 
 
-get_color = function (value, min, max, Palette, CodeSample, colors=256, reverse=FALSE, noneColor="black") {
+get_color = function (value, min, max, Palette, CodeSample, colors=256, reverse=FALSE, noneColor='black') {
     
     color = sapply(value, compute_color,
                    min=min,

@@ -2,14 +2,21 @@
 get_trendLabel = function (code, df_XEx, df_Xtrend, type,
                            space=FALSE) {
 
+    CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
+    CodeXtrend = df_Xtrend$code[!duplicated(df_Xtrend$code)]
+    
+    if (!(code %in% CodeEx) | !(code %in% CodeXtrend)) {
+        return (NA)
+    }
+    
     df_XEx_code = df_XEx[df_XEx$code == code,]
     df_Xtrend_code = df_Xtrend[df_Xtrend$code == code,]
 
     # print(df_XEx_code)
 
-    if (nrow(df_XEx_code) == 0 | nrow(df_Xtrend_code) == 0) {
-        return (NA)
-    } else if (is.na(df_Xtrend_code$trend)) {
+    # if (nrow(df_XEx_code) == 0 | nrow(df_Xtrend_code) == 0) {
+        # return (NA)
+    if (is.na(df_Xtrend_code$trend)) {
         return (NA)
     }
     
