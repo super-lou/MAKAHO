@@ -71,6 +71,65 @@ ui = bootstrapPage(
              ),
 
 
+### 3.5. Palette panel _______________________________________________
+    hidden(
+        absolutePanel(
+            id="colorbar_panel",
+            class="Panel card-insert-r",
+            style="transform: translate(0, 50%);",
+            fixed=TRUE,
+            width=75, height=270,
+            right=0, bottom="35%",
+            
+            div(style="margin: 10px;",
+                plotlyOutput("colorbar_plot"))
+        )
+    ),
+
+### 3.6. Resume panel ________________________________________________
+    hidden(
+        absolutePanel(
+            id='resume_panel',
+            class="Panel card-insert-r",
+            style="transform: translate(0, -50%);",
+            fixed=TRUE,
+            width=130, height="auto",
+            top="25%", right=0,
+            
+            div(class="card-insert-text",
+                
+                h4(class="no-margin-v",
+                   HTML(paste0(
+                       "<b>", textOutput("var"), "</b>"
+                   ))),
+
+                hr(style="margin-top: 0.1rem;
+                          margin-bottom: 0.1rem;
+                          border-top: 2px solid #00a3a6;"),
+                
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       "<b>", textOutput("name"), "</b>"
+                   ))),
+
+                hr(style="margin-top: 0.1rem;
+                          margin-bottom: 0.1rem;
+                          border-top: 2px solid #00a3a6;"),
+
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       textOutput("period_resume")
+                   ))),
+                
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       textOutput("significativite")
+                   )))
+                )
+        )
+    ),
+    
+
 ## 6. HELP ___________________________________________________________
     hidden(
         fixedPanel(id='help_panelButton',
@@ -438,7 +497,7 @@ ui = bootstrapPage(
                                     list(word("tt.c.theme.light"),
                                          word("tt.c.theme.terrain"),
                                          word("tt.c.theme.dark"))))),
-            
+
 ### 3.3. Palette button ______________________________________________
             div(class="Row",
                 div(class="row-label",
@@ -456,6 +515,7 @@ ui = bootstrapPage(
                                     list("show", "none"),
                                 selected="show"))),
 
+### 3.4. Palette button ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -471,63 +531,6 @@ ui = bootstrapPage(
                                 choiceValues=
                                     list("show", "none"),
                                 selected="show")))
-        )
-    ),
-
-    hidden(
-        absolutePanel(
-            id="colorbar_panel",
-            class="Panel card-insert-r",
-            style="transform: translate(0, 50%);",
-            fixed=TRUE,
-            width=75, height=270,
-            right=0, bottom="30%",
-            
-            div(style="margin: 10px;",
-                plotlyOutput("colorbar_plot"))
-        )
-    ),
-
-### 3.4. Resume button _______________________________________________
-    hidden(
-        absolutePanel(
-            id='resume_panel',
-            class="Panel card-insert-r",
-            style="transform: translate(0, -50%);",
-            fixed=TRUE,
-            width=130, height="auto",
-            top="30%", right=0,
-            
-            div(class="card-insert-text",
-                
-                h4(class="no-margin-v",
-                   HTML(paste0(
-                       "<b>", textOutput("var"), "</b>"
-                   ))),
-
-                hr(style="margin-top: 0.1rem;
-                          margin-bottom: 0.1rem;
-                          border-top: 2px solid #00a3a6;"),
-                
-                h6(class="no-margin-v", style="font-size: 0.8em;",
-                   HTML(paste0(
-                       "<b>", textOutput("name"), "</b>"
-                   ))),
-
-                hr(style="margin-top: 0.1rem;
-                          margin-bottom: 0.1rem;
-                          border-top: 2px solid #00a3a6;"),
-
-                h6(class="no-margin-v", style="font-size: 0.8em;",
-                   HTML(paste0(
-                       textOutput("period_resume")
-                   ))),
-                
-                h6(class="no-margin-v", style="font-size: 0.8em;",
-                   HTML(paste0(
-                       textOutput("significativite")
-                   )))
-                )
         )
     ),
 
@@ -594,7 +597,15 @@ ui = bootstrapPage(
                 div(class="sep"),
                 div("inspirée de ",
                     a(href="https://earth.nullschool.net/",
-                      "earth.nullschool.net")))
+                      "earth.nullschool.net"))),
+
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("i.maj"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(word("i.maj.version")))
         )
     ),
 

@@ -55,7 +55,7 @@ save_marker = function (y, shape, color, fill, size, sizeName,
     return (filename)
 }
 
-create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, sizeList, strokeSizeList, nameSizeList, svgSizeList, fillPalette, resources_path, filedir='marker', colors=256, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
+create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, sizeList, strokeSizeList, nameSizeList, svgSizeList, fillPalette, resources_path, filedir='marker', colorStep=256, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
 
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
@@ -77,7 +77,7 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 
     nColor = length(colorList)
     
-    fillList = get_palette(colors=colors,
+    fillList = get_palette(colorStep=colorStep,
                            Palette=fillPalette)
     nFill = length(fillList)
 
@@ -153,7 +153,7 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 #               fillPalette=Palette,
 #               resources_path=resources_path,
 #               filedir='marker',
-#               colors=colors,
+#               colorStep=colorStep,
 #               relY=c(0, -0.02, 0.02),
 #               markerAdd=markerAdd)
 

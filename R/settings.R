@@ -111,7 +111,7 @@ sigVal = as.numeric(gsub('%', '' , sigProba))/100
 
 nbTick = 10
 
-colors = 10
+colorStep = 10
 Palette = Palette_ground
 reverse = FALSE
 
@@ -134,7 +134,3 @@ leftHelp = "52%"
 topHelp = "50%"
 dyNavHelp = 250
 dhNavHelp = 22
-
-# helpX = 550
-# helpY = 100
-# stepH = 25

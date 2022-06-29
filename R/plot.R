@@ -29,12 +29,12 @@
 ### 1.2. Colorbar ____________________________________________________
 # Returns the colorbar but also positions, labels and colors of some
 # ticks along it 
-plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
+plot_colorbar = function (rv, type, Palette, colorStep=256, reverse=FALSE) {
     
     res = compute_colorBin(min=rv$minValue,
                            max=rv$maxValue,
                            Palette=Palette,
-                           colors=colors,
+                           colorStep=colorStep,
                            reverse=reverse)
 
     bin = res$bin
@@ -48,8 +48,8 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
     Y0[Y0 == -Inf] = -1 - dY
 
     PaletteColors = res$Palette
-    X0 = rep(0, colors)
-    X1 = rep(1, colors)
+    X0 = rep(0, colorStep)
+    X1 = rep(1, colorStep)
     
     # Computes the histogram of values
     res = hist(rv$df_value$value,
@@ -60,7 +60,7 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
 
     fig = plotly_empty(width=55, height=250)
     
-    for (i in 2:(colors-1)) {
+    for (i in 2:(colorStep-1)) {
         fig = add_trace(fig,
                         type="scatter",
                         mode="lines",
@@ -104,15 +104,15 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
                     x=c(0, 1, 0.5, 0),
                     y=c(1, 1, 1+dY*2/3, 1),
                     fill="toself",
-                    fillcolor=PaletteColors[colors],
+                    fillcolor=PaletteColors[colorStep],
                     line=list(width=0),
                     text=paste0("<b>",
-                                counts[colors],
+                                counts[colorStep],
                                 "</b>",
                                 "<br>stations"),
                     hoverinfo="text",
                     hoveron="fills",
-                    hoverlabel=list(bgcolor=counts[colors],
+                    hoverlabel=list(bgcolor=counts[colorStep],
                                     font=list(size=12),
                                     bordercolor="white"))
     
@@ -134,7 +134,7 @@ plot_colorbar = function (rv, type, Palette, colors=256, reverse=FALSE) {
                                     font=list(size=12),
                                     bordercolor="white"))
 
-    Xlab = rep(1.2, colors)
+    Xlab = rep(1.2, colorStep)
     Ylab = bin / max(bin)
 
     ncharLim = 4

@@ -12,10 +12,6 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, type,
     df_XEx_code = df_XEx[df_XEx$code == code,]
     df_Xtrend_code = df_Xtrend[df_Xtrend$code == code,]
 
-    # print(df_XEx_code)
-
-    # if (nrow(df_XEx_code) == 0 | nrow(df_Xtrend_code) == 0) {
-        # return (NA)
     if (is.na(df_Xtrend_code$trend)) {
         return (NA)
     }
@@ -91,4 +87,18 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, type,
     }
 
     return (label)
+}
+
+switch_colorLabel = function (color) {
+    #switch 12% https://mdigi.tools/darken-color/#f6e8c3
+    if (color == "#F6E8C3") {
+        newColor = "#efd695"
+        
+    } else if (color == "#C7EAE5") {
+        newColor = "#a1dcd3"
+        
+    } else {
+        newColor = color
+    }
+    return (newColor)
 }

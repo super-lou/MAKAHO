@@ -197,41 +197,45 @@ server = function (input, output, session) {
     observeEvent({
         input$map_bounds
         rv$mapPreview_bounds
+        input$theme_choice
     }, {
 
         windowChange = input$dimension[1] != rv$width | input$dimension[2] != rv$height
-        if (windowChange) {
-            rv$defaultBounds = input$map_bounds
-            rv$width = input$dimension[1]
-            rv$height = input$dimension[2]
-        }
 
-        error = 0.1
-        
-        isDefault = all(abs(unlist(input$map_bounds) - unlist(rv$defaultBounds)) <= error)
-        
-        isFocus = all(abs(unlist(input$map_bounds) - unlist(rv$mapPreview_bounds)) <= error)
+        if (!identical(windowChange, logical(0))) {
+            if (windowChange) {
+                rv$defaultBounds = input$map_bounds
+                rv$width = input$dimension[1]
+                rv$height = input$dimension[2]
+            }
 
-        if (windowChange) {
-            isDefault = TRUE
-            isFocus = TRUE
-        }
-        
-        if (isDefault & isFocus & is.null(rv$helpPage)) {
-            hide(id='focusZoom_panelButton')
-            hide(id='defaultZoom_panelButton')
+            error = 0.1
             
-        } else if (isDefault & !isFocus) {
-            showElement(id='focusZoom_panelButton')
-            hide(id='defaultZoom_panelButton')
+            isDefault = all(abs(unlist(input$map_bounds) - unlist(rv$defaultBounds)) <= error)
             
-        } else if (!isDefault & isFocus) {
-            hide(id='focusZoom_panelButton')
-            showElement(id='defaultZoom_panelButton')
-            
-        } else if (!isDefault & !isFocus) {
-            showElement(id='focusZoom_panelButton')
-            hide(id='defaultZoom_panelButton')
+            isFocus = all(abs(unlist(input$map_bounds) - unlist(rv$mapPreview_bounds)) <= error)
+
+            if (windowChange) {
+                isDefault = TRUE
+                isFocus = TRUE
+            }
+
+            if (isDefault & isFocus & is.null(rv$helpPage)) {
+                hide(id='focusZoom_panelButton')
+                hide(id='defaultZoom_panelButton')
+                
+            } else if (isDefault & !isFocus) {
+                showElement(id='focusZoom_panelButton')
+                hide(id='defaultZoom_panelButton')
+                
+            } else if (!isDefault & isFocus) {
+                hide(id='focusZoom_panelButton')
+                showElement(id='defaultZoom_panelButton')
+                
+            } else if (!isDefault & !isFocus) {
+                showElement(id='focusZoom_panelButton')
+                hide(id='defaultZoom_panelButton')
+            }
         }
     })
 
@@ -295,7 +299,7 @@ server = function (input, output, session) {
                              rv$minValue,
                              rv$maxValue,
                              Palette=Palette,
-                             colors=colors,
+                             colorStep=colorStep,
                              reverse=reverse,
                              noneColor=none2Color)
             
@@ -363,6 +367,7 @@ server = function (input, output, session) {
         trendLabel[is.na(trendLabel)] = ""
 
         trendColor = rv$fillList[match(Code, CodeAll())]
+        trendColor = sapply(trendColor, switch_colorLabel)
         
         n = 4
         label = paste0(
@@ -447,19 +452,6 @@ server = function (input, output, session) {
     rv$CodeSample_save = isolate(CodeAll())
     rv$theme_choice_save = isolate(input$theme_choice)
 
-
-    # observeEvent({
-    #     rv$badCode
-    #     rv$warningMode
-    # }, {
-    #     if (!rv$warningMode) {
-    #         rv$CodeSampleCheck =
-    #             rv$CodeSample[!(rv$CodeSample %in% rv$badCode)]
-    #     } else {
-    #         rv$CodeSampleCheck = rv$CodeSample
-    #     }
-    # })
-
     CodeSampleCheck = reactive({
         if (!rv$warningMode) {
             rv$CodeSample[!(rv$CodeSample %in% badCode())]
@@ -470,38 +462,12 @@ server = function (input, output, session) {
 
     CodeSample = reactive({
 
-        print('code')
-        print(CodeSampleCheck())
-        
         if (identical(CodeSampleCheck(), character(0))) {
             NULL
         } else {
             CodeSampleCheck()
         }
     })
-    # CodeSample = debounce(CodeSampleB, 100)
-    
-    
-    # CodeSampleB = reactive({
-    #     if (!rv$warningMode) {
-    #         CodeSample = rv$CodeSample[!(rv$CodeSample %in% rv$missCode) &
-    #                                    !(rv$CodeSample %in% rv$invalidCode)]
-    #         # CodeSample = rv$CodeSample[!(rv$CodeSample %in% missCode()) &
-    #         #                            !(rv$CodeSample %in% invalidCode())]
-    #     } else {
-    #         CodeSample = rv$CodeSample
-    #     }
-        
-    #     if (identical(CodeSample, character(0))) {
-    #         NULL
-    #     } else {
-    #         CodeSample
-    #     }
-    # })
-    # CodeSample = debounce(CodeSampleB, 10)
-
-
-    
 
 #### 2.2.1. All/none _________________________________________________
     observeEvent(input$all_button, {
@@ -902,8 +868,6 @@ server = function (input, output, session) {
     
     filename = reactive({
 
-        print('filename')
-        
         filenametmp = paste0(var(), 'Ex_',
                              monthStart(), '.fst')
 
@@ -917,8 +881,6 @@ server = function (input, output, session) {
  
     df_XExAll = reactive({
 
-        print('XExAll')
-        
         if (!is.null(filename())) {
             read_FST(computer_data_path,
                      filename(),
@@ -931,8 +893,6 @@ server = function (input, output, session) {
 
     df_XEx = reactive({
 
-        print('XEx')
-        
         if (!is.null(df_XExAll()) & !is.null(CodeSample())) {
 
             df_XEx = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
@@ -983,11 +943,6 @@ server = function (input, output, session) {
     
     
 ### 2.5. Trend analysis ______________________________________________
-    # output$confiance = renderText({
-    #     confiance = round(100 -  as.numeric(input$alpha_choice)*100)
-    #     paste0('Niveau de confiance de ', confiance, '%')
-    # })
-
     output$significativite = renderText({
         paste0('Significativité de ',
                as.numeric(input$alpha_choice)*100, '%')
@@ -1003,45 +958,6 @@ server = function (input, output, session) {
         df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
         df_Xtrend
     })
-
-
-    # observeEvent({
-    #     df_XExAll()
-    #     period()
-    # }, {
-    #     if (!is.null(df_XExAll())) {
-    #         Start = period()[1]
-    #         End = period()[2]
-    #         df_XEx = df_XExAll()[df_XExAll()$Date >= Start
-    #                              & df_XExAll()$Date <= End,]
-
-    #         CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
-            
-    #         df_Start = summarise(group_by(df_XEx, code),
-    #                              Start=min(Date, na.rm=TRUE))
-    #         analyseStart = df_Start$Start
-    #         df_End = summarise(group_by(df_XEx, code),
-    #                            End=max(Date, na.rm=TRUE))            
-    #         analyseEnd = df_End$End
-            
-    #         rv$missCode = CodeAll()[!(CodeAll() %in% CodeEx)]
-            
-    #         analyseStart[analyseStart < Start] = Start
-    #         analyseEnd[analyseEnd > End] = End
-    #         analysePeriod = (analyseEnd - analyseStart) / 365.25
-    #         rv$invalidCode = CodeEx[analysePeriod < analyseMinYear]
-
-    #         rv$badCode = c(rv$missCode, rv$invalidCode)
-    #         rv$badCode = rv$badCode[!duplicated(rv$badCode)]
-            
-    #     } else {
-    #         rv$missCode = c()
-    #         rv$invalidCode = c()
-    #         rv$badCode = c()
-    #     }
-    # })
-
-
     
     missCode = reactive({
         if (!is.null(df_XExAll())) {
@@ -1149,6 +1065,7 @@ server = function (input, output, session) {
             df_XEx_code = df_XEx()[df_XEx()$code == rv$codeClick,]
             df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == rv$codeClick,]
             color = rv$fillList[CodeAll() == rv$codeClick]
+            switchColor = switch_colorLabel(color)
             
             output$trend_plot = renderPlotly({
                 
@@ -1174,8 +1091,12 @@ server = function (input, output, session) {
                 x = df_XEx_code$Date
                 if (type() == 'sévérité') {
                     y = df_XEx_code$Value
+                    yhoverformat = NULL
+                    unit = " [m<sup>3</sup>.s<sup>-1</sup>]<br>"
                 } else if (type() == 'saisonnalité') { ### /!\ À VÉRIF
                     y = as.Date(df_XEx_code$Value, origin="1970-01-01")
+                    yhoverformat = "%d %b"
+                    unit = ""
                 }
                 
                 fig = add_trace(fig,
@@ -1185,10 +1106,11 @@ server = function (input, output, session) {
                                 y=y,
                                 marker=list(color=grey50COL),
                                 xhoverformat="%Y",
+                                yhoverformat=yhoverformat,
                                 hovertemplate = paste0(
                                     "année %{x}<br>",
                                     "<b>", var(), "</b> %{y}",
-                                    " [m<sup>3</sup>.s<sup>-1</sup>]<br>",
+                                    unit,
                                     "<extra></extra>"),
                                 hoverlabel=list(bgcolor=color,
                                                 font=list(size=12),
@@ -1226,7 +1148,7 @@ server = function (input, output, session) {
                                             df_Xtrend=df_Xtrend(),
                                             type=type(),
                                             space=TRUE)
-                
+
                 fig = add_annotations(fig,
                                       x=0.01,
                                       y=1.01,
@@ -1236,7 +1158,7 @@ server = function (input, output, session) {
                                       showarrow=FALSE,
                                       xanchor='left',
                                       yanchor='bottom',
-                                      font=list(color=color,
+                                      font=list(color=switchColor,
                                                 size=12))
 
                 fig = add_annotations(fig,
@@ -1310,6 +1232,7 @@ server = function (input, output, session) {
                 }
                 
                 fig = config(fig,
+                             locale=word("plotly.language"),
                              displaylogo=FALSE,
                              toImageButtonOptions =
                                  list(format="svg"),
@@ -1370,7 +1293,7 @@ server = function (input, output, session) {
                 plot_colorbar(rv,
                               type=type(),
                               Palette=Palette,
-                              colors=colors,
+                              colorStep=colorStep,
                               reverse=reverse)
             })
         }

@@ -37,17 +37,6 @@ Palette_ground = c('#543005',
                    '#01665e',
                    '#003c30')
 
-Palette_rainbow = c('#67001f',
-                    '#b2182b',
-                    '#d6604d',
-                    '#f4a582',
-                    '#fddbc7',
-                    '#d1e5f0',
-                    '#92c5de',
-                    '#4393c3',
-                    '#2166ac',
-                    '#053061')
-
 # Personnal colors
 grey99COL = "#fcfcfc"
 grey98COL = "#fafafa"
@@ -77,7 +66,7 @@ INRAECyanCOL = "#00a3a6"
 
 ## 1. COLOR MANAGEMENT
 ### 1.1. Color on colorbar ___________________________________________
-compute_colorBin = function (min, max, Palette, colors=256,
+compute_colorBin = function (min, max, Palette, colorStep=256,
                              reverse=FALSE) {
 
     # Gets the number of discrete colors in the palette
@@ -87,12 +76,12 @@ compute_colorBin = function (min, max, Palette, colors=256,
         Palette = rev(Palette)
     }
     # Recreates a continuous color palette
-    PaletteColors = colorRampPalette(Palette)(colors)
+    PaletteColors = colorRampPalette(Palette)(colorStep)
 
     # Computes the absolute max
     maxAbs = max(abs(max), abs(min))
 
-    bin = seq(-maxAbs, maxAbs, length.out=colors-1)
+    bin = seq(-maxAbs, maxAbs, length.out=colorStep-1)
     upBin = c(bin, Inf)
     lowBin = c(-Inf, bin)
 
@@ -100,7 +89,7 @@ compute_colorBin = function (min, max, Palette, colors=256,
     return (res)
 }
 
-compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
+compute_color = function (value, min, max, Palette, colorStep=256, reverse=FALSE) {
 
     # If the value is a NA return NA color
     if (is.na(value)) {
@@ -108,7 +97,7 @@ compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
     }
     
     res = compute_colorBin(min=min, max=max, Palette=Palette,
-                           colors=colors, reverse=reverse)
+                           colorStep=colorStep, reverse=reverse)
     upBin = res$upBin
     lowBin = res$lowBin
     PaletteColors = res$Palette
@@ -122,16 +111,16 @@ compute_color = function (value, min, max, Palette, colors=256, reverse=FALSE) {
     return(color)
 }
 
-# compute_color(-51, -50, 40, Palette, colors=10)
+# compute_color(-51, -50, 40, Palette, colorStep=10)
 
 
-get_color = function (value, min, max, Palette, CodeSample, colors=256, reverse=FALSE, noneColor='black') {
+get_color = function (value, min, max, Palette, CodeSample, colorStep=256, reverse=FALSE, noneColor='black') {
     
     color = sapply(value, compute_color,
                    min=min,
                    max=max,
                    Palette=Palette,
-                   colors=colors,
+                   colorStep=colorStep,
                    reverse=reverse)
     
     color[is.na(color)] = noneColor    
@@ -141,7 +130,7 @@ get_color = function (value, min, max, Palette, CodeSample, colors=256, reverse=
 
 ### 1.3. Palette tester ______________________________________________
 # Allows to display the current personal palette
-palette_tester = function (Palette, colors=256) {
+palette_tester = function (Palette, colorStep=256) {
 
     outdir = 'palette'
     if (!(file.exists(outdir))) {
@@ -149,12 +138,12 @@ palette_tester = function (Palette, colors=256) {
     }
 
     # An arbitrary x vector
-    X = 1:colors
+    X = 1:colorStep
     # All the same arbitrary y position to create a colorbar
-    Y = rep(0, times=colors)
+    Y = rep(0, times=colorStep)
 
     # Recreates a continuous color palette
-    Palette = colorRampPalette(Palette)(colors)
+    Palette = colorRampPalette(Palette)(colorStep)
 
     # Open a void plot
     p = ggplot() + theme_void()
@@ -169,7 +158,7 @@ palette_tester = function (Palette, colors=256) {
     }
 
     p = p +
-        scale_x_continuous(limits=c(0, colors),
+        scale_x_continuous(limits=c(0, colorStep),
                            expand=c(0, 0)) +
         
         scale_y_continuous(limits=c(0, 1),
@@ -190,12 +179,12 @@ palette_tester = function (Palette, colors=256) {
 }
 
 
-get_palette = function (Palette, colors=256) {
+get_palette = function (Palette, colorStep=256) {
     
     # Gets the number of discrete colors in the palette
     nSample = length(Palette)
     # Recreates a continuous color palette
-    Palette = colorRampPalette(Palette)(colors)
+    Palette = colorRampPalette(Palette)(colorStep)
 
     return (Palette)
 }
