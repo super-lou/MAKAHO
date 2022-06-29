@@ -791,19 +791,16 @@ server = function (input, output, session) {
 
 ### 2.3. Variable extration __________________________________________
     observeEvent(input$event_choice, {
-        
+
         var_event = Var$var[Var$event == input$event_choice]
+        varHTML_event = Var$varHTML[Var$event == input$event_choice]
         name_event = Var$name[Var$event == input$event_choice]
-        
-        updateRadioButton(session, class="radioButton",
-                          inputId="var_choice",
-                          choices=var_event,
-                          selected=var_event[1])
 
         updateRadioButton(session,
                           class="radioButton",
                           inputId="var_choice",
-                          choiceNames=var_event,
+                          choiceValues=var_event,
+                          choiceNames=varHTML_event,
                           choiceTooltips=name_event,
                           selected=var_event[1])
     })
@@ -1565,7 +1562,7 @@ server = function (input, output, session) {
 
             if (rv$helpPage == 12) {
                 if (rv$width > width_lim) {
-                    showOnly(id=c("download_bar", "dlClick_bar"))
+                    showOnly(id=c("download_bar"))
                 }
                 maskOnly(id="maskDownload_panelButton")
             }

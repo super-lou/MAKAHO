@@ -106,6 +106,13 @@
     background-color: rgba(5, 5, 10, 0.8) !important;
 }
 
+.card-opac {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+}
+
 .card-text {
     background-color: transparent !important;
     transform: translate(-50%, -50%) !important;
@@ -159,7 +166,6 @@ a:link {
 a:hover {
     color: #ffffff !important;
 }
-
 
 .Tooltip {
     position: relative !important;

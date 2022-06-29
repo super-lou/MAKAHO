@@ -763,6 +763,12 @@ ui = bootstrapPage(
                           icon_name=iconLib$none)
                    )
     ),
+    hidden(
+        fixedPanel(id="opacPhoto_panelButton",
+                   class="card-opac",
+                   right=40, top=5,
+                   width=35, height=35)
+    ),
 
     hidden(
         fixedPanel(id="maskDownload_panelButton",

@@ -57,6 +57,12 @@ get_Var = function (dico, varProba) {
         
         for (j in 1:nbVar) {
             var = word(paste0("ana.var", i, "." , j))
+
+            varHTML = var
+            if (grepl('[_]', var)) {
+                varHTML = paste0("<span>", gsub('_', '<sub>', var), "</sub>", "</span>")
+            }
+            
             name = word(paste0("tt.ana.var", i, "." , j))
             
             if (grepl('^t.*', var)) {
@@ -73,6 +79,7 @@ get_Var = function (dico, varProba) {
             
             Var = bind_rows(Var, tibble(event=event,
                                         var=var,
+                                        varHTML=varHTML,
                                         name=name,
                                         type=type,
                                         proba=proba))
@@ -390,6 +397,7 @@ IdList_mask = c("maskZoom_panelButton",
                 "maskTheme_panelButton",
                 "maskInfo_panelButton",
                 "maskPhoto_panelButton",
+                "opacPhoto_panelButton",
                 "maskDownload_panelButton")
 
 maskAll = function (except=NULL, None=FALSE,
