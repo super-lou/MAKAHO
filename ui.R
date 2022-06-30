@@ -33,7 +33,7 @@ ui = bootstrapPage(
     tags$head(HTML("<title>MAKAHO</title> <link rel='icon' type='image/gif/png' href='MAKAHO.png'>")),
 
     tags$head(tags$meta(property="og:title", content="MAKAHO"),
-              tags$meta(property="og:image", content="screen.png"),
+              tags$meta(property="og:image", content="https://forgemia.inra.fr/sk8/sk8-apps/ara/riverly/makaho/-/raw/main/www/screen.png"),
               tags$meta(property="og:description", content=gsub("<b>|</b>", "", word("help.p1.p1")))),
 
     tags$head(tags$script('
