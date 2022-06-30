@@ -172,7 +172,8 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                                           padding-left:0.2rem;"),
                      icon=NULL,
                      width=width,
-                     img(icon_name, align="right"),
+                     img(icon_name, align="right",
+                         style="text-align: center;"),
                      ...)
     } else {
         div(class="Tooltip bunch",
@@ -183,7 +184,8 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                                           padding-left:0.2rem;"),
                              icon=NULL,
                              width=width,
-                             img(icon_name, align="right"),
+                             img(icon_name, align="right",
+                                 style="text-align: center;"),
                              ...),
                 '<span class="Tooltiptext">', tooltip, '</span>')))
     }
@@ -201,7 +203,8 @@ selectButton = function (inputId, label=NULL, icon_name=NULL,
                     label=NULL,
                     choiceNames=
                         paste0(img(icon_name,
-                                   align="right"),
+                                   align="right",
+                                   style="text-align: center;"),
                                label),
                     choiceValues=TRUE,
                     selected=selected,
@@ -214,7 +217,8 @@ selectButton = function (inputId, label=NULL, icon_name=NULL,
             label=NULL,
             choiceNames=
                 paste0(img(icon_name,
-                           align="right"),
+                           align="right",
+                           style="text-align: center;"),
                        label),
             choiceValues=TRUE,
             selected=selected,
@@ -231,7 +235,8 @@ updateSelectButton = function (session, inputId, label=NULL,
         choiceValues = NULL
     } else {
         choiceNames = paste0(img(icon_name,
-                                 align="right"),
+                                 align="right",
+                                 style="text-align: center;"),
                              label)
         choiceValues = TRUE
     }
@@ -263,7 +268,8 @@ radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
                                 "", simplify=FALSE)
     }
     if (!is.null(choiceIcons)) {
-        inter = lapply(choiceIcons, img, align="right")
+        inter = lapply(choiceIcons, img, align="right",
+                       style="text-align: center;")
         choiceItems = mapply(paste0, inter, choiceItems)
     }
     if (!is.null(choiceTooltips)) {
@@ -301,7 +307,8 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
                                 "", simplify=FALSE)
     }
     if (!is.null(choiceIcons)) {
-        inter = lapply(choiceIcons, img, align="right")
+        inter = lapply(choiceIcons, img, align="right",
+                       style="text-align: center;")
         choiceItems = mapply(paste0, inter, choiceItems)
     }
     if (!is.null(choiceTooltips)) {

@@ -137,7 +137,7 @@ ui = bootstrapPage(
 ## 6. HELP ___________________________________________________________
     hidden(
         fixedPanel(id='help_panelButton',
-                   right=95, bottom=10,
+                   right=105, bottom=10,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='help_button',
@@ -1113,10 +1113,12 @@ ui = bootstrapPage(
                                " - ", 0.5*widthHelp, "px",
                                " + ", dhNavHelp*(N_helpPage+1), "px)"),
                    top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                   # right=95, bottom=10,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='closeHelp_button',
                           label=NULL,
+                          # icon_name=iconLib$help_outline_white,
                           icon_name=iconLib$close_white,
                           tooltip=word("tt.help.close")) 
                    )

@@ -46,7 +46,7 @@
     background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
     min-width: 13rem !important;
-    max-width: calc(100vw - 7.8rem) !important;
+    max-width: calc(100vw - 8.5rem) !important;
 }
 
 
@@ -252,9 +252,9 @@ a:hover {
     font-size: 25px !important;
     border: none !important;
     border-radius: 0.4rem/0.4rem !important;
-    padding-top: 0.65rem !important;
+    padding-top: 0.67rem !important;
     padding-bottom: 0rem !important;
-    padding-left: 0.7rem !important;
+    padding-left: 0.74rem !important;
     padding-right: 0rem !important;
     margin: 0 !important;
     background-color: transparent !important;
