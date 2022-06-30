@@ -32,6 +32,10 @@ ui = bootstrapPage(
     
     tags$head(HTML("<title>MAKAHO</title> <link rel='icon' type='image/gif/png' href='MAKAHO.png'>")),
 
+    tags$head(tags$meta(property="og:title", content="MAKAHO"),
+              tags$meta(property="og:image", content="screen.png"),
+              tags$meta(property="og:description", content=gsub("<b>|</b>", "", word("help.p1.p1")))),
+
     tags$head(tags$script('
     var dimension = [0, 0];
     $(document).on("shiny:connected", function(e) {
@@ -133,7 +137,7 @@ ui = bootstrapPage(
 ## 6. HELP ___________________________________________________________
     hidden(
         fixedPanel(id='help_panelButton',
-                   right=95, bottom=8,
+                   right=95, bottom=10,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='help_button',
@@ -142,7 +146,7 @@ ui = bootstrapPage(
                           tooltip=word("tt.help"))
                    )
     ),
-
+    
     hidden(
         fixedPanel(id='blur_panel',
                    class="Panel card-blur"   
@@ -397,11 +401,6 @@ ui = bootstrapPage(
             left=0, top=62,
 
             div(class="Row",
-                # div(class="row-label",
-                #     HTML(paste0("<span><b>",
-                #                 word("click.bar"),
-                #                 "</b></span>"))),
-                # div(class="sep"),
                 div(class="bunch",
                     Button(class="Button",
                            'clickOk_button',
@@ -421,11 +420,6 @@ ui = bootstrapPage(
             left=0, top=62,
 
             div(class="Row",
-                # div(class="row-label",
-                #     HTML(paste0("<span><b>",
-                #                 word("poly.bar"),
-                #                 "</b></span>"))),
-                # div(class="sep"),
                 div(class="bunch",
                     radioButton(class="radioButton",
                                 inputId="poly_choice",
@@ -538,7 +532,7 @@ ui = bootstrapPage(
 ## 4. INFO ___________________________________________________________
 ### 4.1. Panel button ________________________________________________ 
     fixedPanel(id="info_panelButton",
-               right=10, bottom=2,
+               right=10, bottom=4,
                width="auto", height="auto",
                Button(class="Button-info",
                       inputId='info_button',
@@ -742,7 +736,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="maskInfo_panelButton",
-                   right=10, bottom=2,
+                   right=10, bottom=4,
                    width="auto", height="auto",
                    Button(class="maskButton-info",
                           inputId='mask',
@@ -996,7 +990,7 @@ ui = bootstrapPage(
     page_circle(n=11, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p11")),
-    
+
     hidden(
         fixedPanel(id="help11_panel",
                    class="Panel card-text",
@@ -1004,10 +998,12 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p11.s1"))),
+
+                   h4(HTML(word("help.p11.ss1"))),
                    
                    p(HTML(word("help.p11.p1")))
                    )
-    ),
+    ),    
 
 #### 6.3.12. Page 12 _________________________________________________
     page_circle(n=12, leftBase=leftHelp, widthHelp=widthHelp,
@@ -1022,9 +1018,7 @@ ui = bootstrapPage(
                    
                    h1(HTML(word("help.p12.s1"))),
                    
-                   p(HTML(word("help.p12.p1"))),
-
-                   p(HTML(word("help.p12.p2"))),
+                   p(HTML(word("help.p12.p1")))
                    )
     ),
 
@@ -1042,6 +1036,8 @@ ui = bootstrapPage(
                    h1(HTML(word("help.p13.s1"))),
                    
                    p(HTML(word("help.p13.p1"))),
+
+                   p(HTML(word("help.p13.p2"))),
                    )
     ),
 
@@ -1058,7 +1054,24 @@ ui = bootstrapPage(
                    
                    h1(HTML(word("help.p14.s1"))),
                    
-                   p(HTML(word("help.p14.p1")))
+                   p(HTML(word("help.p14.p1"))),
+                   )
+    ),
+
+#### 6.3.15. Page 15 _________________________________________________
+    page_circle(n=15, leftBase=leftHelp, widthHelp=widthHelp,
+                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                dh=dhNavHelp, tooltip=word("tt.help.p15")),
+    
+    hidden(
+        fixedPanel(id="help15_panel",
+                   class="Panel card-text",
+                   left=leftHelp, top=topHelp,
+                   width=widthHelp, height="auto",
+                   
+                   h1(HTML(word("help.p15.s1"))),
+                   
+                   p(HTML(word("help.p15.p1")))
                    )
         ),
 

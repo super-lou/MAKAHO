@@ -115,6 +115,8 @@ colorStep = 10
 Palette = Palette_ground
 reverse = FALSE
 
+exQprob = 0.01
+
 analyseMinYear = 30
 
 validColor = grey50COL
@@ -128,9 +130,9 @@ none1Color_dark = grey9COL
 none2Color_dark = grey18COL
 
 
-N_helpPage = 14
+N_helpPage = 15
 widthHelp = 350
-leftHelp = "52%"
+leftHelp = "50%"
 topHelp = "50%"
-dyNavHelp = 250
+dyNavHelp = 260
 dhNavHelp = 22

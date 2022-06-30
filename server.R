@@ -288,7 +288,7 @@ server = function (input, output, session) {
 
             res = get_trendExtremes(df_XEx(), df_Xtrend(),
                                     type=type(),
-                                    minQprob=0.01, maxQprob=0.99)
+                                    minQprob=exQprob, maxQprob=1-exQprob)
             
             rv$df_value = res$df_value
             rv$minValue = res$min
@@ -1507,6 +1507,7 @@ server = function (input, output, session) {
     observePage(input, rv, n=12, N=N_helpPage)
     observePage(input, rv, n=13, N=N_helpPage)
     observePage(input, rv, n=14, N=N_helpPage)
+    observePage(input, rv, n=15, N=N_helpPage)
 
     observeEvent({
         rv$helpPage
@@ -1555,26 +1556,33 @@ server = function (input, output, session) {
 
             if (rv$helpPage == 11) {
                 if (rv$width > width_lim) {
+                    showOnly(id="theme_panel")
+                }
+                maskOnly(id="maskTheme_panelButton")
+            }
+
+            if (rv$helpPage == 12) {
+                if (rv$width > width_lim) {
                     showOnly(id="photo_bar")
                 }
                 maskOnly(id="maskPhoto_panelButton")
             }
 
-            if (rv$helpPage == 12) {
+            if (rv$helpPage == 13) {
                 if (rv$width > width_lim) {
                     showOnly(id=c("download_bar"))
                 }
                 maskOnly(id="maskDownload_panelButton")
             }
 
-            if (rv$helpPage == 13) {
+            if (rv$helpPage == 14) {
                 if (rv$width > width_lim) {
                     showOnly(id="download_bar")
                 }
                 maskOnly(id="maskDownload_panelButton")
             }
 
-            if (rv$helpPage == 14) {
+            if (rv$helpPage == 15) {
                 if (rv$width > width_lim) {
                     showOnly(id="info_panel")
                 }
