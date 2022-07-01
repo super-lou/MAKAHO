@@ -853,9 +853,13 @@ server = function (input, output, session) {
             hide(id="proba_row")
             choices = FALSE
         }
-        updateRadioGroupButtons(session, "proba_choice",
-                                status="RadioButton",
-                                choices=choices)
+
+        updateRadioButton(session,
+                          class="radioButton",
+                          inputId="proba_choice",
+                          choiceNames=choices,
+                          choiceTooltips=
+                              paste0(word("tt.ana.proba"), choices))
     })
 
     monthStart = reactive({
@@ -918,7 +922,7 @@ server = function (input, output, session) {
                               monthStart,
                               '01',
                               sep='-'))
-        End = as.Date(paste(input$dateYear_slider[2],
+        End = as.Date(paste(input$dateYear_slider[2]+1,
                             monthStart,
                             '01',
                             sep='-')) - 1
@@ -926,7 +930,7 @@ server = function (input, output, session) {
     })
     period = debounce(periodB, 1000)
 
-    output$period = renderText({
+    output$period = renderText({        
         start = format(periodB()[1], "%d/%m/%Y")
         end = format(periodB()[2], "%d/%m/%Y")
         paste0('Du ', start, ' au ', end)
@@ -951,7 +955,7 @@ server = function (input, output, session) {
                                             dep_option='AR1')
         } else {
             df_Xtrend = NULL
-        }
+        }        
         df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
         df_Xtrend
     })
@@ -960,11 +964,17 @@ server = function (input, output, session) {
         if (!is.null(df_XExAll())) {
             Start = period()[1]
             End = period()[2]
-            df_XEx = df_XExAll()[df_XExAll()$Date >= Start
-                                 & df_XExAll()$Date <= End,]
-            CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
+            df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
             
-            CodeAll()[!(CodeAll() %in% CodeEx)]
+            df_Start = summarise(group_by(df_XExNoNA, code),
+                                 Start=min(Date, na.rm=TRUE))
+            StartEx = df_Start$Start
+            df_End = summarise(group_by(df_XExNoNA, code),
+                               End=max(Date, na.rm=TRUE))            
+            EndEx = df_End$End
+            CodeEx = df_Start$code
+
+            CodeEx[EndEx <= Start | End <= StartEx]
             
         } else {
             c()
@@ -975,22 +985,16 @@ server = function (input, output, session) {
         if (!is.null(df_XExAll())) {
             Start = period()[1]
             End = period()[2]
-            df_XEx = df_XExAll()[df_XExAll()$Date >= Start
-                                 & df_XExAll()$Date <= End,]
-            CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
+            df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
+            df_XExNoNA = df_XExNoNA[Start <= df_XExNoNA$Date
+                                    & df_XExNoNA$Date <= End,]
+                
+            df_Period = summarise(group_by(df_XExNoNA, code),
+                                  Period=length(Value))
+            PeriodEx = df_Period$Period
+            CodeEx = df_Period$code
             
-            df_Start = summarise(group_by(df_XEx, code),
-                                 Start=min(Date, na.rm=TRUE))
-            analyseStart = df_Start$Start
-            df_End = summarise(group_by(df_XEx, code),
-                               End=max(Date, na.rm=TRUE))            
-            analyseEnd = df_End$End
-                        
-            analyseStart[analyseStart < Start] = Start
-            analyseEnd[analyseEnd > End] = End
-            analysePeriod = (analyseEnd - analyseStart) / 365.25
-            
-            CodeEx[analysePeriod < analyseMinYear]
+            CodeEx[PeriodEx < analyseMinYear]
             
         } else {
             c()
@@ -1065,9 +1069,11 @@ server = function (input, output, session) {
             switchColor = switch_colorLabel(color)
             
             output$trend_plot = renderPlotly({
-                
+
+                DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$Value)]
+                abs = c(min(DateNoNA), max(DateNoNA))
                 # Convert the number of day to the unit of the period
-                abs_num = as.numeric(period()) / 365.25
+                abs_num = as.numeric(abs) / 365.25
                 # Compute the y of the trend
                 if (type() == 'sévérité') {
                     ord = abs_num * df_Xtrend_code$trend +
@@ -1115,17 +1121,19 @@ server = function (input, output, session) {
 
                 fig = add_trace(fig,
                                 type="scatter",
-                                mode="lines",
-                                x=period(),
+                                mode="markers+lines",
+                                x=abs,
                                 y=ord,
+                                marker=list(color='white', size=6),
                                 line=list(color='white', width=6),
                                 hoverinfo="none")
                 
                 fig = add_trace(fig,
                                 type="scatter",
-                                mode="lines",
-                                x=period(),
+                                mode="markers+lines",
+                                x=abs,
                                 y=ord,
+                                marker=list(color=color, size=3),
                                 line=list(color=color, width=3),
                                 hoverinfo="none")
                 
@@ -1184,7 +1192,7 @@ server = function (input, output, session) {
                 }
                 
                 fig = layout(fig,
-                             
+                             separators='. ', 
                              xaxis=list(range=period(),
                                         showgrid=FALSE,
                                         ticks="outside",
@@ -1210,7 +1218,7 @@ server = function (input, output, session) {
                                  fixedrange=TRUE),
                              
                              margin=list(l=0,
-                                         r=0,
+                                         r=12,
                                          b=0,
                                          t=30,
                                          pad=0),

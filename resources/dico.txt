@@ -64,6 +64,7 @@ tt.ana.var4.7;"Volume de déficite de l'étiage (intégrale de la courbe de la m
 ana.var4.8;"t_etiage"
 tt.ana.var4.8;"Durée de l'étiage (durée de la plus longue période continue de la moyenne sur 10 jours sous le maximum des VCN10)"
 ana.proba;"Probabilité"
+tt.ana.proba;"Probabilité de"
 ana.dm;"Année hydro."
 tt.ana.dm;"Mois de début de l'année hydrologique"
 ana.m01;"Janv"

@@ -462,23 +462,18 @@ a:hover {
 
 
 /* SLIDER */
-
 .irs {
-    margin-top: -12px !important;
-    margin-bottom: -8px !important;
+    margin-top: -5px !important;
+    margin-bottom: -9px !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
-
 .size1Slider .irs {
     min-width: 14rem !important;
-    width: 19rem !important;
     max-width: calc(100vw - 9rem) !important;
 }
-
 .size2Slider .irs {
     min-width: 13.5rem !important;
-    width: 20.5rem !important;
     max-width: calc(100vw - 9rem) !important;
 }
 
@@ -505,7 +500,6 @@ a:hover {
 }
 /* Bottom text */
 .irs-grid-text {
-    /* font-family: 'arial' !important; */
     color: #979797 !important;
     position: absolute !important;
     bottom: 15px !important;
@@ -547,7 +541,8 @@ a:hover {
 .irs-from,
 .irs-to,
 .irs-single {
-    color: transparent !important;
+    top: 0.3rem !important;
+    color: #b3b3b3 !important;
     background: transparent !important;
 }
 /* Handle */
