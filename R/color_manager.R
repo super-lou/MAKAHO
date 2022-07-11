@@ -37,31 +37,7 @@ Palette_ground = c('#543005',
                    '#01665e',
                    '#003c30')
 
-# Personnal colors
-grey99COL = "#fcfcfc"
-grey98COL = "#fafafa"
-grey97COL = "#f7f7f7"
-grey94COL = "#f0f0f0"
-grey90COL = "#e5e5e5"
-grey85COL = "#d9d9d9"
-grey75COL = "#bfbfbf"
-grey70COL = "#b3b3b3"
-grey50COL = "#808080"
-grey40COL = "#666666"
-grey30COL = "#4d4d4d"
-grey20COL = "#333333"
-grey18COL = "#2e2e2e"
-grey15COL = "#262626"
-grey9COL = "#171717"
 
-yellowCOL = "#fddc5c"
-orangeCOL = "#ffa62b"
-redCOL = "#dc343b"
-
-lightCyanCOL = "#66c1bf"
-midCyanCOL = "#008c8e"
-darkCyanCOL = "#275662"
-INRAECyanCOL = "#00a3a6"
 
 
 ## 1. COLOR MANAGEMENT
@@ -89,6 +65,8 @@ compute_colorBin = function (min, max, Palette, colorStep=256,
     return (res)
 }
 
+# compute_colorBin(-10, 10, Palette, colorStep=10)
+
 compute_color = function (value, min, max, Palette, colorStep=256, reverse=FALSE) {
 
     # If the value is a NA return NA color
@@ -114,7 +92,7 @@ compute_color = function (value, min, max, Palette, colorStep=256, reverse=FALSE
 # compute_color(-51, -50, 40, Palette, colorStep=10)
 
 
-get_color = function (value, min, max, Palette, CodeSample, colorStep=256, reverse=FALSE, noneColor='black') {
+get_color = function (value, min, max, Palette, colorStep=256, reverse=FALSE, noneColor='black') {
     
     color = sapply(value, compute_color,
                    min=min,

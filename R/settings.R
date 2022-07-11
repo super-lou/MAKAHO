@@ -36,21 +36,6 @@ resources_path = 'resources'
 INRAElogo_path = file.path(resources_path,
                            "logo", "Logo-INRAE_Transparent.png")
 
-shp_dir = 'map'
-
-# Path to the shapefile for basin shape from 'computer_data_path' 
-bs_shpdir = file.path(shp_dir, 'bassin')
-bs_shpname = 'BassinHydrographique.shp'
-
-# Path to the shapefile for station basins shape from 'computer_data_path' 
-cbs_shpdir = file.path(shp_dir, 'bassin_station')
-cbs_shpname = c('BV_4207_stations.shp', '3BVs_FRANCE_L2E_2018.shp')
-cbs_coord = c("L93", "L2")
-
-# Path to the shapefile for river shape from 'computer_data_path' 
-rv_shpdir = file.path('map', 'river')
-rv_shpname = 'CoursEau_FXX.shp'
-
 # Icon directory
 icon_dir = 'icons'
 # Creates icon library 
@@ -112,12 +97,38 @@ sigVal = as.numeric(gsub('%', '' , sigProba))/100
 nbTick = 10
 
 colorStep = 10
-Palette = Palette_ground
+Palette = Palette_ground()
 reverse = FALSE
 
 exQprob = 0.01
 
 analyseMinYear = 30
+
+# Personnal colors
+grey99COL = "#fcfcfc"
+grey98COL = "#fafafa"
+grey97COL = "#f7f7f7"
+grey94COL = "#f0f0f0"
+grey90COL = "#e5e5e5"
+grey85COL = "#d9d9d9"
+grey75COL = "#bfbfbf"
+grey70COL = "#b3b3b3"
+grey50COL = "#808080"
+grey40COL = "#666666"
+grey30COL = "#4d4d4d"
+grey20COL = "#333333"
+grey18COL = "#2e2e2e"
+grey15COL = "#262626"
+grey9COL = "#171717"
+
+yellowCOL = "#fddc5c"
+orangeCOL = "#ffa62b"
+redCOL = "#dc343b"
+
+lightCyanCOL = "#66c1bf"
+midCyanCOL = "#008c8e"
+darkCyanCOL = "#275662"
+INRAECyanCOL = "#00a3a6"
 
 validColor = grey50COL
 invalidColor = yellowCOL
@@ -136,3 +147,31 @@ leftHelp = "51%"
 topHelp = "50%"
 dyNavHelp = 270
 dhNavHelp = 21
+
+
+## ash
+data_path = file.path(computer_data_path, 'fst', 'data.fst')
+meta_path = file.path(computer_data_path, 'fst', 'meta.fst')
+if (!file.exists(data_path) | !file.exists(meta_path)) {
+    df_data = extract_data(computer_data_path, filedir, "all")
+    df_meta = extract_meta(computer_data_path, filedir, "all")
+    df_meta = get_lacune(df_data, df_meta)
+    ### ///!\\\ pas de régime hydro
+    write_dataFST(df_data, filename='data.fst', filedir='fst',
+                  resdir=computer_data_path)
+    write_dataFST(df_meta, filename='meta.fst', filedir='fst',
+                  resdir=computer_data_path)
+}
+
+to_do = c('station_trend_analyse')
+filedir = "RRSE"
+trend_period = list(c(1, 2))
+
+init_var_file = 'default.R'
+var_dir = 'variable'
+var_to_analyse_dir = ''
+to_assign_out = c()
+hydroPeriod_mode = 'fixed'
+saving = c()
+fast_format = TRUE
+read_results = FALSE
