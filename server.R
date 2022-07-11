@@ -63,9 +63,8 @@ server = function (input, output, session) {
                         missCode=c(),
                         invalidCode=c(),
                         badCode=c(),
-                        df_XExAll=NULL,
                         df_XEx=NULL,
-                        df_XExSample=NULL
+                        df_Xtrend=NULL
                         )
 
     startOBS = observe({
@@ -494,7 +493,7 @@ server = function (input, output, session) {
             rv$clickMode = TRUE
         } else {
             if (rv$clickMode) {
-                rv$clickMode = FALSE
+                deselect_mode(session, rv)
                 hide(id='click_bar')
                 showElement(id='ana_panel')
             }
@@ -515,14 +514,7 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$clickOk_button, {
-
-        updateSelectButton(
-            session=session,
-            class="selectButton",
-            inputId="click_select",
-            selected=FALSE)
-                
-        rv$clickMode = FALSE
+        deselect_mode(session, rv)                
         hide(id='click_bar')
         hide(id='theme_panel')
         showElement(id='ana_panel')
@@ -539,12 +531,12 @@ server = function (input, output, session) {
                 hide(id='click_bar')
                 hide(id='dlClick_bar')
                 showElement(id='poly_bar')
-                rv$polyMode = "Add"
+                rv$polyMode = input$poly_choice#"Add"
                 rv$polyCoord = tibble()
                 
         } else {
             if (rv$polyMode == 'Add' | rv$polyMode == 'Rm') {
-                rv$polyMode = 'false'
+                deselect_mode(session, rv)
                 hide(id='poly_bar')
                 showElement(id='ana_panel')
             }
@@ -626,13 +618,11 @@ server = function (input, output, session) {
             rv$polyCoord = NULL
         }
 
-        updateSelectButton(
-            session=session,
-            class="selectButton",
-            inputId="poly_select",
-            selected=FALSE)
+        print("deselect")
+        print(rv$polyMode)
+        deselect_mode(session, rv)
+        print(rv$polyMode)
         
-        rv$polyMode = 'false'
         hide(id='poly_bar')
         hide(id='theme_panel')
         showElement(id='ana_panel')
@@ -867,48 +857,101 @@ server = function (input, output, session) {
         formatC(month, width=2, flag=0)
     })
     
-    filename = reactive({
+    # filename = reactive({
 
-        filenametmp = paste0(var(), 'Ex_',
-                             monthStart(), '.fst')
+    #     filenametmp = paste0(var(), 'Ex_',
+    #                          monthStart(), '.fst')
 
-        file_path = file.path(computer_data_path, 'fst', filenametmp)
-        if (file.exists(file_path)) {
-            filenametmp
-        } else {
-            NULL
-        }
+    #     file_path = file.path(computer_data_path, 'fst', filenametmp)
+    #     if (file.exists(file_path)) {
+    #         filenametmp
+    #     } else {
+    #         NULL
+    #     }
+    # })
+
+
+    df_data = reactive({
+        read_FST(computer_data_path,
+                 'data.fst',
+                 filedir='fst')
     })
+
+
+    observeEvent(, {
+        script_to_analyse_path =  file.path('R', var_dir, var())
+        source(file.path('R', var_dir, init_var_file),
+               encoding='UTF-8')
+        source(script_to_analyse_path,
+               encoding='UTF-8')
+
+        res = get_Xtrend(var,
+                         df_data(),
+                         df_meta(),
+                         period=list(period()),
+                         hydroPeriod=hydroPeriod,
+                         alpha=alpha,
+                         df_flag=df_flag,
+                         yearNA_lim=yearNA_lim,
+                         dayNA_lim=dayNA_lim,
+                         day_to_roll=day_to_roll,
+                         functM=functM,
+                         functM_args=functM_args,
+                         isDateM=isDateM,
+                         functY=functY,
+                         functY_args=functY_args,
+                         isDateY=isDateY,
+                         functYT_ext=functYT_ext,
+                         functYT_ext_args=functYT_ext_args,
+                         isDateYT_ext=isDateYT_ext,
+                         functYT_sum=functYT_sum,
+                         functYT_sum_args=functYT_sum_args)
+
+        df_Xdata = res$data
+        df_Xmod = res$mod
+        res_Xanalyse = res$analyse
+        # Gets the extracted data for the variable
+        df_XEx = res_Xanalyse$extract
+        # Gets the trend results for the variable
+        df_Xtrend = res_Xanalyse$estimate
+
+        rv$df_XEx = df_XEx
+        rv$df_Xtrend = df_Xtrend
+    })
+
+
+
+    
  
-    df_XExAll = reactive({
+    # df_XExAll = reactive({
 
-        if (!is.null(filename())) {
-            read_FST(computer_data_path,
-                     filename(),
-                     filedir='fst')
-        } else {
-            NULL
-         }
-    })
+    #     if (!is.null(filename())) {
+    #         read_FST(computer_data_path,
+    #                  filename(),
+    #                  filedir='fst')
+    #     } else {
+    #         NULL
+    #      }
+    # })
 
 
-    df_XEx = reactive({
+    # df_XEx = reactive({
 
-        if (!is.null(df_XExAll()) & !is.null(CodeSample())) {
+    #     if (!is.null(df_XExAll()) & !is.null(CodeSample())) {
 
-            df_XEx = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
+    #         df_XEx = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
 
-            Start = period()[1]
-            End = period()[2]
+    #         Start = period()[1]
+    #         End = period()[2]
             
-            df_XEx = df_XEx[df_XEx$Date >= Start
-                            & df_XEx$Date <= End,]
-            df_XEx
+    #         df_XEx = df_XEx[df_XEx$Date >= Start
+    #                         & df_XEx$Date <= End,]
+    #         df_XEx
             
-        } else {
-            NULL
-        }
-    })
+    #     } else {
+    #         NULL
+    #     }
+    # })
 
     
 
@@ -1372,7 +1415,7 @@ server = function (input, output, session) {
             rv$dlClickMode = TRUE
         } else {
             if (rv$dlClickMode) {
-                rv$dlClickMode = FALSE
+                deselect_mode(session, rv)
                 hide(id='dlClick_bar')
                 showElement(id='download_bar')
             }
@@ -1461,14 +1504,7 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$dlClickOk_button, {
-        
-        updateSelectButton(
-            session=session,
-            class="selectButton",
-            inputId="dlClick_select",
-            selected=FALSE)
-        rv$dlClickMode = FALSE
-        
+        deselect_mode(session, rv)
         hide(id='dlClick_bar')
         showElement(id='download_bar')
     })

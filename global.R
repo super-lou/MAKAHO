@@ -38,23 +38,35 @@ library(icons)
 library(dplyr)
 library(tools) # file_ext
 library(data.table) # fast reading
-library(sp) # crs
-library(sf) # crs
-library(ggplot2)
-library(ggtext)
-library(scales)
-library(ggh4x)
 library(plotly)
 
+# ash
+library(qpdf)
+library(lubridate)
+library(trend)
+library(accelerometry)
+library(CircStats)
+
+
+
+dev_path = file.path(dirname(dirname(getwd())),
+                     'CDD_stationnarite', 'ash', 'R')
+if (file.exists(dev_path)) {
+    print('Loading ash from local directory')
+    list_path = list.files(dev_path, pattern="*.R$", full.names=TRUE)
+    for (path in list_path) {
+        source(path, encoding='UTF-8')    
+    }
+} else {
+    library(ash)
+}
 
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')
 source(file.path('R', 'plot.R'), encoding='UTF-8')
-source(file.path('R', 'color_manager.R'), encoding='UTF-8')
 source(file.path('R', 'settings.R'), encoding='UTF-8')
 source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
-source(file.path('R', 'style.R'), encoding='UTF-8')
 source(file.path('R', 'server', 'short.R'), encoding='UTF-8')
 
 
