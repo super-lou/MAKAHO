@@ -369,8 +369,6 @@ a:hover {
 .sep {
     display: inline !important;
     margin: 0.1rem 0.5rem !important;
-    /* border-left: 2px solid #bbb; */
-    /* border-top: 1px solid #bbb; */
     border-left: 2px solid #43494c !important;
     border-top: 1px solid #43494c !important;
 }
@@ -469,12 +467,22 @@ a:hover {
     margin-right: 0 !important;
 }
 .size1Slider .irs {
-    min-width: 14rem !important;
-    max-width: calc(100vw - 9rem) !important;
+    margin-top: -5px !important;
+    margin-bottom: -30px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    min-width: 11.2rem !important;
+    width: 17.5rem !important;
+    max-width: calc(100vw - 13.3rem) !important;
 }
 .size2Slider .irs {
+    margin-top: -6px !important;
+    margin-bottom: -24px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     min-width: 13.5rem !important;
-    max-width: calc(100vw - 9rem) !important;
+    width: 20rem !important;
+    max-width: calc(100vw - 11rem) !important;
 }
 
 /* Selection bar */
@@ -487,6 +495,12 @@ a:hover {
 .invertSlider .irs-bar {
     height: 5px !important;
     background: #474747 !important;
+    border-top: 0px solid transparent !important;
+    border-bottom: 0px solid transparent !important;
+}
+.soloSlider .irs-bar {
+    height: 5px !important;
+    background: transparent !important;
     border-top: 0px solid transparent !important;
     border-bottom: 0px solid transparent !important;
 }
@@ -533,13 +547,11 @@ a:hover {
 }
 /* Max label */
 .irs-max {
-    /* font-family: 'arial' !important; */
     background: transparent !important;
     color: transparent !important;
 }
 /* Min label */
 .irs-min {
-    /* font-family: 'arial' !important; */
     background: transparent !important;
     color: transparent !important;
 }

@@ -350,16 +350,29 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
+                    style="margin-bottom: -16px !important;",
 
-                    uiOutput("hydroPeriod_slider"),
-                    
-                    selectButton(
+                    div(style="margin-left: 8px !important;",
+                        uiOutput("hydroPeriod_slider")),
+
+                    div(selectButton(
                         class="selectButton",
-                        inputId="invertSlider_select",
-                        label=word("ana.invert.slider"),
-                        icon_name=iconLib$contrast_white,
+                        inputId="sampleSlider_select",
+                        label=word("ana.sample.slider"),
+                        icon_name=iconLib$data_array_white,
                         selected=FALSE,
-                        tooltip=word("tt.ana.invert.slider"))
+                        tooltip=word("tt.ana.sample.slider"))),
+                    
+                    hidden(
+                        div(id="invertSlider",
+                            selectButton(
+                                class="selectButton",
+                                inputId="invertSlider_select",
+                                label=word("ana.invert.slider"),
+                                icon_name=iconLib$contrast_white,
+                                selected=FALSE,
+                                tooltip=word("tt.ana.invert.slider")))
+                    )
                     )),
 
             div(class="Row",
@@ -369,14 +382,8 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    Slider(class="size2Slider",
-                           inputId="dateYear_slider",
-                           label=NULL,
-                           step=1,
-                           sep='',
-                           min=1900,
-                           max=2020,
-                           value=c(1968, 2020)))),
+                    div(style="margin-left: 8px !important;",
+                        uiOutput("dateYear_slider")))),
 
 ### 2.6. Statistical option ______________________________________________
             div(class="Row",

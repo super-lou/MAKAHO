@@ -47,6 +47,7 @@ server = function (input, output, session) {
                         dlClickMode=FALSE,
                         photoMode=FALSE,
                         invertSliderMode=FALSE,
+                        sampleSliderMode=FALSE,
                         currentLimits=NULL,
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
@@ -852,12 +853,22 @@ server = function (input, output, session) {
 
 
 ### 2.4. _____________________________________________________________
-    monthStart = reactive({
-        if (!is.null(input$hydroPeriod_slider)) {
-            month = which(Months == input$hydroPeriod_slider)
-            formatC(month, width=2, flag=0)
+    # monthStart = reactive({
+    #     if (!is.null(input$hydroPeriod_slider)) {
+    #         month = which(Months == input$hydroPeriod_slider)
+    #         formatC(month, width=2, flag=0)
+    #     } else {
+    #         NULL
+    #     }
+    # })
+
+    observe({
+        if (!is.null(input$sampleSlider_select)) {
+            rv$sampleSliderMode = TRUE
+            showElement(id="invertSlider")
         } else {
-            NULL
+            rv$sampleSliderMode = FALSE
+            hide(id="invertSlider")
         }
     })
 
@@ -871,12 +882,17 @@ server = function (input, output, session) {
 
     output$hydroPeriod_slider = renderUI({
 
-        if (rv$invertSliderMode) {
-            class = "size1Slider invertSlider"
-            selected = Months[c(1, 1)]
+        if (rv$sampleSliderMode) {
+            if (rv$invertSliderMode) {
+                class = "size1Slider invertSlider"
+                selected = Months[c(1, 1)]
+            } else {
+                class = "size1Slider"
+                selected = Months[c(1, 12)]
+            }
         } else {
-            class = "size1Slider"
-            selected = Months[c(1, 12)]
+            class = "size1Slider soloSlider"
+            selected = Months[1]
         }
         
         Slider(class=class,
@@ -889,42 +905,61 @@ server = function (input, output, session) {
                selected=selected)
     })
 
-    hydroPeriod = reactive({
-        if (!is.null(input$hydroPeriod_slider)) {
-            
-            if (rv$invertSliderMode) {
-                nameMonthStart = input$hydroPeriod_slider[2]
-                idMonthStart = which(Months == nameMonthStart)
-                monthStart = formatC(idMonthStart, width=2, flag=0)
+    output$dateYear_slider = renderUI({
+        Slider(class="size2Slider",
+               inputId="dateYear_slider",
+               label=NULL,
+               step=1,
+               sep='',
+               min=1900,
+               max=2020,
+               value=c(1968, 2020))
+    })
+        
 
-                nameMonthEnd = input$hydroPeriod_slider[1]
-                idMonthEnd = which(Months == nameMonthEnd)
-                monthEnd = formatC(idMonthEnd, width=2, flag=0)            
-                dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
-                
-                hydroPeriodStart = paste0(monthStart, "-01")
-                hydroPeriodEnd = substr(dateEnd - 1, 6, 10)
-                
+    hydroPeriodB = reactive({
+        if (!is.null(input$hydroPeriod_slider)) {
+            if (rv$sampleSliderMode & length(input$hydroPeriod_slider) == 2) {
+                if (rv$invertSliderMode) {
+                    nameMonthStart = input$hydroPeriod_slider[2]
+                    idMonthStart = which(Months == nameMonthStart)
+                    monthStart = formatC(idMonthStart, width=2, flag=0)
+
+                    nameMonthEnd = input$hydroPeriod_slider[1]
+                    idMonthEnd = which(Months == nameMonthEnd)
+                    monthEnd = formatC(idMonthEnd, width=2, flag=0)            
+                    dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
+                    
+                    hydroPeriodStart = paste0(monthStart, "-01")
+                    hydroPeriodEnd = substr(dateEnd - 1, 6, 10)
+                    
+                } else {
+                    nameMonthStart = input$hydroPeriod_slider[1]
+                    idMonthStart = which(Months == nameMonthStart)
+                    monthStart = formatC(idMonthStart, width=2, flag=0)
+
+                    nameMonthEnd = input$hydroPeriod_slider[2]
+                    idMonthEnd = which(Months == nameMonthEnd)
+                    monthEnd = formatC(idMonthEnd, width=2, flag=0)
+                    dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
+
+                    hydroPeriodStart = paste0(monthStart, "-01")
+                    hydroPeriodEnd = substr(dateEnd + months(1) - 1, 6, 10)
+                }
+                c(hydroPeriodStart, hydroPeriodEnd)
+
             } else {
                 nameMonthStart = input$hydroPeriod_slider[1]
                 idMonthStart = which(Months == nameMonthStart)
                 monthStart = formatC(idMonthStart, width=2, flag=0)
-
-                nameMonthEnd = input$hydroPeriod_slider[2]
-                idMonthEnd = which(Months == nameMonthEnd)
-                monthEnd = formatC(idMonthEnd, width=2, flag=0)
-                dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
-
                 hydroPeriodStart = paste0(monthStart, "-01")
-                hydroPeriodEnd = substr(dateEnd + months(1) - 1, 6, 10)
+                hydroPeriodStart
             }
-            c(hydroPeriodStart, hydroPeriodEnd)
         } else {
             NULL
         }
     })
-    
-
+    hydroPeriod = debounce(hydroPeriodB, 1000)
     
     
     # filename = reactive({
@@ -1063,14 +1098,44 @@ server = function (input, output, session) {
 
 ### 2.4. Period ______________________________________________________
     periodB = reactive({
-        if (!is.null(hydroPeriod())) {  
-            Start = as.Date(paste0(input$dateYear_slider[1],
-                                   "-",
-                                   hydroPeriod()[1]))
-            End = as.Date(paste0(input$dateYear_slider[2],
-                                 "-",
-                                 hydroPeriod()[2]))
-            c(Start, End)
+        if (!is.null(hydroPeriod())) {
+
+            startYear = input$dateYear_slider[1]
+            endYear = input$dateYear_slider[2]
+            
+            inter = endYear - startYear
+            if (inter < 30) {
+                if (startYear + 30 > 2020 & endYear - 30 >= 1900) {
+                    startYear = endYear - 30
+                } else {
+                    endYear = startYear + 30
+                }
+                updateSlider(session=session,
+                             class="size2Slider",
+                             inputId="dateYear_slider",
+                             value=c(startYear, endYear))
+            }
+
+            if (rv$sampleSliderMode & length(hydroPeriod()) == 2) {
+                Start = as.Date(paste0(startYear,
+                                       "-",
+                                       hydroPeriod()[1]))
+                End = as.Date(paste0(endYear,
+                                     "-",
+                                     hydroPeriod()[2]))
+                c(Start, End)
+            } else {                
+                Start = as.Date(paste0(startYear,
+                                       "-",
+                                       hydroPeriod()[1]))
+                Endtmp = as.Date(paste0(endYear,
+                                        "-",
+                                        hydroPeriod()[1])) - 1
+                End = as.Date(paste0(endYear,
+                                     "-",
+                                     substr(Endtmp, 6, 10)))
+                c(Start, End)
+            }
         } else {
             NULL
         }
