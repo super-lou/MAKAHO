@@ -150,13 +150,16 @@ dhNavHelp = 21
 
 
 ## ash
+hydrograph_period = c("1968-01-01", "1988-12-31")
+
 data_path = file.path(computer_data_path, 'fst', 'data.fst')
 meta_path = file.path(computer_data_path, 'fst', 'meta.fst')
 if (!file.exists(data_path) | !file.exists(meta_path)) {
     df_data = extract_data(computer_data_path, filedir, "all")
     df_meta = extract_meta(computer_data_path, filedir, "all")
     df_meta = get_lacune(df_data, df_meta)
-    ### ///!\\\ pas de régime hydro
+    df_meta = get_hydrograph(df_data, df_meta,
+                             period=hydrograph_period)$meta
     write_dataFST(df_data, filename='data.fst', filedir='fst',
                   resdir=computer_data_path)
     write_dataFST(df_meta, filename='meta.fst', filedir='fst',
@@ -175,3 +178,4 @@ hydroPeriod_mode = 'fixed'
 saving = c()
 fast_format = TRUE
 read_results = FALSE
+df_flag = NULL

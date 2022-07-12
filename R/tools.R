@@ -330,6 +330,26 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
 }
 
 
+Slider = function (class, modeText=FALSE, ...) {
+    if (modeText) {
+        div(class=class,
+            sliderTextInput(...))
+    } else {
+        div(class=class,
+            sliderInput(...))
+    }
+}
+updateSlider = function (class, modeText=FALSE, ...) {
+    if (modeText) {
+        div(class=class,
+            updateSliderTextInput(...))
+    } else {
+        div(class=class,
+            updateSliderInput(...))
+    }
+}
+
+
 page_circle = function (n, leftBase, widthHelp, top, dh, tooltip=NULL) {
     hidden(
         fixedPanel(id=paste0("c", n,"_panelButton"),

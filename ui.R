@@ -349,12 +349,18 @@ ui = bootstrapPage(
                                 word('ana.dm'),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch textSlider size1Slider",
-                    sliderTextInput(inputId="dateMonth_slider",
-                                    label=NULL,
-                                    grid=TRUE,
-                                    force_edges=FALSE,
-                                    choices=Months))),
+                div(class="bunch",
+
+                    uiOutput("hydroPeriod_slider"),
+                    
+                    selectButton(
+                        class="selectButton",
+                        inputId="invertSlider_select",
+                        label=word("ana.invert.slider"),
+                        icon_name=iconLib$contrast_white,
+                        selected=FALSE,
+                        tooltip=word("tt.ana.invert.slider"))
+                    )),
 
             div(class="Row",
                 div(class="row-label",
@@ -362,14 +368,15 @@ ui = bootstrapPage(
                                 word('ana.dy'),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(class="bunch size2Slider",
-                    sliderInput("dateYear_slider",
-                                label=NULL,
-                                step=1,
-                                sep='',
-                                min=1900,
-                                max=2020,
-                                value=c(1968, 2020)))),
+                div(class="bunch",
+                    Slider(class="size2Slider",
+                           inputId="dateYear_slider",
+                           label=NULL,
+                           step=1,
+                           sep='',
+                           min=1900,
+                           max=2020,
+                           value=c(1968, 2020)))),
 
 ### 2.6. Statistical option ______________________________________________
             div(class="Row",

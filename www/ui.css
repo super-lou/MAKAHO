@@ -484,7 +484,7 @@ a:hover {
     border-top: 0px solid transparent !important;
     border-bottom: 0px solid transparent !important;
 }
-.texSlider .irs-bar {
+.invertSlider .irs-bar {
     height: 5px !important;
     background: #474747 !important;
     border-top: 0px solid transparent !important;
@@ -495,6 +495,12 @@ a:hover {
 .irs-line {
     height: 5px !important;
     background: #474747 !important;
+    border: 0px solid transparent !important;
+    border-radius: 5px !important;
+}
+.invertSlider .irs-line {
+    height: 5px !important;
+    background: #979797 !important;
     border: 0px solid transparent !important;
     border-radius: 5px !important;
 }

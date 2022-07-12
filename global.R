@@ -39,6 +39,8 @@ library(dplyr)
 library(tools) # file_ext
 library(data.table) # fast reading
 library(plotly)
+library(sp) # conversion of L93 to WGS84
+library(sf) # conversion of L93 to WGS84
 
 # ash
 library(qpdf)
@@ -55,7 +57,7 @@ if (file.exists(dev_path)) {
     print('Loading ash from local directory')
     list_path = list.files(dev_path, pattern="*.R$", full.names=TRUE)
     for (path in list_path) {
-        source(path, encoding='UTF-8')    
+        source(path, encoding='UTF-8')
     }
 } else {
     library(ash)

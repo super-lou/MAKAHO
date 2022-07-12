@@ -46,6 +46,7 @@ server = function (input, output, session) {
                         warningMode=TRUE,
                         dlClickMode=FALSE,
                         photoMode=FALSE,
+                        invertSliderMode=FALSE,
                         currentLimits=NULL,
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
@@ -617,12 +618,8 @@ server = function (input, output, session) {
             map = clearShapes(map)
             rv$polyCoord = NULL
         }
-
-        print("deselect")
-        print(rv$polyMode)
-        deselect_mode(session, rv)
-        print(rv$polyMode)
         
+        deselect_mode(session, rv)
         hide(id='poly_bar')
         hide(id='theme_panel')
         showElement(id='ana_panel')
@@ -852,10 +849,83 @@ server = function (input, output, session) {
                               paste0(word("tt.ana.proba"), choices))
     })
 
+
+
+### 2.4. _____________________________________________________________
     monthStart = reactive({
-        month = which(Months == input$dateMonth_slider)
-        formatC(month, width=2, flag=0)
+        if (!is.null(input$hydroPeriod_slider)) {
+            month = which(Months == input$hydroPeriod_slider)
+            formatC(month, width=2, flag=0)
+        } else {
+            NULL
+        }
     })
+
+    observe({
+        if (!is.null(input$invertSlider_select)) {
+            rv$invertSliderMode = TRUE
+        } else {
+            rv$invertSliderMode = FALSE
+        }
+    })
+
+    output$hydroPeriod_slider = renderUI({
+
+        if (rv$invertSliderMode) {
+            class = "size1Slider invertSlider"
+            selected = Months[c(1, 1)]
+        } else {
+            class = "size1Slider"
+            selected = Months[c(1, 12)]
+        }
+        
+        Slider(class=class,
+               inputId="hydroPeriod_slider",
+               modeText=TRUE,
+               label=NULL,
+               grid=TRUE,
+               force_edges=FALSE,
+               choices=Months,
+               selected=selected)
+    })
+
+    hydroPeriod = reactive({
+        if (!is.null(input$hydroPeriod_slider)) {
+            
+            if (rv$invertSliderMode) {
+                nameMonthStart = input$hydroPeriod_slider[2]
+                idMonthStart = which(Months == nameMonthStart)
+                monthStart = formatC(idMonthStart, width=2, flag=0)
+
+                nameMonthEnd = input$hydroPeriod_slider[1]
+                idMonthEnd = which(Months == nameMonthEnd)
+                monthEnd = formatC(idMonthEnd, width=2, flag=0)            
+                dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
+                
+                hydroPeriodStart = paste0(monthStart, "-01")
+                hydroPeriodEnd = substr(dateEnd - 1, 6, 10)
+                
+            } else {
+                nameMonthStart = input$hydroPeriod_slider[1]
+                idMonthStart = which(Months == nameMonthStart)
+                monthStart = formatC(idMonthStart, width=2, flag=0)
+
+                nameMonthEnd = input$hydroPeriod_slider[2]
+                idMonthEnd = which(Months == nameMonthEnd)
+                monthEnd = formatC(idMonthEnd, width=2, flag=0)
+                dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
+
+                hydroPeriodStart = paste0(monthStart, "-01")
+                hydroPeriodEnd = substr(dateEnd + months(1) - 1, 6, 10)
+            }
+            c(hydroPeriodStart, hydroPeriodEnd)
+        } else {
+            NULL
+        }
+    })
+    
+
+    
     
     # filename = reactive({
 
@@ -871,55 +941,91 @@ server = function (input, output, session) {
     # })
 
 
+    df_dataAll = reactive({
+        if (file.exists(file.path(computer_data_path, 'fst', "data.fst"))) {
+            read_FST(computer_data_path,
+                     "data.fst",
+                     filedir="fst")
+        } else {
+            NULL
+        }
+    })
+
     df_data = reactive({
-        read_FST(computer_data_path,
-                 'data.fst',
-                 filedir='fst')
+        if (!is.null(df_dataAll()) & !is.null(CodeSample())) {
+            df_data = df_dataAll()[df_dataAll()$code %in% CodeSample(),]
+            # Start = period()[1]
+            # End = period()[2]
+            # df_data = df_data[df_data$Date >= Start
+                            # & df_data$Date <= End,]
+            df_data
+        } else {
+            NULL
+        }
     })
 
 
-    observeEvent(, {
-        script_to_analyse_path =  file.path('R', var_dir, var())
-        source(file.path('R', var_dir, init_var_file),
-               encoding='UTF-8')
-        source(script_to_analyse_path,
-               encoding='UTF-8')
+    observeEvent({
+        df_data()
+        df_meta()
+        var()
+        period()
+    }, {
+        if (!is.null(df_data()) & !is.null(df_meta()) & var()!= FALSE) {
+            script_to_analyse_path = file.path('R',
+                                               var_dir,
+                                               paste0(var(), ".R"))
+            source(file.path('R', var_dir, init_var_file),
+                   encoding='UTF-8')
+            source(script_to_analyse_path,
+                   encoding='UTF-8')
 
-        res = get_Xtrend(var,
-                         df_data(),
-                         df_meta(),
-                         period=list(period()),
-                         hydroPeriod=hydroPeriod,
-                         alpha=alpha,
-                         df_flag=df_flag,
-                         yearNA_lim=yearNA_lim,
-                         dayNA_lim=dayNA_lim,
-                         day_to_roll=day_to_roll,
-                         functM=functM,
-                         functM_args=functM_args,
-                         isDateM=isDateM,
-                         functY=functY,
-                         functY_args=functY_args,
-                         isDateY=isDateY,
-                         functYT_ext=functYT_ext,
-                         functYT_ext_args=functYT_ext_args,
-                         isDateYT_ext=isDateYT_ext,
-                         functYT_sum=functYT_sum,
-                         functYT_sum_args=functYT_sum_args)
+            res = get_Xtrend(var(),
+                             df_data(),
+                             df_meta(),
+                             period=list(period()),
+                             hydroPeriod=hydroPeriod(),
+                             df_flag=df_flag,
+                             yearNA_lim=yearNA_lim,
+                             dayNA_lim=dayNA_lim,
+                             day_to_roll=day_to_roll,
+                             functM=functM,
+                             functM_args=functM_args,
+                             isDateM=isDateM,
+                             functY=functY,
+                             functY_args=functY_args,
+                             isDateY=isDateY,
+                             functYT_ext=functYT_ext,
+                             functYT_ext_args=functYT_ext_args,
+                             isDateYT_ext=isDateYT_ext,
+                             functYT_sum=functYT_sum,
+                             functYT_sum_args=functYT_sum_args)
 
-        df_Xdata = res$data
-        df_Xmod = res$mod
-        res_Xanalyse = res$analyse
-        # Gets the extracted data for the variable
-        df_XEx = res_Xanalyse$extract
-        # Gets the trend results for the variable
-        df_Xtrend = res_Xanalyse$estimate
+            # Gets the extracted data for the variable
+            df_XEx = res$analyse$extract
+            # Gets the trend results for the variable
+            df_Xtrend = res$analyse$estimate
+            df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
 
-        rv$df_XEx = df_XEx
-        rv$df_Xtrend = df_Xtrend
+            rv$df_XEx = df_XEx
+            rv$df_Xtrend = df_Xtrend
+        } else {
+            rv$df_XEx = NULL
+            rv$df_Xtrend = NULL
+        }
     })
 
+    df_XEx = reactive({
+        rv$df_XEx
+    })
 
+    df_Xtrend = reactive({
+        rv$df_Xtrend
+    })
+
+    df_XExAll = reactive({
+        NULL
+    })
 
     
  
@@ -957,19 +1063,17 @@ server = function (input, output, session) {
 
 ### 2.4. Period ______________________________________________________
     periodB = reactive({
-        month = which(Months == input$dateMonth_slider)
-        monthStart = formatC(month, width=2, flag=0)
-        monthEnd = formatC((month-2)%%12+1, width=2, flag=0)
-
-        Start = as.Date(paste(input$dateYear_slider[1],
-                              monthStart,
-                              '01',
-                              sep='-'))
-        End = as.Date(paste(input$dateYear_slider[2]+1,
-                            monthStart,
-                            '01',
-                            sep='-')) - 1
-        c(Start, End)
+        if (!is.null(hydroPeriod())) {  
+            Start = as.Date(paste0(input$dateYear_slider[1],
+                                   "-",
+                                   hydroPeriod()[1]))
+            End = as.Date(paste0(input$dateYear_slider[2],
+                                 "-",
+                                 hydroPeriod()[2]))
+            c(Start, End)
+        } else {
+            NULL
+        }
     })
     period = debounce(periodB, 1000)
 
@@ -992,32 +1096,74 @@ server = function (input, output, session) {
                as.numeric(input$alpha_choice)*100, '%')
     })
 
-    df_Xtrend = reactive({
-        if (!is.null(df_XEx())) {
-            df_Xtrend = Estimate_stats_WRAP(df_XEx=df_XEx(),
-                                            dep_option='AR1')
-        } else {
-            df_Xtrend = NULL
-        }        
-        df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
-        df_Xtrend
-    })
+    # df_Xtrend = reactive({
+    #     if (!is.null(df_XEx())) {
+    #         df_Xtrend = Estimate_stats_WRAP(df_XEx=df_XEx(),
+    #                                         dep_option='AR1')
+    #     } else {
+    #         df_Xtrend = NULL
+    #     }        
+    #     df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
+    #     df_Xtrend
+    # })
     
+    # missCode = reactive({
+    #     if (!is.null(df_XExAll())) {
+    #         Start = period()[1]
+    #         End = period()[2]
+    #         df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
+            
+    #         df_Start = summarise(group_by(df_XExNoNA, code),
+    #                              Start=min(Date, na.rm=TRUE))
+    #         StartEx = df_Start$Start
+    #         df_End = summarise(group_by(df_XExNoNA, code),
+    #                            End=max(Date, na.rm=TRUE))            
+    #         EndEx = df_End$End
+    #         CodeEx = df_Start$code
+
+    #         CodeEx[EndEx <= Start | End <= StartEx]
+            
+    #     } else {
+    #         c()
+    #     }
+    # })
+
+    # invalidCode = reactive({
+    #     if (!is.null(df_XExAll())) {
+    #         Start = period()[1]
+    #         End = period()[2]
+    #         df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
+    #         df_XExNoNA = df_XExNoNA[Start <= df_XExNoNA$Date
+    #                                 & df_XExNoNA$Date <= End,]
+                
+    #         df_Period = summarise(group_by(df_XExNoNA, code),
+    #                               Period=length(Value))
+    #         PeriodEx = df_Period$Period
+    #         CodeEx = df_Period$code
+            
+    #         CodeEx[PeriodEx < analyseMinYear]
+            
+    #     } else {
+    #         c()
+    #     }
+    # })
+
+
     missCode = reactive({
-        if (!is.null(df_XExAll())) {
+        if (!is.null(df_dataAll())) {
             Start = period()[1]
             End = period()[2]
-            df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
+            df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
             
-            df_Start = summarise(group_by(df_XExNoNA, code),
+            df_Start = summarise(group_by(df_dataNoNA, code),
                                  Start=min(Date, na.rm=TRUE))
-            StartEx = df_Start$Start
-            df_End = summarise(group_by(df_XExNoNA, code),
+            StartData = df_Start$Start
+            df_End = summarise(group_by(df_dataNoNA, code),
                                End=max(Date, na.rm=TRUE))            
-            EndEx = df_End$End
-            CodeEx = df_Start$code
+            EndData = df_End$End
+            CodeData = df_Start$code
 
-            CodeEx[EndEx <= Start | End <= StartEx]
+            CodeData[EndData <= Start | End <= StartData]
             
         } else {
             c()
@@ -1025,19 +1171,19 @@ server = function (input, output, session) {
     })
 
     invalidCode = reactive({
-        if (!is.null(df_XExAll())) {
+        if (!is.null(df_dataAll())) {
             Start = period()[1]
             End = period()[2]
-            df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
-            df_XExNoNA = df_XExNoNA[Start <= df_XExNoNA$Date
-                                    & df_XExNoNA$Date <= End,]
-                
-            df_Period = summarise(group_by(df_XExNoNA, code),
-                                  Period=length(Value))
-            PeriodEx = df_Period$Period
-            CodeEx = df_Period$code
+            df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
+            df_dataNoNA = df_dataNoNA[Start <= df_dataNoNA$Date
+                                      & df_dataNoNA$Date <= End,]
             
-            CodeEx[PeriodEx < analyseMinYear]
+            df_Period = summarise(group_by(df_dataNoNA, code),
+                                  Period=length(Value))
+            PeriodData = df_Period$Period/365.25
+            CodeData = df_Period$code
+
+            CodeData[PeriodData < analyseMinYear]
             
         } else {
             c()
