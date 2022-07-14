@@ -13,7 +13,6 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-
 which.maxNA = function (x) {
     idMax = which.max(x)
     if (identical(idMax, integer(0))) {
@@ -21,7 +20,6 @@ which.maxNA = function (x) {
     }
     return (idMax)
 }
-
 
 functY = which.maxNA
 functY_args = NULL

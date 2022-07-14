@@ -58,81 +58,85 @@ plot_colorbar = function (rv, type, Palette, colorStep=256, reverse=FALSE) {
     # Extracts the number of counts per cells
     counts = res$counts
 
-    fig = plotly_empty(width=55, height=250)
+    fig = plotly::plotly_empty(width=55, height=250)
     
     for (i in 2:(colorStep-1)) {
-        fig = add_trace(fig,
-                        type="scatter",
-                        mode="lines",
-                        x=c(X0[i], X0[i], X1[i], X1[i], X0[i]),
-                        y=c(Y0[i], Y1[i], Y1[i], Y0[i], Y0[i]),
-                        fill="toself",
-                        fillcolor=PaletteColors[i],
-                        line=list(width=0),
-                        text=paste0("<b>",
-                                    counts[i],
-                                    "</b>",
-                                    "<br>stations"),
-                        hoverinfo="text",
-                        hoveron="fills",
-                        hoverlabel=list(bgcolor=counts[i],
-                                        font=list(color="white",
-                                                  size=12),
-                                        bordercolor="white"))
+        fig = plotly::add_trace(
+                          fig,
+                          type="scatter",
+                          mode="lines",
+                          x=c(X0[i], X0[i], X1[i], X1[i], X0[i]),
+                          y=c(Y0[i], Y1[i], Y1[i], Y0[i], Y0[i]),
+                          fill="toself",
+                          fillcolor=PaletteColors[i],
+                          line=list(width=0),
+                          text=paste0("<b>",
+                                      counts[i],
+                                      "</b>",
+                                      "<br>stations"),
+                          hoverinfo="text",
+                          hoveron="fills",
+                          hoverlabel=list(bgcolor=counts[i],
+                                          font=list(color="white",
+                                                    size=12),
+                                          bordercolor="white"))
     }
     
-    fig = layout(fig,
-                 xaxis=list(range=c(-1.5, 3.4),
-                            showticklabels=FALSE,
-                            fixedrange=TRUE),
-                 yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
-                            showticklabels=FALSE,
-                            fixedrange=TRUE),
-                 margin=list(l=0,
-                             r=0,
-                             b=0,
-                             t=0,
-                             pad=0),
-                 autosize=FALSE,
-                 plot_bgcolor='transparent',
-                 paper_bgcolor='transparent',
-                 showlegend=FALSE)
+    fig = plotly::layout(
+                      fig,
+                      xaxis=list(range=c(-1.5, 3.4),
+                                 showticklabels=FALSE,
+                                 fixedrange=TRUE),
+                      yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
+                                 showticklabels=FALSE,
+                                 fixedrange=TRUE),
+                      margin=list(l=0,
+                                  r=0,
+                                  b=0,
+                                  t=0,
+                                  pad=0),
+                      autosize=FALSE,
+                      plot_bgcolor='transparent',
+                      paper_bgcolor='transparent',
+                      showlegend=FALSE)
     
-    fig = add_trace(fig,
-                    type="scatter",
-                    mode="lines",
-                    x=c(0, 1, 0.5, 0),
-                    y=c(1, 1, 1+dY*2/3, 1),
-                    fill="toself",
-                    fillcolor=PaletteColors[colorStep],
-                    line=list(width=0),
-                    text=paste0("<b>",
-                                counts[colorStep],
-                                "</b>",
-                                "<br>stations"),
-                    hoverinfo="text",
-                    hoveron="fills",
-                    hoverlabel=list(bgcolor=counts[colorStep],
-                                    font=list(size=12),
-                                    bordercolor="white"))
+    fig = plotly::add_trace(
+                      fig,
+                      type="scatter",
+                      mode="lines",
+                      x=c(0, 1, 0.5, 0),
+                      y=c(1, 1, 1+dY*2/3, 1),
+                      fill="toself",
+                      fillcolor=PaletteColors[colorStep],
+                      line=list(width=0),
+                      text=paste0("<b>",
+                                  counts[colorStep],
+                                  "</b>",
+                                  "<br>stations"),
+                      hoverinfo="text",
+                      hoveron="fills",
+                      hoverlabel=list(bgcolor=counts[colorStep],
+                                      font=list(size=12),
+                                      bordercolor="white"))
     
-    fig = add_trace(fig,
-                    type="scatter",
-                    mode="lines",
-                    x=c(0, 1, 0.5, 0),
-                    y=c(-1, -1, -1-dY*2/3, -1),
-                    fill="toself",
-                    fillcolor=PaletteColors[1],
-                    line=list(width=0),
-                    text=paste0("<b>",
-                                counts[1],
-                                "</b>",
-                                "<br>stations"),
-                    hoverinfo="text",
-                    hoveron="fills",
-                    hoverlabel=list(bgcolor=counts[1],
-                                    font=list(size=12),
-                                    bordercolor="white"))
+    fig = plotly::add_trace(
+                      fig,
+                      type="scatter",
+                      mode="lines",
+                      x=c(0, 1, 0.5, 0),
+                      y=c(-1, -1, -1-dY*2/3, -1),
+                      fill="toself",
+                      fillcolor=PaletteColors[1],
+                      line=list(width=0),
+                      text=paste0("<b>",
+                                  counts[1],
+                                  "</b>",
+                                  "<br>stations"),
+                      hoverinfo="text",
+                      hoveron="fills",
+                      hoverlabel=list(bgcolor=counts[1],
+                                      font=list(size=12),
+                                      bordercolor="white"))
 
     Xlab = rep(1.2, colorStep)
     Ylab = bin / max(bin)
@@ -151,14 +155,15 @@ plot_colorbar = function (rv, type, Palette, colorStep=256, reverse=FALSE) {
     label[nchar(label2) > ncharLim] = label1[nchar(label2) > ncharLim]
     label = paste0("<b>", label, "</b>")
     
-    fig = add_annotations(fig,
-                          x=Xlab,
-                          y=Ylab,
-                          text=label,
-                          showarrow=FALSE,
-                          xanchor='left',
-                          font=list(color=grey40COL,
-                                    size=12))
+    fig = plotly::add_annotations(
+                      fig,
+                      x=Xlab,
+                      y=Ylab,
+                      text=label,
+                      showarrow=FALSE,
+                      xanchor='left',
+                      font=list(color=grey40COL,
+                                size=12))
 
     if (type == 'sévérité') {
         title = paste0("<b>", word("cb.title"), "</b>",
@@ -168,21 +173,23 @@ plot_colorbar = function (rv, type, Palette, colorStep=256, reverse=FALSE) {
                        " ", word("cb.unit.t"))
     }
     
-    fig = add_annotations(fig,
-                          x=-0.1,
-                          y=0,
-                          text=title,
-                          textangle=-90,
-                          showarrow=FALSE,
-                          xanchor='right',
-                          yanchor='center',
-                          font=list(color=grey50COL,
-                                    size=13.5))
+    fig = plotly::add_annotations(
+                      fig,
+                      x=-0.1,
+                      y=0,
+                      text=title,
+                      textangle=-90,
+                      showarrow=FALSE,
+                      xanchor='right',
+                      yanchor='center',
+                      font=list(color=grey50COL,
+                                size=13.5))
     
-    fig = config(fig,
-                 displaylogo=FALSE,
-                 displayModeBar=FALSE,
-                 doubleClick=FALSE)                
+    fig = plotly::config(
+                      fig,
+                      displaylogo=FALSE,
+                      displayModeBar=FALSE,
+                      doubleClick=FALSE)                
     fig  
 
     return(fig)

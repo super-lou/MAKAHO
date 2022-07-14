@@ -28,28 +28,12 @@
 
 # Import library
 library(shiny)
-library(shinythemes)
 library(shinyjs)
 library(shinyWidgets)
 library(leaflet)
-library(leaflet.extras2)
 library(StatsAnalysisTrend)
 library(icons)
 library(dplyr)
-library(tools) # file_ext
-library(data.table) # fast reading
-library(plotly)
-library(sp) # conversion of L93 to WGS84
-library(sf) # conversion of L93 to WGS84
-library(Hmisc)
-
-# ash
-library(qpdf)
-library(lubridate)
-library(trend)
-library(accelerometry)
-library(CircStats)
-
 
 dev_path = file.path(dirname(dirname(getwd())),
                      'CDD_stationnarite', 'ash', 'R')

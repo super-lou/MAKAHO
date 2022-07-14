@@ -13,6 +13,14 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
+maxNA = function (X, na.rm=TRUE) {
+    if (all(is.na(X))) {
+        return (NA)
+    } else {
+        return (max(X))
+    }
+}
+
 which.minNA = function (x) {
     idMin = which.min(x)
     if (identical(idMin, integer(0))) {
@@ -21,25 +29,16 @@ which.minNA = function (x) {
     return (idMin)
 }
 
-compute_tVolSnowmelt = function (X, p) {
-    BF = BFS(X)
-    VolSnowmelt = cumsum(BF)
-    pVolSnowmelt = VolSnowmelt/max(VolSnowmelt, na.rm=TRUE)
-    idp = which.minNA(abs(pVolSnowmelt - p))
-    return (idp)
-}
-
-
 BFS = function (Q, d=5, w=0.9) {
 
     N = length(Q)
-    if (sum(as.numeric(is.na(Q))) == N) {
+    if (all(is.na(Q))) {
         return (NA)
     }
-    Slices = split(Q, ceiling(seq_along(Q)/d))
-    
-    idMinSlices = unlist(lapply(Slices, which.min),
+    Slices = split(Q, ceiling(seq_along(Q)/d))    
+    idMinSlices = unlist(lapply(Slices, which.minNA),
                          use.names=FALSE)
+    
     idShift = c(0, cumsum(unlist(lapply(Slices, length),
                                  use.names=FALSE)))
     idShift = idShift[-length(idShift)]
@@ -54,19 +53,30 @@ BFS = function (Q, d=5, w=0.9) {
     idPivots = idMin[which(test)]
     Pivots = Qmin_k[test]
 
-    # BF = approx(idPivots, Pivots, xout=1:N)$y
-    BF = approxExtrap(idPivots, Pivots, xout=1:N,
-                      method="linear", na.rm=TRUE)$y  
-    
-    BF[is.na(Q)] = NA
-    BF[BF < 0] = 0
-    test = BF > Q
-    test[is.na(test)] = FALSE
-    BF[test] = Q[test]
-
+    nbNAid = length(idPivots[!is.na(idPivots)])
+    nbNA = length(Pivots[!is.na(Pivots)])
+    if (nbNAid >= 2 & nbNA >= 2) {
+        BF = Hmisc::approxExtrap(idPivots, Pivots, xout=1:N,
+                          method="linear", na.rm=TRUE)$y  
+        BF[is.na(Q)] = NA
+        BF[BF < 0] = 0
+        test = BF > Q
+        test[is.na(test)] = FALSE
+        BF[test] = Q[test]
+        
+    } else {
+        BF = rep(NA, N)
+    }    
     return (BF)
 }
 
+compute_tVolSnowmelt = function (X, p) {
+    BF = BFS(X)
+    VolSnowmelt = cumsum(BF)
+    pVolSnowmelt = VolSnowmelt / maxNA(VolSnowmelt, na.rm=TRUE)
+    idp = which.minNA(abs(pVolSnowmelt - p))
+    return (idp)
+}
 
 functY = compute_tVolSnowmelt
 functY_args = list(p=0.9)

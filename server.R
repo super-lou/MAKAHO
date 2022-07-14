@@ -109,10 +109,10 @@ server = function (input, output, session) {
                         options=list(padding=c(20, 20)))
         
         map = addTiles(map, urlTemplate=urlTile())
-        map = addEasyprint(map, options=easyprintOptions(
-                                    exportOnly=TRUE,
-                                    hideControlContainer=TRUE,
-                                    hidden=TRUE))
+        # map = addEasyprint(map, options=easyprintOptions(
+        #                             exportOnly=TRUE,
+        #                             hideControlContainer=TRUE,
+        #                             hidden=TRUE))
         
         rv$mapHTML = map
     })
@@ -427,13 +427,13 @@ server = function (input, output, session) {
         df_metatmp = read_FST(computer_data_path,
                               'meta.fst',
                               filedir='fst')
-        crs_rgf93 = st_crs(2154)
-        crs_wgs84 = st_crs(4326)
-        sf_loca = st_as_sf(df_metatmp[c("L93X_m_BH", "L93Y_m_BH")],
-                           coords=c("L93X_m_BH", "L93Y_m_BH"))
-        st_crs(sf_loca) = crs_rgf93
-        sf_loca = st_transform(sf_loca, crs_wgs84)
-        sf_loca = st_coordinates(sf_loca$geometry)
+        crs_rgf93 = sf::st_crs(2154)
+        crs_wgs84 = sf::st_crs(4326)
+        sf_loca = sf::st_as_sf(df_metatmp[c("L93X_m_BH", "L93Y_m_BH")],
+                               coords=c("L93X_m_BH", "L93Y_m_BH"))
+        sf::st_crs(sf_loca) = crs_rgf93
+        sf_loca = sf::st_transform(sf_loca, crs_wgs84)
+        sf_loca = sf::st_coordinates(sf_loca$geometry)
         df_metatmp$lon = sf_loca[, 1]
         df_metatmp$lat = sf_loca[, 2]
         df_metatmp = df_metatmp[order(df_metatmp$code),]
@@ -800,8 +800,9 @@ server = function (input, output, session) {
             input$var_choice
         }
     })
-    output$var = renderText({
-        var()
+    output$varHTML = renderText({
+        print(gsub("<span>|</span>", "", Var$varHTML[Var$var == var()]))
+        gsub("<span>|</span>", "", Var$varHTML[Var$var == var()])
     })
 
     name = reactive({
@@ -1009,8 +1010,6 @@ server = function (input, output, session) {
         if (!is.null(df_data()) & !is.null(df_meta()) & var()!= FALSE & !is.null(period())) {
 
             print(var())
-            print(proba())
-            print(input$proba_choice)
 
             if (grepl(".*p$", var())) {
                 if (input$proba_choice != FALSE & !is.null(proba())) {
@@ -1024,8 +1023,6 @@ server = function (input, output, session) {
             } else {
                 filename = paste0(var(), ".R")
             }
-
-            print(filename)
 
             if (!is.null(filename)) {
                 script_to_analyse_path = file.path('R',
@@ -1348,7 +1345,7 @@ server = function (input, output, session) {
             color = rv$fillList[CodeAll() == rv$codeClick]
             switchColor = switch_colorLabel(color)
             
-            output$trend_plot = renderPlotly({
+            output$trend_plot = plotly::renderPlotly({
 
                 DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$Value)]
                 abs = c(min(DateNoNA), max(DateNoNA))
@@ -1366,9 +1363,9 @@ server = function (input, output, session) {
                 plotWidth = 480
                 shift = 40
                 if (plotWidth < rv$width - shift) {
-                    fig = plot_ly(width=plotWidth, height=180)
+                    fig = plotly::plot_ly(width=plotWidth, height=180)
                 } else {
-                    fig = plot_ly(width=rv$width-shift, height=180)
+                    fig = plotly::plot_ly(width=rv$width-shift, height=180)
                 }
 
                 x = df_XEx_code$Date
@@ -1382,40 +1379,43 @@ server = function (input, output, session) {
                     unit = ""
                 }
                 
-                fig = add_trace(fig,
-                                type="scatter",
-                                mode="markers",
-                                x=x,
-                                y=y,
-                                marker=list(color=grey50COL),
-                                xhoverformat="%Y",
-                                yhoverformat=yhoverformat,
-                                hovertemplate = paste0(
-                                    "année %{x}<br>",
-                                    "<b>", var(), "</b> %{y}",
-                                    unit,
-                                    "<extra></extra>"),
-                                hoverlabel=list(bgcolor=color,
-                                                font=list(size=12),
-                                                bordercolor="white"))
+                fig = plotly::add_trace(
+                                  fig,
+                                  type="scatter",
+                                  mode="markers",
+                                  x=x,
+                                  y=y,
+                                  marker=list(color=grey50COL),
+                                  xhoverformat="%Y",
+                                  yhoverformat=yhoverformat,
+                                  hovertemplate = paste0(
+                                      "année %{x}<br>",
+                                      "<b>", var(), "</b> %{y}",
+                                      unit,
+                                      "<extra></extra>"),
+                                  hoverlabel=list(bgcolor=color,
+                                                  font=list(size=12),
+                                                  bordercolor="white"))
 
-                fig = add_trace(fig,
-                                type="scatter",
-                                mode="markers+lines",
-                                x=abs,
-                                y=ord,
-                                marker=list(color='white', size=6),
-                                line=list(color='white', width=6),
-                                hoverinfo="none")
+                fig = plotly::add_trace(
+                                  fig,
+                                  type="scatter",
+                                  mode="markers+lines",
+                                  x=abs,
+                                  y=ord,
+                                  marker=list(color='white', size=6),
+                                  line=list(color='white', width=6),
+                                  hoverinfo="none")
                 
-                fig = add_trace(fig,
-                                type="scatter",
-                                mode="markers+lines",
-                                x=abs,
-                                y=ord,
-                                marker=list(color=color, size=3),
-                                line=list(color=color, width=3),
-                                hoverinfo="none")
+                fig = plotly::add_trace(
+                                  fig,
+                                  type="scatter",
+                                  mode="markers+lines",
+                                  x=abs,
+                                  y=ord,
+                                  marker=list(color=color, size=3),
+                                  line=list(color=color, width=3),
+                                  hoverinfo="none")
                 
                 # Gets the p value
                 pVal = df_Xtrend_code$p
@@ -1434,32 +1434,34 @@ server = function (input, output, session) {
                                             type=type(),
                                             space=TRUE)
 
-                fig = add_annotations(fig,
-                                      x=0.01,
-                                      y=1.01,
-                                      xref="paper",
-                                      yref="paper",
-                                      text=trendLabel,
-                                      showarrow=FALSE,
-                                      xanchor='left',
-                                      yanchor='bottom',
-                                      font=list(color=switchColor,
-                                                size=12))
+                fig = plotly::add_annotations(
+                                  fig,
+                                  x=0.01,
+                                  y=1.01,
+                                  xref="paper",
+                                  yref="paper",
+                                  text=trendLabel,
+                                  showarrow=FALSE,
+                                  xanchor='left',
+                                  yanchor='bottom',
+                                  font=list(color=switchColor,
+                                            size=12))
 
-                fig = add_annotations(fig,
-                                      x=0.01,
-                                      y=1.13,
-                                      xref="paper",
-                                      yref="paper",
-                                      text=paste0("<b>",
-                                                  rv$codeClick,
-                                                  "</b> - ",
-                                                  name),
-                                      showarrow=FALSE,
-                                      xanchor='left',
-                                      yanchor='bottom',
-                                      font=list(color=INRAECyanCOL,
-                                                size=12))
+                fig = plotly::add_annotations(
+                                  fig,
+                                  x=0.01,
+                                  y=1.13,
+                                  xref="paper",
+                                  yref="paper",
+                                  text=paste0("<b>",
+                                              rv$codeClick,
+                                              "</b> - ",
+                                              name),
+                                  showarrow=FALSE,
+                                  xanchor='left',
+                                  yanchor='bottom',
+                                  font=list(color=INRAECyanCOL,
+                                            size=12))
 
                 # If it is a flow variable
                 if (type() == 'sévérité') {
@@ -1471,66 +1473,71 @@ server = function (input, output, session) {
                                    " ", "[jour]")
                 }
                 
-                fig = layout(fig,
-                             separators='. ', 
-                             xaxis=list(range=period(),
-                                        showgrid=FALSE,
-                                        ticks="outside",
-                                        tickcolor=grey75COL,
-                                        tickfont=list(color=grey40COL),
-                                        showline=TRUE,
-                                        linewidth=2,
-                                        linecolor=grey85COL,
-                                        mirror=TRUE),
-                             
-                             yaxis=list(
-                                 title=list(text=paste0(title,
-                                                        "\n&nbsp;"),
-                                            font=list(color=grey20COL)),
-                                 showgrid=FALSE,
-                                 ticks="outside",
-                                 tickcolor=grey75COL,
-                                 tickfont=list(color=grey40COL),
-                                 showline=TRUE,
-                                 linewidth=2,
-                                 linecolor=grey85COL,
-                                 mirror=TRUE,
-                                 fixedrange=TRUE),
-                             
-                             margin=list(l=0,
-                                         r=12,
-                                         b=0,
-                                         t=30,
-                                         pad=0),
-                             autosize=FALSE,
-                             plot_bgcolor=grey97COL,
-                             paper_bgcolor='transparent',
-                             showlegend=FALSE)
+                fig = plotly::layout(
+                                  fig,
+                                  separators='. ', 
+                                  xaxis=list(range=period(),
+                                             showgrid=FALSE,
+                                             ticks="outside",
+                                             tickcolor=grey75COL,
+                                             tickfont=list(color=grey40COL),
+                                             showline=TRUE,
+                                             linewidth=2,
+                                             linecolor=grey85COL,
+                                             mirror=TRUE),
+                                  
+                                  yaxis=list(
+                                      title=list(
+                                          text=paste0(title,
+                                                      "\n&nbsp;"),
+                                          font=list(color=grey20COL)),
+                                      showgrid=FALSE,
+                                      ticks="outside",
+                                      tickcolor=grey75COL,
+                                      tickfont=list(color=grey40COL),
+                                      showline=TRUE,
+                                      linewidth=2,
+                                      linecolor=grey85COL,
+                                      mirror=TRUE,
+                                      fixedrange=TRUE),
+                                  
+                                  margin=list(l=0,
+                                              r=12,
+                                              b=0,
+                                              t=30,
+                                              pad=0),
+                                  autosize=FALSE,
+                                  plot_bgcolor=grey97COL,
+                                  paper_bgcolor='transparent',
+                                  showlegend=FALSE)
 
                 if (type() == 'sévérité') {
-                    fig = layout(fig,
-                                 yaxis=list(rangemode="tozero"))
+                    fig = plotly::layout(
+                                      fig,
+                                      yaxis=list(rangemode="tozero"))
                     
                 } else if (type() == 'saisonnalité') {
-                    fig = layout(fig,
-                                 yaxis=list(tickformat="%b"))
+                    fig = plotly::layout(
+                                      fig,
+                                      yaxis=list(tickformat="%b"))
                 }
                 
-                fig = config(fig,
-                             locale=word("plotly.language"),
-                             displaylogo=FALSE,
-                             toImageButtonOptions =
-                                 list(format="svg"),
-                             modeBarButtonsToRemove =
-                                 list("lasso2d",
-                                      "select2d",
-                                      "drawline",
-                                      "zoom2d",
-                                      "drawrect",
-                                      "autoScale2d",
-                                      "hoverCompareCartesian",
-                                      "hoverClosestCartesian")
-                             )
+                fig = plotly::config(
+                                  fig,
+                                  locale=word("plotly.language"),
+                                  displaylogo=FALSE,
+                                  toImageButtonOptions =
+                                      list(format="svg"),
+                                  modeBarButtonsToRemove =
+                                      list("lasso2d",
+                                           "select2d",
+                                           "drawline",
+                                           "zoom2d",
+                                           "drawrect",
+                                           "autoScale2d",
+                                           "hoverCompareCartesian",
+                                           "hoverClosestCartesian")
+                              )
                 fig
             })
         }
@@ -1574,7 +1581,7 @@ server = function (input, output, session) {
         input$colorbar_choice
     }, {
         if (input$colorbar_choice == 'show' & !is.null(df_Xtrend())) {
-            output$colorbar_plot = renderPlotly({
+            output$colorbar_plot = plotly::renderPlotly({
                 plot_colorbar(rv,
                               type=type(),
                               Palette=Palette,

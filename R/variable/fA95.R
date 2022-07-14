@@ -15,7 +15,7 @@ isDateM = FALSE
 
 compute_fAp = function (Q, p) {
     Qp = compute_Qp(Q, p)
-    n = sum(as.numeric(Q > Qp))
+    n = sum(as.numeric(Q[!is.na(Q)] > Qp))
     N = length(Q)
     fA = n/N
     return (fA)

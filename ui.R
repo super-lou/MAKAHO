@@ -86,7 +86,7 @@ ui = bootstrapPage(
             right=0, bottom="35%",
             
             div(style="margin: 10px;",
-                plotlyOutput("colorbar_plot"))
+                plotly::plotlyOutput("colorbar_plot"))
         )
     ),
 
@@ -104,7 +104,9 @@ ui = bootstrapPage(
                 
                 h4(class="no-margin-v",
                    HTML(paste0(
-                       "<b>", textOutput("var"), "</b>"
+                       "<b>",
+                       textOutput("varHTML"),
+                       "</b>"
                    ))),
 
                 hr(style="margin-top: 0.1rem;
@@ -195,7 +197,7 @@ ui = bootstrapPage(
             bottom=10,
             
             div(style="position: absolute; margin: 10px;",
-                plotlyOutput("trend_plot")),
+                plotly::plotlyOutput("trend_plot")),
             
             div(Button(class="Button-icon",
                        style="position: absolute;

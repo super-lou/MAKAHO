@@ -13,7 +13,15 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-functY = max
+maxNA = function (X, na.rm=TRUE) {
+    if (all(is.na(X))) {
+        return (NA)
+    } else {
+        return (max(X))
+    }
+}
+
+functY = maxNA
 functY_args = list(na.rm=TRUE)
 isDateY = FALSE
 

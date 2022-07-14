@@ -13,6 +13,7 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
+
 which_underfirst = function (L, UpLim, select_longest=TRUE) {
     
     ID = which(L <= UpLim)
@@ -54,8 +55,24 @@ functY_args = list(select_longest=TRUE,
                    UpLim='*threshold*')
 isDateY = TRUE
 
-functYT_ext = min
+minNA = function (X, na.rm=TRUE) {
+    if (all(is.na(X))) {
+        return (NA)
+    } else {
+        return (min(X))
+    }
+}
+
+maxNA = function (X, na.rm=TRUE) {
+    if (all(is.na(X))) {
+        return (NA)
+    } else {
+        return (max(X))
+    }
+}
+
+functYT_ext = minNA
 functYT_ext_args = list(na.rm=TRUE)
 isDateYT_ext = FALSE
-functYT_sum = max
+functYT_sum = maxNA
 functYT_sum_args = list(na.rm=TRUE)
