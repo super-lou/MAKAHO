@@ -13,7 +13,6 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-
 which_underfirst = function (L, UpLim, select_longest=TRUE) {
     
     ID = which(L <= UpLim)

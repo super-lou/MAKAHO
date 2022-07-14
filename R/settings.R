@@ -75,7 +75,7 @@ dico_file = 'dico.txt'
 dico = create_dico(dico_file, resources_path)
 
 
-varProba = list(fA=c("90%", "95%", "99%"),
+varProba = list(fAp=c("90%", "95%", "99%"),
                 Qp=c("10%", "25%", "50%", "75%", "90%"))
 
 Var = get_Var(dico, varProba)

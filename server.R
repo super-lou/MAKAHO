@@ -841,7 +841,6 @@ server = function (input, output, session) {
             hide(id="proba_row")
             choices = FALSE
         }
-
         updateRadioButton(session,
                           class="radioButton",
                           inputId="proba_choice",
@@ -1005,45 +1004,72 @@ server = function (input, output, session) {
         df_meta()
         var()
         period()
+        input$proba_choice
     }, {
-        if (!is.null(df_data()) & !is.null(df_meta()) & var()!= FALSE) {
-            script_to_analyse_path = file.path('R',
-                                               var_dir,
-                                               paste0(var(), ".R"))
-            source(file.path('R', var_dir, init_var_file),
-                   encoding='UTF-8')
-            source(script_to_analyse_path,
-                   encoding='UTF-8')
+        if (!is.null(df_data()) & !is.null(df_meta()) & var()!= FALSE & !is.null(period())) {
 
-            res = get_Xtrend(var(),
-                             df_data(),
-                             df_meta(),
-                             period=list(period()),
-                             hydroPeriod=hydroPeriod(),
-                             df_flag=df_flag,
-                             yearNA_lim=yearNA_lim,
-                             dayNA_lim=dayNA_lim,
-                             day_to_roll=day_to_roll,
-                             functM=functM,
-                             functM_args=functM_args,
-                             isDateM=isDateM,
-                             functY=functY,
-                             functY_args=functY_args,
-                             isDateY=isDateY,
-                             functYT_ext=functYT_ext,
-                             functYT_ext_args=functYT_ext_args,
-                             isDateYT_ext=isDateYT_ext,
-                             functYT_sum=functYT_sum,
-                             functYT_sum_args=functYT_sum_args)
+            print(var())
+            print(proba())
+            print(input$proba_choice)
 
-            # Gets the extracted data for the variable
-            df_XEx = res$analyse$extract
-            # Gets the trend results for the variable
-            df_Xtrend = res$analyse$estimate
-            df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
+            if (grepl(".*p$", var())) {
+                if (input$proba_choice != FALSE & !is.null(proba())) {
+                    filename = paste0(gsub("p", "",
+                                           var()),
+                                      gsub("%", "", input$proba_choice),
+                                      ".R")
+                } else {
+                    filename = NULL
+                }
+            } else {
+                filename = paste0(var(), ".R")
+            }
 
-            rv$df_XEx = df_XEx
-            rv$df_Xtrend = df_Xtrend
+            print(filename)
+
+            if (!is.null(filename)) {
+                script_to_analyse_path = file.path('R',
+                                                   var_dir,
+                                                   filename)
+                source(file.path('R', var_dir, init_var_file),
+                       encoding='UTF-8')
+                source(script_to_analyse_path,
+                       encoding='UTF-8')
+
+                res = get_Xtrend(var(),
+                                 df_data(),
+                                 df_meta(),
+                                 period=list(period()),
+                                 hydroPeriod=hydroPeriod(),
+                                 df_flag=df_flag,
+                                 yearNA_lim=yearNA_lim,
+                                 dayNA_lim=dayNA_lim,
+                                 day_to_roll=day_to_roll,
+                                 functM=functM,
+                                 functM_args=functM_args,
+                                 isDateM=isDateM,
+                                 functY=functY,
+                                 functY_args=functY_args,
+                                 isDateY=isDateY,
+                                 functYT_ext=functYT_ext,
+                                 functYT_ext_args=functYT_ext_args,
+                                 isDateYT_ext=isDateYT_ext,
+                                 functYT_sum=functYT_sum,
+                                 functYT_sum_args=functYT_sum_args)
+
+                # Gets the extracted data for the variable
+                df_XEx = res$analyse$extract
+                # Gets the trend results for the variable
+                df_Xtrend = res$analyse$estimate
+                df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
+
+                rv$df_XEx = df_XEx
+                rv$df_Xtrend = df_Xtrend
+                
+            } else {
+                rv$df_XEx = NULL
+                rv$df_Xtrend = NULL
+            }
         } else {
             rv$df_XEx = NULL
             rv$df_Xtrend = NULL

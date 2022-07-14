@@ -54,15 +54,21 @@ BFS = function (Q, d=5, w=0.9) {
     Pivots = Qmin_k[test]
 
     # BF = approx(idPivots, Pivots, xout=1:N)$y
-    BF = approxExtrap(idPivots, Pivots, xout=1:N,
-                      method="linear", na.rm=TRUE)$y  
-    
-    BF[is.na(Q)] = NA
-    BF[BF < 0] = 0
-    test = BF > Q
-    test[is.na(test)] = FALSE
-    BF[test] = Q[test]
 
+    nbNAid = length(idPivots[!is.na(idPivots)])
+    nbNA = length(Pivots[!is.na(Pivots)])
+    if (nbNAid >= 2 & nbNA >= 2) {
+        BF = approxExtrap(idPivots, Pivots, xout=1:N,
+                          method="linear", na.rm=TRUE)$y  
+        BF[is.na(Q)] = NA
+        BF[BF < 0] = 0
+        test = BF > Q
+        test[is.na(test)] = FALSE
+        BF[test] = Q[test]
+        
+    } else {
+        BF = rep(NA, N)
+    }    
     return (BF)
 }
 
