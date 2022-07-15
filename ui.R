@@ -103,11 +103,7 @@ ui = bootstrapPage(
             div(class="card-insert-text",
                 
                 h4(class="no-margin-v",
-                   HTML(paste0(
-                       "<b>",
-                       textOutput("varHTML"),
-                       "</b>"
-                   ))),
+                   htmlOutput("varHTML")),
 
                 hr(style="margin-top: 0.1rem;
                           margin-bottom: 0.1rem;
@@ -240,7 +236,7 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    textOutput("data"))),
+                    htmlOutput("dataHTML"))),
 
             div(class="Row",
                 div(class="row-label",

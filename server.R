@@ -66,7 +66,8 @@ server = function (input, output, session) {
                         invalidCode=c(),
                         badCode=c(),
                         df_XEx=NULL,
-                        df_Xtrend=NULL
+                        df_Xtrend=NULL,
+                        hydroMonths_save=NULL
                         )
 
     startOBS = observe({
@@ -800,9 +801,16 @@ server = function (input, output, session) {
             input$var_choice
         }
     })
-    output$varHTML = renderText({
-        print(gsub("<span>|</span>", "", Var$varHTML[Var$var == var()]))
-        gsub("<span>|</span>", "", Var$varHTML[Var$var == var()])
+    
+    varHTML = reactive({
+        Var$varHTML[Var$var == var()]
+    })
+    output$varHTML = renderUI({
+        HTML(paste0(
+            "<b>",
+            varHTML(),
+            "</b>"
+        ))
     })
 
     name = reactive({
@@ -825,13 +833,13 @@ server = function (input, output, session) {
         }
     })
 
-    output$data = renderText({
-        data = paste0(var(), ' : ', name())
+    output$dataHTML = renderUI({
+        data = paste0(varHTML(), ' : ', name())
         if (!is.null(proba())) {
             data = paste0(data, ' avec la probabilité de ',
                           input$proba_choice)
         }
-        data
+        HTML(data)
     })
 
     observe({
@@ -847,7 +855,7 @@ server = function (input, output, session) {
                           inputId="proba_choice",
                           choiceNames=choices,
                           choiceTooltips=
-                              paste0(word("tt.ana.proba"), choices))
+                              paste0(word("tt.ana.proba"), " ", choices))
     })
 
 
@@ -880,29 +888,52 @@ server = function (input, output, session) {
         }
     })
 
-    output$hydroPeriod_slider = renderUI({
-
-        if (rv$sampleSliderMode) {
-            if (rv$invertSliderMode) {
-                class = "size1Slider invertSlider"
-                selected = Months[c(1, 1)]
-            } else {
-                class = "size1Slider"
-                selected = Months[c(1, 12)]
-            }
+    sliderModeB = reactive({
+        rv$sampleSliderMode & rv$invertSliderMode
+    })
+    sliderMode = debounce(sliderModeB, 100)
+    
+    observeEvent(sliderMode(), {
+        if (!is.null(input$hydroPeriod_slider)) {
+            hydroMonths = match(input$hydroPeriod_slider, Months)
         } else {
-            class = "size1Slider soloSlider"
-            selected = Months[1]
+            hydroMonths = 1
         }
         
-        Slider(class=class,
-               inputId="hydroPeriod_slider",
-               modeText=TRUE,
-               label=NULL,
-               grid=TRUE,
-               force_edges=FALSE,
-               choices=Months,
-               selected=selected)
+        if (rv$sampleSliderMode) {
+            
+            if (rv$invertSliderMode) {
+                class = "size1Slider invertSlider"
+                if (length(hydroMonths) == 1) {
+                    selected = Months[c(1, hydroMonths)]
+                } else {
+                    selected = Months[hydroMonths]
+                }
+                
+            } else {
+                class = "size1Slider"
+                if (length(input$hydroPeriod_slider) == 1) {
+                    selected = Months[c(hydroMonths, 12)]
+                } else {
+                    selected = Months[hydroMonths]
+                }
+            }
+            
+        } else {
+            class = "size1Slider soloSlider"
+            selected = Months[hydroMonths[1]]
+        }
+        
+        output$hydroPeriod_slider = renderUI({
+            Slider(class=class,
+                   inputId="hydroPeriod_slider",
+                   modeText=TRUE,
+                   label=NULL,
+                   grid=TRUE,
+                   force_edges=FALSE,
+                   choices=Months,
+                   selected=selected)
+        })
     })
 
     output$dateYear_slider = renderUI({

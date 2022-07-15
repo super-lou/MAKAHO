@@ -97,7 +97,10 @@ sigVal = as.numeric(gsub('%', '' , sigProba))/100
 nbTick = 10
 
 colorStep = 10
-Palette = Palette_ground()
+
+
+Palette = ash:::Palette_ground()
+Palette = ash::Palette_ground()
 reverse = FALSE
 
 exQprob = 0.01
