@@ -38,8 +38,8 @@
     max-width: calc(100vw - 3rem) !important;
 }
 
-.card-theme {
-    padding-top: 0.5rem !important;
+.card-settings {
+    padding-top: 1.2rem !important;
     padding-bottom: 0.6rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -211,7 +211,7 @@ a:hover {
     padding: 0.325rem 0.75rem !important;
     margin: 0 !important;
     background-color: rgba(5, 5, 10, 0.90) !important;
-    color: #d9d9d9 !important;
+    color: #ffffff !important;
 }
 .SmallButton-menu {
     font: inherit !important;
@@ -220,12 +220,31 @@ a:hover {
     padding: 0.19rem 0.3rem !important;
     margin: 0 !important;
     background-color: rgba(5, 5, 10, 0.90) !important;
-    color: #d9d9d9 !important;
+    color: #ffffff !important;
 }
 /* Hover */
 .SmallButton-menu:hover,
 .Button-menu:hover {
+    background-color: rgba(5, 5, 10, 0.83) !important;
     color: #ffffff !important;
+}
+
+/* SMALL ACTUALISE BUTTON */
+.SmallButton-actualise {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 20rem/20rem !important;
+    padding-top: 0.27rem !important;
+    padding-bottom: 0.27rem !important;
+    padding-left: 0.37rem !important;
+    padding-right: 0.37rem !important;
+    margin: 0 !important;
+    background-color: rgba(39, 86, 98, 0.95) !important;
+    color: #d9d9d9 !important;
+}
+/* Hover */
+.SmallButton-actualise:hover {
+    background-color: rgba(39, 86, 98, 0.80) !important;
 }
 
 /* SMALL WHITE MENU BUTTON */

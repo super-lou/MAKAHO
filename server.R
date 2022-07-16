@@ -30,7 +30,8 @@ server = function (input, output, session) {
     session$onSessionEnded(stopApp)    
 
 
-    rv = reactiveValues(width=0,
+    rv = reactiveValues(start=FALSE,
+                        width=0,
                         height=0,
                         CodeSample=NULL,
                         CodeSample_save=NULL,
@@ -67,7 +68,12 @@ server = function (input, output, session) {
                         badCode=c(),
                         df_XEx=NULL,
                         df_Xtrend=NULL,
-                        hydroMonths_save=NULL
+                        period=NULL,
+                        hydroPeriod=NULL,
+                        var=FALSE,
+                        type=NULL,
+                        proba=NULL,
+                        CodeSample_act=NULL
                         )
 
     startOBS = observe({
@@ -77,8 +83,11 @@ server = function (input, output, session) {
         showElement(id='photo_panelButton')
         showElement(id='download_panelButton')
         showElement(id='help_panelButton')
+        showElement(id="actualise_panelButton")
+        rv$start = TRUE
         startOBS$destroy()
     })
+
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________
@@ -243,6 +252,7 @@ server = function (input, output, session) {
 
 ### 1.3. Marker ______________________________________________________
     markerListAll = reactive({
+
         if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
             none1Color = none1Color_light
         } else if (input$theme_choice == 'dark') {
@@ -289,7 +299,7 @@ server = function (input, output, session) {
             
 
             res = get_trendExtremes(df_XEx(), df_Xtrend(),
-                                    type=type(),
+                                    type=rv$type,
                                     minQprob=exQprob, maxQprob=1-exQprob)
             
             rv$df_value = res$df_value
@@ -337,6 +347,7 @@ server = function (input, output, session) {
         df_meta()
         markerListAll()
     }, {
+        
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
@@ -359,7 +370,7 @@ server = function (input, output, session) {
             trendLabel = sapply(Code, get_trendLabel,
                                 df_XEx=df_XEx(),
                                 df_Xtrend=df_Xtrend(),
-                                type=type())
+                                type=rv$type)
         } else {
             trendLabel = NA
         }
@@ -597,15 +608,15 @@ server = function (input, output, session) {
     observeEvent(input$polyOk_button, {
         if (nrow(rv$polyCoord) != 0) {
         
-            station_coordinates = SpatialPointsDataFrame(
+            station_coordinates = sp::SpatialPointsDataFrame(
                 df_meta()[c('lon', 'lat')],
                 df_meta()['code'])
 
             # Transform them to an sp Polygon
-            drawn_polygon = Polygon(as.matrix(rv$polyCoord))
+            drawn_polygon = sp::Polygon(as.matrix(rv$polyCoord))
             
             # Use over from the sp package to identify selected station
-            selected_station = station_coordinates %over% SpatialPolygons(list(Polygons(list(drawn_polygon), "drawn_polygon")))
+            selected_station = sp::over(station_coordinates, sp::SpatialPolygons(list(sp::Polygons(list(drawn_polygon), "drawn_polygon"))))
 
             selectCode = df_meta()$code[!is.na(selected_station)]
 
@@ -795,36 +806,18 @@ server = function (input, output, session) {
     })
 
     var = reactive({
-        if (is.null(input$var_choice)) {
-            Var$var[1]
-        } else {
+        if (!is.null(input$var_choice) & input$var_choice != FALSE) {
             input$var_choice
+        } else {
+            Var$var[1]
         }
-    })
-    
-    varHTML = reactive({
-        Var$varHTML[Var$var == var()]
-    })
-    output$varHTML = renderUI({
-        HTML(paste0(
-            "<b>",
-            varHTML(),
-            "</b>"
-        ))
-    })
-
-    name = reactive({
-        Var$name[Var$var == var()]
-    })
-    output$name = renderText({
-        name()
     })
 
     type = reactive({
-        Var$type[Var$var == var()]            
+        Var$type[Var$var == rv$var]            
     })
 
-    proba = reactive({
+    proba_choices = reactive({
         id = which(Var$var == var())
         if (!identical(id, integer(0))) {
             Var$proba[[id]]
@@ -833,19 +826,40 @@ server = function (input, output, session) {
         }
     })
 
-    output$dataHTML = renderUI({
-        data = paste0(varHTML(), ' : ', name())
-        if (!is.null(proba())) {
+    proba = reactive({
+        if (!is.null(proba_choices())) {
+            input$proba_choice
+        } else {
+            NULL
+        }
+    })
+    
+    output$varHTML = renderUI({
+        HTML(paste0(
+            "<b>",
+            Var$varHTML[Var$var == rv$var],
+            "</b>"
+        ))
+    })
+
+    output$name = renderText({
+        Var$name[Var$var == rv$var]
+    })
+
+    output$dataHTML_ana = renderUI({
+        data = paste0(Var$varHTML[Var$var == var()], ' : ',
+                      Var$name[Var$var == var()])
+        if (!is.null(proba_choices())) {
             data = paste0(data, ' avec la probabilité de ',
-                          input$proba_choice)
+                          proba())
         }
         HTML(data)
     })
 
     observe({
-        if (!is.null(proba())) {
+        if (!is.null(proba_choices())) {
             showElement(id="proba_row")
-            choices = proba()
+            choices = proba_choices()
         } else {
             hide(id="proba_row")
             choices = FALSE
@@ -861,15 +875,6 @@ server = function (input, output, session) {
 
 
 ### 2.4. _____________________________________________________________
-    # monthStart = reactive({
-    #     if (!is.null(input$hydroPeriod_slider)) {
-    #         month = which(Months == input$hydroPeriod_slider)
-    #         formatC(month, width=2, flag=0)
-    #     } else {
-    #         NULL
-    #     }
-    # })
-
     observe({
         if (!is.null(input$sampleSlider_select)) {
             rv$sampleSliderMode = TRUE
@@ -987,26 +992,11 @@ server = function (input, output, session) {
                 hydroPeriodStart
             }
         } else {
-            NULL
+            "01-01"
         }
     })
     hydroPeriod = debounce(hydroPeriodB, 1000)
     
-    
-    # filename = reactive({
-
-    #     filenametmp = paste0(var(), 'Ex_',
-    #                          monthStart(), '.fst')
-
-    #     file_path = file.path(computer_data_path, 'fst', filenametmp)
-    #     if (file.exists(file_path)) {
-    #         filenametmp
-    #     } else {
-    #         NULL
-    #     }
-    # })
-
-
     df_dataAll = reactive({
         if (file.exists(file.path(computer_data_path, 'fst', "data.fst"))) {
             read_FST(computer_data_path,
@@ -1019,40 +1009,53 @@ server = function (input, output, session) {
 
     df_data = reactive({
         if (!is.null(df_dataAll()) & !is.null(CodeSample())) {
-            df_data = df_dataAll()[df_dataAll()$code %in% CodeSample(),]
-            # Start = period()[1]
-            # End = period()[2]
-            # df_data = df_data[df_data$Date >= Start
-                            # & df_data$Date <= End,]
-            df_data
+            df_dataAll()[df_dataAll()$code %in% CodeSample(),]
         } else {
             NULL
         }
     })
 
-
     observeEvent({
-        df_data()
-        df_meta()
+        CodeSample()
         var()
         period()
-        input$proba_choice
+        proba()
+        hydroPeriod()
     }, {
-        if (!is.null(df_data()) & !is.null(df_meta()) & var()!= FALSE & !is.null(period())) {
-
-            print(var())
-
-            if (grepl(".*p$", var())) {
-                if (input$proba_choice != FALSE & !is.null(proba())) {
+        
+        if (all(identical(CodeSample(), rv$CodeSample_act)) & identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod))) {
+            hide(id="actualise_panelButton")
+        } else {
+            showElement(id="actualise_panelButton")
+        }
+    })
+    
+    observeEvent({
+        input$actualise_button
+        rv$start
+    }, {
+        rv$CodeSample_act = CodeSample()
+        rv$var = var()
+        rv$type = type()
+        rv$period = period()
+        rv$proba = proba()
+        rv$hydroPeriod = hydroPeriod()
+        
+        if (!is.null(df_data()) & !is.null(df_meta()) & rv$var != FALSE & !is.null(rv$period)) {
+            
+            hide(id="actualise_panelButton")
+            
+            if (grepl(".*p$", rv$var)) {
+                if (rv$proba != FALSE & !is.null(proba_choices())) {
                     filename = paste0(gsub("p", "",
-                                           var()),
-                                      gsub("%", "", input$proba_choice),
+                                           rv$var),
+                                      gsub("%", "", rv$proba),
                                       ".R")
                 } else {
                     filename = NULL
                 }
             } else {
-                filename = paste0(var(), ".R")
+                filename = paste0(rv$var, ".R")
             }
 
             if (!is.null(filename)) {
@@ -1064,11 +1067,11 @@ server = function (input, output, session) {
                 source(script_to_analyse_path,
                        encoding='UTF-8')
 
-                res = get_Xtrend(var(),
+                res = get_Xtrend(rv$var,
                                  df_data(),
                                  df_meta(),
-                                 period=list(period()),
-                                 hydroPeriod=hydroPeriod(),
+                                 period=list(rv$period),
+                                 hydroPeriod=rv$hydroPeriod,
                                  df_flag=df_flag,
                                  yearNA_lim=yearNA_lim,
                                  dayNA_lim=dayNA_lim,
@@ -1111,52 +1114,20 @@ server = function (input, output, session) {
     df_Xtrend = reactive({
         rv$df_Xtrend
     })
-
-    df_XExAll = reactive({
-        NULL
-    })
-
-    
- 
-    # df_XExAll = reactive({
-
-    #     if (!is.null(filename())) {
-    #         read_FST(computer_data_path,
-    #                  filename(),
-    #                  filedir='fst')
-    #     } else {
-    #         NULL
-    #      }
-    # })
-
-
-    # df_XEx = reactive({
-
-    #     if (!is.null(df_XExAll()) & !is.null(CodeSample())) {
-
-    #         df_XEx = df_XExAll()[df_XExAll()$code %in% CodeSample(),]
-
-    #         Start = period()[1]
-    #         End = period()[2]
-            
-    #         df_XEx = df_XEx[df_XEx$Date >= Start
-    #                         & df_XEx$Date <= End,]
-    #         df_XEx
-            
-    #     } else {
-    #         NULL
-    #     }
-    # })
-
     
 
 ### 2.4. Period ______________________________________________________
     periodB = reactive({
-        if (!is.null(hydroPeriod())) {
 
+        if (!is.null(input$dateYear_slider)) {
             startYear = input$dateYear_slider[1]
             endYear = input$dateYear_slider[2]
-            
+        } else {
+            startYear = 1968
+            endYear = 2020
+        }
+        
+        if (!is.null(hydroPeriod())) {    
             inter = endYear - startYear
             if (inter < 30) {
                 if (startYear + 30 > 2020 & endYear - 30 >= 1900) {
@@ -1196,15 +1167,15 @@ server = function (input, output, session) {
     })
     period = debounce(periodB, 1000)
 
-    output$period = renderText({        
+    output$period_ana = renderText({        
         start = format(periodB()[1], "%d/%m/%Y")
         end = format(periodB()[2], "%d/%m/%Y")
         paste0('Du ', start, ' au ', end)
     })
 
-    output$period_resume = renderText({
-        start = format(period()[1], "%Y")
-        end = format(period()[2], "%Y")
+    output$period = renderText({
+        start = format(rv$period[1], "%Y")
+        end = format(rv$period[2], "%Y")
         paste0('Période ', start, ' - ', end)
     })
     
@@ -1215,63 +1186,10 @@ server = function (input, output, session) {
                as.numeric(input$alpha_choice)*100, '%')
     })
 
-    # df_Xtrend = reactive({
-    #     if (!is.null(df_XEx())) {
-    #         df_Xtrend = Estimate_stats_WRAP(df_XEx=df_XEx(),
-    #                                         dep_option='AR1')
-    #     } else {
-    #         df_Xtrend = NULL
-    #     }        
-    #     df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
-    #     df_Xtrend
-    # })
-    
-    # missCode = reactive({
-    #     if (!is.null(df_XExAll())) {
-    #         Start = period()[1]
-    #         End = period()[2]
-    #         df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
-            
-    #         df_Start = summarise(group_by(df_XExNoNA, code),
-    #                              Start=min(Date, na.rm=TRUE))
-    #         StartEx = df_Start$Start
-    #         df_End = summarise(group_by(df_XExNoNA, code),
-    #                            End=max(Date, na.rm=TRUE))            
-    #         EndEx = df_End$End
-    #         CodeEx = df_Start$code
-
-    #         CodeEx[EndEx <= Start | End <= StartEx]
-            
-    #     } else {
-    #         c()
-    #     }
-    # })
-
-    # invalidCode = reactive({
-    #     if (!is.null(df_XExAll())) {
-    #         Start = period()[1]
-    #         End = period()[2]
-    #         df_XExNoNA = df_XExAll()[!is.na(df_XExAll()$Value),]
-    #         df_XExNoNA = df_XExNoNA[Start <= df_XExNoNA$Date
-    #                                 & df_XExNoNA$Date <= End,]
-                
-    #         df_Period = summarise(group_by(df_XExNoNA, code),
-    #                               Period=length(Value))
-    #         PeriodEx = df_Period$Period
-    #         CodeEx = df_Period$code
-            
-    #         CodeEx[PeriodEx < analyseMinYear]
-            
-    #     } else {
-    #         c()
-    #     }
-    # })
-
-
     missCode = reactive({
         if (!is.null(df_dataAll())) {
-            Start = period()[1]
-            End = period()[2]
+            Start = rv$period[1]
+            End = rv$period[2]
             df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
             
             df_Start = summarise(group_by(df_dataNoNA, code),
@@ -1291,8 +1209,8 @@ server = function (input, output, session) {
 
     invalidCode = reactive({
         if (!is.null(df_dataAll())) {
-            Start = period()[1]
-            End = period()[2]
+            Start = rv$period[1]
+            End = rv$period[2]
             df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
             df_dataNoNA = df_dataNoNA[Start <= df_dataNoNA$Date
                                       & df_dataNoNA$Date <= End,]
@@ -1360,14 +1278,14 @@ server = function (input, output, session) {
 
     observeEvent({
         rv$codeClick
-        period()
-        var()
+        rv$period
+        rv$var
         rv$width
     }, {
         
         if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(rv$codeClick)) {
             
-            showElement(id='plot_panel')
+            showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
             
             name = df_meta()$nom[df_meta()$code == rv$codeClick]
 
@@ -1383,10 +1301,10 @@ server = function (input, output, session) {
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
                 # Compute the y of the trend
-                if (type() == 'sévérité') {
+                if (rv$type == 'sévérité') {
                     ord = abs_num * df_Xtrend_code$trend +
                         df_Xtrend_code$intercept
-                } else if (type() == 'saisonnalité') {
+                } else if (rv$type == 'saisonnalité') {
                     ord = as.Date(abs_num * df_Xtrend_code$trend +
                         df_Xtrend_code$intercept, origin="1970-01-01")
                 }
@@ -1400,11 +1318,11 @@ server = function (input, output, session) {
                 }
 
                 x = df_XEx_code$Date
-                if (type() == 'sévérité') {
+                if (rv$type == 'sévérité') {
                     y = df_XEx_code$Value
                     yhoverformat = NULL
                     unit = " [m<sup>3</sup>.s<sup>-1</sup>]<br>"
-                } else if (type() == 'saisonnalité') { ### /!\ À VÉRIF
+                } else if (rv$type == 'saisonnalité') { ### /!\ À VÉRIF
                     y = as.Date(df_XEx_code$Value, origin="1970-01-01")
                     yhoverformat = "%d %b"
                     unit = ""
@@ -1421,7 +1339,7 @@ server = function (input, output, session) {
                                   yhoverformat=yhoverformat,
                                   hovertemplate = paste0(
                                       "année %{x}<br>",
-                                      "<b>", var(), "</b> %{y}",
+                                      "<b>", rv$var, "</b> %{y}",
                                       unit,
                                       "<extra></extra>"),
                                   hoverlabel=list(bgcolor=color,
@@ -1462,7 +1380,7 @@ server = function (input, output, session) {
                 trendLabel = get_trendLabel(code=rv$codeClick,
                                             df_XEx=df_XEx(),
                                             df_Xtrend=df_Xtrend(),
-                                            type=type(),
+                                            type=rv$type,
                                             space=TRUE)
 
                 fig = plotly::add_annotations(
@@ -1495,19 +1413,19 @@ server = function (input, output, session) {
                                             size=12))
 
                 # If it is a flow variable
-                if (type() == 'sévérité') {
-                    title = paste0("<b> ", var(), "</b>",
+                if (rv$type == 'sévérité') {
+                    title = paste0("<b> ", rv$var, "</b>",
                                    " ", "[m<sup>3</sup>.s<sup>-1</sup>]")
 
-                } else if (type() == 'saisonnalité') {
-                    title = paste0("<b> ", var(), "</b>",
+                } else if (rv$type == 'saisonnalité') {
+                    title = paste0("<b> ", rv$var, "</b>",
                                    " ", "[jour]")
                 }
                 
                 fig = plotly::layout(
                                   fig,
                                   separators='. ', 
-                                  xaxis=list(range=period(),
+                                  xaxis=list(range=rv$period,
                                              showgrid=FALSE,
                                              ticks="outside",
                                              tickcolor=grey75COL,
@@ -1542,12 +1460,12 @@ server = function (input, output, session) {
                                   paper_bgcolor='transparent',
                                   showlegend=FALSE)
 
-                if (type() == 'sévérité') {
+                if (rv$type == 'sévérité') {
                     fig = plotly::layout(
                                       fig,
                                       yaxis=list(rangemode="tozero"))
                     
-                } else if (type() == 'saisonnalité') {
+                } else if (rv$type == 'saisonnalité') {
                     fig = plotly::layout(
                                       fig,
                                       yaxis=list(tickformat="%b"))
@@ -1593,6 +1511,10 @@ server = function (input, output, session) {
         toggleOnly(id="theme_panel")
         deselect_mode(session, rv)
     })
+
+    observeEvent(input$closeSettings_button, {
+        hide(id='theme_panel')
+    })
     
 ### 3.2. Palette _____________________________________________________
     observeEvent({
@@ -1613,11 +1535,167 @@ server = function (input, output, session) {
     }, {
         if (input$colorbar_choice == 'show' & !is.null(df_Xtrend())) {
             output$colorbar_plot = plotly::renderPlotly({
-                plot_colorbar(rv,
-                              type=type(),
-                              Palette=Palette,
-                              colorStep=colorStep,
-                              reverse=reverse)
+                
+                res = compute_colorBin(min=rv$minValue,
+                                       max=rv$maxValue,
+                                       Palette=Palette,
+                                       colorStep=colorStep,
+                                       reverse=reverse)
+
+                bin = res$bin
+                upBin = res$upBin
+                Y1 = upBin / max(upBin[is.finite(upBin)])
+                dY = mean(diff(Y1[is.finite(Y1)]))
+                Y1[Y1 == Inf] = 1 + dY
+                
+                lowBin = res$lowBin
+                Y0 = lowBin / max(lowBin[is.finite(lowBin)])
+                Y0[Y0 == -Inf] = -1 - dY
+
+                PaletteColors = res$Palette
+                X0 = rep(0, colorStep)
+                X1 = rep(1, colorStep)
+                
+                # Computes the histogram of values
+                res = hist(rv$df_value$value,
+                           breaks=c(-Inf, bin, Inf),
+                           plot=FALSE)
+                # Extracts the number of counts per cells
+                counts = res$counts
+
+                fig = plotly::plotly_empty(width=55, height=250)
+                
+                for (i in 2:(colorStep-1)) {
+                    fig = plotly::add_trace(
+                                      fig,
+                                      type="scatter",
+                                      mode="lines",
+                                      x=c(X0[i], X0[i], X1[i], X1[i], X0[i]),
+                                      y=c(Y0[i], Y1[i], Y1[i], Y0[i], Y0[i]),
+                                      fill="toself",
+                                      fillcolor=PaletteColors[i],
+                                      line=list(width=0),
+                                      text=paste0("<b>",
+                                                  counts[i],
+                                                  "</b>",
+                                                  "<br>stations"),
+                                      hoverinfo="text",
+                                      hoveron="fills",
+                                      hoverlabel=list(bgcolor=counts[i],
+                                                      font=list(color="white",
+                                                                size=12),
+                                                      bordercolor="white"))
+                }
+                
+                fig = plotly::layout(
+                                  fig,
+                                  xaxis=list(range=c(-1.5, 3.4),
+                                             showticklabels=FALSE,
+                                             fixedrange=TRUE),
+                                  yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
+                                             showticklabels=FALSE,
+                                             fixedrange=TRUE),
+                                  margin=list(l=0,
+                                              r=0,
+                                              b=0,
+                                              t=0,
+                                              pad=0),
+                                  autosize=FALSE,
+                                  plot_bgcolor='transparent',
+                                  paper_bgcolor='transparent',
+                                  showlegend=FALSE)
+                
+                fig = plotly::add_trace(
+                                  fig,
+                                  type="scatter",
+                                  mode="lines",
+                                  x=c(0, 1, 0.5, 0),
+                                  y=c(1, 1, 1+dY*2/3, 1),
+                                  fill="toself",
+                                  fillcolor=PaletteColors[colorStep],
+                                  line=list(width=0),
+                                  text=paste0("<b>",
+                                              counts[colorStep],
+                                              "</b>",
+                                              "<br>stations"),
+                                  hoverinfo="text",
+                                  hoveron="fills",
+                                  hoverlabel=list(bgcolor=counts[colorStep],
+                                                  font=list(size=12),
+                                                  bordercolor="white"))
+                
+                fig = plotly::add_trace(
+                                  fig,
+                                  type="scatter",
+                                  mode="lines",
+                                  x=c(0, 1, 0.5, 0),
+                                  y=c(-1, -1, -1-dY*2/3, -1),
+                                  fill="toself",
+                                  fillcolor=PaletteColors[1],
+                                  line=list(width=0),
+                                  text=paste0("<b>",
+                                              counts[1],
+                                              "</b>",
+                                              "<br>stations"),
+                                  hoverinfo="text",
+                                  hoveron="fills",
+                                  hoverlabel=list(bgcolor=counts[1],
+                                                  font=list(size=12),
+                                                  bordercolor="white"))
+
+                Xlab = rep(1.2, colorStep)
+                Ylab = bin / max(bin)
+
+                ncharLim = 4
+                if (rv$type == 'sévérité') {
+                    labelRaw = bin*100
+                } else if (rv$type == 'saisonnalité') {
+                    labelRaw = bin
+                }
+                label2 = signif(labelRaw, 2)
+                label2[label2 >= 0] = paste0(" ", label2[label2 >= 0])
+                label1 = signif(labelRaw, 1)
+                label1[label1 >= 0] = paste0(" ", label1[label1 >= 0])
+                label = label2        
+                label[nchar(label2) > ncharLim] = label1[nchar(label2) > ncharLim]
+                label = paste0("<b>", label, "</b>")
+                
+                fig = plotly::add_annotations(
+                                  fig,
+                                  x=Xlab,
+                                  y=Ylab,
+                                  text=label,
+                                  showarrow=FALSE,
+                                  xanchor='left',
+                                  font=list(color=grey40COL,
+                                            size=12))
+
+                if (rv$type == 'sévérité') {
+                    title = paste0("<b>", word("cb.title"), "</b>",
+                                   " ", word("cb.unit.Q"))
+                } else if (rv$type == 'saisonnalité') {
+                    title = paste0("<b>", word("cb.title"), "</b>",
+                                   " ", word("cb.unit.t"))
+                }
+                
+                fig = plotly::add_annotations(
+                                  fig,
+                                  x=-0.1,
+                                  y=0,
+                                  text=title,
+                                  textangle=-90,
+                                  showarrow=FALSE,
+                                  xanchor='right',
+                                  yanchor='center',
+                                  font=list(color=grey50COL,
+                                            size=13.5))
+                
+                fig = plotly::config(
+                                  fig,
+                                  displaylogo=FALSE,
+                                  displayModeBar=FALSE,
+                                  doubleClick=FALSE)                
+                fig  
             })
         }
     })

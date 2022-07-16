@@ -41,27 +41,27 @@
 # }
 
 
-lapply(names(sessionInfo()$otherPkgs), function(pkgs)
-    detach(
-        paste0('package:', pkgs),
-        character.only = T,
-        unload = T,
-        force = T
-    ))
+# lapply(names(sessionInfo()$otherPkgs), function(pkgs)
+#     detach(
+#         paste0('package:', pkgs),
+#         character.only = T,
+#         unload = T,
+#         force = T
+#     ))
 
 
-print(.packages())
-print(sessionInfo())
+# print(.packages())
+# print(sessionInfo())
 
-print("library ash")
+# print("library ash")
 library(ash)
-print(sessionInfo())
+# print(sessionInfo())
 
-print("requireNamespace ash")
-requireNamespace("ash")
-print(sessionInfo())
+# print("requireNamespace ash")
+# requireNamespace("ash")
+# print(sessionInfo())
 
-print("other library")
+# print("other library")
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -69,12 +69,11 @@ library(leaflet)
 library(StatsAnalysisTrend)
 library(icons)
 library(dplyr)
-print(sessionInfo())
+# print(sessionInfo())
 
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')
-source(file.path('R', 'plot.R'), encoding='UTF-8')
 source(file.path('R', 'settings.R'), encoding='UTF-8')
 source(file.path('R', 'marker_manager.R'), encoding='UTF-8')
 source(file.path('R', 'server', 'short.R'), encoding='UTF-8')

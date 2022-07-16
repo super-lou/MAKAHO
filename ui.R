@@ -120,7 +120,7 @@ ui = bootstrapPage(
 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
-                       textOutput("period_resume")
+                       textOutput("period")
                    ))),
                 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
@@ -229,6 +229,17 @@ ui = bootstrapPage(
             height="auto",
             left=10, bottom=49,
 
+### 3.1. Panel button ________________________________________________
+            div(style="position: absolute;
+                       bottom: 0.6rem;
+                       right: 0.6rem;",
+                Button(class="Button-icon",
+                       inputId='theme_button',
+                       label=NULL,
+                       icon_name=iconLib$settings_white,
+                       tooltip=word("tt.c.title"))),
+
+### 2.2. Panel _______________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -236,7 +247,7 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    htmlOutput("dataHTML"))),
+                    htmlOutput("dataHTML_ana"))),
 
             div(class="Row",
                 div(class="row-label",
@@ -245,7 +256,7 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
-                    textOutput("period"))),
+                    textOutput("period_ana"))),
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",
@@ -452,30 +463,40 @@ ui = bootstrapPage(
                        tooltip=word("tt.bar.ok")))),
             )
      ),
-    
 
-## 3. CUSTOMIZATION __________________________________________________
-### 3.1. Panel button ________________________________________________
+
+### 2.7. Actualise button ____________________________________________
     hidden(
-        fixedPanel(id='theme_panelButton',
-                   left=116, bottom=10,
+        fixedPanel(id='actualise_panelButton',
+                   left=124, bottom=11,
                    width="auto", height="auto",
-                   Button(class="Button-menu",
-                          inputId='theme_button',
-                          label=NULL,
-                          icon_name=iconLib$menu_white,
-                          tooltip=word("tt.c.title"))
+                   Button(class="SmallButton-actualise",
+                      inputId='actualise_button',
+                      label=NULL,
+                      icon_name=iconLib$refresh_white,
+                      tooltip=word("tt.actualise.title"))
                    )
     ),
     
+
+## 3. CUSTOMIZATION __________________________________________________
 ### 3.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='theme_panel',
-            class="Panel card-theme",
+            class="Panel card-settings",
+            style="transform: translate(-50%, 50%);",
             fixed=TRUE,        
             width="auto", height="auto",
-            left=116, bottom=49,
+            left="50%", bottom="50%",
+
+            div(Button(class="Button-icon",
+                       style="position: absolute;
+                              top: 0.15rem;
+                              left: 0.15rem;",
+                       inputId='closeSettings_button',
+                       label=NULL,
+                       icon_name=iconLib$close_white)),
             
 ### 3.2. Background theme ____________________________________________
             div(class="Row",
