@@ -73,7 +73,8 @@ server = function (input, output, session) {
                         var=FALSE,
                         type=NULL,
                         proba=NULL,
-                        CodeSample_act=NULL
+                        CodeSample_act=NULL,
+                        CodeAdd=NULL
                         )
 
     startOBS = observe({
@@ -286,7 +287,6 @@ server = function (input, output, session) {
             shapeList[match(missCode(), CodeAll())] = 'o'
 
             rv$shapeList = shapeList
-
             
             colorList = rep(none1Color, nCodeAll())
             colorList[match(CodeSample(), CodeAll())] = validColor
@@ -297,7 +297,6 @@ server = function (input, output, session) {
 
             rv$colorList = colorList
             
-
             res = get_trendExtremes(df_XEx(), df_Xtrend(),
                                     type=rv$type,
                                     minQprob=exQprob, maxQprob=1-exQprob)
@@ -305,7 +304,6 @@ server = function (input, output, session) {
             rv$df_value = res$df_value
             rv$minValue = res$min
             rv$maxValue = res$max
-
 
             fill = get_color(rv$df_value$value,
                              rv$minValue,
@@ -537,17 +535,18 @@ server = function (input, output, session) {
 #### 2.2.3. Polygone _________________________________________________
     observe({
         if (!is.null(input$poly_select)) {
-                hide(id='ana_panel')
-                hide(id='theme_panel')
-                hide(id='info_panel')
-                hide(id='photo_bar')
-                hide(id='download_bar')
-                hide(id='click_bar')
-                hide(id='dlClick_bar')
-                showElement(id='poly_bar')
-                rv$polyMode = input$poly_choice#"Add"
+            hide(id='ana_panel')
+            hide(id='theme_panel')
+            hide(id='info_panel')
+            hide(id='photo_bar')
+            hide(id='download_bar')
+            hide(id='click_bar')
+            hide(id='dlClick_bar')
+            showElement(id='poly_bar')
+            rv$polyMode = input$poly_choice
+            # if (is.null(rv$polyCoord)) {
                 rv$polyCoord = tibble()
-                
+            # }
         } else {
             if (rv$polyMode == 'Add' | rv$polyMode == 'Rm') {
                 deselect_mode(session, rv)
@@ -606,6 +605,8 @@ server = function (input, output, session) {
     })
     
     observeEvent(input$polyOk_button, {
+        print(rv$polyMode)
+        
         if (nrow(rv$polyCoord) != 0) {
         
             station_coordinates = sp::SpatialPointsDataFrame(
@@ -617,6 +618,9 @@ server = function (input, output, session) {
             
             # Use over from the sp package to identify selected station
             selected_station = sp::over(station_coordinates, sp::SpatialPolygons(list(sp::Polygons(list(drawn_polygon), "drawn_polygon"))))
+
+            print(rv$polyCoord)
+            # print(selected_station)
 
             selectCode = df_meta()$code[!is.na(selected_station)]
 
@@ -1022,9 +1026,19 @@ server = function (input, output, session) {
         proba()
         hydroPeriod()
     }, {
+
+        if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
+            if (!all(CodeSample() %in% rv$CodeSample_act)) {
+                rv$CodeAdd = CodeSample()[!(CodeSample() %in% rv$CodeSample_act)]
+            }
+        }
         
-        if (all(identical(CodeSample(), rv$CodeSample_act)) & identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod))) {
+        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod))) {
             hide(id="actualise_panelButton")
+
+
+            rv$actualise
+                
         } else {
             showElement(id="actualise_panelButton")
         }
@@ -1032,16 +1046,26 @@ server = function (input, output, session) {
     
     observeEvent({
         input$actualise_button
+        rv$CodeAdd
         rv$start
     }, {
-        rv$CodeSample_act = CodeSample()
+        rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
+        rv$CodeSample_act = sort(rv$CodeSample_act)
         rv$var = var()
         rv$type = type()
         rv$period = period()
         rv$proba = proba()
         rv$hydroPeriod = hydroPeriod()
+
         
         if (!is.null(df_data()) & !is.null(df_meta()) & rv$var != FALSE & !is.null(rv$period)) {
+
+            if (!is.null(rv$CodeAdd)) {
+                df_data = df_data()[df_data()$code %in% rv$CodeAdd,]
+                rv$CodeAdd = NULL
+            } else {
+                df_data = df_data()
+            }
             
             hide(id="actualise_panelButton")
             
@@ -1068,7 +1092,7 @@ server = function (input, output, session) {
                        encoding='UTF-8')
 
                 res = get_Xtrend(rv$var,
-                                 df_data(),
+                                 df_data,
                                  df_meta(),
                                  period=list(rv$period),
                                  hydroPeriod=rv$hydroPeriod,
@@ -1108,11 +1132,11 @@ server = function (input, output, session) {
     })
 
     df_XEx = reactive({
-        rv$df_XEx
+        rv$df_XEx[rv$df_XEx$code %in% CodeSample(),]
     })
 
     df_Xtrend = reactive({
-        rv$df_Xtrend
+        rv$df_Xtrend[rv$df_Xtrend$code %in% CodeSample(),]
     })
     
 
