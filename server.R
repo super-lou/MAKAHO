@@ -54,6 +54,7 @@ server = function (input, output, session) {
                         mapPreview_bounds=NULL,
                         defaultBounds=NULL,
                         value=NULL,
+                        valueSample=NULL,
                         minValue=NULL,
                         maxValue=NULL,
                         helpPage=NULL,
@@ -74,7 +75,9 @@ server = function (input, output, session) {
                         type=NULL,
                         proba=NULL,
                         CodeSample_act=NULL,
-                        CodeAdd=NULL
+                        CodeAdd=NULL,
+                        actualiseForce=FALSE,
+                        loading=FALSE
                         )
 
     startOBS = observe({
@@ -84,7 +87,6 @@ server = function (input, output, session) {
         showElement(id='photo_panelButton')
         showElement(id='download_panelButton')
         showElement(id='help_panelButton')
-        showElement(id="actualise_panelButton")
         rv$start = TRUE
         startOBS$destroy()
     })
@@ -266,18 +268,18 @@ server = function (input, output, session) {
             none2Color = none2Color_dark
         }
         
-        if (!is.null(df_XEx()) | !is.null(df_Xtrend())) {
+        if (!is.null(rv$df_XEx) | !is.null(rv$df_Xtrend)) {
             
-            trendCode = df_Xtrend()$code
+            trendCode = rv$df_Xtrend$code
 
             sizeList = rep('small', nCodeAll())
             sizeList[match(rv$codeClick, CodeAll())] = 'big'
 
             rv$sizeList = sizeList
             
-            OkS = df_Xtrend()$p <= input$alpha_choice
-            CodeSU = trendCode[OkS & df_Xtrend()$trend >= 0]
-            CodeSD = trendCode[OkS & df_Xtrend()$trend < 0]
+            OkS = rv$df_Xtrend$p <= input$alpha_choice
+            CodeSU = trendCode[OkS & rv$df_Xtrend$trend >= 0]
+            CodeSD = trendCode[OkS & rv$df_Xtrend$trend < 0]
             CodeNS = trendCode[!OkS]
             
             shapeList = rep('o', nCodeAll())
@@ -297,11 +299,14 @@ server = function (input, output, session) {
 
             rv$colorList = colorList
             
-            res = get_trendExtremes(df_XEx(), df_Xtrend(),
+            res = get_trendExtremes(rv$df_XEx, rv$df_Xtrend,
                                     type=rv$type,
-                                    minQprob=exQprob, maxQprob=1-exQprob)
+                                    minQprob=exQprob,
+                                    maxQprob=1-exQprob,
+                                    CodeSample=CodeSample())
             
             rv$df_value = res$df_value
+            rv$df_valueSample = res$df_valueSample
             rv$minValue = res$min
             rv$maxValue = res$max
 
@@ -364,10 +369,10 @@ server = function (input, output, session) {
         Sup = df_meta()$surface_km2_BH[okCode]
         Alt = df_meta()$altitude_m_BH[okCode]
 
-        if (!is.null(df_XEx()) & !is.null(df_Xtrend())) {            
+        if (!is.null(rv$df_XEx) & !is.null(rv$df_Xtrend)) {            
             trendLabel = sapply(Code, get_trendLabel,
-                                df_XEx=df_XEx(),
-                                df_Xtrend=df_Xtrend(),
+                                df_XEx=rv$df_XEx,
+                                df_Xtrend=rv$df_Xtrend,
                                 type=rv$type)
         } else {
             trendLabel = NA
@@ -535,18 +540,18 @@ server = function (input, output, session) {
 #### 2.2.3. Polygone _________________________________________________
     observe({
         if (!is.null(input$poly_select)) {
-            hide(id='ana_panel')
-            hide(id='theme_panel')
-            hide(id='info_panel')
-            hide(id='photo_bar')
-            hide(id='download_bar')
-            hide(id='click_bar')
-            hide(id='dlClick_bar')
-            showElement(id='poly_bar')
-            rv$polyMode = input$poly_choice
-            # if (is.null(rv$polyCoord)) {
+            if (rv$polyMode != 'Add' & rv$polyMode != 'Rm') {
+                hide(id='ana_panel')
+                hide(id='theme_panel')
+                hide(id='info_panel')
+                hide(id='photo_bar')
+                hide(id='download_bar')
+                hide(id='click_bar')
+                hide(id='dlClick_bar')
+                showElement(id='poly_bar')
+                rv$polyMode = input$poly_choice
                 rv$polyCoord = tibble()
-            # }
+            }
         } else {
             if (rv$polyMode == 'Add' | rv$polyMode == 'Rm') {
                 deselect_mode(session, rv)
@@ -605,8 +610,6 @@ server = function (input, output, session) {
     })
     
     observeEvent(input$polyOk_button, {
-        print(rv$polyMode)
-        
         if (nrow(rv$polyCoord) != 0) {
         
             station_coordinates = sp::SpatialPointsDataFrame(
@@ -619,9 +622,6 @@ server = function (input, output, session) {
             # Use over from the sp package to identify selected station
             selected_station = sp::over(station_coordinates, sp::SpatialPolygons(list(sp::Polygons(list(drawn_polygon), "drawn_polygon"))))
 
-            print(rv$polyCoord)
-            # print(selected_station)
-
             selectCode = df_meta()$code[!is.na(selected_station)]
 
             if (rv$polyMode == "Add") {
@@ -633,13 +633,8 @@ server = function (input, output, session) {
 
             map = leafletProxy("map")
             map = clearShapes(map)
-            rv$polyCoord = NULL
         }
-        
         deselect_mode(session, rv)
-        hide(id='poly_bar')
-        hide(id='theme_panel')
-        showElement(id='ana_panel')
     })
 
 #### 2.2.4. Warning __________________________________________________
@@ -1026,29 +1021,53 @@ server = function (input, output, session) {
         proba()
         hydroPeriod()
     }, {
-
         if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
             if (!all(CodeSample() %in% rv$CodeSample_act)) {
                 rv$CodeAdd = CodeSample()[!(CodeSample() %in% rv$CodeSample_act)]
+                rv$actualiseForce = !rv$actualiseForce
             }
         }
         
         if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod))) {
-            hide(id="actualise_panelButton")
-
-
-            rv$actualise
-                
+            hide(id="actualise_panelButton")    
         } else {
-            showElement(id="actualise_panelButton")
+            if (rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$hydroPeriod)) {
+                showElement(id="actualise_panelButton")
+            }
         }
     })
+
+    # observeEvent(input$actualise_button, {
+
+    #     output$loading_panel = renderUI({
+    #         conditionalPanel(condition=!rv$loading,
+    #                          style="position: fixed;
+    #                             left: 123px; bottom: 11px;",
+                             
+    #                          fixedPanel(class="card-load",
+    #                                     left=0, top=0,
+    #                                     width="100%", height="100%"),
+                             
+    #                          div(id="loadmessage",
+    #                              HTML('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>')))
+    #     })
+        
+    # }, priority=100)
+
+    observeEvent({
+        input$theme_button
+    }, {
+        print('aa')
+        shinyjs::addClass(id="loading", class="lds-ring")
+    })
+
     
     observeEvent({
         input$actualise_button
-        rv$CodeAdd
+        rv$actualiseForce
         rv$start
     }, {
+        
         rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
         rv$CodeSample_act = sort(rv$CodeSample_act)
         rv$var = var()
@@ -1056,13 +1075,11 @@ server = function (input, output, session) {
         rv$period = period()
         rv$proba = proba()
         rv$hydroPeriod = hydroPeriod()
-
         
         if (!is.null(df_data()) & !is.null(df_meta()) & rv$var != FALSE & !is.null(rv$period)) {
 
             if (!is.null(rv$CodeAdd)) {
                 df_data = df_data()[df_data()$code %in% rv$CodeAdd,]
-                rv$CodeAdd = NULL
             } else {
                 df_data = df_data()
             }
@@ -1118,6 +1135,17 @@ server = function (input, output, session) {
                 df_Xtrend = res$analyse$estimate
                 df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
 
+                if (!is.null(rv$CodeAdd)) {
+                    df_XEx = bind_rows(rv$df_XEx, df_XEx)
+                    df_XEx = df_XEx[order(df_XEx$code),]
+                    df_Xtrend = bind_rows(rv$df_Xtrend, df_Xtrend)
+                    df_Xtrend = df_Xtrend[order(df_Xtrend$code),]
+                    rv$CodeAdd = NULL
+                }
+
+                df_XEx = df_XEx[df_XEx$code %in% CodeSample(),]
+                df_Xtrend = df_Xtrend[df_Xtrend$code %in% CodeSample(),]
+
                 rv$df_XEx = df_XEx
                 rv$df_Xtrend = df_Xtrend
                 
@@ -1129,14 +1157,9 @@ server = function (input, output, session) {
             rv$df_XEx = NULL
             rv$df_Xtrend = NULL
         }
-    })
 
-    df_XEx = reactive({
-        rv$df_XEx[rv$df_XEx$code %in% CodeSample(),]
-    })
+        shinyjs::removeClass(id="loading", class="lds-ring")
 
-    df_Xtrend = reactive({
-        rv$df_Xtrend[rv$df_Xtrend$code %in% CodeSample(),]
     })
     
 
@@ -1313,8 +1336,8 @@ server = function (input, output, session) {
             
             name = df_meta()$nom[df_meta()$code == rv$codeClick]
 
-            df_XEx_code = df_XEx()[df_XEx()$code == rv$codeClick,]
-            df_Xtrend_code = df_Xtrend()[df_Xtrend()$code == rv$codeClick,]
+            df_XEx_code = rv$df_XEx[rv$df_XEx$code == rv$codeClick,]
+            df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$code == rv$codeClick,]
             color = rv$fillList[CodeAll() == rv$codeClick]
             switchColor = switch_colorLabel(color)
             
@@ -1402,8 +1425,8 @@ server = function (input, output, session) {
                 }
 
                 trendLabel = get_trendLabel(code=rv$codeClick,
-                                            df_XEx=df_XEx(),
-                                            df_Xtrend=df_Xtrend(),
+                                            df_XEx=rv$df_XEx,
+                                            df_Xtrend=rv$df_Xtrend,
                                             type=rv$type,
                                             space=TRUE)
 
@@ -1543,21 +1566,23 @@ server = function (input, output, session) {
 ### 3.2. Palette _____________________________________________________
     observeEvent({
         input$colorbar_choice
-        df_Xtrend()
+        rv$df_Xtrend
     }, {        
-        if (input$colorbar_choice == 'show' & !is.null(df_Xtrend())) {
+        if (input$colorbar_choice == 'show' & !is.null(rv$df_Xtrend)) {
             showElement(id="colorbar_panel")
-        } else if (input$colorbar_choice == 'none' | is.null(df_Xtrend())) {
+        } else if (input$colorbar_choice == 'none' | is.null(rv$df_Xtrend)) {
             hide(id="colorbar_panel")
         }
     })
 
     observeEvent({
+        input$colorbar_choice
         rv$minValue
         rv$maxValue
-        input$colorbar_choice
+        rv$df_value
     }, {
-        if (input$colorbar_choice == 'show' & !is.null(df_Xtrend())) {
+        
+        if (input$colorbar_choice == 'show' & !is.null(rv$df_Xtrend)) {
             output$colorbar_plot = plotly::renderPlotly({
                 
                 res = compute_colorBin(min=rv$minValue,
@@ -1581,7 +1606,7 @@ server = function (input, output, session) {
                 X1 = rep(1, colorStep)
                 
                 # Computes the histogram of values
-                res = hist(rv$df_value$value,
+                res = hist(rv$df_valueSample$value,
                            breaks=c(-Inf, bin, Inf),
                            plot=FALSE)
                 # Extracts the number of counts per cells
@@ -1727,9 +1752,9 @@ server = function (input, output, session) {
 ### 3.3. Resume panel ________________________________________________
     observeEvent({
         input$resume_choice
-        df_Xtrend()
+        rv$df_Xtrend
     }, {
-        if (input$resume_choice == 'show' & !is.null(df_Xtrend())) {
+        if (input$resume_choice == 'show' & !is.null(rv$df_Xtrend)) {
             showElement(id="resume_panel")
         } else if (input$resume_choice == 'none') {
             hide(id="resume_panel")
@@ -2037,12 +2062,7 @@ server = function (input, output, session) {
 
         hide(id='blur_panel')
     })
-    
 
     
-
 } 
-
-
-
 

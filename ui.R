@@ -715,11 +715,6 @@ ui = bootstrapPage(
             right=0, top=62,
 
             div(class="Row",
-                # div(class="row-label",
-                #     HTML(paste0("<span><b>",
-                #                 word("dl.bar"),
-                #                 "</b></span>"))),
-                # div(class="sep"),
                 div(class="bunch",
                     Button(class="Button",
                            'dlClickOk_button',
@@ -1146,16 +1141,24 @@ ui = bootstrapPage(
                                " - ", 0.5*widthHelp, "px",
                                " + ", dhNavHelp*(N_helpPage+1), "px)"),
                    top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
-                   # right=95, bottom=10,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='closeHelp_button',
                           label=NULL,
-                          # icon_name=iconLib$help_outline_white,
                           icon_name=iconLib$close_white,
                           tooltip=word("tt.help.close")) 
                    )
     ),
-    
 
-    )
+    fixedPanel(style="position: fixed;
+                      left: 123px; bottom: 11px;",
+               
+               # fixedPanel(class="card-load",
+                          # left=0, top=0,
+                          # width="100%", height="100%"),
+               
+               span(id="loading",
+                   class="")
+               )
+    
+)
