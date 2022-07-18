@@ -809,7 +809,7 @@ server = function (input, output, session) {
         if (!is.null(input$var_choice) & input$var_choice != FALSE) {
             input$var_choice
         } else {
-            Var$var[1]
+            Var$var[2]
         }
     })
 
