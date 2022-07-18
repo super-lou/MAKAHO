@@ -27,16 +27,7 @@
 
 
 # Import library
-
-# print("library ash")
-library(ash)
-# print(sessionInfo())
-
-# print("requireNamespace ash")
-# requireNamespace("ash")
-# print(sessionInfo())
-
-# print("other library")
+library(ashes)
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -44,7 +35,6 @@ library(leaflet)
 library(StatsAnalysisTrend)
 library(icons)
 library(dplyr)
-# print(sessionInfo())
 
 
 # Sourcing R files
