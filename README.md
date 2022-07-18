@@ -1,5 +1,9 @@
 # MAKAHO
 
+<!-- badges: start -->
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green)](https://lifecycle.r-lib.org/articles/stages.html#maturing)
+<!-- badges: end -->
+
 [MAKAHO](https://makaho.sk8.inrae.fr/) stand for MAnn-Kendall Analysis of Hydrological Observations.
 
 [<img src="https://github.com/super-lou/MAKAHO/blob/0fad3c354954ebc2d8605a2ec9dd3d4f11a36920/www/screen.png" width="600">](https://makaho.sk8.inrae.fr/)</br>
@@ -13,7 +17,7 @@ This project was carried out for National Research Institute for Agriculture, Fo
 
 ### Help
 
-
+You can find an interactive help on the website if you press the bottom right interrogation button.
 
 
 ### FAQ
