@@ -27,7 +27,20 @@
 
 
 # Import library
-library(ashes)
+dev_path = file.path(dirname(dirname(getwd())),
+                     "CDD_stationnarite",
+                     'ashes', 'R')
+if (file.exists(dev_path)) {
+    print('Loading ashes from local directory')
+    list_path = list.files(dev_path, pattern="*.R$", full.names=TRUE)
+    for (path in list_path) {
+        source(path, encoding='UTF-8')
+    }
+
+} else {
+    library(ashes)
+}
+
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
