@@ -59,7 +59,7 @@ minNA = function (X, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (min(X))
+        return (min(X, na.rm=na.rm))
     }
 }
 
@@ -67,7 +67,7 @@ maxNA = function (X, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (max(X))
+        return (max(X, na.rm=na.rm))
     }
 }
 

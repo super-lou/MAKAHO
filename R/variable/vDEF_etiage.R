@@ -16,7 +16,7 @@ isDateM = FALSE
 
 compute_VolDef = function (X, UpLim, select_longest=TRUE) {
     Xdef = X_under(X, UpLim=UpLim, select_longest=select_longest)
-    Vol = cumsum(Xdef)*24*3600 # m^3.s-1 * jour
+    Vol = sum(Xdef)*24*3600 # m^3.s-1 * jour
     return (Vol)
 }
 
@@ -66,7 +66,7 @@ minNA = function (X, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (min(X))
+        return (min(X, na.rm=na.rm))
     }
 }
 
@@ -74,7 +74,7 @@ maxNA = function (X, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (max(X))
+        return (max(X, na.rm=na.rm))
     }
 }
 

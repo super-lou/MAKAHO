@@ -67,6 +67,7 @@ server = function (input, output, session) {
                         missCode=c(),
                         invalidCode=c(),
                         badCode=c(),
+                        actualise=FALSE,
                         df_XEx=NULL,
                         df_Xtrend=NULL,
                         period=NULL,
@@ -350,7 +351,7 @@ server = function (input, output, session) {
         df_meta()
         markerListAll()
     }, {
-        
+
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
@@ -1037,46 +1038,29 @@ server = function (input, output, session) {
         }
     })
 
-    # observeEvent(input$actualise_button, {
 
-    #     output$loading_panel = renderUI({
-    #         conditionalPanel(condition=!rv$loading,
-    #                          style="position: fixed;
-    #                             left: 123px; bottom: 11px;",
-                             
-    #                          fixedPanel(class="card-load",
-    #                                     left=0, top=0,
-    #                                     width="100%", height="100%"),
-                             
-    #                          div(id="loadmessage",
-    #                              HTML('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>')))
-    #     })
-        
-    # }, priority=100)
-
-    observeEvent({
-        input$theme_button
-    }, {
-        print('aa')
-        shinyjs::addClass(id="loading", class="lds-ring")
-    })
-
-    
     observeEvent({
         input$actualise_button
         rv$actualiseForce
         rv$start
-    }, {
-        
-        rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
-        rv$CodeSample_act = sort(rv$CodeSample_act)
-        rv$var = var()
-        rv$type = type()
-        rv$period = period()
-        rv$proba = proba()
-        rv$hydroPeriod = hydroPeriod()
-        
-        if (!is.null(df_data()) & !is.null(df_meta()) & rv$var != FALSE & !is.null(rv$period)) {
+    }, {       
+        if (!is.null(df_data()) & !is.null(df_meta()) & var() != FALSE & !is.null(period())) {
+            rv$actualise = TRUE
+            showElement(id="loading_panel")
+        }
+    })
+
+    observeEvent(rv$actualise, {
+
+        if (rv$actualise) {
+
+            rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
+            rv$CodeSample_act = sort(rv$CodeSample_act)
+            rv$var = var()
+            rv$type = type()
+            rv$period = period()
+            rv$proba = proba()
+            rv$hydroPeriod = hydroPeriod()
 
             if (!is.null(rv$CodeAdd)) {
                 df_data = df_data()[df_data()$code %in% rv$CodeAdd,]
@@ -1153,13 +1137,9 @@ server = function (input, output, session) {
                 rv$df_XEx = NULL
                 rv$df_Xtrend = NULL
             }
-        } else {
-            rv$df_XEx = NULL
-            rv$df_Xtrend = NULL
         }
-
-        shinyjs::removeClass(id="loading", class="lds-ring")
-
+        rv$actualise = FALSE
+        hide(id="loading_panel")
     })
     
 

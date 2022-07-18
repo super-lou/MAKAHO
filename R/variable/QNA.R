@@ -17,7 +17,7 @@ minNA = function (X, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (min(X))
+        return (min(X, na.rm=na.rm))
     }
 }
 

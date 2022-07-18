@@ -17,7 +17,7 @@ maxNA = function (X, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (max(X))
+        return (max(X, na.rm=na.rm))
     }
 }
 
@@ -44,6 +44,11 @@ BFS = function (Q, d=5, w=0.9) {
     idShift = idShift[-length(idShift)]
     idMin = idMinSlices + idShift
     Qmin_k = Q[idMin]
+
+    if (length(Qmin_k) == 1) {
+        BF = rep(NA, N)
+        return (BF)
+    }
 
     n = length(Qmin_k)
     Qmin_kp1 = c(Qmin_k[2:n], NA)

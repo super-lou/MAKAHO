@@ -37,6 +37,11 @@ BFS = function (Q, d=5, w=0.9) {
     idMin = idMinSlices + idShift
     Qmin_k = Q[idMin]
 
+    if (length(Qmin_k) == 1) {
+        BF = rep(NA, N)
+        return (BF)
+    }
+
     n = length(Qmin_k)
     Qmin_kp1 = c(Qmin_k[2:n], NA)
     Qmin_km1 = c(NA, Qmin_k[1:(n-1)])
@@ -49,7 +54,7 @@ BFS = function (Q, d=5, w=0.9) {
     nbNA = length(Pivots[!is.na(Pivots)])
     if (nbNAid >= 2 & nbNA >= 2) {
         BF = Hmisc::approxExtrap(idPivots, Pivots, xout=1:N,
-                                 method="linear", na.rm=TRUE)$y  
+                          method="linear", na.rm=TRUE)$y  
         BF[is.na(Q)] = NA
         BF[BF < 0] = 0
         test = BF > Q
@@ -64,7 +69,7 @@ BFS = function (Q, d=5, w=0.9) {
 
 compute_VolSnowmelt = function (X) {
     BF = BFS(X)
-    VolSnowmelt = cumsum(BF)*24*3600 # m^3.s-1 * jour
+    VolSnowmelt = sum(BF)*24*3600 # m^3.s-1 * jour
     return (VolSnowmelt)
 }
 

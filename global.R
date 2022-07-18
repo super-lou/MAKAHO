@@ -27,31 +27,6 @@
 
 
 # Import library
-# dev_path = file.path(dirname(dirname(getwd())),
-#                      'CDD_stationnarite', 'ash', 'R')
-# if (file.exists(dev_path)) {
-#     print('Loading ash from local directory')
-#     list_path = list.files(dev_path, pattern="*.R$", full.names=TRUE)
-#     for (path in list_path) {
-#         source(path, encoding='UTF-8')
-#     }
-# } else {
-#     print('Loading ash from package')
-#     library(ash)
-# }
-
-
-# lapply(names(sessionInfo()$otherPkgs), function(pkgs)
-#     detach(
-#         paste0('package:', pkgs),
-#         character.only = T,
-#         unload = T,
-#         force = T
-#     ))
-
-
-# print(.packages())
-# print(sessionInfo())
 
 # print("library ash")
 library(ash)

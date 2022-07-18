@@ -117,7 +117,7 @@
     padding: 0 !important;
     border-radius: 0 !important;
     margin: 0 !important;
-    background-color: rgba(5, 5, 10, 0.25) !important;
+    background-color: rgba(5, 5, 10, 0.3) !important;
 }
 
 .card-text {
@@ -637,10 +637,10 @@ a:hover {
     width: 1.4rem;
     height: 1.4rem;
     margin: 0.25rem;
-    border: 0.25rem solid rgba(39, 86, 98, 1);
+    border: 0.25rem solid currentColor;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: rgba(39, 86, 98, 1) transparent transparent transparent;
+    border-color: currentColor transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
     animation-delay: -0.45s;

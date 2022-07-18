@@ -1150,15 +1150,16 @@ ui = bootstrapPage(
                    )
     ),
 
-    fixedPanel(style="position: fixed;
-                      left: 123px; bottom: 11px;",
-               
-               # fixedPanel(class="card-load",
-                          # left=0, top=0,
-                          # width="100%", height="100%"),
-               
-               span(id="loading",
-                   class="")
-               )
-    
+    hidden(
+        fixedPanel(id='loading_panel',
+                   class="card-load",
+                   left=0, top=0,
+                   width="100%", height="100%",
+                   
+                   div(style="position: fixed;
+                              left: 123px; bottom: 11px;",
+                       HTML('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>'))
+                   )
+    )
+
 )
