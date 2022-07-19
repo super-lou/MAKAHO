@@ -13,11 +13,6 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-compute_Qp = function (Q, p) {
-    Qp = quantile(Q[!is.na(Q)], p)
-    return (Qp)
-}
-
 functY = compute_Qp
 functY_args = list(p=0.1)
 isDateY = FALSE

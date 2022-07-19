@@ -27,6 +27,21 @@
 
 
 # Import library
+library(shiny)
+library(shinyjs)
+library(shinyWidgets)
+library(leaflet)
+library(StatsAnalysisTrend)
+library(icons)
+library(dplyr)
+# already ::
+library(accelerometry)
+library(CircStats)
+library(Hmisc)
+library(lubridate)
+library(sf)
+library(sp)
+
 dev_path = file.path(dirname(dirname(getwd())),
                      "CDD_stationnarite",
                      'ashes', 'R')
@@ -36,19 +51,10 @@ if (file.exists(dev_path)) {
     for (path in list_path) {
         source(path, encoding='UTF-8')
     }
-
 } else {
+    print('Loading ashes from package')
     library(ashes)
 }
-
-library(shiny)
-library(shinyjs)
-library(shinyWidgets)
-library(leaflet)
-library(StatsAnalysisTrend)
-library(icons)
-library(dplyr)
-
 
 # Sourcing R files
 source(file.path('R', 'tools.R'), encoding='UTF-8')

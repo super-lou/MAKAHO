@@ -13,19 +13,6 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-compute_fAp = function (Q, p) {
-    Qp = compute_Qp(Q, p)
-    n = sum(as.numeric(Q[!is.na(Q)] > Qp))
-    N = length(Q)
-    fA = n/N
-    return (fA)
-}
-
-compute_Qp = function (Q, p) {
-    Qp = quantile(Q[!is.na(Q)], p)
-    return (Qp)
-}
-
 functY = compute_fAp
 functY_args = list(p=0.9)
 isDateY = FALSE

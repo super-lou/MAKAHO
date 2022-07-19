@@ -149,7 +149,7 @@ dyNavHelp = 270
 dhNavHelp = 21
 
 
-## ash
+## ashes
 hydrograph_period = c("1968-01-01", "1988-12-31")
 
 data_path = file.path(computer_data_path, 'fst', 'data.fst')
@@ -171,6 +171,7 @@ filedir = "RRSE"
 trend_period = list(c(1, 2))
 
 init_var_file = 'default.R'
+init_tools_file = 'tools.R'
 var_dir = 'variable'
 var_to_analyse_dir = ''
 to_assign_out = c()

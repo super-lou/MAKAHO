@@ -74,6 +74,7 @@ server = function (input, output, session) {
                         hydroPeriod=NULL,
                         var=FALSE,
                         type=NULL,
+                        unit=NULL,
                         proba=NULL,
                         CodeSample_act=NULL,
                         CodeAdd=NULL,
@@ -809,7 +810,7 @@ server = function (input, output, session) {
         if (!is.null(input$var_choice) & input$var_choice != FALSE) {
             input$var_choice
         } else {
-            Var$var[2]
+            Var$var[1]
         }
     })
 
@@ -1089,8 +1090,12 @@ server = function (input, output, session) {
                                                    filename)
                 source(file.path('R', var_dir, init_var_file),
                        encoding='UTF-8')
+                source(file.path('R', var_dir, init_tools_file),
+                       encoding='UTF-8')
                 source(script_to_analyse_path,
                        encoding='UTF-8')
+
+                rv$unit = unit
 
                 res = get_Xtrend(rv$var,
                                  df_data,
@@ -1112,7 +1117,7 @@ server = function (input, output, session) {
                                  isDateYT_ext=isDateYT_ext,
                                  functYT_sum=functYT_sum,
                                  functYT_sum_args=functYT_sum_args,
-                                 verbose=TRUE)
+                                 verbose=FALSE)
 
                 # Gets the extracted data for the variable
                 df_XEx = res$analyse$extract
@@ -1759,7 +1764,8 @@ server = function (input, output, session) {
         hide(id="photo_panelButton")
         hide(id="download_panelButton")
         hide(id="help_panelButton")
-
+        hide(id="actualise_panelButton")
+        
         hideAll()
         
         deselect_mode(session, rv)
@@ -1774,6 +1780,7 @@ server = function (input, output, session) {
             showElement(id="photo_panelButton")
             showElement(id="download_panelButton")
             showElement(id="help_panelButton")
+            showElement(id="actualise_panelButton")
             rv$photoMode = FALSE
         }
     })

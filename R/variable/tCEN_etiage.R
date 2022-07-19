@@ -13,14 +13,6 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-which.minNA = function (x) {
-    idMin = which.min(x)
-    if (identical(idMin, integer(0))) {
-        idMin = NA
-    }
-    return (idMin)
-}
-
 functY = which.minNA
 functY_args = NULL
 isDateY = TRUE
@@ -30,5 +22,3 @@ functYT_ext_args = NULL
 isDateYT_ext = FALSE
 functYT_sum = NULL
 functYT_sum_args = NULL
-
-

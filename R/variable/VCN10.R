@@ -13,14 +13,6 @@ functM = NULL
 functM_args = NULL
 isDateM = FALSE
 
-minNA = function (X, na.rm=TRUE) {
-    if (all(is.na(X))) {
-        return (NA)
-    } else {
-        return (min(X, na.rm=na.rm))
-    }
-}
-
 functY = minNA
 functY_args = list(na.rm=TRUE)
 isDateY = FALSE

@@ -611,10 +611,11 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(a(href="https://github.com/super-lou/MAKAHO",
-                      img(src="github.png", height="17px"))),
+                      img(src="github.png", height="17px"),
+                      target="_blank")),
                 div(style="padding-top: 3px; padding-left: 5px;",
                     a(href="https://github.com/super-lou/MAKAHO",
-                      "GitHub"))),
+                      "GitHub", target="_blank"))),
 
             
             div(class="Row",
@@ -624,10 +625,11 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(a(href="https://sk8.inrae.fr",
-                      img(src="SK8.png", height="17px"))),
+                      img(src="SK8.png", height="17px"),
+                      target="_blank")),
                 div(style="padding-top: 3px; padding-left: 5px;",
                     a(href="https://sk8.inrae.fr",
-                      "SK8"))),
+                      "SK8", target="_blank"))),
 
             div(class="Row",
                 div(class="row-label",
@@ -637,7 +639,7 @@ ui = bootstrapPage(
                 div(class="sep"),
                 div("inspirée de ",
                     a(href="https://earth.nullschool.net/",
-                      "earth.nullschool.net"))),
+                      "earth.nullschool.net", target="_blank"))),
 
             div(class="Row",
                 div(class="row-label",
