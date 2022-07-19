@@ -1112,7 +1112,7 @@ server = function (input, output, session) {
                                  isDateYT_ext=isDateYT_ext,
                                  functYT_sum=functYT_sum,
                                  functYT_sum_args=functYT_sum_args,
-                                 verbose=FALSE)
+                                 verbose=TRUE)
 
                 # Gets the extracted data for the variable
                 df_XEx = res$analyse$extract
