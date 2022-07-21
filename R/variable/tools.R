@@ -105,7 +105,7 @@ BFS = function (Q, d=5, w=0.9) {
 ## 2. Volumique ______________________________________________________
 compute_VolSnowmelt = function (X) {
     BF = BFS(X)
-    VolSnowmelt = sum(BF)*24*3600 # m^3.s-1 * jour
+    VolSnowmelt = sum(BF)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (VolSnowmelt)
 }
 
@@ -277,7 +277,7 @@ length_under = function (L, UpLim, select_longest=TRUE) {
 
 compute_VolDef = function (X, UpLim, select_longest=TRUE) {
     Xdef = under_threshold(X, UpLim=UpLim, what="X", select_longest=select_longest)
-    Vol = sum(Xdef)*24*3600 # m^3.s-1 * jour
+    Vol = sum(Xdef)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (Vol)
 }
 

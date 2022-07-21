@@ -98,7 +98,7 @@ nbTick = 10
 
 colorStep = 10
 Palette = Palette_ground()
-reverse = FALSE
+# reverse = FALSE
 
 exQprob = 0.01
 

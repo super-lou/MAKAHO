@@ -1,6 +1,6 @@
 var = "v_BF"
 type = "Volume"
-unit = "m^{3}"
+unit = "hm^{3}"
 glose = "Volume des écoulements lents (volume de l’intégrale sous la courbe du débit de base)"
 event = "Crue Nivale"
 hydroPeriod = c("09-01", "08-31")

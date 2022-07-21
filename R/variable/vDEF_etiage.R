@@ -1,6 +1,6 @@
 var = "vDEF_etiage"
 type = "Volume"
-unit = "m^{3}"
+unit = "hm^{3}"
 glose = "Volume de déficite de l'étiage (intégrale de la courbe de la moyenne sur 10 jours sous le maximum des VCN10)"
 event = "Étiage"
 hydroPeriod = c('05-01', '11-30')

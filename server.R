@@ -76,6 +76,7 @@ server = function (input, output, session) {
                         type=NULL,
                         unit=NULL,
                         proba=NULL,
+                        reverse=FALSE,
                         CodeSample_act=NULL,
                         CodeAdd=NULL,
                         actualiseForce=FALSE,
@@ -124,11 +125,6 @@ server = function (input, output, session) {
                         options=list(padding=c(20, 20)))
         
         map = addTiles(map, urlTemplate=urlTile())
-        # map = addEasyprint(map, options=easyprintOptions(
-        #                             exportOnly=TRUE,
-        #                             hideControlContainer=TRUE,
-        #                             hidden=TRUE))
-        
         rv$mapHTML = map
     })
     
@@ -317,7 +313,7 @@ server = function (input, output, session) {
                              rv$maxValue,
                              Palette=Palette,
                              colorStep=colorStep,
-                             reverse=reverse,
+                             reverse=rv$reverse,
                              noneColor=none2Color)
             
             fillList = rep(none2Color, nCodeAll())
@@ -834,6 +830,15 @@ server = function (input, output, session) {
             NULL
         }
     })
+
+    reverse = reactive({
+        id = which(Var$var == var())
+        if (!identical(id, integer(0))) {
+            Var$reverse[id]
+        } else {
+            FALSE
+        }
+    })
     
     output$varHTML = renderUI({
         HTML(paste0(
@@ -1062,6 +1067,7 @@ server = function (input, output, session) {
             rv$period = period()
             rv$proba = proba()
             rv$hydroPeriod = hydroPeriod()
+            rv$reverse = reverse()
 
             if (!is.null(rv$CodeAdd)) {
                 df_data = df_data()[df_data()$code %in% rv$CodeAdd,]
@@ -1575,7 +1581,7 @@ server = function (input, output, session) {
                                        max=rv$maxValue,
                                        Palette=Palette,
                                        colorStep=colorStep,
-                                       reverse=reverse)
+                                       reverse=rv$reverse)
 
                 bin = res$bin
                 upBin = res$upBin
