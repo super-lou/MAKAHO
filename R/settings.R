@@ -151,7 +151,7 @@ dhNavHelp = 21
 
 ## ashes
 hydrograph_period = c("1968-01-01", "1988-12-31")
-
+verbose = TRUE
 data_path = file.path(computer_data_path, 'fst', 'data.fst')
 meta_path = file.path(computer_data_path, 'fst', 'meta.fst')
 if (!file.exists(data_path) | !file.exists(meta_path)) {

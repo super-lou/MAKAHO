@@ -1123,7 +1123,7 @@ server = function (input, output, session) {
                                  isDateYT_ext=isDateYT_ext,
                                  functYT_sum=functYT_sum,
                                  functYT_sum_args=functYT_sum_args,
-                                 verbose=FALSE)
+                                 verbose=verbose)
 
                 # Gets the extracted data for the variable
                 df_XEx = res$analyse$extract
@@ -1453,11 +1453,15 @@ server = function (input, output, session) {
 
                 # If it is a flow variable
                 if (rv$type == 'sévérité') {
-                    title = paste0("<b> ", rv$var, "</b>",
+                    title = paste0("<b> ",
+                                   Var$varHTML[Var$var == rv$var],
+                                   "</b>",
                                    " ", "[m<sup>3</sup>.s<sup>-1</sup>]")
 
                 } else if (rv$type == 'saisonnalité') {
-                    title = paste0("<b> ", rv$var, "</b>",
+                    title = paste0("<b> ",
+                                   Var$varHTML[Var$var == rv$var],
+                                   "</b>",
                                    " ", "[jour]")
                 }
                 

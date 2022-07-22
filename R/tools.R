@@ -559,10 +559,13 @@ get_trendExtremes = function (df_data, df_trend, type,
     
     minValue = quantile(valueSample, minQprob, na.rm=TRUE)
     maxValue = quantile(valueSample, maxQprob, na.rm=TRUE)
-
-    df_value = tibble(code=Code, value=value)
-    df_valueSample = tibble(code=CodeSample, value=valueSample)
     
+    df_value = tibble(code=Code, value=value)   
+    if (all(CodeSample %in% Code)) {
+        df_valueSample = tibble(code=CodeSample, value=valueSample)
+    } else {
+        df_valueSample = tibble(code=Code, value=valueSample)
+    }
     res = list(df_value=df_value, df_valueSample=df_valueSample,
                min=minValue, max=maxValue)
     return (res)
