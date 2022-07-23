@@ -1,5 +1,5 @@
 
-get_trendLabel = function (code, df_XEx, df_Xtrend, type,
+get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
                            space=FALSE) {
 
     CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
@@ -66,24 +66,34 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, type,
     } else {
         space = "&emsp;"
     }
-        
+
     # If it is a flow variable
-    if (type == 'sévérité') {
+    if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
+        unitHTML = unit
+        unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
+        unitHTML = gsub('[/}]', '</sup>', unitHTML)
         # Create the name of the trend
         label = paste0(
             "<b>", trendC, " x ",
             "10<sup>", powerC, "</sup></b>", shiftC,
-            " [m<sup>3</sup>.s<sup>-1</sup>.an<sup>-1</sup>]",
+            " [", unitHTML, ".an<sup>-1</sup>]",
             space, "<b>",
             trendMeanC, "</b> [%.an<sup>-1</sup>]")
         
-        # If it is a date variable
-    } else if (type == 'saisonnalité') {
+    # If it is a date variable
+    } else if (unit == 'jour' | unit == "jour de l'année") {
         # Create the name of the trend
         label = paste0(
             "<b>", trendC, " x ",
             "10<sup>", powerC, "</sup></b>", shiftC,
             " [jour.an<sup>-1</sup>]")
+
+    } else if (unit == 'an^{-1}') {
+        # Create the name of the trend
+        label = paste0(
+            "<b>", trendC, " x ",
+            "10<sup>", powerC, "</sup></b>", shiftC,
+            " [an<sup>-2</sup>]")
     }
 
     return (label)

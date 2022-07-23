@@ -298,7 +298,7 @@ server = function (input, output, session) {
             rv$colorList = colorList
             
             res = get_trendExtremes(rv$df_XEx, rv$df_Xtrend,
-                                    type=rv$type,
+                                    unit=rv$unit,
                                     minQprob=exQprob,
                                     maxQprob=1-exQprob,
                                     CodeSample=CodeSample())
@@ -371,7 +371,7 @@ server = function (input, output, session) {
             trendLabel = sapply(Code, get_trendLabel,
                                 df_XEx=rv$df_XEx,
                                 df_Xtrend=rv$df_Xtrend,
-                                type=rv$type)
+                                unit=rv$unit)
         } else {
             trendLabel = NA
         }
@@ -475,7 +475,6 @@ server = function (input, output, session) {
     })
 
     CodeSample = reactive({
-
         if (identical(CodeSampleCheck(), character(0))) {
             NULL
         } else {
@@ -841,23 +840,40 @@ server = function (input, output, session) {
     })
     
     output$varHTML = renderUI({
-        HTML(paste0(
-            "<b>",
-            Var$varHTML[Var$var == rv$var],
-            "</b>"
-        ))
+        if (is.null(rv$proba)) {
+            HTML(paste0(
+                "<b>",
+                Var$varHTML[Var$var == rv$var],
+                "</b>"
+            ))
+        } else {
+            HTML(paste0(
+                "<b>",
+                gsub('p', gsub("%", "", rv$proba),
+                     Var$varHTML[Var$var == rv$var]),
+                "</b>"
+            ))
+        }
     })
 
     output$name = renderText({
-        Var$name[Var$var == rv$var]
+        if (is.null(rv$proba)) {
+            Var$name[Var$var == rv$var]
+        } else {
+            gsub('p', gsub("%", "", rv$proba),
+                 Var$name[Var$var == rv$var])
+        }
     })
 
     output$dataHTML_ana = renderUI({
-        data = paste0(Var$varHTML[Var$var == var()], ' : ',
-                      Var$name[Var$var == var()])
-        if (!is.null(proba_choices())) {
-            data = paste0(data, ' avec la probabilité de ',
-                          proba())
+        if (is.null(proba())) {
+            data = paste0(Var$varHTML[Var$var == var()], ' : ',
+                          Var$name[Var$var == var()])
+        } else {
+            data = paste0(gsub('p', gsub("%", "", proba()),
+                               Var$varHTML[Var$var == var()]), ' : ',
+                          gsub('p', gsub("%", "", proba()),
+                               Var$name[Var$var == var()]))
         }
         HTML(data)
     })
@@ -1328,6 +1344,7 @@ server = function (input, output, session) {
             
             name = df_meta()$nom[df_meta()$code == rv$codeClick]
 
+            df_data_code = df_data()[df_data()$code == rv$codeClick,]
             df_XEx_code = rv$df_XEx[rv$df_XEx$code == rv$codeClick,]
             df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$code == rv$codeClick,]
             color = rv$fillList[CodeAll() == rv$codeClick]
@@ -1335,40 +1352,117 @@ server = function (input, output, session) {
             
             output$trend_plot = plotly::renderPlotly({
 
+                plotWidth = 480
+                shift = 40
+                if (plotWidth < rv$width - shift) {
+                    fig1 = plotly::plot_ly(width=plotWidth, height=70)
+                } else {
+                    fig1 = plotly::plot_ly(width=rv$width-shift, height=70)
+                }
+
+                x = df_data_code$Date
+                y = df_data_code$Value
+                var = "Q"
+                unit = "[m<sup>3</sup>.s<sup>-1</sup>]"
+                    
+                fig1 = plotly::add_trace(
+                                  fig1,
+                                  type="scatter",
+                                  mode="lines",
+                                  x=x,
+                                  y=y,
+                                  line=list(color=grey50COL),
+                                  xhoverformat="%d/%m/%Y",
+                                  hovertemplate = paste0(
+                                      "jour %{x}<br>",
+                                      "<b>", var, "</b> %{y}",
+                                      unit,
+                                      "<extra></extra>"),
+                                  hoverlabel=list(bgcolor=color,
+                                                  font=list(size=12),
+                                                  bordercolor="white"))
+                
+                fig1 = plotly::layout(
+                                  fig1,
+                                  xaxis=list(range=rv$period,
+                                             showgrid=FALSE,
+                                             ticks="outside",
+                                             tickcolor=grey75COL,
+                                             tickfont=list(color=grey40COL),
+                                             showline=TRUE,
+                                             linewidth=2,
+                                             linecolor=grey85COL,
+                                             mirror=TRUE),
+                                  
+                                  yaxis=list(
+                                      title=list(
+                                          text=paste0(
+                                              "<b>", var, "</b>",
+                                              unit),
+                                          font=list(color=grey20COL)),
+                                      showgrid=FALSE,
+                                      ticks="outside",
+                                      tickcolor=grey75COL,
+                                      tickfont=list(color=grey40COL),
+                                      showline=TRUE,
+                                      linewidth=2,
+                                      linecolor=grey85COL,
+                                      mirror=TRUE,
+                                      fixedrange=TRUE),
+                                  
+                                  margin=list(l=0,
+                                              r=12,
+                                              b=0,
+                                              t=30,
+                                              pad=0),
+
+                                  autosize=FALSE,
+                                  plot_bgcolor=grey97COL,
+                                  paper_bgcolor='transparent',
+                                  showlegend=FALSE)
+                
+
                 DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$Value)]
                 abs = c(min(DateNoNA), max(DateNoNA))
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
                 # Compute the y of the trend
-                if (rv$type == 'sévérité') {
+                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'an^{-1}' | rv$unit == 'jour') {
                     ord = abs_num * df_Xtrend_code$trend +
                         df_Xtrend_code$intercept
-                } else if (rv$type == 'saisonnalité') {
+                } else if (rv$unit == "jour de l'année") {
                     ord = as.Date(abs_num * df_Xtrend_code$trend +
                         df_Xtrend_code$intercept, origin="1970-01-01")
                 }
 
-                plotWidth = 480
-                shift = 40
                 if (plotWidth < rv$width - shift) {
-                    fig = plotly::plot_ly(width=plotWidth, height=180)
+                    fig2 = plotly::plot_ly(width=plotWidth, height=140)
                 } else {
-                    fig = plotly::plot_ly(width=rv$width-shift, height=180)
+                    fig2 = plotly::plot_ly(width=rv$width-shift, height=140)
                 }
 
                 x = df_XEx_code$Date
-                if (rv$type == 'sévérité') {
+                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'an^{-1}' | rv$unit == 'jour') {
                     y = df_XEx_code$Value
                     yhoverformat = NULL
-                    unit = " [m<sup>3</sup>.s<sup>-1</sup>]<br>"
-                } else if (rv$type == 'saisonnalité') { ### /!\ À VÉRIF
+                    unit = rv$unit
+                    unit = gsub('[/^][/{]', '<sup>', unit)
+                    unit = gsub('[/}]', '</sup>', unit)
+                    unit = paste0(" [", unit, "]<br>")
+                } else if (rv$unit == "jour de l'année") {
                     y = as.Date(df_XEx_code$Value, origin="1970-01-01")
                     yhoverformat = "%d %b"
                     unit = ""
                 }
+                if (is.null(rv$proba)) {
+                    var = Var$varHTML[Var$var == rv$var]
+                } else {
+                    var = gsub('p', gsub("%", "", rv$proba),
+                               Var$varHTML[Var$var == rv$var])
+                }
                 
-                fig = plotly::add_trace(
-                                  fig,
+                fig2 = plotly::add_trace(
+                                  fig2,
                                   type="scatter",
                                   mode="markers",
                                   x=x,
@@ -1378,15 +1472,15 @@ server = function (input, output, session) {
                                   yhoverformat=yhoverformat,
                                   hovertemplate = paste0(
                                       "année %{x}<br>",
-                                      "<b>", rv$var, "</b> %{y}",
+                                      "<b>", var, "</b> %{y}",
                                       unit,
                                       "<extra></extra>"),
                                   hoverlabel=list(bgcolor=color,
                                                   font=list(size=12),
                                                   bordercolor="white"))
 
-                fig = plotly::add_trace(
-                                  fig,
+                fig2 = plotly::add_trace(
+                                  fig2,
                                   type="scatter",
                                   mode="markers+lines",
                                   x=abs,
@@ -1395,8 +1489,8 @@ server = function (input, output, session) {
                                   line=list(color='white', width=6),
                                   hoverinfo="none")
                 
-                fig = plotly::add_trace(
-                                  fig,
+                fig2 = plotly::add_trace(
+                                  fig2,
                                   type="scatter",
                                   mode="markers+lines",
                                   x=abs,
@@ -1419,11 +1513,11 @@ server = function (input, output, session) {
                 trendLabel = get_trendLabel(code=rv$codeClick,
                                             df_XEx=rv$df_XEx,
                                             df_Xtrend=rv$df_Xtrend,
-                                            type=rv$type,
+                                            unit=rv$unit,
                                             space=TRUE)
 
-                fig = plotly::add_annotations(
-                                  fig,
+                fig2 = plotly::add_annotations(
+                                  fig2,
                                   x=0.01,
                                   y=1.01,
                                   xref="paper",
@@ -1435,8 +1529,8 @@ server = function (input, output, session) {
                                   font=list(color=switchColor,
                                             size=12))
 
-                fig = plotly::add_annotations(
-                                  fig,
+                fig2 = plotly::add_annotations(
+                                  fig2,
                                   x=0.01,
                                   y=1.13,
                                   xref="paper",
@@ -1450,24 +1544,16 @@ server = function (input, output, session) {
                                   yanchor='bottom',
                                   font=list(color=INRAECyanCOL,
                                             size=12))
-
-                # If it is a flow variable
-                if (rv$type == 'sévérité') {
-                    title = paste0("<b> ",
-                                   Var$varHTML[Var$var == rv$var],
-                                   "</b>",
-                                   " ", "[m<sup>3</sup>.s<sup>-1</sup>]")
-
-                } else if (rv$type == 'saisonnalité') {
-                    title = paste0("<b> ",
-                                   Var$varHTML[Var$var == rv$var],
-                                   "</b>",
-                                   " ", "[jour]")
-                }
                 
-                fig = plotly::layout(
-                                  fig,
-                                  separators='. ', 
+                unit = rv$unit
+                unit = gsub('[/^][/{]', '<sup>', unit)
+                unit = gsub('[/}]', '</sup>', unit)
+                unit = paste0("[", unit, "]<br>")
+                title = paste0("<b> ", var, "</b>",
+                               " ", unit)
+
+                fig2 = plotly::layout(
+                                  fig2,
                                   xaxis=list(range=rv$period,
                                              showgrid=FALSE,
                                              ticks="outside",
@@ -1480,8 +1566,7 @@ server = function (input, output, session) {
                                   
                                   yaxis=list(
                                       title=list(
-                                          text=paste0(title,
-                                                      "\n&nbsp;"),
+                                          text=title,
                                           font=list(color=grey20COL)),
                                       showgrid=FALSE,
                                       ticks="outside",
@@ -1498,24 +1583,30 @@ server = function (input, output, session) {
                                               b=0,
                                               t=30,
                                               pad=0),
+                                  
                                   autosize=FALSE,
                                   plot_bgcolor=grey97COL,
                                   paper_bgcolor='transparent',
                                   showlegend=FALSE)
 
-                if (rv$type == 'sévérité') {
-                    fig = plotly::layout(
-                                      fig,
+                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'an^{-1}' | rv$unit == 'jour') {
+                    fig2 = plotly::layout(
+                                      fig2,
                                       yaxis=list(rangemode="tozero"))
                     
-                } else if (rv$type == 'saisonnalité') {
-                    fig = plotly::layout(
-                                      fig,
+                } else if (rv$unit == "jour de l'année") {
+                    fig2 = plotly::layout(
+                                      fig2,
                                       yaxis=list(tickformat="%b"))
                 }
                 
+
+
+                fig = plotly::subplot(fig1, fig2, nrows=2)
+                                
                 fig = plotly::config(
                                   fig,
+                                  separators='. ',
                                   locale=word("plotly.language"),
                                   displaylogo=FALSE,
                                   toImageButtonOptions =
@@ -1692,9 +1783,9 @@ server = function (input, output, session) {
                 Ylab = bin / max(bin)
 
                 ncharLim = 4
-                if (rv$type == 'sévérité') {
+                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}') {                    
                     labelRaw = bin*100
-                } else if (rv$type == 'saisonnalité') {
+                } else if (rv$unit == 'an^{-1}' | rv$unit == 'jour' | rv$unit == "jour de l'année") {
                     labelRaw = bin
                 }
                 label2 = signif(labelRaw, 2)
@@ -1715,13 +1806,23 @@ server = function (input, output, session) {
                                   font=list(color=grey40COL,
                                             size=12))
 
-                if (rv$type == 'sévérité') {
-                    title = paste0("<b>", word("cb.title"), "</b>",
-                                   " ", word("cb.unit.Q"))
-                } else if (rv$type == 'saisonnalité') {
-                    title = paste0("<b>", word("cb.title"), "</b>",
-                                   " ", word("cb.unit.t"))
-                }
+                unit = rv$unit
+                unit = gsub("^jour$|^jour de l[/']année$",
+                            paste0(word("unit.day"),
+                                   " ", word("unit.by"), " ",
+                                   word("unit.year")),
+                            unit)
+                unit =
+                    gsub('^m[/^][/{]3[/}][.]s[/^][/{]-1[/}]$|^hm[/^][/{]3[/}]$',
+                         paste0("%", " ", word("unit.by"), " ",
+                                word("unit.year")),
+                         unit)
+                unit = gsub('^an[/^][/{]-1[/}]$',
+                            paste0(word("unit.by"), " ",
+                                   word("unit.year"), "<sup>2</sup>"),
+                            unit)
+                title = paste0("<b>", word("cb.title"), "</b>",
+                               " ", unit)
                 
                 fig = plotly::add_annotations(
                                   fig,

@@ -189,7 +189,7 @@ ui = bootstrapPage(
             id='plot_panel',
             class="Panel card-insert-c",
             fixed=TRUE,
-            width=500, height=200,
+            width=500, height=230,
             bottom=10,
             
             div(style="position: absolute; margin: 10px;",
