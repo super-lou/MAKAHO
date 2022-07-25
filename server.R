@@ -27,8 +27,13 @@
 
 
 server = function (input, output, session) {
-    session$onSessionEnded(stopApp)    
 
+    if (file.exists(dev_path)) {
+        session$onSessionEnded(stopApp)
+        verbose = TRUE
+    } else {
+        verbose = FALSE
+    }
 
     rv = reactiveValues(start=FALSE,
                         width=0,
@@ -1345,12 +1350,15 @@ server = function (input, output, session) {
             name = df_meta()$nom[df_meta()$code == rv$codeClick]
 
             df_data_code = df_data()[df_data()$code == rv$codeClick,]
+            maxQ_win = max(df_data_code$Value, na.rm=TRUE)*1.1            
             df_XEx_code = rv$df_XEx[rv$df_XEx$code == rv$codeClick,]
             df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$code == rv$codeClick,]
             color = rv$fillList[CodeAll() == rv$codeClick]
             switchColor = switch_colorLabel(color)
             
             output$trend_plot = plotly::renderPlotly({
+                
+                validate(need(!is.null(rv$codeClick), message=FALSE))
                 
                 fig1 = plotly::plot_ly()
                 
@@ -1376,6 +1384,86 @@ server = function (input, output, session) {
                                                   font=list(size=12),
                                                   bordercolor="white"))
 
+
+                df_data_codeLIM = df_data_code
+                minDate = min(df_data_code$Date)
+                maxDate = max(df_data_code$Date)
+
+                # print(df_XEx_code) ///!\\\ NA_pct pas ok début d'année
+                # print(df_Xtrend_code)
+                # print(rv$period)
+                # print(minDate)
+                # print(maxDate)
+                # print("")
+                
+                if (minDate > rv$period[1]) {
+                    NAadd = seq.Date(rv$period[1],
+                                     minDate-1,
+                                     "day")
+                    nNAadd = length(NAadd)
+                    df_data_codeLIM =
+                        bind_rows(tibble(Date=NAadd,
+                                         Value=rep(NA, nNAadd),
+                                         code=rep(rv$codeClick, nNAadd)),
+                                  df_data_codeLIM)
+                }
+                
+                if (maxDate < rv$period[2]) {
+                    NAadd = seq.Date(maxDate+1,
+                                     rv$period[2],
+                                     "day")
+                    nNAadd = length(NAadd)
+                    df_data_codeLIM =
+                        bind_rows(df_data_codeLIM,
+                                  tibble(Date=NAadd,
+                                         Value=rep(NA, nNAadd),
+                                         code=rep(rv$codeClick, nNAadd)))
+                }
+                
+                # Extract NA data
+                NAdate = df_data_codeLIM$Date[is.na(df_data_codeLIM$Value)]
+                # Get the difference between each point of date data
+                # without NA
+                dNAdate = diff(NAdate)
+                # If difference of day is not 1 then
+                # it is TRUE for the beginning of each missing data period 
+                NAdate_Down = NAdate[append(Inf, dNAdate) != 1]
+                # If difference of day is not 1 then
+                # it is TRUE for the ending of each missing data period 
+                NAdate_Up = NAdate[append(dNAdate, Inf) != 1]
+
+                nMiss = length(NAdate_Up)
+                Ymin = rep(0, nMiss)
+                Ymax = rep(maxQ_win, nMiss)
+
+                for (i in 1:nMiss) {
+                    fig1 = plotly::add_trace(
+                                       fig1,
+                                       type="scatter",
+                                       mode="lines",
+                                       x=c(NAdate_Down[i], NAdate_Down[i],
+                                           NAdate_Up[i], NAdate_Up[i],
+                                           NAdate_Down[i]),
+                                       y=c(Ymin[i], Ymax[i],
+                                           Ymax[i], Ymin[i],
+                                           Ymin[i]),
+                                       fill="toself",
+                                       opacity=0.4,
+                                       fillcolor=lightCyanCOL,
+                                       line=list(width=0),
+                                       text=paste0("<b>",
+                                                   
+                                                   "</b>",
+                                                   "jours manquants"),
+                                       hoverinfo="text",
+                                       hoveron="fills",
+                                       hoverlabel=
+                                           list(bgcolor=lightCyanCOL,
+                                                font=list(color="white",
+                                                          size=12),
+                                                bordercolor="white"))
+                }
+                
                 # Gets the p value
                 pVal = df_Xtrend_code$p
 
@@ -1425,42 +1513,36 @@ server = function (input, output, session) {
                 fig1 = plotly::layout(
                                    fig1,
                                    separators='. ',
-                                   xaxis=list(range=rv$period,
-                                              showgrid=FALSE,
-                                              ticks="outside",
-                                              tickcolor=grey75COL,
-                                              tickfont=
-                                                  list(color=grey40COL),
-                                              showline=TRUE,
-                                              linewidth=2,
-                                              linecolor=grey85COL,
-                                              mirror=TRUE,
-                                              showticklabels=FALSE),
-                                   
+                                   # xaxis=list(showgrid=FALSE,
+                                   #            ticks="outside",
+                                   #            tickcolor=grey75COL,
+                                   #            tickfont=
+                                   #                list(color=grey40COL),
+                                   #            showline=TRUE,
+                                   #            linewidth=2,
+                                   #            linecolor=grey85COL,
+                                   #            mirror=TRUE,
+                                   #            matches="x"),
+
                                    yaxis=list(
+                                       range=c(0, maxQ_win),
                                        title=list(
                                            text=paste0(
                                                "<b>", var, "</b>",
                                                unit),
                                            font=list(color=grey20COL)),
-                                       # showgrid=FALSE,
                                        gridcolor=grey85COL,
-                                       gridwidth=0.08,
+                                       gridwidth=0.6,
                                        ticks="outside",
                                        tickcolor=grey75COL,
                                        tickfont=list(color=grey40COL),
                                        showline=TRUE,
                                        linewidth=2,
                                        linecolor=grey85COL,
-                                       zerolinecolor="transparent",
+                                       zerolinecolor=grey85COL,
+                                       zerolinewidth=0.6,
                                        mirror=TRUE,
                                        fixedrange=TRUE),
-                                   
-                                   margin=list(l=0,
-                                               r=12,
-                                               b=0,
-                                               t=30,
-                                               pad=0),
 
                                    autosize=FALSE,
                                    plot_bgcolor=grey97COL,
@@ -1482,7 +1564,7 @@ server = function (input, output, session) {
                                             "autoScale2d",
                                             "hoverCompareCartesian",
                                             "hoverClosestCartesian")
-                               )      
+                               )     
                 
 
                 DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$Value)]
@@ -1568,16 +1650,17 @@ server = function (input, output, session) {
                 fig2 = plotly::layout(
                                    fig2,
                                    separators='. ',
-                                   xaxis=list(range=rv$period,
-                                              showgrid=FALSE,
-                                              ticks="outside",
-                                              tickcolor=grey75COL,
-                                              tickfont=
-                                                  list(color=grey40COL),
-                                              showline=TRUE,
-                                              linewidth=2,
-                                              linecolor=grey85COL,
-                                              mirror=TRUE),
+                                   # xaxis=list(range=rv$period,
+                                   #            showgrid=FALSE,
+                                   #            ticks="outside",
+                                   #            tickcolor=grey75COL,
+                                   #            tickfont=
+                                   #                list(color=grey40COL),
+                                   #            showline=TRUE,
+                                   #            linewidth=2,
+                                   #            linecolor=grey85COL,
+                                   #            showticklabels=TRUE,
+                                   #            mirror=TRUE),
                                    
                                    yaxis=list(
                                        title=list(
@@ -1593,12 +1676,6 @@ server = function (input, output, session) {
                                        zerolinecolor="transparent",
                                        mirror=TRUE,
                                        fixedrange=TRUE),
-                                   
-                                   margin=list(l=0,
-                                               r=12,
-                                               b=0,
-                                               t=30,
-                                               pad=0),
                                    
                                    autosize=FALSE,
                                    plot_bgcolor=grey97COL,
@@ -1630,7 +1707,9 @@ server = function (input, output, session) {
 
                 fig = plotly::subplot(fig1, fig2, nrows=2,
                                       heights=c(1/3, 2/3),
-                                      margin=0.03)
+                                      titleY=TRUE,
+                                      shareX=TRUE,
+                                      margin=0.025)
 
                 plotWidth = 480
                 shift = 40
@@ -1643,7 +1722,25 @@ server = function (input, output, session) {
                 fig  = plotly::layout(fig,
                                       autosize=FALSE,
                                       width=width,
-                                      height=230)
+                                      height=230,
+                                      
+                                      xaxis=list(range=rv$period,
+                                                 showgrid=FALSE,
+                                                 ticks="outside",
+                                                 tickcolor=grey75COL,
+                                                 tickfont=
+                                                     list(color=grey40COL),
+                                                 showline=TRUE,
+                                                 linewidth=2,
+                                                 linecolor=grey85COL,
+                                                 showticklabels=TRUE,
+                                                 mirror="all"),
+                                      
+                                      margin=list(l=0,
+                                                  r=12,
+                                                  b=0,
+                                                  t=32,
+                                                  pad=0))
                                 
                 fig = plotly::config(
                                   fig,

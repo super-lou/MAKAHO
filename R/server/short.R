@@ -1,7 +1,7 @@
 
 get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
                            space=FALSE) {
-
+    
     CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
     CodeXtrend = df_Xtrend$code[!duplicated(df_Xtrend$code)]
     
