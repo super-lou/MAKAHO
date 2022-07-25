@@ -1351,19 +1351,13 @@ server = function (input, output, session) {
             switchColor = switch_colorLabel(color)
             
             output$trend_plot = plotly::renderPlotly({
-
-                plotWidth = 480
-                shift = 40
-                if (plotWidth < rv$width - shift) {
-                    fig1 = plotly::plot_ly(width=plotWidth, height=70)
-                } else {
-                    fig1 = plotly::plot_ly(width=rv$width-shift, height=70)
-                }
-
+                
+                fig1 = plotly::plot_ly()
+                
                 x = df_data_code$Date
                 y = df_data_code$Value
                 var = "Q"
-                unit = "[m<sup>3</sup>.s<sup>-1</sup>]"
+                unit = " [m<sup>3</sup>.s<sup>-1</sup>]"
                     
                 fig1 = plotly::add_trace(
                                   fig1,
@@ -1371,7 +1365,7 @@ server = function (input, output, session) {
                                   mode="lines",
                                   x=x,
                                   y=y,
-                                  line=list(color=grey50COL),
+                                  line=list(color=grey20COL, width=0.85),
                                   xhoverformat="%d/%m/%Y",
                                   hovertemplate = paste0(
                                       "jour %{x}<br>",
@@ -1381,45 +1375,114 @@ server = function (input, output, session) {
                                   hoverlabel=list(bgcolor=color,
                                                   font=list(size=12),
                                                   bordercolor="white"))
+
+                # Gets the p value
+                pVal = df_Xtrend_code$p
+
+                if (pVal <= input$alpha_choice) {
+                    colorLine = color
+                    colorLabel = color
+                } else {
+                    colorLine = 'grey85'
+                    colorLabel = 'grey85'
+                }
+
+                trendLabel = get_trendLabel(code=rv$codeClick,
+                                            df_XEx=rv$df_XEx,
+                                            df_Xtrend=rv$df_Xtrend,
+                                            unit=rv$unit,
+                                            space=TRUE)
+
+                fig1 = plotly::add_annotations(
+                                   fig1,
+                                   x=0.01,
+                                   y=1.01,
+                                   xref="paper",
+                                   yref="paper",
+                                   text=trendLabel,
+                                   showarrow=FALSE,
+                                   xanchor='left',
+                                   yanchor='bottom',
+                                   font=list(color=switchColor,
+                                             size=12))
+
+                fig1 = plotly::add_annotations(
+                                   fig1,
+                                   x=0.01,
+                                   y=1.29,
+                                   xref="paper",
+                                   yref="paper",
+                                   text=paste0("<b>",
+                                               rv$codeClick,
+                                               "</b> - ",
+                                               name),
+                                   showarrow=FALSE,
+                                   xanchor='left',
+                                   yanchor='bottom',
+                                   font=list(color=INRAECyanCOL,
+                                             size=12))
                 
                 fig1 = plotly::layout(
-                                  fig1,
-                                  xaxis=list(range=rv$period,
-                                             showgrid=FALSE,
-                                             ticks="outside",
-                                             tickcolor=grey75COL,
-                                             tickfont=list(color=grey40COL),
-                                             showline=TRUE,
-                                             linewidth=2,
-                                             linecolor=grey85COL,
-                                             mirror=TRUE),
-                                  
-                                  yaxis=list(
-                                      title=list(
-                                          text=paste0(
-                                              "<b>", var, "</b>",
-                                              unit),
-                                          font=list(color=grey20COL)),
-                                      showgrid=FALSE,
-                                      ticks="outside",
-                                      tickcolor=grey75COL,
-                                      tickfont=list(color=grey40COL),
-                                      showline=TRUE,
-                                      linewidth=2,
-                                      linecolor=grey85COL,
-                                      mirror=TRUE,
-                                      fixedrange=TRUE),
-                                  
-                                  margin=list(l=0,
-                                              r=12,
-                                              b=0,
-                                              t=30,
-                                              pad=0),
+                                   fig1,
+                                   separators='. ',
+                                   xaxis=list(range=rv$period,
+                                              showgrid=FALSE,
+                                              ticks="outside",
+                                              tickcolor=grey75COL,
+                                              tickfont=
+                                                  list(color=grey40COL),
+                                              showline=TRUE,
+                                              linewidth=2,
+                                              linecolor=grey85COL,
+                                              mirror=TRUE,
+                                              showticklabels=FALSE),
+                                   
+                                   yaxis=list(
+                                       title=list(
+                                           text=paste0(
+                                               "<b>", var, "</b>",
+                                               unit),
+                                           font=list(color=grey20COL)),
+                                       # showgrid=FALSE,
+                                       gridcolor=grey85COL,
+                                       gridwidth=0.08,
+                                       ticks="outside",
+                                       tickcolor=grey75COL,
+                                       tickfont=list(color=grey40COL),
+                                       showline=TRUE,
+                                       linewidth=2,
+                                       linecolor=grey85COL,
+                                       zerolinecolor="transparent",
+                                       mirror=TRUE,
+                                       fixedrange=TRUE),
+                                   
+                                   margin=list(l=0,
+                                               r=12,
+                                               b=0,
+                                               t=30,
+                                               pad=0),
 
-                                  autosize=FALSE,
-                                  plot_bgcolor=grey97COL,
-                                  paper_bgcolor='transparent',
-                                  showlegend=FALSE)
+                                   autosize=FALSE,
+                                   plot_bgcolor=grey97COL,
+                                   paper_bgcolor='transparent',
+                                   showlegend=FALSE)
+
+                fig1 = plotly::config(
+                                   fig1,
+                                   locale=word("plotly.language"),
+                                   displaylogo=FALSE,
+                                   toImageButtonOptions =
+                                       list(format="svg"),
+                                   modeBarButtonsToRemove =
+                                       list("lasso2d",
+                                            "select2d",
+                                            "drawline",
+                                            "zoom2d",
+                                            "drawrect",
+                                            "autoScale2d",
+                                            "hoverCompareCartesian",
+                                            "hoverClosestCartesian")
+                               )      
                 
 
                 DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$Value)]
@@ -1433,12 +1496,6 @@ server = function (input, output, session) {
                 } else if (rv$unit == "jour de l'année") {
                     ord = as.Date(abs_num * df_Xtrend_code$trend +
                         df_Xtrend_code$intercept, origin="1970-01-01")
-                }
-
-                if (plotWidth < rv$width - shift) {
-                    fig2 = plotly::plot_ly(width=plotWidth, height=140)
-                } else {
-                    fig2 = plotly::plot_ly(width=rv$width-shift, height=140)
                 }
 
                 x = df_XEx_code$Date
@@ -1460,6 +1517,8 @@ server = function (input, output, session) {
                     var = gsub('p', gsub("%", "", rv$proba),
                                Var$varHTML[Var$var == rv$var])
                 }
+
+                fig2 = plotly::plot_ly()
                 
                 fig2 = plotly::add_trace(
                                   fig2,
@@ -1499,52 +1558,6 @@ server = function (input, output, session) {
                                   line=list(color=color, width=3),
                                   hoverinfo="none")
                 
-                # Gets the p value
-                pVal = df_Xtrend_code$p
-
-                if (pVal <= input$alpha_choice) {
-                    colorLine = color
-                    colorLabel = color
-                } else {
-                    colorLine = 'grey85'
-                    colorLabel = 'grey85'
-                }
-
-                trendLabel = get_trendLabel(code=rv$codeClick,
-                                            df_XEx=rv$df_XEx,
-                                            df_Xtrend=rv$df_Xtrend,
-                                            unit=rv$unit,
-                                            space=TRUE)
-
-                fig2 = plotly::add_annotations(
-                                  fig2,
-                                  x=0.01,
-                                  y=1.01,
-                                  xref="paper",
-                                  yref="paper",
-                                  text=trendLabel,
-                                  showarrow=FALSE,
-                                  xanchor='left',
-                                  yanchor='bottom',
-                                  font=list(color=switchColor,
-                                            size=12))
-
-                fig2 = plotly::add_annotations(
-                                  fig2,
-                                  x=0.01,
-                                  y=1.13,
-                                  xref="paper",
-                                  yref="paper",
-                                  text=paste0("<b>",
-                                              rv$codeClick,
-                                              "</b> - ",
-                                              name),
-                                  showarrow=FALSE,
-                                  xanchor='left',
-                                  yanchor='bottom',
-                                  font=list(color=INRAECyanCOL,
-                                            size=12))
-                
                 unit = rv$unit
                 unit = gsub('[/^][/{]', '<sup>', unit)
                 unit = gsub('[/}]', '</sup>', unit)
@@ -1553,60 +1566,87 @@ server = function (input, output, session) {
                                " ", unit)
 
                 fig2 = plotly::layout(
-                                  fig2,
-                                  xaxis=list(range=rv$period,
-                                             showgrid=FALSE,
-                                             ticks="outside",
-                                             tickcolor=grey75COL,
-                                             tickfont=list(color=grey40COL),
-                                             showline=TRUE,
-                                             linewidth=2,
-                                             linecolor=grey85COL,
-                                             mirror=TRUE),
-                                  
-                                  yaxis=list(
-                                      title=list(
-                                          text=title,
-                                          font=list(color=grey20COL)),
-                                      showgrid=FALSE,
-                                      ticks="outside",
-                                      tickcolor=grey75COL,
-                                      tickfont=list(color=grey40COL),
-                                      showline=TRUE,
-                                      linewidth=2,
-                                      linecolor=grey85COL,
-                                      mirror=TRUE,
-                                      fixedrange=TRUE),
-                                  
-                                  margin=list(l=0,
-                                              r=12,
-                                              b=0,
-                                              t=30,
-                                              pad=0),
-                                  
-                                  autosize=FALSE,
-                                  plot_bgcolor=grey97COL,
-                                  paper_bgcolor='transparent',
-                                  showlegend=FALSE)
+                                   fig2,
+                                   separators='. ',
+                                   xaxis=list(range=rv$period,
+                                              showgrid=FALSE,
+                                              ticks="outside",
+                                              tickcolor=grey75COL,
+                                              tickfont=
+                                                  list(color=grey40COL),
+                                              showline=TRUE,
+                                              linewidth=2,
+                                              linecolor=grey85COL,
+                                              mirror=TRUE),
+                                   
+                                   yaxis=list(
+                                       title=list(
+                                           text=title,
+                                           font=list(color=grey20COL)),
+                                       showgrid=FALSE,
+                                       ticks="outside",
+                                       tickcolor=grey75COL,
+                                       tickfont=list(color=grey40COL),
+                                       showline=TRUE,
+                                       linewidth=2,
+                                       linecolor=grey85COL,
+                                       zerolinecolor="transparent",
+                                       mirror=TRUE,
+                                       fixedrange=TRUE),
+                                   
+                                   margin=list(l=0,
+                                               r=12,
+                                               b=0,
+                                               t=30,
+                                               pad=0),
+                                   
+                                   autosize=FALSE,
+                                   plot_bgcolor=grey97COL,
+                                   paper_bgcolor='transparent',
+                                   showlegend=FALSE)
 
-                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'an^{-1}' | rv$unit == 'jour') {
+                if (rv$unit == "jour de l'année") {
                     fig2 = plotly::layout(
-                                      fig2,
-                                      yaxis=list(rangemode="tozero"))
-                    
-                } else if (rv$unit == "jour de l'année") {
-                    fig2 = plotly::layout(
-                                      fig2,
-                                      yaxis=list(tickformat="%b"))
+                                       fig2,
+                                       yaxis=list(tickformat="%b"))
                 }
-                
 
+                fig2 = plotly::config(
+                                   fig2,
+                                   locale=word("plotly.language"),
+                                   displaylogo=FALSE,
+                                   toImageButtonOptions =
+                                       list(format="svg"),
+                                   modeBarButtonsToRemove =
+                                       list("lasso2d",
+                                            "select2d",
+                                            "drawline",
+                                            "zoom2d",
+                                            "drawrect",
+                                            "autoScale2d",
+                                            "hoverCompareCartesian",
+                                            "hoverClosestCartesian")
+                               )
 
-                fig = plotly::subplot(fig1, fig2, nrows=2)
+                fig = plotly::subplot(fig1, fig2, nrows=2,
+                                      heights=c(1/3, 2/3),
+                                      margin=0.03)
+
+                plotWidth = 480
+                shift = 40
+                if (plotWidth < rv$width - shift) {
+                    width = plotWidth
+                } else {
+                    width = rv$width-shift
+                }
+
+                fig  = plotly::layout(fig,
+                                      autosize=FALSE,
+                                      width=width,
+                                      height=230)
                                 
                 fig = plotly::config(
                                   fig,
-                                  separators='. ',
                                   locale=word("plotly.language"),
                                   displaylogo=FALSE,
                                   toImageButtonOptions =
