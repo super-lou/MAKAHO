@@ -1023,6 +1023,12 @@ server = function (input, output, session) {
         }
     })
     hydroPeriod = debounce(hydroPeriodB, 1000)
+
+    output$hydroPeriod = renderText({
+        hydroStart = format(rv$period[1], "%d %b")
+        hydroEnd = format(rv$period[2], "%d %b")
+        paste0("Année hydrologique du ", hydroStart, " au ", hydroEnd)
+    })    
     
     df_dataAll = reactive({
         if (file.exists(file.path(computer_data_path, 'fst', "data.fst"))) {
@@ -1048,6 +1054,7 @@ server = function (input, output, session) {
         period()
         proba()
         hydroPeriod()
+        rv$photoMode
     }, {
         if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
             if (!all(CodeSample() %in% rv$CodeSample_act)) {
@@ -1059,7 +1066,7 @@ server = function (input, output, session) {
         if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod))) {
             hide(id="actualise_panelButton")    
         } else {
-            if (rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$hydroPeriod)) {
+            if ((rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$hydroPeriod)) & !rv$photoMode) {
                 showElement(id="actualise_panelButton")
             }
         }
@@ -2028,7 +2035,7 @@ server = function (input, output, session) {
             showElement(id="photo_panelButton")
             showElement(id="download_panelButton")
             showElement(id="help_panelButton")
-            showElement(id="actualise_panelButton")
+            # showElement(id="actualise_panelButton")
             rv$photoMode = FALSE
         }
     })

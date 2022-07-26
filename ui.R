@@ -97,7 +97,7 @@ ui = bootstrapPage(
             class="Panel card-insert-r",
             style="transform: translate(0, -50%);",
             fixed=TRUE,
-            width=130, height="auto",
+            width=145, height="auto",
             top="25%", right=0,
             
             div(class="card-insert-text",
@@ -118,6 +118,11 @@ ui = bootstrapPage(
                           margin-bottom: 0.1rem;
                           border-top: 2px solid #00a3a6;"),
 
+                h6(class="no-margin-v", style="font-size: 0.8em;",
+                   HTML(paste0(
+                       textOutput("hydroPeriod")
+                   ))),
+                
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
                        textOutput("period")
