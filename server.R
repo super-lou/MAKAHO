@@ -163,8 +163,8 @@ server = function (input, output, session) {
         df_meta()
     }, {
         if (!is.null(CodeSample())) {
-            Lon = df_meta()$lon[df_meta()$code %in% CodeSample()]
-            Lat = df_meta()$lat[df_meta()$code %in% CodeSample()]
+            Lon = df_meta()$lon[df_meta()$Code %in% CodeSample()]
+            Lat = df_meta()$lat[df_meta()$Code %in% CodeSample()]
             rv$currentLimits = list(north=max(Lat), east=max(Lon),
                                     south=min(Lat), west=min(Lon))
 
@@ -273,7 +273,7 @@ server = function (input, output, session) {
         
         if (!is.null(rv$df_XEx) | !is.null(rv$df_Xtrend)) {
             
-            trendCode = rv$df_Xtrend$code
+            trendCode = rv$df_Xtrend$Code
 
             sizeList = rep('small', nCodeAll())
             sizeList[match(rv$codeClick, CodeAll())] = 'big'
@@ -322,7 +322,7 @@ server = function (input, output, session) {
                              noneColor=none2Color)
             
             fillList = rep(none2Color, nCodeAll())
-            fillCode = rv$df_value$code
+            fillCode = rv$df_value$Code
             
             okCodeSample = fillCode %in% CodeSample()
             fillCodeSample = fillCode[okCodeSample]
@@ -454,13 +454,13 @@ server = function (input, output, session) {
         sf_loca = sf::st_coordinates(sf_loca$geometry)
         df_metatmp$lon = sf_loca[, 1]
         df_metatmp$lat = sf_loca[, 2]
-        df_metatmp = df_metatmp[order(df_metatmp$code),]
+        df_metatmp = df_metatmp[order(df_metatmp$Code),]
         df_metatmp
     })
 
 ### 2.2. Station selection ___________________________________________
     CodeAll = reactive({
-        rle(df_meta()$code)$values
+        rle(df_meta()$Code)$values
     })
 
     nCodeAll = reactive({
@@ -616,7 +616,7 @@ server = function (input, output, session) {
         
             station_coordinates = sp::SpatialPointsDataFrame(
                 df_meta()[c('lon', 'lat')],
-                df_meta()['code'])
+                df_meta()['Code'])
 
             # Transform them to an sp Polygon
             drawn_polygon = sp::Polygon(as.matrix(rv$polyCoord))
@@ -624,7 +624,7 @@ server = function (input, output, session) {
             # Use over from the sp package to identify selected station
             selected_station = sp::over(station_coordinates, sp::SpatialPolygons(list(sp::Polygons(list(drawn_polygon), "drawn_polygon"))))
 
-            selectCode = df_meta()$code[!is.na(selected_station)]
+            selectCode = df_meta()$Code[!is.na(selected_station)]
 
             if (rv$polyMode == "Add") {
                 rv$CodeSample = c(rv$CodeSample, selectCode)
@@ -675,13 +675,13 @@ server = function (input, output, session) {
                                     rep('Rhône-Méditérannée & Corse', 5),
                                     rep('Îles', 1)
                                     ))
-        fL = substr(df_meta()$code, 1, 1)
+        fL = substr(df_meta()$Code, 1, 1)
         df_basinName$basin[match(fL, df_basinName$letter)]
     })
     
     searchChoices = reactive({
         Values = c(
-            paste0("code:", df_meta()$code),
+            paste0("code:", df_meta()$Code),
             paste0("name:", df_meta()$nom),
             paste0("region:", df_meta()$region_hydro),
             paste0("regime:", df_meta()$regime_hydro),
@@ -690,7 +690,7 @@ server = function (input, output, session) {
             paste0("basin:", meta_basin())
         )
         htmlValues = c(
-            paste0(df_meta()$code,
+            paste0(df_meta()$Code,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.code"),
                    '</i>'),
@@ -752,13 +752,13 @@ server = function (input, output, session) {
         Search = gsub("(.*?):", "", htmlSearch)
         searchType = gsub(":(.*)", "", htmlSearch)
 
-        Code = df_meta()$code[df_meta()$code %in% Search[searchType == "code"]]
-        CodeNom = df_meta()$code[df_meta()$nom %in% Search[searchType == "name"]]
-        CodeRegion = df_meta()$code[df_meta()$region_hydro %in% Search[searchType == "region"]]
-        CodeRegime = df_meta()$code[df_meta()$regime_hydro %in% Search[searchType == "regime"]]
-        CodeLocation = df_meta()$code[meta_location() %in% Search[searchType == "location"]]
-        CodeRiver = df_meta()$code[meta_river() %in% Search[searchType == "river"]]
-        CodeBasin = df_meta()$code[meta_basin() %in% Search[searchType == "basin"]]
+        Code = df_meta()$Code[df_meta()$Code %in% Search[searchType == "code"]]
+        CodeNom = df_meta()$Code[df_meta()$nom %in% Search[searchType == "name"]]
+        CodeRegion = df_meta()$Code[df_meta()$region_hydro %in% Search[searchType == "region"]]
+        CodeRegime = df_meta()$Code[df_meta()$regime_hydro %in% Search[searchType == "regime"]]
+        CodeLocation = df_meta()$Code[meta_location() %in% Search[searchType == "location"]]
+        CodeRiver = df_meta()$Code[meta_river() %in% Search[searchType == "river"]]
+        CodeBasin = df_meta()$Code[meta_basin() %in% Search[searchType == "basin"]]
 
         selectCode = levels(factor(c(Code,
                                      CodeNom,
@@ -861,13 +861,32 @@ server = function (input, output, session) {
         }
     })
 
-    output$name = renderText({
+    output$nameHTML = renderUI({
         if (is.null(rv$proba)) {
-            Var$name[Var$var == rv$var]
+            name = Var$name[Var$var == rv$var]
         } else {
-            gsub('p', gsub("%", "", rv$proba),
-                 Var$name[Var$var == rv$var])
+            name = gsub('p', gsub("%", "", rv$proba),
+                        Var$name[Var$var == rv$var])
         }
+        nbNewline = 0
+        nbLim = 24
+        nbChar = nchar(name)
+        while (nbChar > nbLim) {
+            nbNewline = nbNewline + 1
+            posSpace = which(strsplit(name, "")[[1]] == " ")
+            idNewline = which.min(abs(posSpace - nbLim * nbNewline))
+            posNewline = posSpace[idNewline]
+            name = paste(substring(name,
+                                   c(1, posNewline + 1),
+                                   c(posNewline,
+                                     nchar(name))),
+                         collapse="<br>")
+            Newline = substr(name,
+                             posNewline + 2,
+                             nchar(name))
+            nbChar = nchar(Newline)
+        }
+        HTML(name)
     })
 
     output$dataHTML_ana = renderUI({
@@ -1024,10 +1043,14 @@ server = function (input, output, session) {
     })
     hydroPeriod = debounce(hydroPeriodB, 1000)
 
-    output$hydroPeriod = renderText({
+    output$hydroPeriodHTML = renderUI({
         hydroStart = format(rv$period[1], "%d %b")
         hydroEnd = format(rv$period[2], "%d %b")
-        paste0("Année hydrologique du ", hydroStart, " au ", hydroEnd)
+        HTML(paste0(word("out.hp"), "<br>",
+                    word("out.from"), " ",
+                    hydroStart, " ",
+                    word("out.to"), " ",
+                    hydroEnd))
     })    
     
     df_dataAll = reactive({
@@ -1042,7 +1065,7 @@ server = function (input, output, session) {
 
     df_data = reactive({
         if (!is.null(df_dataAll()) & !is.null(CodeSample())) {
-            df_dataAll()[df_dataAll()$code %in% CodeSample(),]
+            df_dataAll()[df_dataAll()$Code %in% CodeSample(),]
         } else {
             NULL
         }
@@ -1098,7 +1121,7 @@ server = function (input, output, session) {
             rv$reverse = reverse()
 
             if (!is.null(rv$CodeAdd)) {
-                df_data = df_data()[df_data()$code %in% rv$CodeAdd,]
+                df_data = df_data()[df_data()$Code %in% rv$CodeAdd,]
             } else {
                 df_data = df_data()
             }
@@ -1133,7 +1156,6 @@ server = function (input, output, session) {
 
                 res = get_Xtrend(rv$var,
                                  df_data,
-                                 df_meta(),
                                  period=list(rv$period),
                                  hydroPeriod=rv$hydroPeriod,
                                  df_flag=df_flag,
@@ -1161,14 +1183,14 @@ server = function (input, output, session) {
 
                 if (!is.null(rv$CodeAdd)) {
                     df_XEx = bind_rows(rv$df_XEx, df_XEx)
-                    df_XEx = df_XEx[order(df_XEx$code),]
+                    df_XEx = df_XEx[order(df_XEx$Code),]
                     df_Xtrend = bind_rows(rv$df_Xtrend, df_Xtrend)
-                    df_Xtrend = df_Xtrend[order(df_Xtrend$code),]
+                    df_Xtrend = df_Xtrend[order(df_Xtrend$Code),]
                     rv$CodeAdd = NULL
                 }
 
-                df_XEx = df_XEx[df_XEx$code %in% CodeSample(),]
-                df_Xtrend = df_Xtrend[df_Xtrend$code %in% CodeSample(),]
+                df_XEx = df_XEx[df_XEx$Code %in% CodeSample(),]
+                df_Xtrend = df_Xtrend[df_Xtrend$Code %in% CodeSample(),]
 
                 rv$df_XEx = df_XEx
                 rv$df_Xtrend = df_Xtrend
@@ -1259,13 +1281,13 @@ server = function (input, output, session) {
             End = rv$period[2]
             df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
             
-            df_Start = summarise(group_by(df_dataNoNA, code),
+            df_Start = summarise(group_by(df_dataNoNA, Code),
                                  Start=min(Date, na.rm=TRUE))
             StartData = df_Start$Start
-            df_End = summarise(group_by(df_dataNoNA, code),
+            df_End = summarise(group_by(df_dataNoNA, Code),
                                End=max(Date, na.rm=TRUE))            
             EndData = df_End$End
-            CodeData = df_Start$code
+            CodeData = df_Start$Code
 
             CodeData[EndData <= Start | End <= StartData]
             
@@ -1282,10 +1304,10 @@ server = function (input, output, session) {
             df_dataNoNA = df_dataNoNA[Start <= df_dataNoNA$Date
                                       & df_dataNoNA$Date <= End,]
             
-            df_Period = summarise(group_by(df_dataNoNA, code),
+            df_Period = summarise(group_by(df_dataNoNA, Code),
                                   Period=length(Value))
             PeriodData = df_Period$Period/365.25
-            CodeData = df_Period$code
+            CodeData = df_Period$Code
 
             CodeData[PeriodData < analyseMinYear]
             
@@ -1329,8 +1351,8 @@ server = function (input, output, session) {
     })
 
     observeEvent(rv$codeClick, {
-        Lon = df_meta()$lon[df_meta()$code == rv$codeClick]
-        Lat = df_meta()$lat[df_meta()$code == rv$codeClick]
+        Lon = df_meta()$lon[df_meta()$Code == rv$codeClick]
+        Lat = df_meta()$lat[df_meta()$Code == rv$codeClick]
         names(Lon) = NULL
         names(Lat) = NULL
         
@@ -1354,12 +1376,12 @@ server = function (input, output, session) {
             
             showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
             
-            name = df_meta()$nom[df_meta()$code == rv$codeClick]
+            name = df_meta()$nom[df_meta()$Code == rv$codeClick]
 
-            df_data_code = df_data()[df_data()$code == rv$codeClick,]
+            df_data_code = df_data()[df_data()$Code == rv$codeClick,]
             maxQ_win = max(df_data_code$Value, na.rm=TRUE)*1.1            
-            df_XEx_code = rv$df_XEx[rv$df_XEx$code == rv$codeClick,]
-            df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$code == rv$codeClick,]
+            df_XEx_code = rv$df_XEx[rv$df_XEx$Code == rv$codeClick,]
+            df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$Code == rv$codeClick,]
             color = rv$fillList[CodeAll() == rv$codeClick]
             switchColor = switch_colorLabel(color)
             
@@ -1368,11 +1390,18 @@ server = function (input, output, session) {
                 validate(need(!is.null(rv$codeClick), message=FALSE))
                 
                 fig1 = plotly::plot_ly()
-                
+
                 x = df_data_code$Date
-                y = df_data_code$Value
-                var = "Q"
-                unit = " [m<sup>3</sup>.s<sup>-1</sup>]"
+                event = Var$event[Var$var == rv$var]
+                if (event == "Étiage") {
+                    y = sqrt(df_data_code$Value)
+                    varLabel = "&#8730;Q"
+                    unitLabel = " [m<sup>3/2</sup>.s<sup>-1/2</sup>]"
+                } else {
+                    y = df_data_code$Value
+                    varLabel = "Q"
+                    unitLabel = " [m<sup>3</sup>.s<sup>-1</sup>]"
+                }
                     
                 fig1 = plotly::add_trace(
                                   fig1,
@@ -1383,9 +1412,10 @@ server = function (input, output, session) {
                                   line=list(color=grey20COL, width=0.85),
                                   xhoverformat="%d/%m/%Y",
                                   hovertemplate = paste0(
-                                      "jour %{x}<br>",
-                                      "<b>", var, "</b> %{y}",
-                                      unit,
+                                      word("plot.day"),
+                                      " ", "%{x}<br>",
+                                      "<b>", varLabel, "</b> %{y}",
+                                      unitLabel,
                                       "<extra></extra>"),
                                   hoverlabel=list(bgcolor=color,
                                                   font=list(size=12),
@@ -1395,13 +1425,6 @@ server = function (input, output, session) {
                 df_data_codeLIM = df_data_code
                 minDate = min(df_data_code$Date)
                 maxDate = max(df_data_code$Date)
-
-                # print(df_XEx_code) ///!\\\ NA_pct pas ok début d'année
-                # print(df_Xtrend_code)
-                # print(rv$period)
-                # print(minDate)
-                # print(maxDate)
-                # print("")
                 
                 if (minDate > rv$period[1]) {
                     NAadd = seq.Date(rv$period[1],
@@ -1411,7 +1434,7 @@ server = function (input, output, session) {
                     df_data_codeLIM =
                         bind_rows(tibble(Date=NAadd,
                                          Value=rep(NA, nNAadd),
-                                         code=rep(rv$codeClick, nNAadd)),
+                                         Code=rep(rv$codeClick, nNAadd)),
                                   df_data_codeLIM)
                 }
                 
@@ -1424,7 +1447,7 @@ server = function (input, output, session) {
                         bind_rows(df_data_codeLIM,
                                   tibble(Date=NAadd,
                                          Value=rep(NA, nNAadd),
-                                         code=rep(rv$codeClick, nNAadd)))
+                                         Code=rep(rv$codeClick, nNAadd)))
                 }
                 
                 # Extract NA data
@@ -1438,11 +1461,13 @@ server = function (input, output, session) {
                 # If difference of day is not 1 then
                 # it is TRUE for the ending of each missing data period 
                 NAdate_Up = NAdate[append(dNAdate, Inf) != 1]
-
+                
                 nMiss = length(NAdate_Up)
                 Ymin = rep(0, nMiss)
                 Ymax = rep(maxQ_win, nMiss)
 
+                lenMiss = NAdate_Up - NAdate_Down + 1
+                
                 for (i in 1:nMiss) {
                     fig1 = plotly::add_trace(
                                        fig1,
@@ -1458,10 +1483,11 @@ server = function (input, output, session) {
                                        opacity=0.4,
                                        fillcolor=lightCyanCOL,
                                        line=list(width=0),
-                                       text=paste0("<b>",
-                                                   
-                                                   "</b>",
-                                                   "jours manquants"),
+                                       text=paste0(
+                                           "<b>",
+                                           lenMiss[i],
+                                           "</b>", " ",
+                                           word("plot.miss")),
                                        hoverinfo="text",
                                        hoveron="fills",
                                        hoverlabel=
@@ -1520,23 +1546,13 @@ server = function (input, output, session) {
                 fig1 = plotly::layout(
                                    fig1,
                                    separators='. ',
-                                   # xaxis=list(showgrid=FALSE,
-                                   #            ticks="outside",
-                                   #            tickcolor=grey75COL,
-                                   #            tickfont=
-                                   #                list(color=grey40COL),
-                                   #            showline=TRUE,
-                                   #            linewidth=2,
-                                   #            linecolor=grey85COL,
-                                   #            mirror=TRUE,
-                                   #            matches="x"),
 
                                    yaxis=list(
                                        range=c(0, maxQ_win),
                                        title=list(
                                            text=paste0(
-                                               "<b>", var, "</b>",
-                                               unit),
+                                               "<b>", varLabel, "</b>",
+                                               unitLabel),
                                            font=list(color=grey20COL)),
                                        gridcolor=grey85COL,
                                        gridwidth=0.6,
@@ -1579,7 +1595,7 @@ server = function (input, output, session) {
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
                 # Compute the y of the trend
-                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'an^{-1}' | rv$unit == 'jour') {
+                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
                     ord = abs_num * df_Xtrend_code$trend +
                         df_Xtrend_code$intercept
                 } else if (rv$unit == "jour de l'année") {
@@ -1588,22 +1604,22 @@ server = function (input, output, session) {
                 }
 
                 x = df_XEx_code$Date
-                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'an^{-1}' | rv$unit == 'jour') {
+                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
                     y = df_XEx_code$Value
-                    yhoverformat = NULL
-                    unit = rv$unit
-                    unit = gsub('[/^][/{]', '<sup>', unit)
-                    unit = gsub('[/}]', '</sup>', unit)
-                    unit = paste0(" [", unit, "]<br>")
+                    yhoverformat = '.3r'
+                    unitLabel = rv$unit
+                    unitLabel = gsub('[/^][/{]', '<sup>', unitLabel)
+                    unitLabel = gsub('[/}]', '</sup>', unitLabel)
+                    unitLabel = paste0(" [", unitLabel, "]<br>")
                 } else if (rv$unit == "jour de l'année") {
                     y = as.Date(df_XEx_code$Value, origin="1970-01-01")
                     yhoverformat = "%d %b"
-                    unit = ""
+                    unitLabel = ""
                 }
                 if (is.null(rv$proba)) {
-                    var = Var$varHTML[Var$var == rv$var]
+                    varLabel = Var$varHTML[Var$var == rv$var]
                 } else {
-                    var = gsub('p', gsub("%", "", rv$proba),
+                    varLabel = gsub('p', gsub("%", "", rv$proba),
                                Var$varHTML[Var$var == rv$var])
                 }
 
@@ -1620,8 +1636,8 @@ server = function (input, output, session) {
                                   yhoverformat=yhoverformat,
                                   hovertemplate = paste0(
                                       "année %{x}<br>",
-                                      "<b>", var, "</b> %{y}",
-                                      unit,
+                                      "<b>", varLabel, "</b> %{y}",
+                                      unitLabel,
                                       "<extra></extra>"),
                                   hoverlabel=list(bgcolor=color,
                                                   font=list(size=12),
@@ -1647,27 +1663,16 @@ server = function (input, output, session) {
                                   line=list(color=color, width=3),
                                   hoverinfo="none")
                 
-                unit = rv$unit
-                unit = gsub('[/^][/{]', '<sup>', unit)
-                unit = gsub('[/}]', '</sup>', unit)
-                unit = paste0("[", unit, "]<br>")
-                title = paste0("<b> ", var, "</b>",
-                               " ", unit)
+                unitLabel = rv$unit
+                unitLabel = gsub('[/^][/{]', '<sup>', unitLabel)
+                unitLabel = gsub('[/}]', '</sup>', unitLabel)
+                unitLabel = paste0("[", unitLabel, "]<br>")
+                title = paste0("<b> ", varLabel, "</b>",
+                               " ", unitLabel)
 
                 fig2 = plotly::layout(
                                    fig2,
                                    separators='. ',
-                                   # xaxis=list(range=rv$period,
-                                   #            showgrid=FALSE,
-                                   #            ticks="outside",
-                                   #            tickcolor=grey75COL,
-                                   #            tickfont=
-                                   #                list(color=grey40COL),
-                                   #            showline=TRUE,
-                                   #            linewidth=2,
-                                   #            linecolor=grey85COL,
-                                   #            showticklabels=TRUE,
-                                   #            mirror=TRUE),
                                    
                                    yaxis=list(
                                        title=list(
@@ -1842,8 +1847,8 @@ server = function (input, output, session) {
                            plot=FALSE)
                 # Extracts the number of counts per cells
                 counts = res$counts
-
-                fig = plotly::plotly_empty(width=55, height=250)
+                
+                fig = plotly::plotly_empty(width=62, height=260)
                 
                 for (i in 2:(colorStep-1)) {
                     fig = plotly::add_trace(
@@ -1869,18 +1874,13 @@ server = function (input, output, session) {
                 
                 fig = plotly::layout(
                                   fig,
-                                  xaxis=list(range=c(-1.5, 3.4),
+                                  autosize=FALSE,
+                                  xaxis=list(range=c(-1.51, 3.4),
                                              showticklabels=FALSE,
                                              fixedrange=TRUE),
                                   yaxis=list(range=c(-1-dY*2/3, 1+dY*2/3),
                                              showticklabels=FALSE,
                                              fixedrange=TRUE),
-                                  margin=list(l=0,
-                                              r=0,
-                                              b=0,
-                                              t=0,
-                                              pad=0),
-                                  autosize=FALSE,
                                   plot_bgcolor='transparent',
                                   paper_bgcolor='transparent',
                                   showlegend=FALSE)
@@ -1929,9 +1929,43 @@ server = function (input, output, session) {
                 ncharLim = 4
                 if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}') {                    
                     labelRaw = bin*100
-                } else if (rv$unit == 'an^{-1}' | rv$unit == 'jour' | rv$unit == "jour de l'année") {
+                } else if (rv$unit == 'jour.an^{-1}' | rv$unit == 'jour' | rv$unit == "jour de l'année") {
                     labelRaw = bin
                 }
+                
+                if (get_power(max(labelRaw)) < 0) {
+                    power = get_power(min(labelRaw))
+                    labelRaw = labelRaw * 10^(-power)
+                    powerLabel = paste0("x<b>10<sup>",
+                                        power,
+                                        "</sup></b>")
+                    fig = plotly::add_annotations(
+                                      fig,
+                                      x=0.95,
+                                      y=-1-dY*2/3,
+                                      text=powerLabel,
+                                      showarrow=FALSE,
+                                      xanchor='left',
+                                      font=list(color=grey65COL,
+                                                size=12.5))
+
+                    fig = plotly::layout(
+                                      fig,
+                                      margin=list(l=0,
+                                                  r=0,
+                                                  b=6,
+                                                  t=0,
+                                                  pad=0))
+                } else {
+                    fig = plotly::layout(
+                                      fig,
+                                      margin=list(l=0,
+                                                  r=0,
+                                                  b=3,
+                                                  t=3,
+                                                  pad=0))
+                }
+                
                 label2 = signif(labelRaw, 2)
                 label2[label2 >= 0] = paste0(" ", label2[label2 >= 0])
                 label1 = signif(labelRaw, 1)
@@ -1961,8 +1995,9 @@ server = function (input, output, session) {
                          paste0("%", " ", word("unit.by"), " ",
                                 word("unit.year")),
                          unit)
-                unit = gsub('^an[/^][/{]-1[/}]$',
-                            paste0(word("unit.by"), " ",
+                unit = gsub('^jour[.]an[/^][/{]-1[/}]$',
+                            paste0(word("unit.day"), " ",
+                                   word("unit.by"), " ",
                                    word("unit.year"), "<sup>2</sup>"),
                             unit)
                 title = paste0("<b>", word("cb.title"), "</b>",

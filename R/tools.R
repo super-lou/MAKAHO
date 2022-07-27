@@ -540,15 +540,15 @@ get_trendExtremes = function (df_data, df_trend, unit,
                               CodeSample=NULL) {
     
     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
-        df_mean = summarise(group_by(df_data, code),
+        df_mean = summarise(group_by(df_data, Code),
                             mean=mean(Value, na.rm=TRUE))
 
-        df_join = full_join(df_trend, df_mean, by="code")
+        df_join = full_join(df_trend, df_mean, by="Code")
         value = df_join$trend / df_join$mean
-        Code = df_join$code
+        Code = df_join$Code
     } else {
         value = df_trend$trend
-        Code = df_trend$code
+        Code = df_trend$Code
     }
 
     if (!is.null(CodeSample)) {
@@ -560,11 +560,11 @@ get_trendExtremes = function (df_data, df_trend, unit,
     minValue = quantile(valueSample, minQprob, na.rm=TRUE)
     maxValue = quantile(valueSample, maxQprob, na.rm=TRUE)
     
-    df_value = tibble(code=Code, value=value)   
+    df_value = tibble(Code=Code, value=value)   
     if (all(CodeSample %in% Code)) {
-        df_valueSample = tibble(code=CodeSample, value=valueSample)
+        df_valueSample = tibble(Code=CodeSample, value=valueSample)
     } else {
-        df_valueSample = tibble(code=Code, value=valueSample)
+        df_valueSample = tibble(Code=Code, value=valueSample)
     }
     res = list(df_value=df_value, df_valueSample=df_valueSample,
                min=minValue, max=maxValue)

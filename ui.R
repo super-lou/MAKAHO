@@ -82,7 +82,7 @@ ui = bootstrapPage(
             class="Panel card-insert-r",
             style="transform: translate(0, 50%);",
             fixed=TRUE,
-            width=75, height=270,
+            width="auto", height=280,
             right=0, bottom="35%",
             
             div(style="margin: 10px;",
@@ -97,8 +97,8 @@ ui = bootstrapPage(
             class="Panel card-insert-r",
             style="transform: translate(0, -50%);",
             fixed=TRUE,
-            width=145, height="auto",
-            top="25%", right=0,
+            width="auto", height="auto",
+            right=0, top="25%",
             
             div(class="card-insert-text",
                 
@@ -111,7 +111,7 @@ ui = bootstrapPage(
                 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
-                       "<b>", textOutput("name"), "</b>"
+                       "<b>", htmlOutput("nameHTML"), "</b>"
                    ))),
 
                 hr(style="margin-top: 0.1rem;
@@ -120,7 +120,7 @@ ui = bootstrapPage(
 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
-                       textOutput("hydroPeriod")
+                       htmlOutput("hydroPeriodHTML")
                    ))),
                 
                 h6(class="no-margin-v", style="font-size: 0.8em;",

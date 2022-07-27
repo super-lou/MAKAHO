@@ -42,11 +42,13 @@ which.maxNA = function (x) {
 }
 
 ## 3. Fréquentielle __________________________________________________
-compute_fAp = function (Q, p) {
-    Qp = compute_Qp(Q, p)
-    n = sum(as.numeric(Q[!is.na(Q)] > Qp))
+compute_fAp = function (Q, lowLim) {
+    n = sum(as.numeric(Q[!is.na(Q)] > lowLim))
+    if (n == 0) {
+        return (NA)
+    }
     N = length(Q)
-    fA = n/N
+    fA = n/N # jour par an
     return (fA)
 }
 
@@ -133,154 +135,12 @@ compute_tSnowmelt = function (X, p1, p2) {
 # |_   _|| |_   _ _  ___  ___| |_   ___ | | __| |
 #   | |  | ' \ | '_|/ -_)(_-<| ' \ / _ \| |/ _` |
 #   |_|  |_||_||_|  \___|/__/|_||_|\___/|_|\__,_| ____________________
-## 1. 
-X_under = function (X, UpLim, select_longest=TRUE) {
-    
-    ID = which(X <= UpLim)
-
-    if (select_longest) {
-        dID = diff(ID)
-        dID = c(10, dID)
-        
-        IDjump = which(dID != 1)
-        Njump = length(IDjump)
-        
-        Periods = vector(mode='list', length=Njump)
-        Nperiod = c()
-        
-        for (i in 1:Njump) {
-            idStart = IDjump[i]
-            
-            if (i < Njump) {
-                idEnd = IDjump[i+1] - 1
-            } else {
-                idEnd = length(ID)
-            }
-            
-            period = ID[idStart:idEnd]
-            Periods[[i]] = period
-            Nperiod = c(Nperiod, length(period))
-        }
-        period_max = Periods[[which.max(Nperiod)]]
-        per = period_max
-    } else {
-        per = ID
-    }
-    Xper = X[per]
-    return (Xper)
-}
-
-which_underfirst = function (L, UpLim, select_longest=TRUE) {
-    
-    ID = which(L <= UpLim)
-
-    if (select_longest) {
-        dID = diff(ID)
-        dID = c(10, dID)
-        
-        IDjump = which(dID != 1)
-        Njump = length(IDjump)
-        
-        Periods = vector(mode='list', length=Njump)
-        Nperiod = c()
-        
-        for (i in 1:Njump) {
-            idStart = IDjump[i]
-            
-            if (i < Njump) {
-                idEnd = IDjump[i+1] - 1
-            } else {
-                idEnd = length(ID)
-            }
-            
-            period = ID[idStart:idEnd]
-            Periods[[i]] = period
-            Nperiod = c(Nperiod, length(period))
-        }
-        period_max = Periods[[which.max(Nperiod)]]
-        id = period_max[1]
-    } else {
-        id = ID[1]
-    }
-    return (id)
-}
-
-which_underlast = function (L, UpLim, select_longest=TRUE) {
-    
-    ID = which(L <= UpLim)
-
-    if (select_longest) {
-        dID = diff(ID)
-        dID = c(10, dID)
-        
-        IDjump = which(dID != 1)
-        Njump = length(IDjump)
-        
-        Periods = vector(mode='list', length=Njump)
-        Nperiod = c()
-        
-        for (i in 1:Njump) {
-            idStart = IDjump[i]
-            
-            if (i < Njump) {
-                idEnd = IDjump[i+1] - 1
-            } else {
-                idEnd = length(ID)
-            }
-            
-            period = ID[idStart:idEnd]
-            Periods[[i]] = period
-            Nperiod = c(Nperiod, length(period))
-        }
-        period_max = Periods[[which.max(Nperiod)]]
-        id = period_max[length(period_max)]
-    } else {
-        id = ID[length(ID)]
-    }
-    return (id)
-}
-
-length_under = function (L, UpLim, select_longest=TRUE) {
-    
-    ID = which(L <= UpLim)
-
-    if (select_longest) {
-        dID = diff(ID)
-        dID = c(10, dID)
-        
-        IDjump = which(dID != 1)
-        Njump = length(IDjump)
-        
-        Periods = vector(mode='list', length=Njump)
-        Nperiod = c()
-        
-        for (i in 1:Njump) {
-            idStart = IDjump[i]
-            
-            if (i < Njump) {
-                idEnd = IDjump[i+1] - 1
-            } else {
-                idEnd = length(ID)
-            }
-            
-            period = ID[idStart:idEnd]
-            Periods[[i]] = period
-            Nperiod = c(Nperiod, length(period))
-        }
-        period_max = Periods[[which.max(Nperiod)]]
-        len = period_max[length(period_max)] - period_max[1] + 1
-    } else {
-        len = ID[length(ID)] - ID[1] + 1
-    }
-    return (len)
-}
-
+## 1.
 compute_VolDef = function (X, UpLim, select_longest=TRUE) {
     Xdef = under_threshold(X, UpLim=UpLim, what="X", select_longest=select_longest)
     Vol = sum(Xdef)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (Vol)
 }
-
 
 under_threshold = function (X, UpLim, what="X", select_longest=TRUE) {
     

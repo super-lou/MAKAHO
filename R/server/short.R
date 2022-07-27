@@ -2,15 +2,15 @@
 get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
                            space=FALSE) {
     
-    CodeEx = df_XEx$code[!duplicated(df_XEx$code)]
-    CodeXtrend = df_Xtrend$code[!duplicated(df_Xtrend$code)]
+    CodeEx = df_XEx$Code[!duplicated(df_XEx$Code)]
+    CodeXtrend = df_Xtrend$Code[!duplicated(df_Xtrend$Code)]
     
     if (!(code %in% CodeEx) | !(code %in% CodeXtrend)) {
         return (NA)
     }
     
-    df_XEx_code = df_XEx[df_XEx$code == code,]
-    df_Xtrend_code = df_Xtrend[df_Xtrend$code == code,]
+    df_XEx_code = df_XEx[df_XEx$Code == code,]
+    df_Xtrend_code = df_Xtrend[df_Xtrend$Code == code,]
 
     if (is.na(df_Xtrend_code$trend)) {
         return (NA)
@@ -88,12 +88,12 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
             "10<sup>", powerC, "</sup></b>", shiftC,
             " [jour.an<sup>-1</sup>]")
 
-    } else if (unit == 'an^{-1}') {
+    } else if (unit == 'jour.an^{-1}') {
         # Create the name of the trend
         label = paste0(
             "<b>", trendC, " x ",
             "10<sup>", powerC, "</sup></b>", shiftC,
-            " [an<sup>-2</sup>]")
+            " [jour.an<sup>-2</sup>]")
     }
 
     return (label)
