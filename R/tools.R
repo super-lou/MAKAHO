@@ -427,7 +427,7 @@ observePage = function (input, rv, n, N) {
 
 IdList_mask = c("maskZoom_panelButton",
                 "maskAna_panelButton",
-                "maskTheme_panelButton",
+                "maskActualise_panelButton",
                 "maskInfo_panelButton",
                 "maskPhoto_panelButton",
                 "opacPhoto_panelButton",

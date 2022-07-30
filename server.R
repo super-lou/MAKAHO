@@ -1086,7 +1086,7 @@ server = function (input, output, session) {
             }
         }
         
-        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod))) {
+        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod)) & is.null(rv$helpPage)) {
             hide(id="actualise_panelButton")    
         } else {
             if ((rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$hydroPeriod)) & !rv$photoMode) {
@@ -1797,6 +1797,7 @@ server = function (input, output, session) {
 
     observeEvent(input$closeSettings_button, {
         hide(id='theme_panel')
+        showElement(id='ana_panel')
     })
     
 ### 3.2. Palette _____________________________________________________
@@ -2203,6 +2204,7 @@ server = function (input, output, session) {
         showElement(id='blur_panel')
         
         showElement(id='focusZoom_panelButton')
+        showElement(id='actualise_panelButton')
         
         showElement(id='before_panelButton')
         show_page(n=1, N=N_helpPage)
@@ -2264,25 +2266,33 @@ server = function (input, output, session) {
                 maskOnly(id="maskAna_panelButton")
             }
                 
-            if (rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8 | rv$helpPage == 9) {
+            if (rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8) {
                 if (rv$width > width_lim) {
                     showOnly(id="ana_panel")
                 }
                 maskOnly(id="maskAna_panelButton")
             }
 
+            if (rv$helpPage == 9) {
+                if (rv$width > width_lim) {
+                    showOnly(id="ana_panel")
+                }
+                maskOnly(id=c("maskAna_panelButton",
+                              "maskActualise_panelButton"))
+            }
+
             if (rv$helpPage == 10) {
                 if (rv$width > width_lim) {
                     showOnly(id="theme_panel")
                 }
-                maskOnly(id="maskTheme_panelButton")
+                maskOnly(id="")
             }
 
             if (rv$helpPage == 11) {
                 if (rv$width > width_lim) {
                     showOnly(id="theme_panel")
                 }
-                maskOnly(id="maskTheme_panelButton")
+                maskOnly(id="")
             }
 
             if (rv$helpPage == 12) {
@@ -2329,6 +2339,7 @@ server = function (input, output, session) {
         hideAll()
         
         hide(id='focusZoom_panelButton')
+        hide(id='actualise_panelButton')
         
         demaskAll()
 

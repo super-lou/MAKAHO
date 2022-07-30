@@ -314,6 +314,18 @@ a:hover {
     background-color: rgba(5, 5, 10, 0.8) !important;
     color: transparent !important;
 }
+.maskSmallButton-actualise {
+    font: inherit !important;
+    border: none !important;
+    border-radius: 20rem/20rem !important;
+    padding-top: 0.27rem !important;
+    padding-bottom: 0.27rem !important;
+    padding-left: 0.37rem !important;
+    padding-right: 0.37rem !important;
+    margin: 0 !important;
+    background-color: rgba(5, 5, 10, 0.8) !important;
+    color: transparent !important;
+}
 .maskButton-info {
     font-size: 25px !important;
     border: none !important;

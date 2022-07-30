@@ -490,10 +490,10 @@ ui = bootstrapPage(
         absolutePanel(
             id='theme_panel',
             class="Panel card-settings",
-            style="transform: translate(-50%, 50%);",
+            style="transform: translate(0, 50%);",
             fixed=TRUE,        
             width="auto", height="auto",
-            left="50%", bottom="50%",
+            left=10, bottom="50%",
 
             div(Button(class="Button-icon",
                        style="position: absolute;
@@ -502,7 +502,41 @@ ui = bootstrapPage(
                        inputId='closeSettings_button',
                        label=NULL,
                        icon_name=iconLib$close_white)),
-            
+
+### 3.3. Palette button ______________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("c.cb"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioButton(class="radioButton",
+                                inputId="colorbar_choice",
+                                choiceNames=
+                                    list(word("c.show"),
+                                         word("c.none")),
+                                choiceValues=
+                                    list("show", "none"),
+                                selected="show"))),
+
+### 3.4. Resume button ______________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("c.resume"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioButton(class="radioButton",
+                                inputId="resume_choice",
+                                choiceNames=
+                                    list(word("c.show"),
+                                         word("c.none")),
+                                choiceValues=
+                                    list("show", "none"),
+                                selected="show"))),
+
 ### 3.2. Background theme ____________________________________________
             div(class="Row",
                 div(class="row-label",
@@ -528,42 +562,8 @@ ui = bootstrapPage(
                                 choiceTooltips=
                                     list(word("tt.c.theme.light"),
                                          word("tt.c.theme.terrain"),
-                                         word("tt.c.theme.dark"))))),
-
-### 3.3. Palette button ______________________________________________
-            div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("c.cb"),
-                                "</b></span>"))),
-                div(class="sep"),
-                div(class="bunch",
-                    radioButton(class="radioButton",
-                                inputId="colorbar_choice",
-                                choiceNames=
-                                    list(word("c.show"),
-                                         word("c.none")),
-                                choiceValues=
-                                    list("show", "none"),
-                                selected="show"))),
-
-### 3.4. Palette button ______________________________________________
-            div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("c.resume"),
-                                "</b></span>"))),
-                div(class="sep"),
-                div(class="bunch",
-                    radioButton(class="radioButton",
-                                inputId="resume_choice",
-                                choiceNames=
-                                    list(word("c.show"),
-                                         word("c.none")),
-                                choiceValues=
-                                    list("show", "none"),
-                                selected="show")))
-        )
+                                         word("tt.c.theme.dark")))))
+            )
     ),
 
     
@@ -770,12 +770,12 @@ ui = bootstrapPage(
                           icon_name=iconLib$none)
                    )
     ),
-
+    
     hidden(
-        fixedPanel(id="maskTheme_panelButton",
-                   left=116, bottom=10,
+        fixedPanel(id="maskActualise_panelButton",
+                   left=124, bottom=11,
                    width="auto", height="auto",
-                   Button(class="maskButton-menu",
+                   Button(class="maskSmallButton-actualise",
                           inputId='mask',
                           label=NULL,
                           icon_name=iconLib$none)
@@ -791,9 +791,7 @@ ui = bootstrapPage(
                           label=NULL,
                           icon_name=iconLib$noneINRAElogo)
                    )
-       ),
-    
-
+    ),
 
     hidden(
         fixedPanel(id="maskPhoto_panelButton",
@@ -837,7 +835,6 @@ ui = bootstrapPage(
                    
                    h1(style="font-size: 4em;",
                       HTML(word("help.p1.s1"))),
-                   
                    p(HTML(word("help.p1.p1")))
                    )
     ),
@@ -854,9 +851,7 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p2.s1"))),
-
                    h4(HTML(word("help.p2.ss1"))),
-                   
                    p(HTML(word("help.p2.p1")))
                    )
     ),
@@ -873,11 +868,8 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p3.s1"))),
-                   
                    h4(HTML(word("help.p3.ss1"))),
-                   
                    p(HTML(word("help.p3.p1"))),
-
                    p(HTML(word("help.p3.p2")))
                    )  
     ),
@@ -894,9 +886,7 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p4.s1"))),
-                   
                    p(HTML(word("help.p4.p1"))),
-
                    p(HTML(word("help.p4.p2")))
                    )
     ),
@@ -913,14 +903,10 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p5.s1"))),
-
                    h4(HTML(word("help.p5.ss1"))),
-                   
                    p(HTML(word("help.p5.p1"))),
-
                    p(HTML(word("help.p5.p2"))),
-                   
-                   p(HTML(word("help.p5.p3"))),
+                   p(HTML(word("help.p5.p3")))
                    )
     ),
     
@@ -936,12 +922,9 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p6.s1"))),
-
                    h4(HTML(word("help.p6.ss1"))),
-                   
                    p(HTML(word("help.p6.p1"))),
-
-                   p(HTML(word("help.p6.p2"))),
+                   p(HTML(word("help.p6.p2")))
                    )
     ),
 
@@ -958,14 +941,10 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p7.s1"))),
-                   
                    h4(HTML(word("help.p7.ss1"))),
-                   
                    p(HTML(word("help.p7.p1"))),
-
                    p(HTML(word("help.p7.p2"))),
-
-                   p(HTML(word("help.p7.p3"))),
+                   p(HTML(word("help.p7.p3")))
                    )
     ),
 
@@ -981,13 +960,9 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p8.s1"))),
-                   
                    h4(HTML(word("help.p8.ss1"))),
-                   
                    p(HTML(word("help.p8.p1"))),
-
                    p(HTML(word("help.p8.p2"))),
-
                    p(HTML(word("help.p8.p3"))),
                    ) 
     ),
@@ -1004,10 +979,10 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p9.s1"))),
-                   
                    h4(HTML(word("help.p9.ss1"))),
-                   
-                   p(HTML(word("help.p9.p1")))
+                   p(HTML(word("help.p9.p1"))),
+                   h4(HTML(word("help.p9.ss2"))),
+                   p(HTML(word("help.p9.p2")))
                    )
     ),
 
@@ -1023,14 +998,9 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p10.s1"))),
-
                    h4(HTML(word("help.p10.ss1"))),
-                   
                    p(HTML(word("help.p10.p1"))),
-
-                   h4(HTML(word("help.p10.ss2"))),
-                   
-                   p(HTML(word("help.p10.p2"))),
+                   p(HTML(word("help.p10.p2")))
                    )
     ),
 
@@ -1046,10 +1016,10 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p11.s1"))),
-
                    h4(HTML(word("help.p11.ss1"))),
-                   
-                   p(HTML(word("help.p11.p1")))
+                   p(HTML(word("help.p11.p1"))),
+                   h4(HTML(word("help.p11.ss2"))),
+                   p(HTML(word("help.p11.p2")))
                    )
     ),    
 
@@ -1065,7 +1035,6 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p12.s1"))),
-                   
                    p(HTML(word("help.p12.p1")))
                    )
     ),
@@ -1082,10 +1051,8 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p13.s1"))),
-                   
                    p(HTML(word("help.p13.p1"))),
-
-                   p(HTML(word("help.p13.p2"))),
+                   p(HTML(word("help.p13.p2")))
                    )
     ),
 
@@ -1101,8 +1068,7 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p14.s1"))),
-                   
-                   p(HTML(word("help.p14.p1"))),
+                   p(HTML(word("help.p14.p1")))
                    )
     ),
 
@@ -1118,7 +1084,6 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p15.s1"))),
-                   
                    p(HTML(word("help.p15.p1")))
                    )
         ),
