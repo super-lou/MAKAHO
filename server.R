@@ -54,6 +54,8 @@ server = function (input, output, session) {
                         photoMode=FALSE,
                         invertSliderMode=FALSE,
                         sampleSliderMode=FALSE,
+                        optimalMode=FALSE,
+                        optimalMode_act=FALSE,
                         currentLimits=NULL,
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
@@ -301,17 +303,20 @@ server = function (input, output, session) {
             colorList[match(missCodeSample, CodeAll())] = missColor
 
             rv$colorList = colorList
-            
-            res = get_trendExtremes(rv$df_XEx, rv$df_Xtrend,
-                                    unit=rv$unit,
-                                    minQprob=exQprob,
-                                    maxQprob=1-exQprob,
-                                    CodeSample=CodeSample())
+
+            res = get_trendExtremesMOD(rv$df_XEx, rv$df_Xtrend,
+                                       unit=rv$unit,
+                                       minQprob=exQprob,
+                                       maxQprob=1-exQprob,
+                                       CodeSample=CodeSample())
             
             rv$df_value = res$df_value
             rv$df_valueSample = res$df_valueSample
             rv$minValue = res$min
             rv$maxValue = res$max
+
+            print(res$min)
+            print(res$max)
 
             fill = get_color(rv$df_value$value,
                              rv$minValue,
@@ -922,6 +927,16 @@ server = function (input, output, session) {
 
 ### 2.4. _____________________________________________________________
     observe({
+        if (!is.null(input$optimalSlider_select)) {
+            rv$optimalMode = TRUE
+            hide(id="sampleSlider")
+        } else {
+            rv$optimalMode = FALSE
+            showElement(id="sampleSlider")
+        }
+    })
+    
+    observe({
         if (!is.null(input$sampleSlider_select)) {
             rv$sampleSliderMode = TRUE
             showElement(id="invertSlider")
@@ -939,20 +954,23 @@ server = function (input, output, session) {
         }
     })
 
-    sliderModeB = reactive({
-        rv$sampleSliderMode & rv$invertSliderMode
-    })
-    sliderMode = debounce(sliderModeB, 100)
-    
-    observeEvent(sliderMode(), {
+    observeEvent({
+        rv$sampleSliderMode
+        rv$invertSliderMode
+        rv$optimalMode
+    }, {
+
         if (!is.null(input$hydroPeriod_slider)) {
             hydroMonths = match(input$hydroPeriod_slider, Months)
         } else {
             hydroMonths = 1
         }
         
-        if (rv$sampleSliderMode) {
-            
+        if (rv$optimalMode) {
+            class = "size1Slider noneSlider"
+            selected = Months[hydroMonths[1]]
+
+        } else if (rv$sampleSliderMode) {
             if (rv$invertSliderMode) {
                 class = "size1Slider invertSlider"
                 if (length(hydroMonths) == 1) {
@@ -968,8 +986,7 @@ server = function (input, output, session) {
                 } else {
                     selected = Months[hydroMonths]
                 }
-            }
-            
+            }           
         } else {
             class = "size1Slider soloSlider"
             selected = Months[hydroMonths[1]]
@@ -1030,6 +1047,8 @@ server = function (input, output, session) {
                 }
                 c(hydroPeriodStart, hydroPeriodEnd)
 
+            } else if (rv$optimalMode) {
+                rv$hydroPeriod
             } else {
                 nameMonthStart = input$hydroPeriod_slider[1]
                 idMonthStart = which(Months == nameMonthStart)
@@ -1044,13 +1063,17 @@ server = function (input, output, session) {
     hydroPeriod = debounce(hydroPeriodB, 1000)
 
     output$hydroPeriodHTML = renderUI({
-        hydroStart = format(rv$period[1], "%d %b")
-        hydroEnd = format(rv$period[2], "%d %b")
-        HTML(paste0(word("out.hp"), "<br>",
-                    word("out.from"), " ",
-                    hydroStart, " ",
-                    word("out.to"), " ",
-                    hydroEnd))
+        if (rv$optimalMode_act) {
+            HTML(word("out.optimal"))
+        } else {
+            hydroStart = format(rv$period[1], "%d %b")
+            hydroEnd = format(rv$period[2], "%d %b")
+            HTML(paste0(word("out.hp"), "<br>",
+                        word("out.from"), " ",
+                        hydroStart, " ",
+                        word("out.to"), " ",
+                        hydroEnd))
+        }
     })    
     
     df_dataAll = reactive({
@@ -1078,6 +1101,7 @@ server = function (input, output, session) {
         proba()
         hydroPeriod()
         rv$photoMode
+        rv$optimalMode
     }, {
         if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
             if (!all(CodeSample() %in% rv$CodeSample_act)) {
@@ -1086,7 +1110,7 @@ server = function (input, output, session) {
             }
         }
         
-        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod)) & is.null(rv$helpPage)) {
+        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod)) & is.null(rv$helpPage) & identical(rv$optimalMode, rv$optimalMode_act)) {
             hide(id="actualise_panelButton")    
         } else {
             if ((rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$hydroPeriod)) & !rv$photoMode) {
@@ -1094,7 +1118,6 @@ server = function (input, output, session) {
             }
         }
     })
-
 
     observeEvent({
         input$actualise_button
@@ -1113,6 +1136,7 @@ server = function (input, output, session) {
 
             rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
             rv$CodeSample_act = sort(rv$CodeSample_act)
+            rv$optimalMode_act = rv$optimalMode
             rv$var = var()
             rv$type = type()
             rv$period = period()
@@ -1154,10 +1178,35 @@ server = function (input, output, session) {
 
                 rv$unit = unit
 
+                if (rv$optimalMode_act) {
+                    event = Var$event[Var$var == rv$var]
+                    if (identical(hydroPeriod_opti[[event]], "min")) {
+                        minQM_code = df_meta()$minQM[df_meta()$Code %in% rv$CodeSample_act]
+                        Value = paste0(formatC(minQM_code,
+                                               width=2,
+                                               flag="0"),
+                                       '-01')
+                        hydroPeriod_analyse = tibble(Code=rv$CodeSample_act,
+                                             Value=Value)
+                    } else if (identical(hydroPeriod_opti[[event]], "max")) {
+                        maxQM_code = df_meta()$maxQM[df_meta()$Code %in% rv$CodeSample_act]
+                        Value = paste0(formatC(maxQM_code,
+                                               width=2,
+                                               flag="0"),
+                                       '-01')
+                        hydroPeriod_analyse = tibble(Code=rv$CodeSample_act,
+                                             Value=Value)
+                    } else {
+                        hydroPeriod_analyse = hydroPeriod_opti[[event]]
+                    }
+                } else {
+                    hydroPeriod_analyse = rv$hydroPeriod
+                }
+
                 res = get_Xtrend(rv$var,
                                  df_data,
                                  period=list(rv$period),
-                                 hydroPeriod=rv$hydroPeriod,
+                                 hydroPeriod=hydroPeriod_analyse,
                                  df_flag=df_flag,
                                  yearNA_lim=yearNA_lim,
                                  dayNA_lim=dayNA_lim,
@@ -1194,7 +1243,7 @@ server = function (input, output, session) {
 
                 rv$df_XEx = df_XEx
                 rv$df_Xtrend = df_Xtrend
-                
+
             } else {
                 rv$df_XEx = NULL
                 rv$df_Xtrend = NULL
@@ -1238,6 +1287,7 @@ server = function (input, output, session) {
                                      "-",
                                      hydroPeriod()[2]))
                 c(Start, End)
+
             } else {                
                 Start = as.Date(paste0(startYear,
                                        "-",

@@ -152,7 +152,7 @@ dhNavHelp = 21
 
 
 ## ashes
-hydrograph_period = c("1968-01-01", "1988-12-31")
+hydrograph_period = c("1900-01-01", "2020-12-31")
 data_path = file.path(computer_data_path, 'fst', 'data.fst')
 meta_path = file.path(computer_data_path, 'fst', 'meta.fst')
 if (!file.exists(data_path) | !file.exists(meta_path)) {
@@ -181,3 +181,10 @@ saving = c()
 fast_format = TRUE
 read_results = FALSE
 df_flag = NULL
+
+hydroPeriod_opti = list(
+    'Crue' = 'min',
+    'Crue Nivale' = "09-01",
+    'Moyennes Eaux' = 'min',
+    'Étiage' = c('05-01', '11-30')
+)

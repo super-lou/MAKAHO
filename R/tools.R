@@ -535,9 +535,9 @@ read_FST = function (resdir, filename, filedir='fst') {
 # df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
 
 
-get_trendExtremes = function (df_data, df_trend, unit,
-                              minQprob=0, maxQprob=1,
-                              CodeSample=NULL) {
+get_trendExtremesMOD = function (df_data, df_trend, unit,
+                                 minQprob=0, maxQprob=1,
+                                 CodeSample=NULL) {
     
     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
         df_mean = summarise(group_by(df_data, Code),

@@ -371,11 +371,22 @@ ui = bootstrapPage(
 
                     div(selectButton(
                         class="selectButton",
-                        inputId="sampleSlider_select",
-                        label=word("ana.sample.slider"),
-                        icon_name=iconLib$data_array_white,
+                        inputId="optimalSlider_select",
+                        label=word("ana.optimal.slider"),
+                        icon_name=iconLib$auto_awesome_white,
                         selected=FALSE,
-                        tooltip=word("tt.ana.sample.slider"))),
+                        tooltip=word("tt.ana.optimal.slider"))),
+                    
+                    hidden(
+                        div(id="sampleSlider",
+                            selectButton(
+                                class="selectButton",
+                                inputId="sampleSlider_select",
+                                label=word("ana.sample.slider"),
+                                icon_name=iconLib$data_array_white,
+                                selected=FALSE,
+                                tooltip=word("tt.ana.sample.slider")))
+                    ),
                     
                     hidden(
                         div(id="invertSlider",
