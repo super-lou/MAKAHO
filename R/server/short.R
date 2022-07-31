@@ -98,17 +98,3 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
 
     return (label)
 }
-
-switch_colorLabel = function (color) {
-    #switch 12% https://mdigi.tools/darken-color/#f6e8c3
-    if (color == "#F6E8C3") {
-        newColor = "#efd695"
-        
-    } else if (color == "#C7EAE5") {
-        newColor = "#a1dcd3"
-        
-    } else {
-        newColor = color
-    }
-    return (newColor)
-}

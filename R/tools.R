@@ -77,11 +77,7 @@ get_Var = function (dico, varProba) {
                 proba = NA
             }
 
-            reverse = FALSE
-            if (grepl('^tFIN', var) | grepl('^t[_]', var) | grepl('^v', var)) {
-                reverse = TRUE
-            }
-            
+            reverse = get_reverse(var)
             Var = bind_rows(Var, tibble(event=event,
                                         var=var,
                                         varHTML=varHTML,
