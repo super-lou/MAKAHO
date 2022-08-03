@@ -973,8 +973,7 @@ ui = bootstrapPage(
                    h1(HTML(word("help.p8.s1"))),
                    h4(HTML(word("help.p8.ss1"))),
                    p(HTML(word("help.p8.p1"))),
-                   p(HTML(word("help.p8.p2"))),
-                   p(HTML(word("help.p8.p3"))),
+                   p(HTML(word("help.p8.p2")))
                    ) 
     ),
 
@@ -997,11 +996,11 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 6.3.10. Page 10 _________________________________________________
+#### 6.3.10. Page 10 ___________________________________________________
     page_circle(n=10, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p10")),
-
+    
     hidden(
         fixedPanel(id="help10_panel",
                    class="Panel card-text",
@@ -1011,6 +1010,7 @@ ui = bootstrapPage(
                    h1(HTML(word("help.p10.s1"))),
                    h4(HTML(word("help.p10.ss1"))),
                    p(HTML(word("help.p10.p1"))),
+                   h4(HTML(word("help.p10.ss2"))),
                    p(HTML(word("help.p10.p2")))
                    )
     ),
@@ -1029,16 +1029,15 @@ ui = bootstrapPage(
                    h1(HTML(word("help.p11.s1"))),
                    h4(HTML(word("help.p11.ss1"))),
                    p(HTML(word("help.p11.p1"))),
-                   h4(HTML(word("help.p11.ss2"))),
                    p(HTML(word("help.p11.p2")))
                    )
-    ),    
+    ),
 
 #### 6.3.12. Page 12 _________________________________________________
     page_circle(n=12, leftBase=leftHelp, widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p12")),
-    
+
     hidden(
         fixedPanel(id="help12_panel",
                    class="Panel card-text",
@@ -1046,9 +1045,12 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p12.s1"))),
-                   p(HTML(word("help.p12.p1")))
+                   h4(HTML(word("help.p12.ss1"))),
+                   p(HTML(word("help.p12.p1"))),
+                   h4(HTML(word("help.p12.ss2"))),
+                   p(HTML(word("help.p12.p2")))
                    )
-    ),
+    ),    
 
 #### 6.3.13. Page 13 _________________________________________________
     page_circle(n=13, leftBase=leftHelp, widthHelp=widthHelp,
@@ -1062,8 +1064,7 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p13.s1"))),
-                   p(HTML(word("help.p13.p1"))),
-                   p(HTML(word("help.p13.p2")))
+                   p(HTML(word("help.p13.p1")))
                    )
     ),
 
@@ -1079,7 +1080,9 @@ ui = bootstrapPage(
                    width=widthHelp, height="auto",
                    
                    h1(HTML(word("help.p14.s1"))),
-                   p(HTML(word("help.p14.p1")))
+                   p(HTML(word("help.p14.p1"))),
+                   p(HTML(word("help.p14.p2"))),
+                   p(HTML(word("help.p14.p3")))
                    )
     ),
 

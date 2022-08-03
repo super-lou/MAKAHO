@@ -2323,19 +2323,12 @@ server = function (input, output, session) {
                 maskOnly(id="maskAna_panelButton")
             }
 
-            if (rv$helpPage == 9) {
+            if (rv$helpPage == 10) {
                 if (rv$width > width_lim) {
                     showOnly(id="ana_panel")
                 }
                 maskOnly(id=c("maskAna_panelButton",
                               "maskActualise_panelButton"))
-            }
-
-            if (rv$helpPage == 10) {
-                if (rv$width > width_lim) {
-                    showOnly(id="theme_panel")
-                }
-                maskOnly(id="")
             }
 
             if (rv$helpPage == 11) {
@@ -2347,16 +2340,16 @@ server = function (input, output, session) {
 
             if (rv$helpPage == 12) {
                 if (rv$width > width_lim) {
-                    showOnly(id="photo_bar")
+                    showOnly(id="theme_panel")
                 }
-                maskOnly(id="maskPhoto_panelButton")
+                maskOnly(id="")
             }
 
             if (rv$helpPage == 13) {
                 if (rv$width > width_lim) {
-                    showOnly(id=c("download_bar"))
+                    showOnly(id="photo_bar")
                 }
-                maskOnly(id="maskDownload_panelButton")
+                maskOnly(id="maskPhoto_panelButton")
             }
 
             if (rv$helpPage == 14) {
