@@ -7,6 +7,10 @@
     -webkit-font-smoothing: subpixel-antialiased !important;
 }
 
+strong, b {
+    font-weight: bold !important;
+}
+
 .Panel {
     flex-direction: column !important;
     align-items: stretch !important;

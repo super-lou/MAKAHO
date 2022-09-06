@@ -28,6 +28,21 @@
 
 ui = bootstrapPage(
 
+
+    tags$head(tags$script('
+                        var dimension = [0, 0];
+                        $(document).on("shiny:connected", function(e) {
+                        dimension[0] = window.innerWidth;
+                        dimension[1] = window.innerHeight;
+                        Shiny.onInputChange("dimension", dimension);
+                        });
+                        $(window).resize(function(e) {
+                        dimension[0] = window.innerWidth;
+                        dimension[1] = window.innerHeight;
+                        Shiny.onInputChange("dimension", dimension);
+                        });
+                        ')),
+
     useShinyjs(),
     
     tags$head(HTML("<title>MAKAHO</title> <link rel='icon' type='image/gif/png' href='MAKAHO.png'>")),
@@ -85,7 +100,7 @@ ui = bootstrapPage(
             width="auto", height=280,
             right=0, bottom="35%",
             
-            div(style="margin: 10px;",
+            div(style="position: absolute; margin: 10px;",
                 plotly::plotlyOutput("colorbar_plot"))
         )
     ),
@@ -98,7 +113,7 @@ ui = bootstrapPage(
             style="transform: translate(0, -50%);",
             fixed=TRUE,
             width="auto", height="auto",
-            right=0, top="25%",
+            right=0, top="30%",
             
             div(class="card-insert-text",
                 
@@ -194,11 +209,14 @@ ui = bootstrapPage(
             id='plot_panel',
             class="Panel card-insert-c",
             fixed=TRUE,
-            width=500, height=250,
+            width="auto",
+            height="auto",
             bottom=10,
             
-            div(style="position: absolute; margin: 10px;",
-                plotly::plotlyOutput("trend_plot")),
+            div(style="margin: 10px;",
+                plotly::plotlyOutput("trend_plot",
+                                     width="auto",
+                                     height="auto")),
             
             div(Button(class="Button-icon",
                        style="position: absolute;

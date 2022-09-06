@@ -315,9 +315,6 @@ server = function (input, output, session) {
             rv$minValue = res$min
             rv$maxValue = res$max
 
-            print(res$min)
-            print(res$max)
-
             fill = get_color(rv$df_value$value,
                              rv$minValue,
                              rv$maxValue,
@@ -1773,18 +1770,22 @@ server = function (input, output, session) {
                                       shareX=TRUE,
                                       margin=0.025)
 
-                plotWidth = 480
-                shift = 40
-                if (plotWidth < rv$width - shift) {
-                    width = plotWidth
-                } else {
-                    width = rv$width-shift
+                plotWidth = as.integer(rv$width/3) #480
+                plotHeight = as.integer(rv$height/3.3)
+                # shift = 40
+                # if (plotWidth < rv$width - shift) {
+                #     width = plotWidth
+                # } else {
+                #     width = rv$width-shift
+                # }
+                if (rv$width < rv$height) {
+                    plotWidth = plotWidth - 40
                 }
 
                 fig  = plotly::layout(fig,
                                       autosize=FALSE,
-                                      width=width,
-                                      height=230,
+                                      width=plotWidth,
+                                      height=plotHeight,
                                       
                                       xaxis=list(range=rv$period,
                                                  showgrid=FALSE,
