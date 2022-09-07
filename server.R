@@ -28,7 +28,7 @@
 
 server = function (input, output, session) {
 
-    if (file.exists(dev_path)) {
+    if (file.exists(dev_path_ashes) | file.exists(dev_path_dataSHEEP)) {
         session$onSessionEnded(stopApp)
         verbose = TRUE
     } else {
@@ -1577,7 +1577,7 @@ server = function (input, output, session) {
                 fig1 = plotly::add_annotations(
                                    fig1,
                                    x=0.01,
-                                   y=1.29,
+                                   y=1.25,
                                    xref="paper",
                                    yref="paper",
                                    text=paste0("<b>",
@@ -1770,17 +1770,18 @@ server = function (input, output, session) {
                                       shareX=TRUE,
                                       margin=0.025)
 
-                plotWidth = as.integer(rv$width/3) #480
-                plotHeight = as.integer(rv$height/3.3)
-                # shift = 40
-                # if (plotWidth < rv$width - shift) {
-                #     width = plotWidth
-                # } else {
-                #     width = rv$width-shift
-                # }
-                if (rv$width < rv$height) {
-                    plotWidth = plotWidth - 40
+                plotHeight = as.integer(rv$height/2.7)
+                if (rv$width > 1920) {
+                    plotWidth = as.integer(rv$width/3)
+                } else if (rv$width > 1080 & rv$width <= 1920) {
+                    plotWidth = as.integer(rv$width/2.5)
+                } else if (rv$width > 720 & rv$width <= 1080) {
+                    plotWidth = as.integer(rv$width/2)
+                } else if (rv$width <= 720) {
+                    plotWidth = rv$width - 40
                 }
+                
+                margin_top = as.integer(plotHeight/7.6)
 
                 fig  = plotly::layout(fig,
                                       autosize=FALSE,
@@ -1802,7 +1803,7 @@ server = function (input, output, session) {
                                       margin=list(l=0,
                                                   r=12,
                                                   b=0,
-                                                  t=32,
+                                                  t=margin_top, #32
                                                   pad=0))
                                 
                 fig = plotly::config(
@@ -1899,16 +1900,22 @@ server = function (input, output, session) {
                            plot=FALSE)
                 # Extracts the number of counts per cells
                 counts = res$counts
+
+                plotWidth = 67
+                plotHeight = 260# as.integer(rv$height/2.8) 
                 
-                fig = plotly::plotly_empty(width=62, height=260)
+                fig = plotly::plotly_empty(width=plotWidth,
+                                           height=plotHeight)
                 
                 for (i in 2:(colorStep-1)) {
                     fig = plotly::add_trace(
                                       fig,
                                       type="scatter",
                                       mode="lines",
-                                      x=c(X0[i], X0[i], X1[i], X1[i], X0[i]),
-                                      y=c(Y0[i], Y1[i], Y1[i], Y0[i], Y0[i]),
+                                      x=c(X0[i], X0[i],
+                                          X1[i], X1[i], X0[i]),
+                                      y=c(Y0[i], Y1[i],
+                                          Y1[i], Y0[i], Y0[i]),
                                       fill="toself",
                                       fillcolor=PaletteColors[i],
                                       line=list(width=0),
@@ -2004,7 +2011,7 @@ server = function (input, output, session) {
                     fig = plotly::layout(
                                       fig,
                                       margin=list(l=0,
-                                                  r=0,
+                                                  r=5,
                                                   b=6,
                                                   t=0,
                                                   pad=0))
@@ -2012,7 +2019,7 @@ server = function (input, output, session) {
                     fig = plotly::layout(
                                       fig,
                                       margin=list(l=0,
-                                                  r=0,
+                                                  r=5,
                                                   b=3,
                                                   t=3,
                                                   pad=0))

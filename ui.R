@@ -97,11 +97,17 @@ ui = bootstrapPage(
             class="Panel card-insert-r",
             style="transform: translate(0, 50%);",
             fixed=TRUE,
-            width="auto", height=280,
+            width="auto",
+            height="auto", #280
             right=0, bottom="35%",
             
-            div(style="position: absolute; margin: 10px;",
-                plotly::plotlyOutput("colorbar_plot"))
+            div(style="margin-top: 10px;
+                       margin-bottom: 10px;
+                       margin-left: 10px;
+                       margin-right: 5px;",
+                plotly::plotlyOutput("colorbar_plot",
+                                     width="auto",
+                                     height="auto"))
         )
     ),
 
@@ -852,7 +858,8 @@ ui = bootstrapPage(
 
 ### 6.3. Pages _______________________________________________________
 #### 6.3.1. Page 1 ___________________________________________________
-    page_circle(n=1, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=1, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p1")),
     
@@ -860,7 +867,7 @@ ui = bootstrapPage(
         fixedPanel(id="help1_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(style="font-size: 4em;",
                       HTML(word("help.p1.s1"))),
@@ -869,7 +876,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.2. Page 2 ___________________________________________________
-    page_circle(n=2, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=2, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p2")),
 
@@ -877,7 +885,7 @@ ui = bootstrapPage(
         fixedPanel(id="help2_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p2.s1"))),
                    h4(HTML(word("help.p2.ss1"))),
@@ -886,7 +894,8 @@ ui = bootstrapPage(
     ),
     
 #### 6.3.3. Page 3 ___________________________________________________
-    page_circle(n=3, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=3, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p3")),
 
@@ -894,7 +903,7 @@ ui = bootstrapPage(
         fixedPanel(id="help3_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p3.s1"))),
                    h4(HTML(word("help.p3.ss1"))),
@@ -904,7 +913,8 @@ ui = bootstrapPage(
     ),
     
 #### 6.3.4. Page 4 ___________________________________________________
-    page_circle(n=4, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=4, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p4")),
 
@@ -912,7 +922,7 @@ ui = bootstrapPage(
         fixedPanel(id="help4_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p4.s1"))),
                    p(HTML(word("help.p4.p1"))),
@@ -921,7 +931,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.5. Page 5 ___________________________________________________
-    page_circle(n=5, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=5, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p5")),
 
@@ -929,7 +940,7 @@ ui = bootstrapPage(
         fixedPanel(id="help5_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p5.s1"))),
                    h4(HTML(word("help.p5.ss1"))),
@@ -940,7 +951,8 @@ ui = bootstrapPage(
     ),
     
 #### 6.3.6. Page 6 ___________________________________________________
-    page_circle(n=6, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=6, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p6")),
 
@@ -948,7 +960,7 @@ ui = bootstrapPage(
         fixedPanel(id="help6_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p6.s1"))),
                    h4(HTML(word("help.p6.ss1"))),
@@ -959,7 +971,8 @@ ui = bootstrapPage(
 
     
 #### 6.3.7. Page 7 ___________________________________________________
-    page_circle(n=7, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=7, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p7")),
 
@@ -967,7 +980,7 @@ ui = bootstrapPage(
         fixedPanel(id="help7_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p7.s1"))),
                    h4(HTML(word("help.p7.ss1"))),
@@ -978,7 +991,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.8. Page 8 ___________________________________________________
-    page_circle(n=8, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=8, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p8")),
 
@@ -986,7 +1000,7 @@ ui = bootstrapPage(
         fixedPanel(id="help8_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p8.s1"))),
                    h4(HTML(word("help.p8.ss1"))),
@@ -996,7 +1010,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.9. Page 9 ___________________________________________________
-    page_circle(n=9, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=9, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p9")),
     
@@ -1004,7 +1019,7 @@ ui = bootstrapPage(
         fixedPanel(id="help9_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p9.s1"))),
                    h4(HTML(word("help.p9.ss1"))),
@@ -1015,7 +1030,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.10. Page 10 ___________________________________________________
-    page_circle(n=10, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=10, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p10")),
     
@@ -1023,7 +1039,7 @@ ui = bootstrapPage(
         fixedPanel(id="help10_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p10.s1"))),
                    h4(HTML(word("help.p10.ss1"))),
@@ -1034,7 +1050,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.11. Page 11 _________________________________________________
-    page_circle(n=11, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=11, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p11")),
 
@@ -1042,7 +1059,7 @@ ui = bootstrapPage(
         fixedPanel(id="help11_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p11.s1"))),
                    h4(HTML(word("help.p11.ss1"))),
@@ -1052,7 +1069,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.12. Page 12 _________________________________________________
-    page_circle(n=12, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=12, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p12")),
 
@@ -1060,8 +1078,8 @@ ui = bootstrapPage(
         fixedPanel(id="help12_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
-                   
+                   width="auto", height="auto",
+
                    h1(HTML(word("help.p12.s1"))),
                    h4(HTML(word("help.p12.ss1"))),
                    p(HTML(word("help.p12.p1"))),
@@ -1071,7 +1089,8 @@ ui = bootstrapPage(
     ),    
 
 #### 6.3.13. Page 13 _________________________________________________
-    page_circle(n=13, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=13, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p13")),
     
@@ -1079,7 +1098,7 @@ ui = bootstrapPage(
         fixedPanel(id="help13_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p13.s1"))),
                    p(HTML(word("help.p13.p1")))
@@ -1087,7 +1106,8 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.14. Page 14 _________________________________________________
-    page_circle(n=14, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=14, leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p14")),
     
@@ -1095,7 +1115,7 @@ ui = bootstrapPage(
         fixedPanel(id="help14_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto", height="auto",
                    
                    h1(HTML(word("help.p14.s1"))),
                    p(HTML(word("help.p14.p1"))),
@@ -1105,7 +1125,9 @@ ui = bootstrapPage(
     ),
 
 #### 6.3.15. Page 15 _________________________________________________
-    page_circle(n=15, leftBase=leftHelp, widthHelp=widthHelp,
+    page_circle(n=15,
+                leftBase=leftHelp,
+                widthHelp=widthHelp,
                 top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
                 dh=dhNavHelp, tooltip=word("tt.help.p15")),
     
@@ -1113,7 +1135,8 @@ ui = bootstrapPage(
         fixedPanel(id="help15_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
-                   width=widthHelp, height="auto",
+                   width="auto",
+                   height="auto",
                    
                    h1(HTML(word("help.p15.s1"))),
                    p(HTML(word("help.p15.p1")))

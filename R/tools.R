@@ -175,7 +175,8 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                      icon=NULL,
                      width=width,
                      img(icon_name, align="right",
-                         style="text-align: center;"),
+                         style="text-align: center;
+                                display: flex; align-items: center;"),
                      ...)
     } else {
         div(class="Tooltip bunch",
@@ -187,7 +188,8 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                              icon=NULL,
                              width=width,
                              img(icon_name, align="right",
-                                 style="text-align: center;"),
+                                 style="text-align: center;
+                                        display: flex; align-items: center;"),
                              ...),
                 '<span class="Tooltiptext">', tooltip, '</span>')))
     }
@@ -206,7 +208,8 @@ selectButton = function (inputId, label=NULL, icon_name=NULL,
                     choiceNames=
                         paste0(img(icon_name,
                                    align="right",
-                                   style="text-align: center;"),
+                                   style="text-align: center;
+                                          display: flex; align-items: center;"),
                                label),
                     choiceValues=TRUE,
                     selected=selected,
@@ -220,7 +223,8 @@ selectButton = function (inputId, label=NULL, icon_name=NULL,
             choiceNames=
                 paste0(img(icon_name,
                            align="right",
-                           style="text-align: center;"),
+                           style="text-align: center;
+                                  display: flex; align-items: center;"),
                        label),
             choiceValues=TRUE,
             selected=selected,
@@ -238,7 +242,8 @@ updateSelectButton = function (session, inputId, label=NULL,
     } else {
         choiceNames = paste0(img(icon_name,
                                  align="right",
-                                 style="text-align: center;"),
+                                 style="text-align: center;
+                                        display: flex; align-items: center;"),
                              label)
         choiceValues = TRUE
     }
@@ -271,7 +276,8 @@ radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
     }
     if (!is.null(choiceIcons)) {
         inter = lapply(choiceIcons, img, align="right",
-                       style="text-align: center;")
+                       style="text-align: center;
+                              display: flex; align-items: center;")
         choiceItems = mapply(paste0, inter, choiceItems)
     }
     if (!is.null(choiceTooltips)) {
@@ -310,7 +316,8 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
     }
     if (!is.null(choiceIcons)) {
         inter = lapply(choiceIcons, img, align="right",
-                       style="text-align: center;")
+                       style="text-align: center;
+                              display: flex; align-items: center;")
         choiceItems = mapply(paste0, inter, choiceItems)
     }
     if (!is.null(choiceTooltips)) {
@@ -352,7 +359,8 @@ updateSlider = function (class, modeText=FALSE, ...) {
 }
 
 
-page_circle = function (n, leftBase, widthHelp, top, dh, tooltip=NULL) {
+page_circle = function (n, leftBase, widthHelp,
+                        top, dh, tooltip=NULL) {
     hidden(
         fixedPanel(id=paste0("c", n,"_panelButton"),
                    left=paste0("calc(", leftBase,
