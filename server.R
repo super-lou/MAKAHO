@@ -28,7 +28,7 @@
 
 server = function (input, output, session) {
 
-    if (file.exists(dev_path_ashes) | file.exists(dev_path_dataSHEEP)) {
+    if (file.exists(dev_path_ashes) | file.exists(dev_path_dataSheep)) {
         session$onSessionEnded(stopApp)
         verbose = TRUE
     } else {
