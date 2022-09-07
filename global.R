@@ -44,7 +44,7 @@ library(sp)
 
 dev_path_ashes = file.path(dirname(dirname(getwd())),
                            "ashes_project",
-                           'ashes', 'Ra')
+                           'ashes', 'R')
 if (file.exists(dev_path_ashes)) {
     print('Loading ashes from local directory')
     list_path_ashes = list.files(dev_path_ashes,
@@ -58,17 +58,17 @@ if (file.exists(dev_path_ashes)) {
     library(ashes)
 }
 
-dev_path_dataSHEEP = file.path(dirname(dirname(getwd())),
-                     'dataSHEEP_project', 'dataSHEEP', 'Ra')
-if (file.exists(dev_path_dataSHEEP)) {
-    print('Loading dataSHEEP from local directory')
-    list_path_dataSHEEP = list.files(dev_path_dataSHEEP, pattern="*.R$", full.names=TRUE)
-    for (path_dataSHEEP in list_path_dataSHEEP) {
-        source(path_dataSHEEP, encoding='UTF-8')    
+dev_path_waterSheep = file.path(dirname(dirname(getwd())),
+                     'waterSheep_project', 'waterSheep', 'R')
+if (file.exists(dev_path_waterSheep)) {
+    print('Loading waterSheep from local directory')
+    list_path_waterSheep = list.files(dev_path_waterSheep, pattern="*.R$", full.names=TRUE)
+    for (path_waterSheep in list_path_waterSheep) {
+        source(path_waterSheep, encoding='UTF-8')    
     }
 } else {
-    print('Loading dataSHEEP from package')
-    library(dataSHEEP)
+    print('Loading waterSheep from package')
+    library(waterSheep)
 }
 
 # Sourcing R files
