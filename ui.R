@@ -860,7 +860,7 @@ ui = bootstrapPage(
 #### 6.3.1. Page 1 ___________________________________________________
     page_circle(n=1, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p1")),
     
     hidden(
@@ -878,7 +878,7 @@ ui = bootstrapPage(
 #### 6.3.2. Page 2 ___________________________________________________
     page_circle(n=2, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p2")),
 
     hidden(
@@ -896,7 +896,7 @@ ui = bootstrapPage(
 #### 6.3.3. Page 3 ___________________________________________________
     page_circle(n=3, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p3")),
 
     hidden(
@@ -915,7 +915,7 @@ ui = bootstrapPage(
 #### 6.3.4. Page 4 ___________________________________________________
     page_circle(n=4, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p4")),
 
     hidden(
@@ -933,7 +933,7 @@ ui = bootstrapPage(
 #### 6.3.5. Page 5 ___________________________________________________
     page_circle(n=5, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p5")),
 
     hidden(
@@ -953,7 +953,7 @@ ui = bootstrapPage(
 #### 6.3.6. Page 6 ___________________________________________________
     page_circle(n=6, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p6")),
 
     hidden(
@@ -973,7 +973,7 @@ ui = bootstrapPage(
 #### 6.3.7. Page 7 ___________________________________________________
     page_circle(n=7, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p7")),
 
     hidden(
@@ -993,7 +993,7 @@ ui = bootstrapPage(
 #### 6.3.8. Page 8 ___________________________________________________
     page_circle(n=8, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p8")),
 
     hidden(
@@ -1012,7 +1012,7 @@ ui = bootstrapPage(
 #### 6.3.9. Page 9 ___________________________________________________
     page_circle(n=9, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p9")),
     
     hidden(
@@ -1032,7 +1032,7 @@ ui = bootstrapPage(
 #### 6.3.10. Page 10 ___________________________________________________
     page_circle(n=10, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p10")),
     
     hidden(
@@ -1052,7 +1052,7 @@ ui = bootstrapPage(
 #### 6.3.11. Page 11 _________________________________________________
     page_circle(n=11, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p11")),
 
     hidden(
@@ -1071,7 +1071,7 @@ ui = bootstrapPage(
 #### 6.3.12. Page 12 _________________________________________________
     page_circle(n=12, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p12")),
 
     hidden(
@@ -1091,7 +1091,7 @@ ui = bootstrapPage(
 #### 6.3.13. Page 13 _________________________________________________
     page_circle(n=13, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p13")),
     
     hidden(
@@ -1108,7 +1108,7 @@ ui = bootstrapPage(
 #### 6.3.14. Page 14 _________________________________________________
     page_circle(n=14, leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p14")),
     
     hidden(
@@ -1128,7 +1128,7 @@ ui = bootstrapPage(
     page_circle(n=15,
                 leftBase=leftHelp,
                 widthHelp=widthHelp,
-                top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p15")),
     
     hidden(
@@ -1149,7 +1149,7 @@ ui = bootstrapPage(
                    left=paste0("calc(", leftHelp,
                                " - ", 0.5*widthHelp, "px",
                                " - ", dhNavHelp, "px)"),
-                   top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                   bottom=bottomNavHelp,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='before_button',
@@ -1165,7 +1165,7 @@ ui = bootstrapPage(
                    left=paste0("calc(", leftHelp,
                                " - ", 0.5*widthHelp, "px",
                                " + ", dhNavHelp*N_helpPage, "px)"),
-                   top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                   bottom=bottomNavHelp,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='next_button',
@@ -1180,7 +1180,7 @@ ui = bootstrapPage(
                    left=paste0("calc(", leftHelp,
                                " - ", 0.5*widthHelp, "px",
                                " + ", dhNavHelp*(N_helpPage+1), "px)"),
-                   top=paste0("calc(", topHelp, " + ", dyNavHelp, "px)"),
+                   bottom=bottomNavHelp,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           inputId='closeHelp_button',

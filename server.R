@@ -147,6 +147,13 @@ server = function (input, output, session) {
                                options=list(padding=c(20, 20)))
     })
 
+
+    observeEvent(input$map_click, {
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !rv$photoMode) {
+            hideAll()
+        }
+    })
+
 ### 1.2. Zoom ________________________________________________________    
     observeEvent({
         input$dimension

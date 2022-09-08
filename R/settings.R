@@ -145,8 +145,8 @@ none2Color_dark = grey18COL
 N_helpPage = 15
 widthHelp = 350
 leftHelp = "51%"
-topHelp = "47%"
-dyNavHelp = 300
+topHelp = "45%"
+bottomNavHelp = 45
 dhNavHelp = 21
 
 

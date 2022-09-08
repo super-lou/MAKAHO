@@ -360,13 +360,13 @@ updateSlider = function (class, modeText=FALSE, ...) {
 
 
 page_circle = function (n, leftBase, widthHelp,
-                        top, dh, tooltip=NULL) {
+                        bottom, dh, tooltip=NULL) {
     hidden(
         fixedPanel(id=paste0("c", n,"_panelButton"),
                    left=paste0("calc(", leftBase,
                                " - ", 0.5*widthHelp, "px",
                                " + ", dh*(n-1), "px)"),
-                   top=top,
+                   bottom=bottom,
                    width="auto", height="auto",
 
                    hidden(

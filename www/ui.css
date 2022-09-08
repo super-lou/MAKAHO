@@ -7,6 +7,10 @@
     -webkit-font-smoothing: subpixel-antialiased !important;
 }
 
+.shiny-input-container:not(.shiny-input-container-inline) {
+  width: fit-content !important;
+}
+
 strong, b {
     font-weight: bold !important;
 }
@@ -37,9 +41,9 @@ strong, b {
     padding-right: 1rem !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
-    min-width: 20rem !important;
+    /* min-width: calc(100vw - 20px) !important; */
     width: 28rem !important;
-    max-width: calc(100vw - 3rem) !important;
+    max-width: calc(100vw - 20px) !important;
 }
 
 .card-settings {
@@ -125,7 +129,7 @@ strong, b {
 }
 
 .card-text {
-    min-width: 24rem !important;
+    min-width: 22rem !important;
     max-width: calc(100vw - 55vw) !important;
     background-color: transparent !important;
     transform: translate(-50%, -50%) !important;
@@ -432,6 +436,7 @@ a:hover {
     flex-wrap: wrap !important;
     /* align-items: baseline !important; */
     margin: -1px !important;
+    width: fit-content !important;
 
 }
 
@@ -517,18 +522,18 @@ a:hover {
     margin-bottom: -30px !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    min-width: 11.2rem !important;
+    /* min-width: 11.2rem !important; */
     width: 17.5rem !important;
-    max-width: calc(100vw - 13.3rem) !important;
+    max-width: calc(100vw - 11rem) !important;
 }
 .size2Slider .irs {
     margin-top: -6px !important;
     margin-bottom: -24px !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    min-width: 13.5rem !important;
-    width: 20rem !important;
-    max-width: calc(100vw - 11rem) !important;
+    /* min-width: 13.5rem !important; */
+    width: 20.7rem !important;
+    max-width: calc(100vw - 8.4rem) !important;
 }
 
 /* Selection bar */
