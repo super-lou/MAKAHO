@@ -1,4 +1,4 @@
-# MAKAHO [<img src="www/MAKAHO.png" align="right" width=160 height=160 alt=""/>](https://makaho.sk8.inrae.fr/)
+# MAKAHO [<img src="www/MAKAHO.png" align="right" width=140 height=140 alt=""/>](https://makaho.sk8.inrae.fr/)
 
 <!-- badges: start -->
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green)](https://lifecycle.r-lib.org/articles/stages.html)
