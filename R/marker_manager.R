@@ -143,7 +143,7 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 #     )
 
 # create_marker(shapeList=c(21, 24, 25),
-#               sizeShapeList=c(6, 7, 7),
+#               sizeShapeList=c(5, 7, 7),
 #               colorList=c(validColor, invalidColor),
 #               strokeColorList=c(0.8, 1),
 #               sizeList=c(0.8, 1.2),

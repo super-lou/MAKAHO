@@ -27,7 +27,7 @@
 
 
 # Path to the data
-computer_data_path = 'data'       
+computer_data_path = 'data'
 
 # Resources directory
 resources_path = 'resources'

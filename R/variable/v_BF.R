@@ -5,8 +5,8 @@ glose = "Volume des écoulements lents (volume de l’intégrale sous la courbe 
 event = "Crue Nivale"
 hydroPeriod = c("09-01", "08-31")
 
-yearNA_lim = 10
-dayNA_lim = 3
+NAyear_lim = 10
+NApct_lim = 3
 day_to_roll = NULL
 
 functM = NULL

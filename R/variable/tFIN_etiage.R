@@ -5,8 +5,8 @@ glose = "Fin d'étiage (jour de l'année de la dernière moyenne sur 10 jours so
 event = "Étiage"
 hydroPeriod = c('05-01', '11-30')
 
-yearNA_lim = 10
-dayNA_lim = 3
+NAyear_lim = 10
+NApct_lim = 3
 day_to_roll = 10
 
 functM = NULL

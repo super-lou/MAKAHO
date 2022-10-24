@@ -34,6 +34,7 @@ library(leaflet)
 library(StatsAnalysisTrend)
 library(icons)
 library(dplyr)
+library(stringr)
 # already ::
 library(accelerometry)
 library(CircStats)

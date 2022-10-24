@@ -5,8 +5,8 @@ glose = "Minimum annuel du débit journalier"
 event = "Étiage"
 hydroPeriod = "01-01"
 
-yearNA_lim = 10
-dayNA_lim = 3
+NAyear_lim = 10
+NApct_lim = 3
 day_to_roll = NULL
 
 functM = NULL

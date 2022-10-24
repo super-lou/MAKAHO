@@ -35,7 +35,8 @@ server = function (input, output, session) {
         verbose = FALSE
     }
 
-    rv = reactiveValues(start=FALSE,
+    rv = reactiveValues(startHelp=FALSE,
+                        start=FALSE,
                         width=0,
                         height=0,
                         CodeSample=NULL,
@@ -97,7 +98,8 @@ server = function (input, output, session) {
         showElement(id='photo_panelButton')
         showElement(id='download_panelButton')
         showElement(id='help_panelButton')
-        rv$start = TRUE
+        # rv$start = TRUE
+        rv$startHelp = TRUE
         startOBS$destroy()
     })
 
@@ -370,11 +372,26 @@ server = function (input, output, session) {
         } else {
             okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
+        
         rv$theme_choice_save = input$theme_choice
-
-        Code = CodeAll()[okCode]
+        rv$markerListAll_save = markerListAll()
+        
         markerList = markerListAll()
         markerList$iconUrl = markerListAll()$iconUrl[okCode]
+        
+        codeShapeList =
+            as.numeric(str_extract(unlist(markerList$iconUrl),
+                                   "[:digit:]+"))
+        # print(codeShapeList)
+        
+        # plotOrder = order(codeShapeList)
+
+        # print(plotOrder)
+
+        
+
+        markerList$iconUrl = markerList$iconUrl
+        Code = CodeAll()[okCode]
         Lon = df_meta()$lon[okCode]
         Lat = df_meta()$lat[okCode]
         Nom = df_meta()$nom[okCode]
@@ -432,14 +449,55 @@ server = function (input, output, session) {
         )
 
         map = removeMarker(map, layerId=Code)
-        map = addMarkers(map,
-                         lng=Lon,
-                         lat=Lat,
-                         icon=markerList,
-                         label=lapply(label, HTML),
-                         layerId=Code)
+        # map = addMarkers(map,
+        #                  lng=Lon,
+        #                  lat=Lat,
+        #                  icon=markerList,
+        #                  label=lapply(label, HTML),
+        #                  layerId=Code)
 
-        rv$markerListAll_save = markerListAll()
+        ok21 = codeShapeList == 21
+        okN21 = !ok21
+
+
+        print(ok21)
+        print(any(ok21))
+        print(okN21)
+        print(any(okN21))
+
+        iconAnchorX = list(iconAnchorX=markerList$iconAnchorX)
+        iconAnchorY = list(iconAnchorY=markerList$iconAnchorY)
+
+        iconUrl21 = unlist(markerList$iconUrl, use.names=FALSE)[ok21]
+        iconUrl21 = as.list(iconUrl21)
+        names(iconUrl21) = rep("iconUrl", times=length(iconUrl21))
+        iconUrl21 = list(iconUrl=iconUrl21)
+        markerList21 = append(iconUrl21, iconAnchorX)
+        markerList21 = append(markerList21, iconAnchorY)
+
+        map = addMarkers(map,
+                         lng=Lon[ok21],
+                         lat=Lat[ok21],
+                         icon=markerList21,
+                         label=lapply(label[ok21], HTML),
+                         layerId=Code[ok21])
+
+        iconUrlN21 = unlist(markerList$iconUrl, use.names=FALSE)[okN21]
+        iconUrlN21 = as.list(iconUrlN21)
+        names(iconUrlN21) = rep("iconUrl", times=length(iconUrlN21))
+        iconUrlN21 = list(iconUrl=iconUrlN21)
+        markerListN21 = append(iconUrlN21, iconAnchorX)
+        markerListN21 = append(markerListN21, iconAnchorY)
+
+        map = addMarkers(map,
+                         lng=Lon[okN21],
+                         lat=Lat[okN21],
+                         icon=markerListN21,
+                         label=lapply(label[okN21], HTML),
+                         layerId=Code[okN21])
+
+        print("ok")
+        print("")
     })    
     
 
@@ -1127,7 +1185,7 @@ server = function (input, output, session) {
         input$actualise_button
         rv$actualiseForce
         rv$start
-    }, {       
+    }, {
         if (!is.null(df_data()) & !is.null(df_meta()) & var() != FALSE & !is.null(period())) {
             rv$actualise = TRUE
             showElement(id="loading_panel")
@@ -1135,8 +1193,8 @@ server = function (input, output, session) {
     })
 
     observeEvent(rv$actualise, {
-
-        if (rv$actualise) {
+        
+        if (rv$actualise & rv$start) {
 
             rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
             rv$CodeSample_act = sort(rv$CodeSample_act)
@@ -1212,8 +1270,8 @@ server = function (input, output, session) {
                                  period=list(rv$period),
                                  hydroPeriod=hydroPeriod_analyse,
                                  df_flag=df_flag,
-                                 yearNA_lim=yearNA_lim,
-                                 dayNA_lim=dayNA_lim,
+                                 yearNA_lim=NAyear_lim,
+                                 dayNA_lim=NApct_lim,
                                  day_to_roll=day_to_roll,
                                  functM=functM,
                                  functM_args=functM_args,
@@ -2256,17 +2314,22 @@ server = function (input, output, session) {
     })
 
 ## 6. HELP ___________________________________________________________
-    observeEvent(input$help_button, {
+    observeEvent({
+        input$help_button
+        rv$startHelp
+    }, {
+
+        rv$start = TRUE
+        
         rv$helpPage = 1
         rv$helpPage_save = 0
-        hide(id='help_panelButton')
-        showElement(id='closeHelp_panelButton')
 
         hideAll()
         deselect_mode(session, rv)
-        
         maskAll()
+        
         showElement(id='blur_panel')
+        hide(id='help_panelButton')
         
         showElement(id='focusZoom_panelButton')
         showElement(id='actualise_panelButton')
@@ -2274,6 +2337,9 @@ server = function (input, output, session) {
         showElement(id='before_panelButton')
         show_page(n=1, N=N_helpPage)
         showElement(id='next_panelButton')
+        showElement(id='closeHelp_panelButton')
+
+        showElement(id='dlHelp_panelButton')
         
     })
 
@@ -2390,24 +2456,47 @@ server = function (input, output, session) {
         }
     })
 
+
+    observeEvent(input$dlHelp_button, {
+        outdir = file.path(resources_path)
+        outfile = "makaho_notice.pdf"
+        outpath = file.path(outdir, outfile)
+        
+        output$downloadData = downloadHandler(
+            filename = function () {
+                outfile
+            },
+            content = function (file) {
+                from = outpath
+                file.copy(from, file)
+            }
+        )
+        jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+        session$sendCustomMessage(type='jsCode',
+                                  list(value=jsinject))
+    })
+    
+
     observeEvent(input$closeHelp_button, {
         rv$helpPage = NULL
         rv$helpPage_save = NULL
 
         hideAll()
-        
         hide(id='focusZoom_panelButton')
         hide(id='actualise_panelButton')
-        
         demaskAll()
+
+        hide(id='blur_panel')
+        showElement(id='help_panelButton')
 
         hide(id='before_panelButton')
         hide_page(N=N_helpPage)
         hide(id='next_panelButton')
-        hide(id='closeHelp_panelButton')     
-        showElement(id='help_panelButton')
+        hide(id='closeHelp_panelButton')
 
-        hide(id='blur_panel')
+        hide(id='dlHelp_panelButton')        
     })
 
     

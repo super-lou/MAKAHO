@@ -1191,6 +1191,24 @@ ui = bootstrapPage(
     ),
 
     hidden(
+        fixedPanel(id='dlHelp_panelButton',
+                   left=paste0("calc(", leftHelp,
+                               " - 1% - 0.5rem)"),
+                   bottom=paste0("calc(", bottomNavHelp, "px - 2rem)"), 
+                   width="auto", height="auto",
+                   Button(class="Button-icon",
+                          style="padding-left: 0.5rem !important;
+                                 padding-right: 0.5rem !important;",
+                          inputId='dlHelp_button',
+                          label=word("help.dl"),
+                          icon_name=iconLib$newspaper_white,
+                          tooltip=NULL) 
+                   )
+    ),
+
+
+
+    hidden(
         fixedPanel(id='loading_panel',
                    class="card-load",
                    left=0, top=0,

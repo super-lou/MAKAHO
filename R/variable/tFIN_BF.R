@@ -5,8 +5,8 @@ glose = "Fin des écoulements lents (date lorsque 90% de l’intégrale sous la 
 event = "Crue Nivale"
 hydroPeriod = c("09-01", "08-31")
 
-yearNA_lim = 10
-dayNA_lim = 3
+NAyear_lim = 10
+NApct_lim = 3
 day_to_roll = NULL
 
 functM = NULL

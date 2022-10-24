@@ -5,8 +5,8 @@ glose = "Volume de déficite de l'étiage (intégrale de la courbe de la moyenne
 event = "Étiage"
 hydroPeriod = c('05-01', '11-30')
 
-yearNA_lim = 10
-dayNA_lim = 3
+NAyear_lim = 10
+NApct_lim = 3
 day_to_roll = 10
 
 functM = NULL

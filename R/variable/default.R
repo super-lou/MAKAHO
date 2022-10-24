@@ -5,8 +5,8 @@ glose = ""
 event = ""
 hydroPeriod = c("01-01", "12-31")
 
-yearNA_lim = NULL
-dayNA_lim = NULL
+NAyear_lim = NULL
+NApct_lim = NULL
 day_to_roll = NULL
 
 functM = NULL
