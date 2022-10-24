@@ -131,7 +131,8 @@ midCyanCOL = "#008c8e"
 darkCyanCOL = "#275662"
 INRAECyanCOL = "#00a3a6"
 
-validColor = grey50COL
+validSColor = grey50COL
+validNSColor = grey70COL
 invalidColor = yellowCOL
 missColor = redCOL
 

@@ -71,7 +71,8 @@ server = function (input, output, session) {
                         shapeList=NULL,
                         colorList=NULL,
                         fillList=NULL,
-                        codeClick=NULL,
+                        trendLabelAll=NULL,
+                        codePlot=NULL,
                         missCode=c(),
                         invalidCode=c(),
                         badCode=c(),
@@ -126,6 +127,7 @@ server = function (input, output, session) {
                                              maxZoom=maxZoom,
                                              zoomControl=FALSE,
                                              attributionControl=FALSE))
+        
         map = fitBounds(map,
                         lng1=defaultLimits()$east,
                         lat1=defaultLimits()$south,
@@ -287,7 +289,7 @@ server = function (input, output, session) {
             trendCode = rv$df_Xtrend$Code
 
             sizeList = rep('small', nCodeAll())
-            sizeList[match(rv$codeClick, CodeAll())] = 'big'
+            sizeList[match(rv$codePlot, CodeAll())] = 'big'
 
             rv$sizeList = sizeList
             
@@ -305,7 +307,8 @@ server = function (input, output, session) {
             rv$shapeList = shapeList
             
             colorList = rep(none1Color, nCodeAll())
-            colorList[match(CodeSample(), CodeAll())] = validColor
+            colorList[match(CodeSample(), CodeAll())] = validSColor
+            colorList[match(CodeNS, CodeAll())] = validNSColor
             invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
             colorList[match(invalidCodeSample, CodeAll())] = invalidColor
             missCodeSample = missCode()[missCode() %in% CodeSample()]
@@ -381,38 +384,100 @@ server = function (input, output, session) {
         
         codeShapeList =
             as.numeric(str_extract(unlist(markerList$iconUrl),
-                                   "[:digit:]+"))
-        # print(codeShapeList)
+                                   "[:digit:]+"))        
+
+        LonAll = df_meta()$lon
+        LatAll = df_meta()$lat
+        NomAll = df_meta()$nom
+        SupAll = df_meta()$surface_km2_BH
+        AltAll = df_meta()$altitude_m_BH
+        trendColorAll = rv$fillList
+        trendColorAll = sapply(trendColorAll, switch_colorLabel)
         
-        # plotOrder = order(codeShapeList)
-
-        # print(plotOrder)
-
-        
-
         markerList$iconUrl = markerList$iconUrl
         Code = CodeAll()[okCode]
-        Lon = df_meta()$lon[okCode]
-        Lat = df_meta()$lat[okCode]
-        Nom = df_meta()$nom[okCode]
-        Sup = df_meta()$surface_km2_BH[okCode]
-        Alt = df_meta()$altitude_m_BH[okCode]
+        Lon = LonAll[okCode]
+        Lat = LatAll[okCode]
+        Nom = NomAll[okCode]
+        Sup = SupAll[okCode]
+        Alt = AltAll[okCode]
+        trendColor = trendColorAll[match(Code, CodeAll())]
+        # trendColor = sapply(trendColor, switch_colorLabel)
 
-        if (!is.null(rv$df_XEx) & !is.null(rv$df_Xtrend)) {            
-            trendLabel = sapply(Code, get_trendLabel,
-                                df_XEx=rv$df_XEx,
-                                df_Xtrend=rv$df_Xtrend,
-                                unit=rv$unit)
-        } else {
-            trendLabel = NA
+        map = removeMarker(map, layerId=Code)
+
+        ok21 = codeShapeList == 21
+        okN21 = !ok21
+
+        iconAnchorX = list(iconAnchorX=markerList$iconAnchorX)
+        iconAnchorY = list(iconAnchorY=markerList$iconAnchorY)
+
+        if (any(okN21)) {
+            iconUrlN21 = unlist(markerList$iconUrl, use.names=FALSE)[okN21]
+            iconUrlN21 = as.list(iconUrlN21)
+            names(iconUrlN21) = rep("iconUrl", times=length(iconUrlN21))
+            iconUrlN21 = list(iconUrl=iconUrlN21)
+            markerListN21 = append(iconUrlN21, iconAnchorX)
+            markerListN21 = append(markerListN21, iconAnchorY)
+            
+            map = addMarkers(map,
+                             group="NS",
+                             lng=Lon[okN21],
+                             lat=Lat[okN21],
+                             icon=markerListN21,
+                             # label=lapply(label[okN21], HTML),
+                             layerId=Code[okN21],
+                             options=markerOptions(zIndexOffset=2000))
+        }
+        
+        if (any(ok21)) {
+            iconUrl21 = unlist(markerList$iconUrl, use.names=FALSE)[ok21]
+            iconUrl21 = as.list(iconUrl21)
+            names(iconUrl21) = rep("iconUrl", times=length(iconUrl21))
+            iconUrl21 = list(iconUrl=iconUrl21)
+            markerList21 = append(iconUrl21, iconAnchorX)
+            markerList21 = append(markerList21, iconAnchorY)
+            
+            map = addMarkers(map,
+                             group="S",
+                             lng=Lon[ok21],
+                             lat=Lat[ok21],
+                             icon=markerList21,
+                             # label=lapply(label[ok21], HTML),
+                             layerId=Code[ok21],
+                             options=markerOptions(zIndexOffset=1000))
         }
 
-        Br = rep("<br>", times=length(Code))
-        Br[is.na(trendLabel)] = ""
-        trendLabel[is.na(trendLabel)] = ""
 
-        trendColor = rv$fillList[match(Code, CodeAll())]
-        trendColor = sapply(trendColor, switch_colorLabel)
+        if (!is.null(rv$df_XEx) & !is.null(rv$df_Xtrend)) {            
+            trendLabelAll = sapply(CodeAll(), get_trendLabel,
+                                   df_XEx=rv$df_XEx,
+                                   df_Xtrend=rv$df_Xtrend,
+                                   unit=rv$unit)
+        } else {
+            trendLabelAll = NA
+        }
+
+        trendLabelAll[is.na(trendLabelAll)] = ""
+        
+        okCode = rv$trendLabelAll != trendLabelAll
+        
+        Code = CodeAll()[okCode]
+        Lon = LonAll[okCode]
+        Lat = LatAll[okCode]
+        Nom = NomAll[okCode]
+        Sup = SupAll[okCode]
+        Alt = AltAll[okCode]
+        trendColor = trendColorAll[match(Code, CodeAll())]
+        trendLabel = trendLabelAll[okCode]
+        
+        Br = rep("<br>", times=length(Code))
+        Br[trendLabel == ""] = ""
+
+        rv$trendLabelAll = trendLabelAll
+
+        markerListVoid = get_markerList(rep("void", length(Code)),
+                                        resources_path=resources_path)
         
         n = 4
         label = paste0(
@@ -448,56 +513,15 @@ server = function (input, output, session) {
             "</table>"
         )
 
-        map = removeMarker(map, layerId=Code)
-        # map = addMarkers(map,
-        #                  lng=Lon,
-        #                  lat=Lat,
-        #                  icon=markerList,
-        #                  label=lapply(label, HTML),
-        #                  layerId=Code)
-
-        ok21 = codeShapeList == 21
-        okN21 = !ok21
-
-
-        print(ok21)
-        print(any(ok21))
-        print(okN21)
-        print(any(okN21))
-
-        iconAnchorX = list(iconAnchorX=markerList$iconAnchorX)
-        iconAnchorY = list(iconAnchorY=markerList$iconAnchorY)
-
-        iconUrl21 = unlist(markerList$iconUrl, use.names=FALSE)[ok21]
-        iconUrl21 = as.list(iconUrl21)
-        names(iconUrl21) = rep("iconUrl", times=length(iconUrl21))
-        iconUrl21 = list(iconUrl=iconUrl21)
-        markerList21 = append(iconUrl21, iconAnchorX)
-        markerList21 = append(markerList21, iconAnchorY)
-
+        map = removeMarker(map, layerId=paste0("_", Code))
         map = addMarkers(map,
-                         lng=Lon[ok21],
-                         lat=Lat[ok21],
-                         icon=markerList21,
-                         label=lapply(label[ok21], HTML),
-                         layerId=Code[ok21])
-
-        iconUrlN21 = unlist(markerList$iconUrl, use.names=FALSE)[okN21]
-        iconUrlN21 = as.list(iconUrlN21)
-        names(iconUrlN21) = rep("iconUrl", times=length(iconUrlN21))
-        iconUrlN21 = list(iconUrl=iconUrlN21)
-        markerListN21 = append(iconUrlN21, iconAnchorX)
-        markerListN21 = append(markerListN21, iconAnchorY)
-
-        map = addMarkers(map,
-                         lng=Lon[okN21],
-                         lat=Lat[okN21],
-                         icon=markerListN21,
-                         label=lapply(label[okN21], HTML),
-                         layerId=Code[okN21])
-
-        print("ok")
-        print("")
+                         group="label",
+                         lng=Lon,
+                         lat=Lat,
+                         icon=markerListVoid,
+                         label=lapply(label, HTML),
+                         layerId=paste0("_", Code),
+                         options=markerOptions(zIndexOffset=3000))
     })    
     
 
@@ -566,6 +590,14 @@ server = function (input, output, session) {
     })
     
 #### 2.2.2. Map click ________________________________________________
+    codeClick = reactive({
+        if (is.null(input$map_marker_click)) {
+            NULL
+        } else {
+            gsub("_", "", input$map_marker_click$id)
+        }
+    })
+
     observe({
         if (!is.null(input$click_select)) {
             hide(id='ana_panel')
@@ -586,14 +618,13 @@ server = function (input, output, session) {
         }
     })
 
-    observeEvent(input$map_marker_click, {
+    observeEvent(codeClick(), {
         if (rv$polyMode == 'false' & rv$clickMode & !rv$dlClickMode & !rv$photoMode) {
-            codeClick = input$map_marker_click$id
-            CodeSample = rv$CodeSample
-            if (codeClick %in% CodeSample) {
-                newCodeSample = CodeSample[CodeSample != codeClick]
+                        CodeSample = rv$CodeSample
+            if (codeClick() %in% CodeSample) {
+                newCodeSample = CodeSample[CodeSample != codeClick()]
             } else {
-                newCodeSample = c(CodeSample, codeClick)
+                newCodeSample = c(CodeSample, codeClick())
             }
             rv$CodeSample = newCodeSample
         }
@@ -1435,12 +1466,12 @@ server = function (input, output, session) {
     })
 
 ### 2.6. Trend plot __________________________________________________
-    observeEvent(input$map_marker_click, {
+    observeEvent(codeClick(), {
 
         if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode) {
         
-            if (!is.null(input$map_marker_click) & !is.null(rv$codeClick)) {
-                if (input$map_marker_click$id == rv$codeClick) {
+            if (!is.null(codeClick()) & !is.null(rv$codePlot)) {
+                if (codeClick() == rv$codePlot) {
 
                     map = leafletProxy("map")
                     map = fitBounds(map,
@@ -1450,21 +1481,21 @@ server = function (input, output, session) {
                                     lat2=defaultLimits()$north,
                                     options=list(padding=c(20, 20)))
                     
-                    rv$codeClick = NULL
+                    rv$codePlot = NULL
                     hide(id='plot_panel')
                     
                 } else {
-                    rv$codeClick = input$map_marker_click$id
+                    rv$codePlot = codeClick()
                 }
             } else {
-                rv$codeClick = input$map_marker_click$id
+                rv$codePlot = codeClick()
             }
         }
     })
 
-    observeEvent(rv$codeClick, {
-        Lon = df_meta()$lon[df_meta()$Code == rv$codeClick]
-        Lat = df_meta()$lat[df_meta()$Code == rv$codeClick]
+    observeEvent(rv$codePlot, {
+        Lon = df_meta()$lon[df_meta()$Code == rv$codePlot]
+        Lat = df_meta()$lat[df_meta()$Code == rv$codePlot]
         names(Lon) = NULL
         names(Lat) = NULL
         
@@ -1478,28 +1509,28 @@ server = function (input, output, session) {
     })
 
     observeEvent({
-        rv$codeClick
+        rv$codePlot
         rv$period
         rv$var
         rv$width
     }, {
         
-        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(rv$codeClick)) {
+        if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(rv$codePlot)) {
             
             showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
             
-            name = df_meta()$nom[df_meta()$Code == rv$codeClick]
+            name = df_meta()$nom[df_meta()$Code == rv$codePlot]
 
-            df_data_code = df_data()[df_data()$Code == rv$codeClick,]
+            df_data_code = df_data()[df_data()$Code == rv$codePlot,]
             maxQ_win = max(df_data_code$Value, na.rm=TRUE)*1.1            
-            df_XEx_code = rv$df_XEx[rv$df_XEx$Code == rv$codeClick,]
-            df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$Code == rv$codeClick,]
-            color = rv$fillList[CodeAll() == rv$codeClick]
+            df_XEx_code = rv$df_XEx[rv$df_XEx$Code == rv$codePlot,]
+            df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$Code == rv$codePlot,]
+            color = rv$fillList[CodeAll() == rv$codePlot]
             switchColor = switch_colorLabel(color)
             
             output$trend_plot = plotly::renderPlotly({
                 
-                validate(need(!is.null(rv$codeClick), message=FALSE))
+                validate(need(!is.null(rv$codePlot), message=FALSE))
                 
                 fig1 = plotly::plot_ly()
 
@@ -1546,7 +1577,7 @@ server = function (input, output, session) {
                     df_data_codeLIM =
                         bind_rows(tibble(Date=NAadd,
                                          Value=rep(NA, nNAadd),
-                                         Code=rep(rv$codeClick, nNAadd)),
+                                         Code=rep(rv$codePlot, nNAadd)),
                                   df_data_codeLIM)
                 }
                 
@@ -1559,7 +1590,7 @@ server = function (input, output, session) {
                         bind_rows(df_data_codeLIM,
                                   tibble(Date=NAadd,
                                          Value=rep(NA, nNAadd),
-                                         Code=rep(rv$codeClick, nNAadd)))
+                                         Code=rep(rv$codePlot, nNAadd)))
                 }
                 
                 # Extract NA data
@@ -1620,7 +1651,7 @@ server = function (input, output, session) {
                     colorLabel = 'grey85'
                 }
 
-                trendLabel = get_trendLabel(code=rv$codeClick,
+                trendLabel = get_trendLabel(code=rv$codePlot,
                                             df_XEx=rv$df_XEx,
                                             df_Xtrend=rv$df_Xtrend,
                                             unit=rv$unit,
@@ -1646,7 +1677,7 @@ server = function (input, output, session) {
                                    xref="paper",
                                    yref="paper",
                                    text=paste0("<b>",
-                                               rv$codeClick,
+                                               rv$codePlot,
                                                "</b> - ",
                                                name),
                                    showarrow=FALSE,
@@ -1901,7 +1932,7 @@ server = function (input, output, session) {
                         lat2=defaultLimits()$north,
                         options=list(padding=c(20, 20)))
         
-        rv$codeClick = NULL
+        rv$codePlot = NULL
         hide(id='plot_panel')
     })
     
@@ -2285,16 +2316,14 @@ server = function (input, output, session) {
     })
 
 
-    observeEvent(input$map_marker_click, {
+    observeEvent(codeClick(), {
         if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode & !rv$photoMode) {
-            codeClick = input$map_marker_click$id
-
             output$downloadData = downloadHandler(
                 filename = function () {
-                    paste0(codeClick, ".pdf")
+                    paste0(codeClick(), ".pdf")
                 },
                 content = function (file) {
-                    name = paste0(codeClick, ".pdf")
+                    name = paste0(codeClick(), ".pdf")
                     from = file.path(computer_data_path, 'pdf', name)
                     file.copy(from, file)
                 }

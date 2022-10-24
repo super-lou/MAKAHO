@@ -27,13 +27,17 @@
 
 
 save_marker = function (y, shape, color, fill, size, sizeName,
-                        svgSize, stroke, outdir, ...) {
+                        svgSize, stroke, outdir, name=NA, ...) {
 
-    filename = paste0(sizeName, '_',
-                      shape, '_',
-                      color, '_',
-                      fill,
-                      '.svg')
+    if (is.na(name)) {
+        filename = paste0(sizeName, '_',
+                          shape, '_',
+                          color, '_',
+                          fill,
+                          '.svg')
+    } else {
+        filename = paste0(name, ".svg")
+    }
     
     p = ggplot() + theme_void() +
         geom_point(aes(x=0, y=y),
@@ -112,9 +116,13 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
                 color = marker['color']
                 fill = marker['fill']
                 stroke = as.numeric(marker['stroke'])*strokeSize
+                alpha = as.numeric(marker['alpha'])
+                name = marker['name']
                 filename = save_marker(y, shape, color, fill,
                                        size, sizeName, svgSize,
-                                       stroke, outdir, ...)
+                                       stroke, outdir, name=name,
+                                       alpha=alpha,
+                                       ...)
                 Urls = c(Urls, file.path(outdir, filename))
             }
         }
@@ -131,25 +139,31 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 #       fill=none2Color_dark,
 #       stroke=1),
     
-#     c(color=validColor,
-#       fill=validColor,
+#     c(color=validSColor,
+#       fill=validSColor,
 #       stroke=0.8),
 #     c(color=none1Color_light,
 #       fill=none2Color_light,
 #       stroke=0.8),
 #     c(color=none1Color_dark,
 #       fill=none2Color_dark,
-#       stroke=0.8)
+#       stroke=0.8),
+
+#     c(color="black",
+#       fill="black",
+#       stroke=1,
+#       alpha=0,
+#       name="void")
 #     )
 
 # create_marker(shapeList=c(21, 24, 25),
 #               sizeShapeList=c(5, 7, 7),
-#               colorList=c(validColor, invalidColor),
-#               strokeColorList=c(0.8, 1),
-#               sizeList=c(0.8, 1.2),
-#               strokeSizeList=c(1, 1.4),
-#               nameSizeList=c('small', 'big'),
-#               svgSizeList=c(100, 125),
+#               colorList=c(validSColor, validNSColor, invalidColor),
+#               strokeColorList=c(0.8, 0.8, 1),
+#               sizeList=c(0.8, 0.8, 1.2),
+#               strokeSizeList=c(1, 1, 1.4),
+#               nameSizeList=c('small', 'small', 'big'),
+#               svgSizeList=c(100, 100, 125),
 #               fillPalette=Palette,
 #               resources_path=resources_path,
 #               filedir='marker',
@@ -161,23 +175,26 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 get_marker = function (size, shape, color, fill,
                        resources_path, filedir) {
 
-    if (shape == 'o') {
-        shape = 21
-    } else if (shape == '^') {
-        shape = 24
-    } else if (shape == 'v') {
-        shape = 25
+    if (!is.null(shape)) {
+        if (shape == 'o') {
+            shape = 21
+        } else if (shape == '^') {
+            shape = 24
+        } else if (shape == 'v') {
+            shape = 25
+        }
     }
-    
-    filename = paste0(size, '_', shape, '_', color, '_', fill, '.svg')
+
+    filename = paste0(c(size, shape, color, fill), collapse="_")
+    filename = paste0(filename, '.svg')
     marker = makeIcon(file.path(resources_path, filedir, filename))
     return (marker)
 }
 
 
-get_markerList = function (sizeList, shapeList, colorList, fillList, resources_path, filedir='marker', width=20) {
+get_markerList = function (sizeList, shapeList=NULL, colorList=NULL, fillList=NULL, resources_path="", filedir='marker', width=20) {
 
-    nMark = length(fillList)
+    nMark = length(sizeList)
     
     markerList = list()
     for (i in 1:nMark) {
