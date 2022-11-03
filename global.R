@@ -59,6 +59,22 @@ if (file.exists(dev_path_ashes)) {
     library(ashes)
 }
 
+dev_path_MKstat = file.path(dirname(dirname(getwd())),
+                           "MKstat_project",
+                           'MKstat', 'R')
+if (file.exists(dev_path_MKstat)) {
+    print('Loading MKstat from local directory')
+    list_path_MKstat = list.files(dev_path_MKstat,
+                                 pattern="*.R$",
+                                 full.names=TRUE)
+    for (path_MKstat in list_path_MKstat) {
+        source(path_MKstat, encoding='UTF-8')
+    }
+} else {
+    print('Loading MKstat from package')
+    library(MKstat)
+}
+
 dev_path_dataSheep = file.path(dirname(dirname(getwd())),
                      'dataSheep_project', 'dataSheep', 'R')
 if (file.exists(dev_path_dataSheep)) {

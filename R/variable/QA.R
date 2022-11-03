@@ -3,22 +3,10 @@ type = "sévérité"
 unit = "m^{3}.s^{-1}"
 glose = "Moyenne annuelle du débit journalier"
 event = "Moyennes Eaux"
-hydroPeriod = c("09-01", "08-31")
 
 NAyear_lim = 10
 NApct_lim = 3
-day_to_roll = NULL
-
-functM = NULL
-functM_args = NULL
-isDateM = FALSE
 
 functY = mean
 functY_args = list(na.rm=TRUE)
-isDateY = FALSE
-
-functYT_ext = NULL
-functYT_ext_args = NULL
-isDateYT_ext = FALSE
-functYT_sum = NULL
-functYT_sum_args = NULL
+samplePeriodY = "09-01"

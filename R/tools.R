@@ -548,10 +548,10 @@ get_trendExtremesMOD = function (df_data, df_trend, unit,
                             mean=mean(Value, na.rm=TRUE))
 
         df_join = full_join(df_trend, df_mean, by="Code")
-        value = df_join$trend / df_join$mean
+        value = df_join$a / df_join$mean
         Code = df_join$Code
     } else {
-        value = df_trend$trend
+        value = df_trend$a
         Code = df_trend$Code
     }
 
@@ -599,7 +599,7 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
     df_XEx_code = df_XEx[df_XEx$Code == code,]
     df_Xtrend_code = df_Xtrend[df_Xtrend$Code == code,]
 
-    if (is.na(df_Xtrend_code$trend)) {
+    if (is.na(df_Xtrend_code$a)) {
         return (NA)
     }
     
@@ -608,7 +608,7 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
                     na.rm=TRUE)
     
     # Gets the trend
-    trend = df_Xtrend_code$trend
+    trend = df_Xtrend_code$a
     
     # Computes the mean trend
     trendMean = trend/dataMean

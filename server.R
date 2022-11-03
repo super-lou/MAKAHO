@@ -294,10 +294,10 @@ server = function (input, output, session) {
             rv$sizeList = sizeList
             
             OkS = rv$df_Xtrend$p <= input$alpha_choice
-            CodeSU = trendCode[OkS & rv$df_Xtrend$trend >= 0]
-            CodeSD = trendCode[OkS & rv$df_Xtrend$trend < 0]
+            CodeSU = trendCode[OkS & rv$df_Xtrend$a >= 0]
+            CodeSD = trendCode[OkS & rv$df_Xtrend$a < 0]
             CodeNS = trendCode[!OkS]
-            
+
             shapeList = rep('o', nCodeAll())
             shapeList[match(CodeSU, CodeAll())] = '^'
             shapeList[match(CodeSD, CodeAll())] = 'v'
@@ -308,7 +308,8 @@ server = function (input, output, session) {
             
             colorList = rep(none1Color, nCodeAll())
             colorList[match(CodeSample(), CodeAll())] = validSColor
-            colorList[match(CodeNS, CodeAll())] = validNSColor
+            colorList[match(CodeSample()[CodeSample() %in% CodeNS],
+                            CodeAll())] = validNSColor
             invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
             colorList[match(invalidCodeSample, CodeAll())] = invalidColor
             missCodeSample = missCode()[missCode() %in% CodeSample()]
@@ -367,7 +368,6 @@ server = function (input, output, session) {
         df_meta()
         markerListAll()
     }, {
-
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
@@ -402,7 +402,6 @@ server = function (input, output, session) {
         Sup = SupAll[okCode]
         Alt = AltAll[okCode]
         trendColor = trendColorAll[match(Code, CodeAll())]
-        # trendColor = sapply(trendColor, switch_colorLabel)
 
         map = removeMarker(map, layerId=Code)
 
@@ -425,7 +424,6 @@ server = function (input, output, session) {
                              lng=Lon[okN21],
                              lat=Lat[okN21],
                              icon=markerListN21,
-                             # label=lapply(label[okN21], HTML),
                              layerId=Code[okN21],
                              options=markerOptions(zIndexOffset=2000))
         }
@@ -443,7 +441,6 @@ server = function (input, output, session) {
                              lng=Lon[ok21],
                              lat=Lat[ok21],
                              icon=markerList21,
-                             # label=lapply(label[ok21], HTML),
                              layerId=Code[ok21],
                              options=markerOptions(zIndexOffset=1000))
         }
@@ -950,12 +947,10 @@ server = function (input, output, session) {
                 "</b>"
             ))
         } else {
-            HTML(paste0(
-                "<b>",
-                gsub('p', gsub("%", "", rv$proba),
-                     Var$varHTML[Var$var == rv$var]),
-                "</b>"
-            ))
+            probaNum = as.numeric(gsub("%", "", rv$proba))
+            var = gsub('p', probaNum,
+                       Var$varHTML[Var$var == rv$var])
+            HTML(paste0("<b>", var, "</b>"))
         }
     })
 
@@ -963,8 +958,13 @@ server = function (input, output, session) {
         if (is.null(rv$proba)) {
             name = Var$name[Var$var == rv$var]
         } else {
-            name = gsub('p', gsub("%", "", rv$proba),
+            probaNum = as.numeric(gsub("%", "", rv$proba))
+            name = gsub('p ', paste0(probaNum, " "),
                         Var$name[Var$var == rv$var])
+            name = gsub('q[%]', paste0(100-probaNum, "%"),
+                        name)
+            name = gsub('p[%]', paste0(probaNum, "%"),
+                        name)
         }
         nbNewline = 0
         nbLim = 24
@@ -992,10 +992,16 @@ server = function (input, output, session) {
             data = paste0(Var$varHTML[Var$var == var()], ' : ',
                           Var$name[Var$var == var()])
         } else {
-            data = paste0(gsub('p', gsub("%", "", proba()),
-                               Var$varHTML[Var$var == var()]), ' : ',
-                          gsub('p', gsub("%", "", proba()),
-                               Var$name[Var$var == var()]))
+            probaNum = as.numeric(gsub("%", "", proba()))
+            data = paste0(Var$varHTML[Var$var == var()],
+                          ' : ',
+                          Var$name[Var$var == var()])
+            data = gsub('p ', paste0(probaNum, " "),
+                        data)
+            data = gsub('q[%]', paste0(100-probaNum, "%"),
+                        data)
+            data = gsub('p[%]', paste0(probaNum, "%"),
+                        data)
         }
         HTML(data)
     })
@@ -1299,17 +1305,18 @@ server = function (input, output, session) {
                 res = get_Xtrend(rv$var,
                                  df_data,
                                  period=list(rv$period),
-                                 hydroPeriod=hydroPeriod_analyse,
                                  df_flag=df_flag,
-                                 yearNA_lim=NAyear_lim,
-                                 dayNA_lim=NApct_lim,
+                                 NApct_lim=NApct_lim,
+                                 NAyear_lim=NAyear_lim,
                                  day_to_roll=day_to_roll,
                                  functM=functM,
                                  functM_args=functM_args,
                                  isDateM=isDateM,
+                                 samplePeriodM=samplePeriodM,
                                  functY=functY,
                                  functY_args=functY_args,
                                  isDateY=isDateY,
+                                 samplePeriodY=samplePeriodY,
                                  functYT_ext=functYT_ext,
                                  functYT_ext_args=functYT_ext_args,
                                  isDateYT_ext=isDateYT_ext,
@@ -1321,7 +1328,7 @@ server = function (input, output, session) {
                 df_XEx = res$analyse$extract
                 # Gets the trend results for the variable
                 df_Xtrend = res$analyse$estimate
-                df_Xtrend = df_Xtrend[!is.na(df_Xtrend$trend),]
+                df_Xtrend = df_Xtrend[!is.na(df_Xtrend$a),]
 
                 if (!is.null(rv$CodeAdd)) {
                     df_XEx = bind_rows(rv$df_XEx, df_XEx)
@@ -1336,6 +1343,8 @@ server = function (input, output, session) {
 
                 rv$df_XEx = df_XEx
                 rv$df_Xtrend = df_Xtrend
+
+                print(rv$df_Xtrend)
 
             } else {
                 rv$df_XEx = NULL
@@ -1739,10 +1748,10 @@ server = function (input, output, session) {
                 abs_num = as.numeric(abs) / 365.25
                 # Compute the y of the trend
                 if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
-                    ord = abs_num * df_Xtrend_code$trend +
+                    ord = abs_num * df_Xtrend_code$a +
                         df_Xtrend_code$intercept
                 } else if (rv$unit == "jour de l'année") {
-                    ord = as.Date(abs_num * df_Xtrend_code$trend +
+                    ord = as.Date(abs_num * df_Xtrend_code$a +
                         df_Xtrend_code$intercept, origin="1970-01-01")
                 }
 
@@ -1934,6 +1943,65 @@ server = function (input, output, session) {
         
         rv$codePlot = NULL
         hide(id='plot_panel')
+    })
+
+    observeEvent(input$downloadData_button, {
+        outdir = file.path(computer_data_path, "tmp")
+        if (file.exists(outdir)) {
+            unlink("outdir", recursive=TRUE)
+        }
+        dir.create(outdir)
+        outfile = paste0(rv$codePlot, "_Q", ".txt")
+        outpath = file.path(outdir, outfile)
+        df_data_code = df_data()[df_data()$Code == rv$codePlot,]
+        write.table(df_data_code, outpath, sep=";", row.names=FALSE)
+        
+        output$downloadData = downloadHandler(
+            filename = function () {
+                outfile
+            },
+            content = function (file) {
+                from = outpath
+                file.copy(from, file)
+            }
+        )
+        jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+        session$sendCustomMessage(type='jsCode',
+                                  list(value=jsinject))
+    })
+
+    observeEvent(input$downloadDataEx_button, {
+        outdir = file.path(computer_data_path, "tmp")
+        if (file.exists(outdir)) {
+            unlink("outdir", recursive=TRUE)
+        }
+        dir.create(outdir)
+        if (is.null(rv$proba)) {
+            var = rv$var
+        } else {
+            var = gsub('p', rv$proba ,rv$var)
+        }
+        outfile = paste0(rv$codePlot, "_", var, ".txt")
+        outpath = file.path(outdir, outfile)
+        df_XEx_code = rv$df_XEx[rv$df_XEx$Code == rv$codePlot,]
+        write.table(df_XEx_code, outpath, sep=";", row.names=FALSE)
+        
+        output$downloadData = downloadHandler(
+            filename = function () {
+                outfile
+            },
+            content = function (file) {
+                from = outpath
+                file.copy(from, file)
+            }
+        )
+        jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+        session$sendCustomMessage(type='jsCode',
+                                  list(value=jsinject))
     })
     
 
@@ -2258,10 +2326,13 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$dlSelec_button, {
-        outdir = file.path(computer_data_path, "zip")        
-        if (!(file.exists(outdir))) {
-            dir.create(outdir)
+        
+        outdir = file.path(computer_data_path, "tmp")
+        if (file.exists(outdir)) {
+            unlink("outdir", recursive=TRUE)
         }
+        dir.create(outdir)
+
         outfile = "fiches_stations.zip"
         outpath = file.path(outdir, outfile)
         

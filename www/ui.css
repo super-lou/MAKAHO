@@ -281,7 +281,7 @@ a:hover {
 }
 /* Hover */
 .Button-icon:hover {
-    background-color: rgba(180, 180, 180, 0.30) !important;
+    background-color: rgba(180, 180, 180, 0.2) !important;
     color: #ffffff !important;
 }
 

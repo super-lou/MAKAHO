@@ -20,7 +20,7 @@ maxNA = function (X, na.rm=TRUE) {
 }
 
 compute_Qp = function (Q, p) {
-    Qp = quantile(Q[!is.na(Q)], p)
+    Qp = quantile(Q[!is.na(Q)], 1-p)
     return (Qp)
 }
 
@@ -43,10 +43,8 @@ which.maxNA = function (x) {
 
 ## 3. Fréquentielle __________________________________________________
 compute_fAp = function (Q, lowLim) {
+    lowLim = lowLim[!is.na(lowLim)][1]
     n = sum(as.numeric(Q[!is.na(Q)] > lowLim))
-    if (n == 0) {
-        return (NA)
-    }
     N = length(Q)
     fA = n/N # jour par an
     return (fA)
