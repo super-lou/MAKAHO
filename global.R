@@ -36,6 +36,7 @@ library(icons)
 library(dplyr)
 library(stringr)
 # already ::
+library(R.utils)
 library(accelerometry)
 library(CircStats)
 library(Hmisc)

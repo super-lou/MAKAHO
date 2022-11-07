@@ -1344,8 +1344,6 @@ server = function (input, output, session) {
                 rv$df_XEx = df_XEx
                 rv$df_Xtrend = df_Xtrend
 
-                print(rv$df_Xtrend)
-
             } else {
                 rv$df_XEx = NULL
                 rv$df_Xtrend = NULL
@@ -1539,7 +1537,8 @@ server = function (input, output, session) {
             
             output$trend_plot = plotly::renderPlotly({
                 
-                validate(need(!is.null(rv$codePlot), message=FALSE))
+                shiny::validate(need(!is.null(rv$codePlot),
+                              message=FALSE))
                 
                 fig1 = plotly::plot_ly()
 
@@ -1749,10 +1748,10 @@ server = function (input, output, session) {
                 # Compute the y of the trend
                 if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
                     ord = abs_num * df_Xtrend_code$a +
-                        df_Xtrend_code$intercept
+                        df_Xtrend_code$b
                 } else if (rv$unit == "jour de l'année") {
                     ord = as.Date(abs_num * df_Xtrend_code$a +
-                        df_Xtrend_code$intercept, origin="1970-01-01")
+                        df_Xtrend_code$b, origin="1970-01-01")
                 }
 
                 x = df_XEx_code$Date
