@@ -540,12 +540,12 @@ read_FST = function (resdir, filename, filedir='fst') {
 
 
 get_trendExtremesMOD = function (df_data, df_trend, unit,
-                                 minQprob=0, maxQprob=1,
+                                 minXprob=0, maxXprob=1,
                                  CodeSample=NULL) {
     
     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
         df_mean = summarise(group_by(df_data, Code),
-                            mean=mean(Value, na.rm=TRUE))
+                            mean=mean(X, na.rm=TRUE))
 
         df_join = full_join(df_trend, df_mean, by="Code")
         value = df_join$a / df_join$mean
@@ -561,8 +561,8 @@ get_trendExtremesMOD = function (df_data, df_trend, unit,
         valueSample = value
     }
     
-    minValue = quantile(valueSample, minQprob, na.rm=TRUE)
-    maxValue = quantile(valueSample, maxQprob, na.rm=TRUE)
+    minX = quantile(valueSample, minXprob, na.rm=TRUE)
+    maxX = quantile(valueSample, maxXprob, na.rm=TRUE)
     
     df_value = tibble(Code=Code, value=value)   
     if (all(CodeSample %in% Code)) {
@@ -571,7 +571,7 @@ get_trendExtremesMOD = function (df_data, df_trend, unit,
         df_valueSample = tibble(Code=Code, value=valueSample)
     }
     res = list(df_value=df_value, df_valueSample=df_valueSample,
-               min=minValue, max=maxValue)
+               min=minX, max=maxX)
     return (res)
 }
 
@@ -604,7 +604,7 @@ get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
     }
     
     # Computes the mean of the data on the period
-    dataMean = mean(df_XEx_code$Value,
+    dataMean = mean(df_XEx_code$X,
                     na.rm=TRUE)
     
     # Gets the trend

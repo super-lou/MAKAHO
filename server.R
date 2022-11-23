@@ -63,8 +63,8 @@ server = function (input, output, session) {
                         defaultBounds=NULL,
                         value=NULL,
                         valueSample=NULL,
-                        minValue=NULL,
-                        maxValue=NULL,
+                        minX=NULL,
+                        maxX=NULL,
                         helpPage=NULL,
                         helpPage_prev=NULL,
                         sizeList=NULL,
@@ -80,7 +80,7 @@ server = function (input, output, session) {
                         df_XEx=NULL,
                         df_Xtrend=NULL,
                         period=NULL,
-                        hydroPeriod=NULL,
+                        samplePeriod=NULL,
                         var=FALSE,
                         type=NULL,
                         unit=NULL,
@@ -319,18 +319,18 @@ server = function (input, output, session) {
 
             res = get_trendExtremesMOD(rv$df_XEx, rv$df_Xtrend,
                                        unit=rv$unit,
-                                       minQprob=exQprob,
-                                       maxQprob=1-exQprob,
+                                       minXprob=exXprob,
+                                       maxXprob=1-exXprob,
                                        CodeSample=CodeSample())
             
             rv$df_value = res$df_value
             rv$df_valueSample = res$df_valueSample
-            rv$minValue = res$min
-            rv$maxValue = res$max
+            rv$minX = res$min
+            rv$maxX = res$max
 
             fill = get_color(rv$df_value$value,
-                             rv$minValue,
-                             rv$maxValue,
+                             rv$minX,
+                             rv$maxX,
                              Palette=Palette,
                              colorStep=colorStep,
                              reverse=rv$reverse,
@@ -1059,8 +1059,8 @@ server = function (input, output, session) {
         rv$optimalMode
     }, {
 
-        if (!is.null(input$hydroPeriod_slider)) {
-            hydroMonths = match(input$hydroPeriod_slider, Months)
+        if (!is.null(input$samplePeriod_slider)) {
+            hydroMonths = match(input$samplePeriod_slider, Months)
         } else {
             hydroMonths = 1
         }
@@ -1080,7 +1080,7 @@ server = function (input, output, session) {
                 
             } else {
                 class = "size1Slider"
-                if (length(input$hydroPeriod_slider) == 1) {
+                if (length(input$samplePeriod_slider) == 1) {
                     selected = Months[c(hydroMonths, 12)]
                 } else {
                     selected = Months[hydroMonths]
@@ -1091,9 +1091,9 @@ server = function (input, output, session) {
             selected = Months[hydroMonths[1]]
         }
         
-        output$hydroPeriod_slider = renderUI({
+        output$samplePeriod_slider = renderUI({
             Slider(class=class,
-                   inputId="hydroPeriod_slider",
+                   inputId="samplePeriod_slider",
                    modeText=TRUE,
                    label=NULL,
                    grid=TRUE,
@@ -1115,53 +1115,53 @@ server = function (input, output, session) {
     })
         
 
-    hydroPeriodB = reactive({
-        if (!is.null(input$hydroPeriod_slider)) {
-            if (rv$sampleSliderMode & length(input$hydroPeriod_slider) == 2) {
+    samplePeriodB = reactive({
+        if (!is.null(input$samplePeriod_slider)) {
+            if (rv$sampleSliderMode & length(input$samplePeriod_slider) == 2) {
                 if (rv$invertSliderMode) {
-                    nameMonthStart = input$hydroPeriod_slider[2]
+                    nameMonthStart = input$samplePeriod_slider[2]
                     idMonthStart = which(Months == nameMonthStart)
                     monthStart = formatC(idMonthStart, width=2, flag=0)
 
-                    nameMonthEnd = input$hydroPeriod_slider[1]
+                    nameMonthEnd = input$samplePeriod_slider[1]
                     idMonthEnd = which(Months == nameMonthEnd)
                     monthEnd = formatC(idMonthEnd, width=2, flag=0)            
                     dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
                     
-                    hydroPeriodStart = paste0(monthStart, "-01")
-                    hydroPeriodEnd = substr(dateEnd - 1, 6, 10)
+                    samplePeriodStart = paste0(monthStart, "-01")
+                    samplePeriodEnd = substr(dateEnd - 1, 6, 10)
                     
                 } else {
-                    nameMonthStart = input$hydroPeriod_slider[1]
+                    nameMonthStart = input$samplePeriod_slider[1]
                     idMonthStart = which(Months == nameMonthStart)
                     monthStart = formatC(idMonthStart, width=2, flag=0)
 
-                    nameMonthEnd = input$hydroPeriod_slider[2]
+                    nameMonthEnd = input$samplePeriod_slider[2]
                     idMonthEnd = which(Months == nameMonthEnd)
                     monthEnd = formatC(idMonthEnd, width=2, flag=0)
                     dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
 
-                    hydroPeriodStart = paste0(monthStart, "-01")
-                    hydroPeriodEnd = substr(dateEnd + months(1) - 1, 6, 10)
+                    samplePeriodStart = paste0(monthStart, "-01")
+                    samplePeriodEnd = substr(dateEnd + months(1) - 1, 6, 10)
                 }
-                c(hydroPeriodStart, hydroPeriodEnd)
+                c(samplePeriodStart, samplePeriodEnd)
 
             } else if (rv$optimalMode) {
-                rv$hydroPeriod
+                rv$samplePeriod
             } else {
-                nameMonthStart = input$hydroPeriod_slider[1]
+                nameMonthStart = input$samplePeriod_slider[1]
                 idMonthStart = which(Months == nameMonthStart)
                 monthStart = formatC(idMonthStart, width=2, flag=0)
-                hydroPeriodStart = paste0(monthStart, "-01")
-                hydroPeriodStart
+                samplePeriodStart = paste0(monthStart, "-01")
+                samplePeriodStart
             }
         } else {
             "01-01"
         }
     })
-    hydroPeriod = debounce(hydroPeriodB, 1000)
+    samplePeriod = debounce(samplePeriodB, 1000)
 
-    output$hydroPeriodHTML = renderUI({
+    output$samplePeriodHTML = renderUI({
         if (rv$optimalMode_act) {
             HTML(word("out.optimal"))
         } else {
@@ -1198,7 +1198,7 @@ server = function (input, output, session) {
         var()
         period()
         proba()
-        hydroPeriod()
+        samplePeriod()
         rv$photoMode
         rv$optimalMode
     }, {
@@ -1209,10 +1209,10 @@ server = function (input, output, session) {
             }
         }
         
-        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(hydroPeriod(), rv$hydroPeriod)) & is.null(rv$helpPage) & identical(rv$optimalMode, rv$optimalMode_act)) {
+        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(samplePeriod(), rv$samplePeriod)) & is.null(rv$helpPage) & identical(rv$optimalMode, rv$optimalMode_act)) {
             hide(id="actualise_panelButton")    
         } else {
-            if ((rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$hydroPeriod)) & !rv$photoMode) {
+            if ((rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$samplePeriod)) & !rv$photoMode) {
                 showElement(id="actualise_panelButton")
             }
         }
@@ -1240,7 +1240,7 @@ server = function (input, output, session) {
             rv$type = type()
             rv$period = period()
             rv$proba = proba()
-            rv$hydroPeriod = hydroPeriod()
+            rv$samplePeriod = samplePeriod()
             rv$reverse = reverse()
 
             if (!is.null(rv$CodeAdd)) {
@@ -1268,61 +1268,69 @@ server = function (input, output, session) {
                 script_to_analyse_path = file.path('R',
                                                    var_dir,
                                                    filename)
-                source(file.path('R', var_dir, init_var_file),
-                       encoding='UTF-8')
-                source(file.path('R', var_dir, init_tools_file),
-                       encoding='UTF-8')
-                source(script_to_analyse_path,
-                       encoding='UTF-8')
 
-                rv$unit = unit
-
-                if (rv$optimalMode_act) {
-                    event = Var$event[Var$var == rv$var]
-                    if (identical(hydroPeriod_opti[[event]], "min")) {
-                        minQM_code = df_meta()$minQM[df_meta()$Code %in% rv$CodeSample_act]
-                        Value = paste0(formatC(minQM_code,
-                                               width=2,
-                                               flag="0"),
-                                       '-01')
-                        hydroPeriod_analyse = tibble(Code=rv$CodeSample_act,
-                                             Value=Value)
-                    } else if (identical(hydroPeriod_opti[[event]], "max")) {
-                        maxQM_code = df_meta()$maxQM[df_meta()$Code %in% rv$CodeSample_act]
-                        Value = paste0(formatC(maxQM_code,
-                                               width=2,
-                                               flag="0"),
-                                       '-01')
-                        hydroPeriod_analyse = tibble(Code=rv$CodeSample_act,
-                                             Value=Value)
-                    } else {
-                        hydroPeriod_analyse = hydroPeriod_opti[[event]]
-                    }
-                } else {
-                    hydroPeriod_analyse = rv$hydroPeriod
+                list_path = list.files(file.path('R', var_dir,
+                                                 init_tools_dir),
+                                       pattern='*.R$',
+                                       full.names=TRUE)
+                for (path in list_path) {
+                    source(path, encoding='UTF-8')    
                 }
 
-                res = get_Xtrend(rv$var,
-                                 df_data,
+                Process_default = sourceProcess(
+                    file.path('R', var_dir, init_var_file))
+                
+                Process = sourceProcess(
+                    script_to_analyse_path,
+                    default=Process_default)
+
+                principal = Process$P
+                principal_names = names(principal)
+                for (i in 1:length(principal)) {
+                    assign(principal_names[i], principal[[i]])
+                }
+
+                rv$unit = unit
+                
+                if (rv$optimalMode_act) {
+                    event = Var$event[Var$var == rv$var]
+                    if (identical(samplePeriod_opti[[event]], "min")) {
+                        minQM_code = df_meta()$minQM[df_meta()$Code %in% rv$CodeSample_act]
+                        minQM = paste0(formatC(minQM_code,
+                                               width=2,
+                                               flag="0"),
+                                       '-01')
+                        samplePeriodMOD = tibble(Code=rv$CodeSample_act,
+                                                 sp=minQM)
+                    } else if (identical(samplePeriod_opti[[event]], "max")) {
+                        maxQM_code = df_meta()$maxQM[df_meta()$Code %in% rv$CodeSample_act]
+                        maxQM = paste0(formatC(maxQM_code,
+                                               width=2,
+                                               flag="0"),
+                                       '-01')
+                        samplePeriodMOD = tibble(Code=rv$CodeSample_act,
+                                                 sp=maxQM)
+                    } else {
+                        samplePeriodMOD = samplePeriod_opti[[event]]
+                    }
+                } else {
+                    samplePeriodMOD = rv$samplePeriod
+                }
+
+                if (!is.null(samplePeriodMOD)) {
+                    nProcess = length(Process)
+                    for (i in 1:nProcess) {
+                        if (!is.null(Process[[i]]$samplePeriod)) {
+                            Process[[i]]$samplePeriod = samplePeriodMOD
+                        }
+                    }
+                }
+
+                res = get_Xtrend(data=df_data,
                                  period=list(rv$period),
+                                 level=as.numeric(input$alpha_choice),
                                  df_flag=df_flag,
-                                 NApct_lim=NApct_lim,
-                                 NAyear_lim=NAyear_lim,
-                                 day_to_roll=day_to_roll,
-                                 functM=functM,
-                                 functM_args=functM_args,
-                                 isDateM=isDateM,
-                                 samplePeriodM=samplePeriodM,
-                                 functY=functY,
-                                 functY_args=functY_args,
-                                 isDateY=isDateY,
-                                 samplePeriodY=samplePeriodY,
-                                 functYT_ext=functYT_ext,
-                                 functYT_ext_args=functYT_ext_args,
-                                 isDateYT_ext=isDateYT_ext,
-                                 functYT_sum=functYT_sum,
-                                 functYT_sum_args=functYT_sum_args,
-                                 verbose=verbose)
+                                 Process)
 
                 # Gets the extracted data for the variable
                 df_XEx = res$analyse$extract
@@ -1365,7 +1373,7 @@ server = function (input, output, session) {
             endYear = 2020
         }
         
-        if (!is.null(hydroPeriod())) {    
+        if (!is.null(samplePeriod())) {    
             inter = endYear - startYear
             if (inter < 30) {
                 if (startYear + 30 > 2020 & endYear - 30 >= 1900) {
@@ -1379,22 +1387,22 @@ server = function (input, output, session) {
                              value=c(startYear, endYear))
             }
 
-            if (rv$sampleSliderMode & length(hydroPeriod()) == 2) {
+            if (rv$sampleSliderMode & length(samplePeriod()) == 2) {
                 Start = as.Date(paste0(startYear,
                                        "-",
-                                       hydroPeriod()[1]))
+                                       samplePeriod()[1]))
                 End = as.Date(paste0(endYear,
                                      "-",
-                                     hydroPeriod()[2]))
+                                     samplePeriod()[2]))
                 c(Start, End)
 
             } else {                
                 Start = as.Date(paste0(startYear,
                                        "-",
-                                       hydroPeriod()[1]))
+                                       samplePeriod()[1]))
                 Endtmp = as.Date(paste0(endYear,
                                         "-",
-                                        hydroPeriod()[1])) - 1
+                                        samplePeriod()[1])) - 1
                 End = as.Date(paste0(endYear,
                                      "-",
                                      substr(Endtmp, 6, 10)))
@@ -1429,7 +1437,7 @@ server = function (input, output, session) {
         if (!is.null(df_dataAll())) {
             Start = rv$period[1]
             End = rv$period[2]
-            df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
+            df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Q),]
             
             df_Start = summarise(group_by(df_dataNoNA, Code),
                                  Start=min(Date, na.rm=TRUE))
@@ -1450,12 +1458,12 @@ server = function (input, output, session) {
         if (!is.null(df_dataAll())) {
             Start = rv$period[1]
             End = rv$period[2]
-            df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Value),]
+            df_dataNoNA = df_dataAll()[!is.na(df_dataAll()$Q),]
             df_dataNoNA = df_dataNoNA[Start <= df_dataNoNA$Date
                                       & df_dataNoNA$Date <= End,]
             
             df_Period = summarise(group_by(df_dataNoNA, Code),
-                                  Period=length(Value))
+                                  Period=length(Q))
             PeriodData = df_Period$Period/365.25
             CodeData = df_Period$Code
 
@@ -1529,7 +1537,7 @@ server = function (input, output, session) {
             name = df_meta()$nom[df_meta()$Code == rv$codePlot]
 
             df_data_code = df_data()[df_data()$Code == rv$codePlot,]
-            maxQ_win = max(df_data_code$Value, na.rm=TRUE)*1.1            
+            maxQ_win = max(df_data_code$Q, na.rm=TRUE)*1.1            
             df_XEx_code = rv$df_XEx[rv$df_XEx$Code == rv$codePlot,]
             df_Xtrend_code = rv$df_Xtrend[rv$df_Xtrend$Code == rv$codePlot,]
             color = rv$fillList[CodeAll() == rv$codePlot]
@@ -1545,11 +1553,11 @@ server = function (input, output, session) {
                 x = df_data_code$Date
                 event = Var$event[Var$var == rv$var]
                 if (event == "Étiage") {
-                    y = sqrt(df_data_code$Value)
+                    y = sqrt(df_data_code$Q)
                     varLabel = "&#8730;Q"
                     unitLabel = " [m<sup>3/2</sup>.s<sup>-1/2</sup>]"
                 } else {
-                    y = df_data_code$Value
+                    y = df_data_code$Q
                     varLabel = "Q"
                     unitLabel = " [m<sup>3</sup>.s<sup>-1</sup>]"
                 }
@@ -1584,7 +1592,7 @@ server = function (input, output, session) {
                     nNAadd = length(NAadd)
                     df_data_codeLIM =
                         bind_rows(tibble(Date=NAadd,
-                                         Value=rep(NA, nNAadd),
+                                         Q=rep(NA, nNAadd),
                                          Code=rep(rv$codePlot, nNAadd)),
                                   df_data_codeLIM)
                 }
@@ -1597,12 +1605,12 @@ server = function (input, output, session) {
                     df_data_codeLIM =
                         bind_rows(df_data_codeLIM,
                                   tibble(Date=NAadd,
-                                         Value=rep(NA, nNAadd),
+                                         Q=rep(NA, nNAadd),
                                          Code=rep(rv$codePlot, nNAadd)))
                 }
                 
                 # Extract NA data
-                NAdate = df_data_codeLIM$Date[is.na(df_data_codeLIM$Value)]
+                NAdate = df_data_codeLIM$Date[is.na(df_data_codeLIM$Q)]
                 # Get the difference between each point of date data
                 # without NA
                 dNAdate = diff(NAdate)
@@ -1741,7 +1749,7 @@ server = function (input, output, session) {
                                )     
                 
 
-                DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$Value)]
+                DateNoNA = df_XEx_code$Date[!is.na(df_XEx_code$X)]
                 abs = c(min(DateNoNA), max(DateNoNA))
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
@@ -1756,14 +1764,14 @@ server = function (input, output, session) {
 
                 x = df_XEx_code$Date
                 if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
-                    y = df_XEx_code$Value
+                    y = df_XEx_code$X
                     yhoverformat = '.3r'
                     unitLabel = rv$unit
                     unitLabel = gsub('[/^][/{]', '<sup>', unitLabel)
                     unitLabel = gsub('[/}]', '</sup>', unitLabel)
                     unitLabel = paste0(" [", unitLabel, "]<br>")
                 } else if (rv$unit == "jour de l'année") {
-                    y = as.Date(df_XEx_code$Value, origin="1970-01-01")
+                    y = as.Date(df_XEx_code$X, origin="1970-01-01")
                     yhoverformat = "%d %b"
                     unitLabel = ""
                 }
@@ -2029,16 +2037,16 @@ server = function (input, output, session) {
 
     observeEvent({
         input$colorbar_choice
-        rv$minValue
-        rv$maxValue
+        rv$minX
+        rv$maxX
         rv$df_value
     }, {
         
         if (input$colorbar_choice == 'show' & !is.null(rv$df_Xtrend)) {
             output$colorbar_plot = plotly::renderPlotly({
                 
-                res = compute_colorBin(min=rv$minValue,
-                                       max=rv$maxValue,
+                res = compute_colorBin(min=rv$minX,
+                                       max=rv$maxX,
                                        Palette=Palette,
                                        colorStep=colorStep,
                                        reverse=rv$reverse)

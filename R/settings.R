@@ -99,7 +99,7 @@ nbTick = 10
 colorStep = 10
 Palette = Palette_ground()
 
-exQprob = 0.01
+exXprob = 0.01
 
 analyseMinYear = 30
 
@@ -171,15 +171,9 @@ to_do = c('station_trend_analyse')
 filedir = "RRSE"
 trend_period = list(c(1, 2))
 
-init_var_file = 'default.R'
-init_tools_file = 'tools.R'
-var_dir = 'variable'
-var_to_analyse_dir = ''
-to_assign_out = c()
-hydroPeriod_mode = 'fixed'
-saving = c()
-fast_format = TRUE
-read_results = FALSE
+var_dir = 'variables'
+init_tools_dir = '__tools__'
+init_var_file = '__default__.R'
 df_flag = NULL
 
 hydroPeriod_opti = list(
