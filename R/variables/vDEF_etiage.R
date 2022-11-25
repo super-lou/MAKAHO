@@ -19,13 +19,13 @@ ASHES$P2.keep = TRUE
 ASHES$P3.funct = list(UpLim=maxNA)
 ASHES$P3.funct_args = list("Qmin", na.rm=TRUE)
 ASHES$P3.timeStep = "none"
+ASHES$P3.samplePeriod = c('05-01', '11-30')
 ASHES$P3.keep = TRUE
 
 ASHES$P4.funct = list(X=compute_VolDef)
 ASHES$P4.funct_args = list("Q", select_longest=TRUE, UpLim="UpLim")
 ASHES$P4.timeStep = "year"
 ASHES$P4.samplePeriod = c('05-01', '11-30')
-ASHES$P4.isDate = TRUE
 ASHES$P4.NApct_lim = 3
 ASHES$P4.NAyear_lim = 10
 ASHES$P4.rmNApct = FALSE

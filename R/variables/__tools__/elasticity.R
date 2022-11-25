@@ -44,12 +44,11 @@
 #' @return Elasticity given by :
 #' eps_P = median((Q-Qmean)/(P-Pmean) * Pmean/Qmean)
 #' @export
-compute_elasticity = function (Q, P) {
+compute_elasticity = function (Q, X) {
     Qmean = mean(Q, na.rm=TRUE)
-    Pmean = mean(P, na.rm=TRUE)
-    X = (Q-Qmean)/(P-Pmean) * Pmean/Qmean
-    eps_P = median(X, na.rm=TRUE)
-    return (eps_P)
+    Xmean = mean(X, na.rm=TRUE)
+    eps_X = median((Q-Qmean)/(X-Xmean) * Xmean/Qmean, na.rm=TRUE)
+    return (eps_X)
 }
 
 # compute_CI = function (X, level=0.90) {

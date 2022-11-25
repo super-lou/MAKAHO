@@ -36,7 +36,7 @@
 #' @param na.rm Should missing values be omited ?
 #' @param sim_minus_obs: should it be sim - obs ? (or the other way
 #' around)
-compute_bias = function(obs, sim, na.rm=TRUE, sim_minus_obs=TRUE) {
+compute_Bias = function(obs, sim, na.rm=TRUE, sim_minus_obs=TRUE) {
     if (length(obs) != length(sim)) {
         stop("obs and sim must have the same length")
     }
@@ -46,9 +46,9 @@ compute_bias = function(obs, sim, na.rm=TRUE, sim_minus_obs=TRUE) {
         sim = sim[!isna]
     }
     if (sim_minus_obs) {
-        bias = sum(sim - obs) / sum(obs)
+        Bias = sum(sim - obs) / sum(obs)
     } else {
-        bias = sum(obs - sim) / sum(obs)
+        Bias = sum(obs - sim) / sum(obs)
     }
 }
 
@@ -85,14 +85,14 @@ compute_R2 = function(obs, sim, na.rm=TRUE,
 #' @param na.rm Should missing values be omited ?
 #' @return 1 - sum((sim-obs)^2)/sum((obs-mean(obs))^2)
 #' @export
-compute_nse = function (obs, sim, na.rm=TRUE) {
+compute_NSE = function (obs, sim, na.rm=TRUE) {
     if (na.rm) {
         isna = is.na(obs) | is.na(sim)
         obs = obs[!isna]
         sim = sim[!isna]
     }
-    nse = 1 - sum((sim - obs)^2) / sum((obs - mean(obs))^2)
-    return (nse)
+    NSE = 1 - sum((sim - obs)^2) / sum((obs - mean(obs))^2)
+    return (NSE)
 }
 
 #' @title hsaLog
@@ -106,7 +106,7 @@ compute_nse = function (obs, sim, na.rm=TRUE) {
 #' value (to be added to 'x') or 'inf.na'
 #' @return log(x) according to parametrization
 #' @export
-compute_hsaLog = function (x, method="Pushpalatha2012") {
+compute_hsaLog = function (x, method="inf.na") {
     if (method == "Pushpalatha2012") {
         x = x + mean(x, na.rm = TRUE) / 100
     } else if (is.numeric(method)) {
@@ -124,18 +124,46 @@ compute_hsaLog = function (x, method="Pushpalatha2012") {
 #' @title NSElog
 #' @description Computes the Nash-Sutcliffe efficiency coefficient on
 #' the log transformed streamflow values using the 'hsaLog' function
-#' and the 'nse' function
+#' and the 'NSE' function
 #' @param obs Observed streamflow vector
 #' @param sim Simulated streamflow vector
 #' @param na.rm Should missing values be omited ?
 #' @param log_method See 'hsaLog'
 #' @return NSElog according to parametrization
 #' @export
-compute_nselog = function (obs, sim, na.rm=TRUE, log_method="inf.na") {
-    obs_log = compute_hsaLog(obs, method=log_method)
-    sim_log = compute_hsaLog(sim, method=log_method)
-    nselog = compute_nse(obs=obs_log, sim=sim_log, na.rm=na.rm)
-    return (nselog)
+compute_NSElog = function (obs, sim, na.rm=TRUE, log_method="inf.na") {
+    obs = compute_hsaLog(obs, method=log_method)
+    sim = compute_hsaLog(sim, method=log_method)
+    NSElog = compute_NSE(obs=obs, sim=sim, na.rm=na.rm)
+    return (NSElog)
+}
+
+#' @title NSEi
+#' @description Computes the Nash-Sutcliffe efficiency coefficient on
+#' @param obs Observed streamflow vector
+#' @param sim Simulated streamflow vector
+#' @param na.rm Should missing values be omited ?
+#' @return NSEi according to parametrization
+#' @export
+compute_NSEi = function (obs, sim, na.rm=TRUE) {
+    obs = 1/obs
+    sim = 1/sim
+    NSEi = compute_NSE(obs=obs, sim=sim, na.rm=na.rm)
+    return (NSEi)
+}
+
+#' @title NSEsqrt
+#' @description Computes the Nash-Sutcliffe efficiency coefficient on
+#' @param obs Observed streamflow vector
+#' @param sim Simulated streamflow vector
+#' @param na.rm Should missing values be omited ?
+#' @return NSEsqrt according to parametrization
+#' @export
+compute_NSEsqrt = function (obs, sim, na.rm=TRUE) {
+    obs = sqrt(obs)
+    sim = sqrt(sim)
+    NSEsqrt = compute_NSE(obs=obs, sim=sim, na.rm=na.rm)
+    return (NSEsqrt)
 }
 
 
@@ -152,7 +180,7 @@ compute_nselog = function (obs, sim, na.rm=TRUE, log_method="inf.na") {
 #' for Gupta et al. (2009) and '2' for Kling et al. (2012)
 #' @return KGE
 #' @export
-compute_kge = function (obs, sim, na.rm=TRUE, method=1) {
+compute_KGE = function (obs, sim, na.rm=TRUE, method=1) {
     if (na.rm) {
         isna = is.na(obs) | is.na(sim)
         obs = obs[!isna]
@@ -166,21 +194,35 @@ compute_kge = function (obs, sim, na.rm=TRUE, method=1) {
     ALPHA = ssim / sobs
     BETA  = msim / mobs
     if (method == 1) {
-        kge = compute_kge_short(R=rso, AG=ALPHA, BETA=BETA)
+        KGE = compute_KGE_short(R=rso, AG=ALPHA, BETA=BETA)
     } else if (method == 2){
         cvobs = sobs / mobs
         cvsim = ssim / msim
         GAMMA = cvsim / cvobs
-        kge = compute_kge_short(R=rso, AG=GAMMA, BETA=BETA)
+        KGE = compute_KGE_short(R=rso, AG=GAMMA, BETA=BETA)
     }  else {
         warning("Unknown method, only 1 and 2 are supported. Default method 1 used.")
-        kge = compute_kge_short(R=rso, AG=ALPHA, BETA=BETA)
+        KGE = compute_KGE_short(R=rso, AG=ALPHA, BETA=BETA)
     }
-    return (kge)
+    return (KGE)
 }
 
 # An intermediate function in the computation of KGE.
 # Here only to avoid code repetition
-compute_kge_short = function (R, AG, BETA) {
+compute_KGE_short = function (R, AG, BETA) {
     1 - sqrt((R-1)^2 + (AG-1)^2 + (BETA-1)^2)
+}
+
+#' @title KGEsqrt
+#' @description Computes the
+#' @param obs Observed streamflow vector
+#' @param sim Simulated streamflow vector
+#' @param na.rm Should missing values be omited ?
+#' @return KGEsqrt according to parametrization
+#' @export
+compute_KGEsqrt = function (obs, sim, na.rm=TRUE) {
+    obs = sqrt(obs)
+    sim = sqrt(sim)
+    KGEsqrt = compute_KGE(obs=obs, sim=sim, na.rm=na.rm)
+    return (KGEsqrt)
 }

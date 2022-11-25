@@ -113,15 +113,13 @@ compute_LogNormal = function(X, returnPeriod) {
 
 
 ## 3. USE ____________________________________________________________
-get_Xn = function (X, returnPeriod, event='Crue') {
-    if (event %in% c("Crue", "Crue Nivale")) {
+get_Xn = function (X, returnPeriod, waterType='low') {
+    if (waterType == "high") {
         res = compute_GumbelParams(X)
         a = res$a
         b = res$b
         Xn = compute_GumbelLaw(a, b, returnPeriod)
-    } else if (event == "Moyennes Eaux") {
-        Xn = mean(X, na.rm=TRUE)
-    } else if (event == "Étiage") {
+    } else if (waterType == "low") {
         ### /!\ VCNn-n do no give same results between ashes and
         ### SeineBassin2. It is due to difference in NA positionning
         ### when there is missing values.

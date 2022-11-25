@@ -76,10 +76,11 @@ recession_events_index = function (Q, minduration, maxduration,
     toolong = eventlength >= maxduration
     ievents[toolong, 2] = ievents[toolong, 1L] + maxduration - 1
     if (return_smoothed) {
-        return (list(Q_smoothed=Q, i_events=ievents))
+        res = list(Q_smoothed=Q, i_events=ievents)
     } else {
-        return (ievents)
+        res = ievents
     }
+    return (res)
 }
 
 
@@ -123,5 +124,22 @@ recession_times = function(Q, i_events, segments=list(1L:5L, 15L:30L), n_min=5L,
         reg_res = lapply(Q_e, function(e) .hsaFastLm(1:length(e), e))
         tau[valid_Q_e, k] = -1 / unlist(lapply(reg_res, function(e) e$coefficients[2L]), use.names = FALSE)
     }
-    if (is.function(summary_fun)) apply(tau, 2, summary_fun, ...) else as.data.frame(tau)
+    if (is.function(summary_fun)) {
+        res = apply(tau, 2, summary_fun, ...)
+    } else {
+        res = as.data.frame(tau)
+    }
+    return (res)
+}
+
+
+get_tRec = function (Q) {
+    
+    
+    i_events = recession_events_index(Q, minduration=0, maxduration=50,
+                                      minvalue=mediane(Q, na.rm=TRUE),
+                                      n_smooth=0,
+                                      window_smooth,
+                                      return_smoothed=FALSE) 
+    tRec = recession_times(Q, i_events, segments=list(1L:5L, 15L:30L), n_min=5L, summary_fun=median, ...)
 }

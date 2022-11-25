@@ -93,3 +93,13 @@ compute_RAT = function (Dates, Qobs, Qsim, Pobs, Tobs, Eobs,
     res = c(Cor_P, Cor_T, Cor_PE, RAT_P, RAT_T, RAT_PE)
     return (res)
 }
+
+
+compute_RAT_X = function (Bias, X, thresh=0.05) {
+    Cor_X  = cor.test(x=Bias[!is.na(Bias)],
+                      y=X[!is.na(Bias)],
+                      method="spearman", continuity=FALSE,
+                      alternative="two.sided")$p.value
+    RAT_X  = Cor_X < thresh
+    return (RAT_X)
+}

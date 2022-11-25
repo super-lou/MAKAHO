@@ -121,7 +121,7 @@ baseflow_regime_magnitude = function (Qbf, hdays, n = 1) {
 ### 4.1. Volumic _____________________________________________________
 compute_VolSnowmelt = function (X) {
     BF = BFS(X)
-    VolSnowmelt = sum(BF)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
+    VolSnowmelt = sum(BF, na.rm=TRUE)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (VolSnowmelt)
 }
 

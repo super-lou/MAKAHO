@@ -6,7 +6,7 @@ ASHES$P.event = "Crue"
 ASHES$P1.funct = list(lowLim=compute_Qp)
 ASHES$P1.funct_args = list("Q", p=0.05)
 ASHES$P1.timeStep = "none"
-ASHES$P1.NApct_lim = 3
+ASHES$P1.NApct_lim = NULL
 ASHES$P1.NAyear_lim = 10
 ASHES$P1.keep = TRUE
 

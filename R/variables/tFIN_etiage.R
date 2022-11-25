@@ -19,6 +19,7 @@ ASHES$P2.keep = TRUE
 ASHES$P3.funct = list(UpLim=maxNA)
 ASHES$P3.funct_args = list("Qmin", na.rm=TRUE)
 ASHES$P3.timeStep = "none"
+ASHES$P3.samplePeriod = c('05-01', '11-30')
 ASHES$P3.keep = TRUE
 
 ASHES$P4.funct = list(X=under_threshold)

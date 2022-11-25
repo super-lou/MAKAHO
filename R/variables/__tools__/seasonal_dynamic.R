@@ -46,7 +46,7 @@
 #' @param na.rm Should missing values be omited ?
 #' @return Runoff coefficient
 #' @export
-runoff_coefficient = function(Q, P, na.rm=TRUE) {
+compute_Rc = function(Q, P, na.rm=TRUE) {
     if (length(Q) != length(P)) {
         warning("'Q' and 'P' don't have the same length!")
     }

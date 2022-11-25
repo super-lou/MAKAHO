@@ -28,6 +28,8 @@
 #   |_|  |_||_||_|  \___|/__/|_||_|\___/|_|\__,_| ____________________
 ## 1. UNDER __________________________________________________________  
 under_threshold = function (X, UpLim, what="X", select_longest=TRUE) {
+
+    UpLim = UpLim[1]
     
     ID = which(X <= UpLim)
 
@@ -85,6 +87,6 @@ under_threshold = function (X, UpLim, what="X", select_longest=TRUE) {
 compute_VolDef = function (X, UpLim, select_longest=TRUE) {
     Xdef = under_threshold(X, UpLim=UpLim, what="X",
                            select_longest=select_longest)
-    Vol = sum(Xdef)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
+    Vol = sum(Xdef, na.rm=TRUE)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (Vol)
 }
