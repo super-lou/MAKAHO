@@ -176,7 +176,7 @@ init_tools_dir = '__tools__'
 init_var_file = '__default__.R'
 df_flag = NULL
 
-hydroPeriod_opti = list(
+samplePeriod_opti = list(
     'Crue' = 'min',
     'Crue Nivale' = "09-01",
     'Moyennes Eaux' = 'min',

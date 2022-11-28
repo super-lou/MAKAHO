@@ -2566,7 +2566,7 @@ server = function (input, output, session) {
 
     observeEvent(input$dlHelp_button, {
         outdir = file.path(resources_path)
-        outfile = "makaho_notice.pdf"
+        outfile = "makaho.pdf"
         outpath = file.path(outdir, outfile)
         
         output$downloadData = downloadHandler(
