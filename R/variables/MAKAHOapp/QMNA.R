@@ -1,6 +1,6 @@
 ASHES$P.var = "QMNA"
 ASHES$P.unit = "m^{3}.s^{-1}"
-ASHES$P.glose = "Minimum annuel de la moyenne mensuelle du débit journalier"
+ASHES$P.glose = "Minimum annuel des débits mensuels"
 ASHES$P.event = "Étiage"
 
 ASHES$P1.funct = list(Q=mean)

@@ -171,7 +171,8 @@ to_do = c('station_trend_analyse')
 filedir = "RRSE"
 trend_period = list(c(1, 2))
 
-var_dir = 'variables'
+CARD_dir = 'variables'
+var_to_analyse_dir = 
 init_tools_dir = '__tools__'
 init_var_file = '__default__.R'
 df_flag = NULL

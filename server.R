@@ -2587,6 +2587,9 @@ server = function (input, output, session) {
     
 
     observeEvent(input$closeHelp_button, {
+        if (rv$helpPage == 4) {
+            rv$CodeSample = CodeAll()
+        }
         rv$helpPage = NULL
         rv$helpPage_save = NULL
 

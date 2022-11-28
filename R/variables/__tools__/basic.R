@@ -26,20 +26,25 @@
 # | _ ) __ _  ___(_) __ 
 # | _ \/ _` |(_-<| |/ _|
 # |___/\__,_|/__/|_|\__| _____________________________________________
+## 0. BASIC __________________________________________________________
+minus = function (a, b) {
+    return (a - b)
+}
+
 ## 1. MIN MAX ________________________________________________________                   
-minNA = function (X, na.rm=TRUE) {
+minNA = function (X, div=1, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (min(X, na.rm=na.rm))
+        return (min(X, na.rm=na.rm) / div)
     }
 }
 
-maxNA = function (X, na.rm=TRUE) {
+maxNA = function (X, div=1, na.rm=TRUE) {
     if (all(is.na(X))) {
         return (NA)
     } else {
-        return (max(X, na.rm=na.rm))
+        return (max(X, na.rm=na.rm) / div)
     }
 }
 

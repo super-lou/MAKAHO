@@ -26,12 +26,19 @@
 # |_   _|| |_   _ _  ___  ___| |_   ___ | | __| |
 #   | |  | ' \ | '_|/ -_)(_-<| ' \ / _ \| |/ _` |
 #   |_|  |_||_||_|  \___|/__/|_||_|\___/|_|\__,_| ____________________
-## 1. UNDER __________________________________________________________  
-under_threshold = function (X, UpLim, what="X", select_longest=TRUE) {
+## 1. THRESHOLD __________________________________________________________  
+apply_threshold = function (X, lim, where="under", what="X",
+                            select_longest=TRUE) {
 
-    UpLim = UpLim[1]
-    
-    ID = which(X <= UpLim)
+    lim = lim[1]
+
+    if (where == "under") {
+        ID = which(X <= lim)
+    } else if (where == "above") {
+        ID = which(X >= lim)
+    } else {
+        stop ("Choose 'under' or 'above'")
+    }
 
     if (select_longest) {
         dID = diff(ID)
@@ -82,10 +89,12 @@ under_threshold = function (X, UpLim, what="X", select_longest=TRUE) {
     return (res)
 }
 
-
 ## 2. USE ____________________________________________________________
-compute_VolDef = function (X, UpLim, select_longest=TRUE) {
-    Xdef = under_threshold(X, UpLim=UpLim, what="X",
+compute_VolDef = function (X, upLim, select_longest=TRUE) {
+    Xdef = under_threshold(X,
+                           lim=upLim,
+                           where="under",
+                           what="X",
                            select_longest=select_longest)
     Vol = sum(Xdef, na.rm=TRUE)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (Vol)

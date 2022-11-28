@@ -141,7 +141,7 @@ ui = bootstrapPage(
 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
-                       htmlOutput("hydroPeriodHTML")
+                       htmlOutput("samplePeriodHTML")
                    ))),
                 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
@@ -413,7 +413,7 @@ ui = bootstrapPage(
                     style="margin-bottom: -16px !important;",
 
                     div(style="margin-left: 8px !important;",
-                        uiOutput("hydroPeriod_slider")),
+                        uiOutput("samplePeriod_slider")),
 
                     div(selectButton(
                         class="selectButton",
