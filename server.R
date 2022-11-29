@@ -1264,12 +1264,14 @@ server = function (input, output, session) {
                 filename = paste0(rv$var, ".R")
             }
 
+
             if (!is.null(filename)) {
                 script_to_analyse_path = file.path('R',
-                                                   var_dir,
+                                                   CARD_dir,
+                                                   var_to_analyse_dir,
                                                    filename)
 
-                list_path = list.files(file.path('R', var_dir,
+                list_path = list.files(file.path('R', CARD_dir,
                                                  init_tools_dir),
                                        pattern='*.R$',
                                        full.names=TRUE)
@@ -1278,7 +1280,7 @@ server = function (input, output, session) {
                 }
 
                 Process_default = sourceProcess(
-                    file.path('R', var_dir, init_var_file))
+                    file.path('R',CARD_dir, init_var_file))
                 
                 Process = sourceProcess(
                     script_to_analyse_path,
