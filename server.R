@@ -2198,12 +2198,7 @@ server = function (input, output, session) {
                                                   pad=0))
                 }
                 
-                label2 = signif(labelRaw, 2)
-                label2[label2 >= 0] = paste0(" ", label2[label2 >= 0])
-                label1 = signif(labelRaw, 1)
-                label1[label1 >= 0] = paste0(" ", label1[label1 >= 0])
-                label = label2        
-                label[nchar(label2) > ncharLim] = label1[nchar(label2) > ncharLim]
+                label = round_label(labelRaw, ncharLim=ncharLim)
                 label = paste0("<b>", label, "</b>")
                 
                 fig = plotly::add_annotations(
