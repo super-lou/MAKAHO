@@ -1,6 +1,6 @@
-CARD$P.var = "tFIN_etiage"
-CARD$P.unit = "jour de l'année"
-CARD$P.glose = "Fin d'étiage (jour de l'année de la dernière moyenne sur 10 jours sous le maximum des VCN10)"
+CARD$P.var = "dt_etiage"
+CARD$P.unit = "jour"
+CARD$P.glose = "Durée de l'étiage (durée de la plus longue période continue de la moyenne sur 10 jours sous le maximum des VCN10)"
 CARD$P.topic = "Étiage"
 CARD$P.samplePeriod = c('05-01', '11-30')
 
@@ -27,10 +27,9 @@ CARD$P4.funct = list(X=apply_threshold)
 CARD$P4.funct_args = list("Q",
                            lim="upLim",
                            where="under",
-                           what="last",
+                           what="length",
                            select="longest")
 CARD$P4.timeStep = "year"
 CARD$P4.samplePeriod = c('05-01', '11-30')
-CARD$P4.isDate = TRUE
 CARD$P4.NApct_lim = 3
 CARD$P4.rmNApct = FALSE

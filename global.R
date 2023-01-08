@@ -1,29 +1,26 @@
-# \\\
-# Copyright 2022 Louis Héraut*1
-#
+# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+#                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
+#                     Michel Lang (michel.lang@inrae.fr)*1,
+#                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
+#                     Benjamin Renard (benjamin.renard@inrae.fr)*1
+#                     
 # *1   INRAE, France
-#      louis.heraut@inrae.fr
-#      https://github.com/super-lou
 #
-# This file is part of sht R toolbox.
+# This file is part of MAKAHO R shiny app.
 #
-# Sht R toolbox is free software: you can redistribute it and/or
+# MAKAHO R shiny app is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Sht R toolbox is distributed in the hope that it will be useful, but
+# MAKAHO R shiny app is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with sht R toolbox.
+# along with MAKAHO R shiny app.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
-#
-#
-# global.R
 
 
 # Import library
@@ -43,36 +40,36 @@ library(lubridate)
 library(sf)
 library(sp)
 
-dev_path_ashes = file.path(dirname(dirname(getwd())),
-                           "ashes_project",
-                           'ashes', 'R')
-if (file.exists(dev_path_ashes)) {
-    print('Loading ashes from local directory')
-    list_path_ashes = list.files(dev_path_ashes,
+dev_path_ASHE = file.path(dirname(dirname(getwd())),
+                           "ASHE_project",
+                           'ASHE', 'R')
+if (file.exists(dev_path_ASHE)) {
+    print('Loading ASHE from local directory')
+    list_path_ASHE = list.files(dev_path_ASHE,
                                  pattern="*.R$",
                                  full.names=TRUE)
-    for (path_ashes in list_path_ashes) {
-        source(path_ashes, encoding='UTF-8')
+    for (path_ASHE in list_path_ASHE) {
+        source(path_ASHE, encoding='UTF-8')
     }
 } else {
-    print('Loading ashes from package')
-    library(ashes)
+    print('Loading ASHE from package')
+    library(ASHE)
 }
 
-dev_path_MKstat = file.path(dirname(dirname(getwd())),
-                           "MKstat_project",
-                           'MKstat', 'R')
-if (file.exists(dev_path_MKstat)) {
-    print('Loading MKstat from local directory')
-    list_path_MKstat = list.files(dev_path_MKstat,
+dev_path_EXstat = file.path(dirname(dirname(getwd())),
+                           "EXstat_project",
+                           'EXstat', 'R')
+if (file.exists(dev_path_EXstat)) {
+    print('Loading EXstat from local directory')
+    list_path_EXstat = list.files(dev_path_EXstat,
                                  pattern="*.R$",
                                  full.names=TRUE)
-    for (path_MKstat in list_path_MKstat) {
-        source(path_MKstat, encoding='UTF-8')
+    for (path_EXstat in list_path_EXstat) {
+        source(path_EXstat, encoding='UTF-8')
     }
 } else {
-    print('Loading MKstat from package')
-    library(MKstat)
+    print('Loading EXstat from package')
+    library(EXstat)
 }
 
 dev_path_dataSheep = file.path(dirname(dirname(getwd())),

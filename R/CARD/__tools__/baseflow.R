@@ -1,25 +1,22 @@
-# \\\
-# Copyright 2021-2022 Louis Héraut*1
+# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1
 #
 # *1   INRAE, France
-#      louis.heraut@inrae.fr
 #
-# This file is part of Ashes R toolbox.
+# This file is part of CARD R library.
 #
-# Ashes R toolbox is free software: you can redistribute it and/or
+# CARD R library is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Ashes R toolbox is distributed in the hope that it will be useful, but
+# CARD R library is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with ash R toolbox.
+# along with CARD R library.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
 
 
 #  ___                  __  _              
@@ -73,6 +70,12 @@ BFS = function (Q, d=5, w=0.9) {
     return (BF)
 }
 
+dBFS = function (Q, d=5, w=0.9) {
+    BF = BFS(Q, d=d, w=w)
+    dBF = Q - BF
+    return (dBF)
+}
+
 
 ## 2. BASEFLOW INDEX _________________________________________________
 #' @title baseflow_index
@@ -107,10 +110,10 @@ get_BFI = function (Q, BF, na.rm=TRUE) {
 #' @param n Window size for the rolling mean function
 #' @return
 #' @export
-get_BFM = function (BFmean) {
-    BFmean_max = max(BFmean, na.rm=TRUE)
-    BFmean_min = min(BFmean, na.rm=TRUE)
-    BFM = (BFmean_max - BFmean_min) / BFmean_max
+get_BFM = function (BFA) {
+    BFA_max = max(BFA, na.rm=TRUE)
+    BFA_min = min(BFA, na.rm=TRUE)
+    BFM = (BFA_max - BFA_min) / BFA_max
     return (BFM)
 }
 

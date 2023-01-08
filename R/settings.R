@@ -1,29 +1,26 @@
-# \\\
-# Copyright 2022 Louis Héraut*1
-#
+# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+#                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
+#                     Michel Lang (michel.lang@inrae.fr)*1,
+#                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
+#                     Benjamin Renard (benjamin.renard@inrae.fr)*1
+#                     
 # *1   INRAE, France
-#      louis.heraut@inrae.fr
-#      https://github.com/super-lou
 #
-# This file is part of sht R toolbox.
+# This file is part of MAKAHO R shiny app.
 #
-# Sht R toolbox is free software: you can redistribute it and/or
+# MAKAHO R shiny app is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Sht R toolbox is distributed in the hope that it will be useful, but
+# MAKAHO R shiny app is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with sht R toolbox.
+# along with MAKAHO R shiny app.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
-#
-#
-# R/settings.R
 
 
 # Path to the data
@@ -75,7 +72,7 @@ dico_file = 'dico.txt'
 dico = create_dico(dico_file, resources_path)
 
 
-varProba = list(fAp=c("90%", "95%", "99%"),
+varProba = list(fAp=c("01%", "05%", "10%"),
                 Qp=c("10%", "25%", "50%", "75%", "90%"))
 
 Var = get_Var(dico, varProba)
@@ -151,19 +148,19 @@ bottomNavHelp = 45
 dhNavHelp = 21
 
 
-## ashes
+## ASHE
 hydrograph_period = c("1900-01-01", "2020-12-31")
 data_path = file.path(computer_data_path, 'fst', 'data.fst')
 meta_path = file.path(computer_data_path, 'fst', 'meta.fst')
 if (!file.exists(data_path) | !file.exists(meta_path)) {
-    df_data = extract_data(computer_data_path, filedir, "all")
-    df_meta = extract_meta(computer_data_path, filedir, "all")
-    df_meta = get_lacune(df_data, df_meta)
-    df_meta = get_hydrograph(df_data, df_meta,
+    data = extract_data(computer_data_path, filedir, "all")
+    meta = extract_meta(computer_data_path, filedir, "all")
+    meta = get_lacune(data, meta)
+    meta = get_hydrograph(data, meta,
                              period=hydrograph_period)$meta
-    write_dataFST(df_data, filename='data.fst', filedir='fst',
+    write_dataFST(data, filename='data.fst', filedir='fst',
                   resdir=computer_data_path)
-    write_dataFST(df_meta, filename='meta.fst', filedir='fst',
+    write_dataFST(meta, filename='meta.fst', filedir='fst',
                   resdir=computer_data_path)
 }
 
@@ -171,10 +168,8 @@ to_do = c('station_trend_analyse')
 filedir = "RRSE"
 trend_period = list(c(1, 2))
 
-CARD_dir = "CARD"
-var_to_analyse_dir = "MAKAHOapp"
-init_tools_dir = '__tools__'
-init_var_file = '__default__.R'
+CARD_path = file.path("R", "CARD")
+CARD_dir = "MAKAHOapp"
 df_flag = NULL
 
 samplePeriod_opti = list(

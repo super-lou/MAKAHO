@@ -1,29 +1,26 @@
-# \\\
-# Copyright 2022 Louis Héraut*1
-#
+# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+#                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
+#                     Michel Lang (michel.lang@inrae.fr)*1,
+#                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
+#                     Benjamin Renard (benjamin.renard@inrae.fr)*1
+#                     
 # *1   INRAE, France
-#      louis.heraut@inrae.fr
-#      https://github.com/super-lou
 #
-# This file is part of sht R toolbox.
+# This file is part of MAKAHO R shiny app.
 #
-# Sht R toolbox is free software: you can redistribute it and/or
+# MAKAHO R shiny app is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Sht R toolbox is distributed in the hope that it will be useful, but
+# MAKAHO R shiny app is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with sht R toolbox.
+# along with MAKAHO R shiny app.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
-#
-#
-# R/tools.R
 
 
 word = function (id) {
@@ -65,7 +62,7 @@ get_Var = function (dico, varProba) {
             
             name = word(paste0("tt.ana.var", i, "." , j))
             
-            if (grepl('^t.*', var)) {
+            if (grepl('^t.*', var) | grepl('^dt.*', var)) {
                 type = 'saisonnalité'
             } else {
                 type = 'sévérité'
@@ -535,16 +532,16 @@ read_FST = function (resdir, filename, filedir='fst') {
     df = tibble(fst::read_fst(outfile))
     return (df)
 }
-# df_data = read_FST(computer_data_path, 'QIXAEx_01.fst', filedir='fst')
-# df_meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
+# data = read_FST(computer_data_path, 'QIXAEx_01.fst', filedir='fst')
+# meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
 
 
-get_trendExtremesMOD = function (df_data, df_trend, unit,
+get_trendExtremesMOD = function (data, df_trend, unit,
                                  minXprob=0, maxXprob=1,
                                  CodeSample=NULL) {
     
     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
-        df_mean = summarise(group_by(df_data, Code),
+        df_mean = summarise(group_by(data, Code),
                             mean=mean(X, na.rm=TRUE))
 
         df_join = full_join(df_trend, df_mean, by="Code")
@@ -586,29 +583,29 @@ count_decimal = function(x) {
     }
 }
 
-get_trendLabel = function (code, df_XEx, df_Xtrend, unit,
+get_trendLabel = function (code, dataEX, trendEX, unit,
                            space=FALSE) {
     
-    CodeEx = df_XEx$Code[!duplicated(df_XEx$Code)]
-    CodeXtrend = df_Xtrend$Code[!duplicated(df_Xtrend$Code)]
+    CodeEx = dataEX$Code[!duplicated(dataEX$Code)]
+    CodeXtrend = trendEX$Code[!duplicated(trendEX$Code)]
     
     if (!(code %in% CodeEx) | !(code %in% CodeXtrend)) {
         return (NA)
     }
     
-    df_XEx_code = df_XEx[df_XEx$Code == code,]
-    df_Xtrend_code = df_Xtrend[df_Xtrend$Code == code,]
+    dataEX_code = dataEX[dataEX$Code == code,]
+    trendEX_code = trendEX[trendEX$Code == code,]
 
-    if (is.na(df_Xtrend_code$a)) {
+    if (is.na(trendEX_code$a)) {
         return (NA)
     }
     
     # Computes the mean of the data on the period
-    dataMean = mean(df_XEx_code$X,
+    dataMean = mean(dataEX_code$X,
                     na.rm=TRUE)
     
     # Gets the trend
-    trend = df_Xtrend_code$a
+    trend = trendEX_code$a
     
     # Computes the mean trend
     trendMean = trend/dataMean

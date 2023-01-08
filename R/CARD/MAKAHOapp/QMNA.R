@@ -1,18 +1,18 @@
-ASHES$P.var = "QMNA"
-ASHES$P.unit = "m^{3}.s^{-1}"
-ASHES$P.glose = "Minimum annuel des débits mensuels"
-ASHES$P.event = "Étiage"
+CARD$P.var = "QMNA"
+CARD$P.unit = "m^{3}.s^{-1}"
+CARD$P.glose = "Minimum annuel des débits mensuels"
+CARD$P.topic = "Étiage"
+CARD$P.samplePeriod = c('05-01', '11-30')
 
-ASHES$P1.funct = list(Q=mean)
-ASHES$P1.funct_args = list("Q", na.rm=TRUE)
-ASHES$P1.timeStep = "year-month"
-ASHES$P1.NApct_lim = 3
-ASHES$P1.NAyear_lim = 10
+CARD$P1.funct = list(Q=mean)
+CARD$P1.funct_args = list("Q", na.rm=TRUE)
+CARD$P1.timeStep = "year-month"
+CARD$P1.NApct_lim = 3
+CARD$P1.NAyear_lim = 10
 
-ASHES$P2.funct = list(X=minNA)
-ASHES$P2.funct_args = list("Q", na.rm=TRUE)
-ASHES$P2.timeStep = "year"
-ASHES$P2.samplePeriod = c('05-01', '11-30')
-ASHES$P2.NApct_lim = 3
-ASHES$P2.NAyear_lim = 10
-ASHES$P2.rmNApct = FALSE
+CARD$P2.funct = list(X=minNA)
+CARD$P2.funct_args = list("Q", na.rm=TRUE)
+CARD$P2.timeStep = "year"
+CARD$P2.samplePeriod = c('05-01', '11-30')
+CARD$P2.NApct_lim = 3
+CARD$P2.rmNApct = FALSE

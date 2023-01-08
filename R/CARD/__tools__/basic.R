@@ -1,25 +1,22 @@
-# \\\
-# Copyright 2021-2022 Louis Héraut*1
+# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1
 #
 # *1   INRAE, France
-#      louis.heraut@inrae.fr
 #
-# This file is part of Ashes R toolbox.
+# This file is part of CARD R library.
 #
-# Ashes R toolbox is free software: you can redistribute it and/or
+# CARD R library is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Ashes R toolbox is distributed in the hope that it will be useful, but
+# CARD R library is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with ash R toolbox.
+# along with CARD R library.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
 
 
 #  ___            _     
@@ -27,8 +24,20 @@
 # | _ \/ _` |(_-<| |/ _|
 # |___/\__,_|/__/|_|\__| _____________________________________________
 ## 0. BASIC __________________________________________________________
-minus = function (a, b) {
+minus = function (a, b, first=FALSE) {
+    if (first) {
+        a = a[1]
+        b = b[1]
+    }
     return (a - b)
+}
+
+divided = function (a, b, first=FALSE) {
+    if (first) {
+        a = a[1]
+        b = b[1]
+    }
+    return (a / b)
 }
 
 ## 1. MIN MAX ________________________________________________________                   
@@ -70,7 +79,27 @@ which.maxNA = function (X) {
 ## 3. ROLLING AVERAGE ________________________________________________
 #' @title Rolling average
 #' @export
-rollmean_center = function (X, k) {
+rollmean_center = function (X, k, isCyclical=FALSE) {
+    if (isCyclical) {
+        n = length(X)
+        X = c(X[(n-k+1):n],
+              X,
+              X[1:(k+1)])
+    }    
+    X = RcppRoll::roll_mean(X, n=k, fill=NA,
+                            align="center",
+                            na.rm=FALSE)
+    if (isCyclical) {
+        n = length(X)
+        X = X[(k+1):(n-(k+1))]
+    }
+    return (X)
+}
+
+
+#' @title Rolling average old
+#' @export
+rollmean_center_old = function (X, k) {
 
     N = length(X)
     nNAdown = floor((k-1)/2)
@@ -87,6 +116,7 @@ rollmean_center = function (X, k) {
     isNA[unlist(Map(':', idNAstart[toNA], idNAend[toNA]))] = TRUE
 
     IdNA = which(isNA)
+    
     res = rle(isNA)
     lenNA = res$lengths
     valNA = res$values
@@ -99,7 +129,7 @@ rollmean_center = function (X, k) {
     if (length(IdNA) > 1) {
         start = 1 + dNAstart
         end = length(IdNA) - dNAend
-        if (start < end) {
+        if (start <= end) {
             IdNA = IdNA[start:end]
         } else {
             IdNA = NULL
@@ -133,4 +163,58 @@ rollmean_center = function (X, k) {
     Xroll = c(rep(NA, nNAdown), Xroll)
     Xroll = c(Xroll, rep(NA, nNAup))
     return (Xroll)
+}
+
+
+## 4. CIRCULAR STAT __________________________________________________
+circularTWEAK = function (X, Y, periodicity) {
+    XY2add = abs(X - Y) > (periodicity/2)
+    XYmin = pmin(X, Y, na.rm=TRUE)
+    XisMin = X == XYmin
+    YisMin = Y == XYmin
+
+    XY2add[is.na(XY2add)] = FALSE
+    XisMin[is.na(XisMin)] = FALSE
+    YisMin[is.na(YisMin)] = FALSE
+    
+    X[XY2add & XisMin] = X[XY2add & XisMin] + periodicity
+    Y[XY2add & YisMin] = Y[XY2add & YisMin] + periodicity
+
+    res = list(X=X, Y=Y)
+    return (res)
+}
+
+circular_minus = function (X, Y, periodicity) {
+    res = circularTWEAK(X, Y, periodicity)
+    X = res$X
+    Y = res$Y
+    return (X - Y)
+}
+    
+circular_divided = function (X, Y, periodicity) {
+    res = circularTWEAK(X, Y, periodicity)
+    X = res$X
+    Y = res$Y
+    return (X / Y)
+}
+
+circular_median = function (X, periodicity, na.rm=TRUE) {    
+    scalingFactor = 2 * pi / periodicity;
+    radians = X * scalingFactor
+    sines = sin(radians)
+    cosines = cos(radians)
+    median = atan2(median(sines, na.rm=na.rm), median(cosines, na.rm=na.rm)) / scalingFactor
+
+    print(median)
+
+    if (is.na(median)) {
+        res = NA
+    } else {
+        if (median >= 0) {
+            res = median
+        } else {
+            res = median + periodicity
+        }
+    }
+    return (res)
 }

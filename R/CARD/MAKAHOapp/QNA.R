@@ -1,12 +1,13 @@
-ASHES$P.var = "QNA"
-ASHES$P.unit = "m^{3}.s^{-1}"
-ASHES$P.glose = "Minimum annuel du débit journalier"
-ASHES$P.event = "Étiage"
-
-ASHES$P1.funct = list(X=minNA)
-ASHES$P1.funct_args = list("Q", na.rm=TRUE)
-ASHES$P1.timeStep = "year"
-ASHES$P1.samplePeriod = '01-01'
-ASHES$P1.NApct_lim = 3
-ASHES$P1.NAyear_lim = 10
-ASHES$P1.rmNApct = FALSE
+CARD$P.var = "QNA"
+CARD$P.unit = "m^{3}.s^{-1}"
+CARD$P.glose = "Minimum annuel du débit journalier"
+CARD$P.topic = "Étiage"
+CARD$P.samplePeriod = '01-01'
+    
+CARD$P1.funct = list(X=minNA)
+CARD$P1.funct_args = list("Q", na.rm=TRUE)
+CARD$P1.timeStep = "year"
+CARD$P1.samplePeriod = '01-01'
+CARD$P1.NApct_lim = 3
+CARD$P1.NAyear_lim = 10
+CARD$P1.rmNApct = FALSE

@@ -1,26 +1,24 @@
-# \\\
 # Copyright 2020 Ivan Horner (ivan.horner@irstea.fr)*1,
-#           2022 Louis Héraut (louis.heraut@inrae.fr)*2
+#           2022-2023 Louis Héraut (louis.heraut@inrae.fr)*2
 #
 # *1   IRSTEA, France
 # *2   INRAE, France
 #
-# This file is part of Ashes R package.
+# This file is part of CARD R library.
 #
-# Ashes R package is free software: you can redistribute it and/or
+# CARD R library is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Ashes R package is distributed in the hope that it will be useful, but
+# CARD R library is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Ashes R package.
+# along with CARD R library.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
 
 
 #  ___  _
@@ -56,13 +54,13 @@ compute_fAp = function (Q, lowLim) {
 #' @title fdc_slope
 #' @description Compute the mid-segment flow duration curve slope
 #' @param Q Streamflow vector
-#' @param probs A length 2 numeric vector containing the exceedance
+#' @param p A length 2 numeric vector containing the exceedance
 #' probability that define the of the mid-segment
 #' @return Mid-segment low duration curve slope
 #' @export
-fdc_slope = function(Q, probs=c(0.33, 0.66)) {
-    Qp = compute_Qp(Q, probs=probs)
-    res = - (log10(Qp[1L]) - log10(Qp[2L])) / diff(probs)
+fdc_slope = function(Q, p=c(0.33, 0.66)) {
+    Qp = compute_Qp(Q, p=p)
+    res = - (log10(Qp[1L]) - log10(Qp[2L])) / diff(p)
     return (res)
 }
 
@@ -95,7 +93,7 @@ fdc_values = function (Q, n=1000, sort=FALSE, na.rm=TRUE) {
             warning("'n' is larger than the number of values in 'Q'!")
         }
         pfdc = seq(0, 1, length.out=n)
-        Qfdc = compute_Qp(Q, probs=pfdc)
+        Qfdc = compute_Qp(Q, p=pfdc)
     }
     return(data.frame(p=pfdc, Q=Qfdc))
 }

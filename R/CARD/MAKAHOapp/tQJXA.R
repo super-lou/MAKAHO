@@ -1,13 +1,14 @@
-ASHES$P.var = "tQJXA"
-ASHES$P.unit = "jour de l'année"
-ASHES$P.glose = "Date du maximum annuel du débit journalier"
-ASHES$P.event = "Crue"
+CARD$P.var = "tQJXA"
+CARD$P.unit = "jour de l'année"
+CARD$P.glose = "Date du maximum annuel du débit journalier"
+CARD$P.topic = "Crue"
+CARD$P.samplePeriod = '09-01'
 
-ASHES$P1.funct = list(X=which.maxNA)
-ASHES$P1.funct_args = list("Q")
-ASHES$P1.timeStep = "year"
-ASHES$P1.samplePeriod = '09-01'
-ASHES$P1.isDate = TRUE
-ASHES$P1.NApct_lim = 3
-ASHES$P1.NAyear_lim = 10
-ASHES$P1.rmNApct = FALSE
+CARD$P1.funct = list(X=which.maxNA)
+CARD$P1.funct_args = list("Q")
+CARD$P1.timeStep = "year"
+CARD$P1.samplePeriod = '09-01'
+CARD$P1.isDate = TRUE
+CARD$P1.NApct_lim = 3
+CARD$P1.NAyear_lim = 10
+CARD$P1.rmNApct = FALSE

@@ -1,29 +1,26 @@
-# \\\
-# Copyright 2022 Louis Héraut*1
-#
+# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+#                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
+#                     Michel Lang (michel.lang@inrae.fr)*1,
+#                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
+#                     Benjamin Renard (benjamin.renard@inrae.fr)*1
+#                     
 # *1   INRAE, France
-#      louis.heraut@inrae.fr
-#      https://github.com/super-lou
 #
-# This file is part of sht R toolbox.
+# This file is part of MAKAHO R shiny app.
 #
-# Sht R toolbox is free software: you can redistribute it and/or
+# MAKAHO R shiny app is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# Sht R toolbox is distributed in the hope that it will be useful, but
+# MAKAHO R shiny app is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with sht R toolbox.
+# along with MAKAHO R shiny app.
 # If not, see <https://www.gnu.org/licenses/>.
-# ///
-#
-#
-# ui.R
 
 
 ui = bootstrapPage(
