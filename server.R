@@ -1310,7 +1310,7 @@ server = function (input, output, session) {
                                  level=as.numeric(input$alpha_choice),
                                  period=rv$period,
                                  samplePeriod_by_topic=samplePeriodMOD,
-                                 simplify=TRUE,
+                                 simplify="Code",
                                  verbose=verbose)
 
                 dataEX = res$dataEX

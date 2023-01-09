@@ -1,7 +1,7 @@
 CARD$P.var = "v_BF"
 CARD$P.unit = "hm^{3}"
-CARD$P.glose = "Volume des écoulements lents (volume de l’intégrale sous la courbe du débit de base)"
-CARD$P.topic = "Crue Nivale"
+CARD$P.glose = "Volume des écoulements lents (intégrale sous la courbe du débit de base)"
+CARD$P.topic = "Écoulements Lents"
 CARD$P.samplePeriod = '09-01'
 
 CARD$P1.funct = list(X=compute_VolSnowmelt)

@@ -108,11 +108,11 @@ apply_threshold = function (X, lim, where="under", what="X",
 
 ## 2. USE ____________________________________________________________
 compute_VolDef = function (X, upLim, select_longest=TRUE) {
-    Xdef = under_threshold(X,
+    Xdef = apply_threshold(X,
                            lim=upLim,
                            where="under",
                            what="X",
-                           select_longest=select_longest)
+                           select="longest")
     Vol = sum(Xdef, na.rm=TRUE)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (Vol)
 }

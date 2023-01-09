@@ -1,7 +1,7 @@
 CARD$P.var = "tFIN_BF"
 CARD$P.unit = "jour de l'année"
-CARD$P.glose = "Fin des écoulements lents (date lorsque 90% de l’intégrale sous la courbe du débit de base est atteinte)"
-CARD$P.topic = "Crue Nivale"
+CARD$P.glose = "Fin des écoulements lents (date à laquelle 90% de l’intégrale sous la courbe du débit de base est atteinte)"
+CARD$P.topic = "Écoulements Lents"
 CARD$P.samplePeriod = '09-01'
     
 CARD$P1.funct = list(X=compute_tVolSnowmelt)
