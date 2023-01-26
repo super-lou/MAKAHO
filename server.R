@@ -1302,6 +1302,8 @@ server = function (input, output, session) {
 
                 samplePeriodMOD = list(samplePeriodMOD)
                 names(samplePeriodMOD) = event
+
+                data = dplyr::relocate(data, Code, .before=Date)
                 
                 res = CARD_trend(data,
                                  CARD_path=CARD_path,
@@ -1312,16 +1314,12 @@ server = function (input, output, session) {
                                  samplePeriod_by_topic=samplePeriodMOD,
                                  simplify="Code",
                                  verbose=verbose)
-
+                
                 dataEX = res$dataEX
                 trendEX = res$trendEX
                 metaEX = res$metaEX
-
+                
                 rv$unit = metaEX$unit
-
-            
-
-
 
             # if (!is.null(filename)) {
             #     script_to_analyse_path = file.path('R',

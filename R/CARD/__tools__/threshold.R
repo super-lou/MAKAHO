@@ -29,6 +29,10 @@ apply_threshold = function (X, lim, where="under", what="X",
 
     lim = lim[1]
 
+    if (is.na(lim)) {
+        return (NA)
+    }
+
     if (where == "under") {
         ID = which(X <= lim)
     } else if (where == "above") {

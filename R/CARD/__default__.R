@@ -14,6 +14,6 @@ CARD$P1.NAyear_lim = NULL
 CARD$P1.Seasons = c("DJF", "MAM", "JJA", "SON")
 CARD$P1.onlyDate4Season = FALSE
 CARD$P1.nameEX = "X"
-CARD$P1.keep = FALSE
+CARD$P1.keep = NULL
 CARD$P1.compress = FALSE
 CARD$P1.rmNApct = TRUE

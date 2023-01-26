@@ -205,8 +205,6 @@ circular_median = function (X, periodicity, na.rm=TRUE) {
     cosines = cos(radians)
     median = atan2(median(sines, na.rm=na.rm), median(cosines, na.rm=na.rm)) / scalingFactor
 
-    print(median)
-
     if (is.na(median)) {
         res = NA
     } else {

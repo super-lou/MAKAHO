@@ -80,7 +80,7 @@ fdc_slope = function(Q, p=c(0.33, 0.66)) {
 #' be TRUE if the quantile function is used !)
 #' @return
 #' @export
-fdc_values = function (Q, n=1000, sort=FALSE, na.rm=TRUE) {
+compute_FDC = function (Q, n=1000, sort=FALSE, na.rm=TRUE) {
     if (na.rm) {
         Q = Q[!is.na(Q)]
     }
@@ -95,5 +95,16 @@ fdc_values = function (Q, n=1000, sort=FALSE, na.rm=TRUE) {
         pfdc = seq(0, 1, length.out=n)
         Qfdc = compute_Qp(Q, p=pfdc)
     }
-    return(data.frame(p=pfdc, Q=Qfdc))
+    res = dplyr::tibble(p=pfdc, Q=Qfdc)
+    return(res)
+}
+
+get_FDC_p = function (Q, n=1000, sort=FALSE, na.rm=TRUE) {
+    FDC_p = fdc_values(Q, n=n, sort=sort, na.rm=na.rm)$p
+    return (FDC_p)
+}
+
+get_FDC_Q = function (Q, n=1000, sort=FALSE, na.rm=TRUE) {
+    FDC_Q = fdc_values(Q, n=n, sort=sort, na.rm=na.rm)$Q
+    return (FDC_Q)
 }
