@@ -25,10 +25,12 @@
 
 server = function (input, output, session) {
 
-    if (file.exists(dev_path_ASHE) | file.exists(dev_path_EXstat) | file.exists(dev_path_dataSheep)) {
+    if (dir.exists(dev_lib_path)) {
         session$onSessionEnded(stopApp)
+        dev = TRUE
         verbose = TRUE
     } else {
+        dev = FALSE
         verbose = FALSE
     }
 
@@ -74,6 +76,12 @@ server = function (input, output, session) {
                         invalidCode=c(),
                         badCode=c(),
                         actualise=FALSE,
+                        idCode=NA,
+                        idDate=NA,
+                        idValue=NA,
+                        idExCode=NA,
+                        idExDate=NA,
+                        idExValue=NA,
                         dataEX=NULL,
                         trendEX=NULL,
                         period=NULL,
@@ -172,6 +180,7 @@ server = function (input, output, session) {
         CodeSample()
         meta()
     }, {
+        
         if (!is.null(CodeSample())) {
             Lon = meta()$lon[meta()$Code %in% CodeSample()]
             Lat = meta()$lat[meta()$Code %in% CodeSample()]
@@ -314,10 +323,11 @@ server = function (input, output, session) {
 
             rv$colorList = colorList
 
-            res = get_trendExtremesMOD(rv$dataEX, rv$trendEX,
+            res = get_trendExtremesMOD(rv,
+                                       rv$dataEX, rv$trendEX,
                                        unit=rv$unit,
-                                       minXprob=exXprob,
-                                       maxXprob=1-exXprob,
+                                       minXprob=exProb,
+                                       maxXprob=1-exProb,
                                        CodeSample=CodeSample())
             
             rv$df_value = res$df_value
@@ -325,13 +335,37 @@ server = function (input, output, session) {
             rv$minX = res$min
             rv$maxX = res$max
 
-            fill = get_color(rv$df_value$value,
-                             rv$minX,
-                             rv$maxX,
-                             Palette=Palette,
-                             colorStep=colorStep,
-                             reverse=rv$reverse,
-                             noneColor=none2Color)
+
+
+
+            
+            # fill = get_color(rv$df_value$value,
+            #                  rv$minX,
+            #                  rv$maxX,
+            #                  Palette=Palette,
+            #                  colorStep=colorStep,
+            #                  reverse=rv$reverse,
+            #                  noneColor=none2Color)
+
+            
+
+        
+            res = compute_colorBin(rv$minX,
+                                   rv$maxX,
+                                   colorStep=colorStep,
+                                   center=0,
+                                   include=FALSE)
+            bin = res$bin
+            upBin = res$upBin
+            lowBin = res$lowBin
+        
+            fill = get_colors(rv$df_value$value,
+                              upBin=upBin,
+                              lowBin=lowBin,
+                              Palette=Palette)
+            
+
+
             
             fillList = rep(none2Color, nCodeAll())
             fillCode = rv$df_value$Code
@@ -385,9 +419,9 @@ server = function (input, output, session) {
 
         LonAll = meta()$lon
         LatAll = meta()$lat
-        NomAll = meta()$nom
-        SupAll = meta()$surface_km2_BH
-        AltAll = meta()$altitude_m_BH
+        NomAll = meta()$Nom
+        SupAll = meta()$Surface_km2
+        AltAll = meta()$Altitude_m
         trendColorAll = rv$fillList
         trendColorAll = sapply(trendColorAll, switch_colorLabel)
         
@@ -445,6 +479,7 @@ server = function (input, output, session) {
 
         if (!is.null(rv$dataEX) & !is.null(rv$trendEX)) {            
             trendLabelAll = sapply(CodeAll(), get_trendLabel,
+                                   rv=rv,
                                    dataEX=rv$dataEX,
                                    trendEX=rv$trendEX,
                                    unit=rv$unit)
@@ -527,13 +562,19 @@ server = function (input, output, session) {
 
 ### 2.1. Station metadata ____________________________________________
     meta = reactive({
-        metatmp = read_FST(computer_data_path,
-                              'meta.fst',
-                              filedir='fst')
+        metatmp =
+            read_tibble(filedir=file.path(computer_data_path,
+                                          'fst'),
+                        filename='meta.fst')
+
+        if (dev) {
+            metatmp = metatmp[1:3,]
+        }
+        
         crs_rgf93 = sf::st_crs(2154)
         crs_wgs84 = sf::st_crs(4326)
-        sf_loca = sf::st_as_sf(metatmp[c("L93X_m_BH", "L93Y_m_BH")],
-                               coords=c("L93X_m_BH", "L93Y_m_BH"))
+        sf_loca = sf::st_as_sf(metatmp[c("XL93_m", "YL93_m")],
+                               coords=c("XL93_m", "YL93_m"))
         sf::st_crs(sf_loca) = crs_rgf93
         sf_loca = sf::st_transform(sf_loca, crs_wgs84)
         sf_loca = sf::st_coordinates(sf_loca$geometry)
@@ -545,7 +586,7 @@ server = function (input, output, session) {
 
 ### 2.2. Station selection ___________________________________________
     CodeAll = reactive({
-        rle(meta()$Code)$values
+        levels(factor(meta()$Code))
     })
 
     nCodeAll = reactive({
@@ -742,11 +783,11 @@ server = function (input, output, session) {
 
 #### 2.2.5. Search ___________________________________________________
     meta_location = reactive({
-        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", meta()$nom)
+        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", meta()$Nom)
     })
 
     meta_river = reactive({
-        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", meta()$nom)
+        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", meta()$Nom)
     })
 
     meta_basin = reactive({
@@ -774,9 +815,9 @@ server = function (input, output, session) {
     searchChoices = reactive({
         Values = c(
             paste0("code:", meta()$Code),
-            paste0("name:", meta()$nom),
-            paste0("region:", meta()$region_hydro),
-            paste0("regime:", meta()$regime_hydro),
+            paste0("name:", meta()$Nom),
+            paste0("region:", meta()$Region_Hydro),
+            # paste0("regime:", meta()$regime_hydro),
             paste0("location:", meta_location()),
             paste0("river:", meta_river()),
             paste0("basin:", meta_basin())
@@ -786,18 +827,18 @@ server = function (input, output, session) {
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.code"),
                    '</i>'),
-            paste0(meta()$nom,
+            paste0(meta()$Nom,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.name"),
                    '</i>'),
-            paste0(meta()$region_hydro,
+            paste0(meta()$Region_Hydro,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.region"),
                    '</i>'),
-            paste0(meta()$regime_hydro,
-                   '<i style="font-size: 9pt; color: ',
-                   grey85COL, '">&emsp;', word("ana.search.regime"),
-                   '</i>'),
+            # paste0(meta()$regime_hydro,
+                   # '<i style="font-size: 9pt; color: ',
+                   # grey85COL, '">&emsp;', word("ana.search.regime"),
+                   # '</i>'),
             paste0(meta_location(),
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.location"),
@@ -845,9 +886,9 @@ server = function (input, output, session) {
         searchType = gsub(":(.*)", "", htmlSearch)
 
         Code = meta()$Code[meta()$Code %in% Search[searchType == "code"]]
-        CodeNom = meta()$Code[meta()$nom %in% Search[searchType == "name"]]
-        CodeRegion = meta()$Code[meta()$region_hydro %in% Search[searchType == "region"]]
-        CodeRegime = meta()$Code[meta()$regime_hydro %in% Search[searchType == "regime"]]
+        CodeNom = meta()$Code[meta()$Nom %in% Search[searchType == "name"]]
+        CodeRegion = meta()$Code[meta()$Region_Hydro %in% Search[searchType == "region"]]
+        # CodeRegime = meta()$Code[meta()$regime_hydro %in% Search[searchType == "regime"]]
         CodeLocation = meta()$Code[meta_location() %in% Search[searchType == "location"]]
         CodeRiver = meta()$Code[meta_river() %in% Search[searchType == "river"]]
         CodeBasin = meta()$Code[meta_basin() %in% Search[searchType == "basin"]]
@@ -855,7 +896,7 @@ server = function (input, output, session) {
         selectCode = levels(factor(c(Code,
                                      CodeNom,
                                      CodeRegion,
-                                     CodeRegime,
+                                     # CodeRegime,
                                      CodeLocation,
                                      CodeRiver,
                                      CodeBasin)))
@@ -1181,9 +1222,9 @@ server = function (input, output, session) {
     
     dataAll = reactive({
         if (file.exists(file.path(computer_data_path, 'fst', "data.fst"))) {
-            read_FST(computer_data_path,
-                     "data.fst",
-                     filedir="fst")
+            read_tibble(filedir=file.path(computer_data_path,
+                                          'fst'),
+                        filename='data.fst')
         } else {
             NULL
         }
@@ -1191,7 +1232,19 @@ server = function (input, output, session) {
 
     data = reactive({
         if (!is.null(dataAll()) & !is.null(CodeSample())) {
-            dataAll()[dataAll()$Code %in% CodeSample(),]
+            data = dataAll()[dataAll()$Code %in% CodeSample(),]
+            rv$idValue = c()
+            for (id in 1:ncol(data)) {
+                x = data[[id]]
+                if (is.character(x)) {
+                    rv$idCode = id
+                } else if (lubridate::is.Date(x)) {
+                    rv$idDate = id
+                } else if (is.numeric(x)) {
+                    rv$idValue = c(rv$idValue, id)
+                }
+            }
+            data
         } else {
             NULL
         }
@@ -1257,70 +1310,59 @@ server = function (input, output, session) {
             
             if (grepl(".*p$", rv$var)) {
                 if (rv$proba != FALSE & !is.null(proba_choices())) {
-                    filename = paste0(gsub("p", "",
-                                           rv$var),
-                                      gsub("%", "", rv$proba),
-                                      ".R")
+                    CARD_name = paste0(gsub("p", "",
+                                            rv$var),
+                                       gsub("%", "", rv$proba))
                 } else {
-                    filename = NULL
+                    CARD_name = NULL
                 }
             } else {
-                filename = paste0(rv$var, ".R")
+                CARD_name = paste0(rv$var)
             }
 
-            if (!is.null(filename)) {
-                event = Var$event[Var$var == rv$var]
+            if (!is.null(CARD_name)) {
 
                 if (rv$optimalMode_act) {
-                    spMOD = samplePeriod_opti[[event]]
+                    samplePeriod_overwrite = NULL
                     
-                    if (identical(spMOD, "min") | identical(spMOD, "max")) {
-
-                        fQM_code = meta()[[paste0(spMOD, "QM")]][meta()$Code %in% rv$CodeSample_act]
-                        fQM = paste0(formatC(fQM_code,
-                                             width=2,
-                                             flag="0"),
-                                     '-01')
-                        samplePeriodMOD = tibble(Code=rv$CodeSample_act,
-                                                 sp=fQM)
-                        
-                    } else {
-                        if (length(spMOD) == 2) {
-                            spMOD = list(spMOD)
-                        }
-                        samplePeriodMOD = tibble(Code=rv$CodeSample_act,
-                                                 sp=spMOD)
-                    }
                 } else {
-                    spMOD = rv$samplePeriod
-                    if (length(spMOD) == 2) {
-                        spMOD = list(spMOD)
-                    }
-                    samplePeriodMOD = tibble(Code=rv$CodeSample_act,
-                                             sp=spMOD)
+                    samplePeriod_overwrite = rv$samplePeriod
                 }
-
-                samplePeriodMOD = list(samplePeriodMOD)
-                names(samplePeriodMOD) = event
-
+                
                 data = dplyr::relocate(data, Code, .before=Date)
+
+                print(CARD_name)
                 
-                res = CARD_trend(data,
-                                 CARD_path=CARD_path,
-                                 CARD_dir=CARD_dir,
-                                 CARD_name=filename,
-                                 level=as.numeric(input$alpha_choice),
-                                 period=rv$period,
-                                 samplePeriod_by_topic=samplePeriodMOD,
-                                 simplify="Code",
-                                 verbose=verbose)
+                res = CARD_extraction(
+                    data,
+                    CARD_path=CARD_path,
+                    CARD_dir=CARD_dir,
+                    CARD_name=CARD_name,
+                    period=rv$period,
+                    cancel_lim=FALSE,
+                    simplify=TRUE,
+                    samplePeriod_overwrite=samplePeriod_overwrite,
+                    verbose=verbose)
                 
-                dataEX = res$dataEX
-                trendEX = res$trendEX
                 metaEX = res$metaEX
+                dataEX = res$dataEX
+
+                print(dataEX)
+                print(rv$period)
+                
+                trendEX = process_trend(
+                    dataEX, metaEX,
+                    take_not_signif_into_account=TRUE,
+                    MK_level=as.numeric(input$alpha_choice),
+                    period_trend=rv$period,
+                    exProb=exProb,
+                    verbose=verbose)
+
+                print(trendEX)
+
+                
                 
                 rv$unit = metaEX$unit
-
                 trendEX = trendEX[!is.na(trendEX$a),]
 
                 if (!is.null(rv$CodeAdd)) {
@@ -1334,6 +1376,17 @@ server = function (input, output, session) {
                 dataEX = dataEX[dataEX$Code %in% CodeSample(),]
                 trendEX = trendEX[trendEX$Code %in% CodeSample(),]
 
+                rv$idExValue = c()
+                for (id in 1:ncol(data)) {
+                    x = data[[id]]
+                    if (is.character(x)) {
+                        rv$idExCode = id
+                    } else if (lubridate::is.Date(x)) {
+                        rv$idExDate = id
+                    } else if (is.numeric(x)) {
+                        rv$idExValue = c(rv$idExValue, id)
+                    }
+                }
                 rv$dataEX = dataEX
                 rv$trendEX = trendEX
 
@@ -1519,7 +1572,7 @@ server = function (input, output, session) {
             
             showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
             
-            name = meta()$nom[meta()$Code == rv$codePlot]
+            name = meta()$Nom[meta()$Code == rv$codePlot]
 
             data_code = data()[data()$Code == rv$codePlot,]
             maxQ_win = max(data_code$Q, na.rm=TRUE)*1.1            
@@ -1527,7 +1580,6 @@ server = function (input, output, session) {
             trendEX_code = rv$trendEX[rv$trendEX$Code == rv$codePlot,]
             color = rv$fillList[CodeAll() == rv$codePlot]
             switchColor = switch_colorLabel(color)
-            
             output$trend_plot = plotly::renderPlotly({
                 
                 shiny::validate(need(!is.null(rv$codePlot),
@@ -1652,7 +1704,8 @@ server = function (input, output, session) {
                     colorLabel = 'grey85'
                 }
 
-                trendLabel = get_trendLabel(code=rv$codePlot,
+                trendLabel = get_trendLabel(rv,
+                                            code=rv$codePlot,
                                             dataEX=rv$dataEX,
                                             trendEX=rv$trendEX,
                                             unit=rv$unit,
@@ -1734,7 +1787,7 @@ server = function (input, output, session) {
                                )     
                 
 
-                DateNoNA = dataEX_code$Date[!is.na(dataEX_code$X)]
+                DateNoNA = dataEX_code$Date[!is.na(dataEX_code[[rv$var]])]
                 abs = c(min(DateNoNA), max(DateNoNA))
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
@@ -1749,14 +1802,14 @@ server = function (input, output, session) {
 
                 x = dataEX_code$Date
                 if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
-                    y = dataEX_code$X
+                    y = dataEX_code[[rv$var]]
                     yhoverformat = '.3r'
                     unitLabel = rv$unit
                     unitLabel = gsub('[/^][/{]', '<sup>', unitLabel)
                     unitLabel = gsub('[/}]', '</sup>', unitLabel)
                     unitLabel = paste0(" [", unitLabel, "]<br>")
                 } else if (rv$unit == "jour de l'année") {
-                    y = as.Date(dataEX_code$X, origin="1970-01-01")
+                    y = as.Date(dataEX_code[[rv$var]], origin="1970-01-01")
                     yhoverformat = "%d %b"
                     unitLabel = ""
                 }
@@ -2030,11 +2083,11 @@ server = function (input, output, session) {
         if (input$colorbar_choice == 'show' & !is.null(rv$trendEX)) {
             output$colorbar_plot = plotly::renderPlotly({
                 
-                res = compute_colorBin(min=rv$minX,
-                                       max=rv$maxX,
-                                       Palette=Palette,
+                res = compute_colorBin(rv$minX,
+                                       rv$maxX,
                                        colorStep=colorStep,
-                                       reverse=rv$reverse)
+                                       center=0,
+                                       include=FALSE)
                 bin = res$bin
                 binNoINF = bin[is.finite(bin)]
                 
