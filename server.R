@@ -87,7 +87,6 @@ server = function (input, output, session) {
                         period=NULL,
                         samplePeriod=NULL,
                         var=FALSE,
-                        type=NULL,
                         unit=NULL,
                         proba=NULL,
                         reverse=FALSE,
@@ -542,6 +541,11 @@ server = function (input, output, session) {
             "</table>"
         )
 
+        print(Lon)
+        print(Lat)
+        print(markerListVoid)
+        print("")
+
         map = removeMarker(map, layerId=paste0("_", Code))
         map = addMarkers(map,
                          group="label",
@@ -947,10 +951,6 @@ server = function (input, output, session) {
         }
     })
 
-    type = reactive({
-        Var$type[Var$var == rv$var]            
-    })
-
     proba_choices = reactive({
         id = which(Var$var == var())
         if (!identical(id, integer(0))) {
@@ -1294,7 +1294,6 @@ server = function (input, output, session) {
             rv$CodeSample_act = sort(rv$CodeSample_act)
             rv$optimalMode_act = rv$optimalMode
             rv$var = var()
-            rv$type = type()
             rv$period = period()
             rv$proba = proba()
             rv$samplePeriod = samplePeriod()
@@ -2100,7 +2099,6 @@ server = function (input, output, session) {
                 Y0 = lowBin / max(lowBin[is.finite(lowBin)])
                 Y0[Y0 == -Inf] = -1 - dY
 
-                PaletteColors = res$Palette
                 X0 = rep(0, colorStep)
                 X1 = rep(1, colorStep)
                 
@@ -2128,7 +2126,7 @@ server = function (input, output, session) {
                                       y=c(Y0[i], Y1[i],
                                           Y1[i], Y0[i], Y0[i]),
                                       fill="toself",
-                                      fillcolor=PaletteColors[i],
+                                      fillcolor=Palette[i],
                                       line=list(width=0),
                                       text=paste0("<b>",
                                                   counts[i],
@@ -2162,7 +2160,7 @@ server = function (input, output, session) {
                                   x=c(0, 1, 0.5, 0),
                                   y=c(1, 1, 1+dY*2/3, 1),
                                   fill="toself",
-                                  fillcolor=PaletteColors[colorStep],
+                                  fillcolor=Palette[colorStep],
                                   line=list(width=0),
                                   text=paste0("<b>",
                                               counts[colorStep],
@@ -2181,7 +2179,7 @@ server = function (input, output, session) {
                                   x=c(0, 1, 0.5, 0),
                                   y=c(-1, -1, -1-dY*2/3, -1),
                                   fill="toself",
-                                  fillcolor=PaletteColors[1],
+                                  fillcolor=Palette[1],
                                   line=list(width=0),
                                   text=paste0("<b>",
                                               counts[1],

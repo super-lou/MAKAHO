@@ -72,12 +72,6 @@ dico_file = 'dico.txt'
 dico = create_dico(dico_file, resources_path)
 
 
-varProba = list(fAp=c("01%", "05%", "10%"),
-                Qp=c("10%", "25%", "50%", "75%", "90%"))
-
-Var = get_Var(dico, varProba)
-
-
 # Creates a vector of months name
 Months = c(word("ana.m01"), word("ana.m02"), word("ana.m03"),
            word("ana.m04"), word("ana.m05"), word("ana.m06"),
@@ -91,10 +85,10 @@ Years = 1900:as.numeric(format(today, "%Y"))
 sigProba = c("1%", "5%", "10%")
 sigVal = as.numeric(gsub('%', '' , sigProba))/100
 
-nbTick = 10
-
 colorStep = 10
-Palette = get_IPCC_Palette("ground_10")
+
+# colorStep = 10
+Palette = get_IPCC_Palette("MAKAHO_ground")
 
 exProb = 0.01
 
@@ -180,3 +174,121 @@ samplePeriod_opti = list(
     'Moyennes Eaux' = 'min',
     'Étiage' = c('05-01', '11-30')
 )
+
+
+
+check_varSub = c("fQA[[:digit:]]+",
+                 "QA[[:digit:]]+",
+                 "QA[_]season",
+                 "QA[_]month")
+
+# varProba = list(fAp=c("01%", "05%", "10%"),
+                # Qp=c("10%", "25%", "50%", "75%", "90%"))
+
+# Var = get_Var(dico, varProba)
+
+
+
+
+get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
+
+    CARD_dirpath = file.path(CARD_path, CARD_dir)
+    CARD_files = list.files(CARD_dirpath)
+    nVar = length(CARD_files)
+    Var = dplyr::tibble()
+    
+    for (CARD in CARD_files) {
+        list_path = list.files(file.path(CARD_path,
+                                         "__tools__"),
+                               pattern='*.R$',
+                               recursive=TRUE,
+                               full.names=TRUE)
+        for (path in list_path) {
+            source(path, encoding='UTF-8')    
+        }
+        
+        Process_default = sourceProcess(
+            file.path(CARD_path, "__default__.R"))
+        
+        Process = sourceProcess(
+            file.path(CARD_dirpath, CARD),
+            default=Process_default)
+
+        principal = Process$P
+        principal_names = names(principal)
+        for (pp in 1:length(principal)) {
+            assign(principal_names[pp], principal[[pp]])
+        }
+
+        CARD_var = var
+        
+        var = gsub("[.]R", "", CARD)
+        varHTML = var
+        if (grepl('[_]', var)) {
+            varHTML = paste0("<span>",
+                             gsub('_', '<sub>', var),
+                             "</sub>", "</span>")
+        }
+
+        if (any(sapply(check_varSub, grepl, var))) {
+            ok = which(sapply(check_varSub, grepl, var))
+            
+            if (grepl("(month)|(season)", var)) {
+                if (!any(grepl(check_varSub[ok], Var$var))) {
+                    to_rm = gsub("(month)|(season)", "",
+                                 check_varSub[ok])
+                    sub = gsub(to_rm, "", CARD_var)
+                        
+                    Var = bind_rows(
+                        Var,
+                        dplyr::tibble(event=topic[1],
+                                      var=var,
+                                      varHTML=varHTML,
+                                      name=list(glose),
+                                      sub=list(sub),
+                                      reverse=reverse_palette))
+                }
+                
+            } else {
+                sub = stringr::str_extract(var, "[[:digit:]]+$")
+                var = gsub("[[:digit:]]+$", "p", var)
+                var_regexp = paste0("^", var, "$")
+                varHTML = var
+                if (grepl('[_]', var)) {
+                    varHTML = paste0("<span>",
+                                     gsub('_', '<sub>', var),
+                                     "</sub>", "</span>")
+                }
+                
+                if (!any(grepl(var_regexp, Var$var))) {
+                    Var = bind_rows(
+                        Var,
+                        dplyr::tibble(event=topic[1],
+                                      var=var,
+                                      varHTML=varHTML,
+                                      name=list(glose),
+                                      sub=list(sub),
+                                      reverse=reverse_palette))
+                } else {
+                    ok2 = which(grepl(var_regexp, Var$var))
+                    Var$name[[ok2]] = c(Var$name[[ok2]], glose)
+                    Var$sub[[ok2]] = c(Var$sub[[ok2]], sub)
+                }
+            }
+            
+        } else {
+            Var = bind_rows(
+                Var,
+                dplyr::tibble(event=topic[1],
+                              var=var,
+                              varHTML=varHTML,
+                              name=list(glose),
+                              sub=NA,
+                              reverse=reverse_palette))
+        }
+    }
+    
+    return (Var) 
+}
+
+Var = get_Var2(CARD_path, CARD_dir, check_varSub)

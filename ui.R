@@ -368,11 +368,13 @@ ui = bootstrapPage(
                     radioButton(
                         class="radioButton",
                         inputId="event_choice",
-                        choiceNames=rle(Var$event)$values,
-                        selected=rle(Var$event)$values[1],
+                        choiceNames=
+                            levels(factor(Var$event)),
+                        selected=
+                            levels(factor(Var$event))[1],
                         choiceTooltips=
                             paste(word("tt.ana.regime"),
-                                  tolower(rle(Var$event)$values))))),
+                                  tolower(levels(factor(Var$event))))))),
             
             div(class="Row",
                 div(class="row-label",
