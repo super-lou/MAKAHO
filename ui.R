@@ -289,13 +289,7 @@ ui = bootstrapPage(
 
 ### 2.2. Panel _______________________________________________________
             div(class="Row",
-                div(class="row-label",
-                    HTML(paste0("<span><b>",
-                                word("ana.data"),
-                                "</b></span>"))),
-                div(class="sep"),
-                div(class="bunch",
-                    htmlOutput("dataHTML_ana"))),
+                htmlOutput("dataHTML_ana")),
 
             div(class="Row",
                 div(class="row-label",
@@ -305,6 +299,20 @@ ui = bootstrapPage(
                 div(class="sep"),
                 div(class="bunch",
                     textOutput("period_ana"))),
+            
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("ana.data"),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioButton(
+                        class="radioButton",
+                        inputId="data_choice",
+                        choiceNames=c("RRSE", "Explore2"),
+                        selected="RRSE",
+                        choiceTooltips=word("tt.ana.data.RRSE")))),
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",

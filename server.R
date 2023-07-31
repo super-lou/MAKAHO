@@ -93,7 +93,12 @@ server = function (input, output, session) {
                         CodeSample_act=NULL,
                         CodeAdd=NULL,
                         actualiseForce=FALSE,
-                        loading=FALSE
+                        loading=FALSE,
+                        data_name="RRSE",
+                        dataAll=NULL,
+                        CodeAll=NULL,
+                        data=NULL,
+                        meta=NULL
                         )
 
     startOBS = observe({
@@ -120,8 +125,13 @@ server = function (input, output, session) {
     })
 
     defaultLimits = reactive({
-        Lon = meta()$lon
-        Lat = meta()$lat
+        if (is.null(rv$meta)) {
+            Lon = meta()$lon
+            Lat = meta()$lat
+        } else {
+            Lon = rv$meta$lon
+            Lat = rv$meta$lat 
+        }
         list(north=max(Lat), east=max(Lon),
              south=min(Lat), west=min(Lon))
     })
@@ -177,12 +187,12 @@ server = function (input, output, session) {
 
     observeEvent({
         CodeSample()
-        meta()
+        rv$meta
     }, {
         
         if (!is.null(CodeSample())) {
-            Lon = meta()$lon[meta()$Code %in% CodeSample()]
-            Lat = meta()$lat[meta()$Code %in% CodeSample()]
+            Lon = rv$meta$lon[rv$meta$Code %in% CodeSample()]
+            Lat = rv$meta$lat[rv$meta$Code %in% CodeSample()]
             rv$currentLimits = list(north=max(Lat), east=max(Lon),
                                     south=min(Lat), west=min(Lon))
 
@@ -288,13 +298,16 @@ server = function (input, output, session) {
         } else if (input$theme_choice == 'dark') {
             none2Color = none2Color_dark
         }
-        
-        if (!is.null(rv$dataEX) | !is.null(rv$trendEX)) {
+
+        if (!is.null(rv$dataEX) & !is.null(rv$trendEX) &
+            all(rv$CodeSample %in% levels(factor(rv$dataEX$Code)))) {
+                                                                 
+            print("a")
             
             trendCode = rv$trendEX$Code
 
-            sizeList = rep('small', nCodeAll())
-            sizeList[match(rv$codePlot, CodeAll())] = 'big'
+            sizeList = rep('small', length(rv$CodeAll))
+            sizeList[match(rv$codePlot, rv$CodeAll)] = 'big'
 
             rv$sizeList = sizeList
             
@@ -303,22 +316,24 @@ server = function (input, output, session) {
             CodeSD = trendCode[OkS & rv$trendEX$a < 0]
             CodeNS = trendCode[!OkS]
 
-            shapeList = rep('o', nCodeAll())
-            shapeList[match(CodeSU, CodeAll())] = '^'
-            shapeList[match(CodeSD, CodeAll())] = 'v'
-            shapeList[match(CodeNS, CodeAll())] = 'o'
-            shapeList[match(missCode(), CodeAll())] = 'o'
+            shapeList = rep('o', length(rv$CodeAll))
+            shapeList[match(CodeSU, rv$CodeAll)] = '^'
+            shapeList[match(CodeSD, rv$CodeAll)] = 'v'
+            shapeList[match(CodeNS, rv$CodeAll)] = 'o'
+            shapeList[match(missCode(), rv$CodeAll)] = 'o'
 
             rv$shapeList = shapeList
+
+            print("b")
             
-            colorList = rep(none1Color, nCodeAll())
-            colorList[match(CodeSample(), CodeAll())] = validSColor
+            colorList = rep(none1Color, length(rv$CodeAll))
+            colorList[match(CodeSample(), rv$CodeAll)] = validSColor
             colorList[match(CodeSample()[CodeSample() %in% CodeNS],
-                            CodeAll())] = validNSColor
+                            rv$CodeAll)] = validNSColor
             invalidCodeSample = invalidCode()[invalidCode() %in% CodeSample()]
-            colorList[match(invalidCodeSample, CodeAll())] = invalidColor
+            colorList[match(invalidCodeSample, rv$CodeAll)] = invalidColor
             missCodeSample = missCode()[missCode() %in% CodeSample()]
-            colorList[match(missCodeSample, CodeAll())] = missColor
+            colorList[match(missCodeSample, rv$CodeAll)] = missColor
 
             rv$colorList = colorList
 
@@ -334,21 +349,8 @@ server = function (input, output, session) {
             rv$minX = res$min
             rv$maxX = res$max
 
+            print("c")
 
-
-
-            
-            # fill = get_color(rv$df_value$value,
-            #                  rv$minX,
-            #                  rv$maxX,
-            #                  Palette=Palette,
-            #                  colorStep=colorStep,
-            #                  reverse=rv$reverse,
-            #                  noneColor=none2Color)
-
-            
-
-        
             res = compute_colorBin(rv$minX,
                                    rv$maxX,
                                    colorStep=colorStep,
@@ -364,25 +366,26 @@ server = function (input, output, session) {
                               Palette=Palette)
             
 
-
+            print("d")
             
-            fillList = rep(none2Color, nCodeAll())
+            fillList = rep(none2Color, length(rv$CodeAll))
             fillCode = rv$df_value$Code
             
             okCodeSample = fillCode %in% CodeSample()
             fillCodeSample = fillCode[okCodeSample]
             fillSample = fill[okCodeSample]
 
-            fillList[match(fillCodeSample, CodeAll())] = fillSample
-
+            fillList[match(fillCodeSample, rv$CodeAll)] = fillSample
             rv$fillList = fillList
-            
+
+
+            print("e")
             
         } else {
-            sizeList = rep('small', nCodeAll())
-            shapeList = rep('o', nCodeAll())                        
-            colorList = rep(none1Color, nCodeAll())            
-            fillList = rep(none2Color, nCodeAll())
+            sizeList = rep('small', nrow(meta()))
+            shapeList = rep('o', nrow(meta()))                        
+            colorList = rep(none1Color, nrow(meta()))            
+            fillList = rep(none2Color, nrow(meta()))
         }
         
         get_markerList(sizeList,
@@ -395,16 +398,19 @@ server = function (input, output, session) {
     observeEvent({
         input$theme_choice
         input$alpha_choice
-        meta()
+        rv$meta
         markerListAll()
     }, {
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
-            okCode = rep(TRUE, nCodeAll())
+            okCode = rep(TRUE, length(rv$CodeAll))
         } else {
             okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
+
+
+        print("f")
         
         rv$theme_choice_save = input$theme_choice
         rv$markerListAll_save = markerListAll()
@@ -416,28 +422,33 @@ server = function (input, output, session) {
             as.numeric(str_extract(unlist(markerList$iconUrl),
                                    "[:digit:]+"))        
 
-        LonAll = meta()$lon
-        LatAll = meta()$lat
-        NomAll = meta()$Nom
-        SupAll = meta()$Surface_km2
-        AltAll = meta()$Altitude_m
+        LonAll = rv$meta$lon
+        LatAll = rv$meta$lat
+        NomAll = rv$meta$Nom
+        SupAll = rv$meta$Surface_km2
+        AltAll = rv$meta$Altitude_m
         trendColorAll = rv$fillList
         trendColorAll = sapply(trendColorAll, switch_colorLabel)
+
+        print("g")
         
         markerList$iconUrl = markerList$iconUrl
-        Code = CodeAll()[okCode]
+        Code = rv$CodeAll[okCode]
         Lon = LonAll[okCode]
         Lat = LatAll[okCode]
         Nom = NomAll[okCode]
         Sup = SupAll[okCode]
         Alt = AltAll[okCode]
-        trendColor = trendColorAll[match(Code, CodeAll())]
+        trendColor = trendColorAll[match(Code, rv$CodeAll)]
 
         map = removeMarker(map, layerId=Code)
 
         ok21 = codeShapeList == 21
         okN21 = !ok21
 
+
+        print("h")
+        
         iconAnchorX = list(iconAnchorX=markerList$iconAnchorX)
         iconAnchorY = list(iconAnchorY=markerList$iconAnchorY)
 
@@ -475,9 +486,10 @@ server = function (input, output, session) {
                              options=markerOptions(zIndexOffset=1000))
         }
 
+        print("i")
 
         if (!is.null(rv$dataEX) & !is.null(rv$trendEX)) {            
-            trendLabelAll = sapply(CodeAll(), get_trendLabel,
+            trendLabelAll = sapply(rv$CodeAll, get_trendLabel,
                                    rv=rv,
                                    dataEX=rv$dataEX,
                                    trendEX=rv$trendEX,
@@ -490,18 +502,20 @@ server = function (input, output, session) {
         
         okCode = rv$trendLabelAll != trendLabelAll
         
-        Code = CodeAll()[okCode]
+        Code = rv$CodeAll[okCode]
         Lon = LonAll[okCode]
         Lat = LatAll[okCode]
         Nom = NomAll[okCode]
         Sup = SupAll[okCode]
         Alt = AltAll[okCode]
-        trendColor = trendColorAll[match(Code, CodeAll())]
+        trendColor = trendColorAll[match(Code, rv$CodeAll)]
         trendLabel = trendLabelAll[okCode]
         
         Br = rep("<br>", times=length(Code))
         Br[trendLabel == ""] = ""
 
+        print("j")
+        
         rv$trendLabelAll = trendLabelAll
 
         markerListVoid = get_markerList(rep("void", length(Code)),
@@ -541,6 +555,8 @@ server = function (input, output, session) {
             "</table>"
         )
 
+        print("k")
+
         map = removeMarker(map, layerId=paste0("_", Code))
         map = addMarkers(map,
                          group="label",
@@ -560,16 +576,21 @@ server = function (input, output, session) {
     })
 
 ### 2.1. Station metadata ____________________________________________
-    meta = reactive({
+    data_name = reactive({
+        input$data_choice
+    })
+
+    meta = reactive({        
         metatmp =
             read_tibble(filedir=file.path(computer_data_path,
                                           'fst'),
-                        filename='meta.fst')
+                        filename=paste0('meta_',
+                                        data_name(),
+                                        '.fst'))
 
-        if (dev) {
-            metatmp = metatmp[1:3,]
-        }
-        
+        # if (dev) {
+            # metatmp = metatmp[1:3,]
+        # }
         crs_rgf93 = sf::st_crs(2154)
         crs_wgs84 = sf::st_crs(4326)
         sf_loca = sf::st_as_sf(metatmp[c("XL93_m", "YL93_m")],
@@ -580,16 +601,21 @@ server = function (input, output, session) {
         metatmp$lon = sf_loca[, 1]
         metatmp$lat = sf_loca[, 2]
         metatmp = metatmp[order(metatmp$Code),]
+
+        if (is.null(rv$meta)) {
+            rv$meta = metatmp
+        }
+        
         metatmp
     })
 
 ### 2.2. Station selection ___________________________________________
     CodeAll = reactive({
-        levels(factor(meta()$Code))
-    })
-
-    nCodeAll = reactive({
-        length(CodeAll())
+        CodeAll = levels(factor(meta()$Code))
+        if (is.null(rv$CodeAll)) {
+            rv$CodeAll = CodeAll
+        }
+        CodeAll
     })
 
     rv$CodeSample = isolate(CodeAll())
@@ -614,7 +640,7 @@ server = function (input, output, session) {
 
 #### 2.2.1. All/none _________________________________________________
     observeEvent(input$all_button, {
-        rv$CodeSample = CodeAll()
+        rv$CodeSample = rv$CodeAll
     })
 
     observeEvent(input$none_button, {
@@ -747,8 +773,8 @@ server = function (input, output, session) {
         if (nrow(rv$polyCoord) != 0) {
         
             station_coordinates = sp::SpatialPointsDataFrame(
-                meta()[c('lon', 'lat')],
-                meta()['Code'])
+                rv$meta[c('lon', 'lat')],
+                rv$meta['Code'])
 
             # Transform them to an sp Polygon
             drawn_polygon = sp::Polygon(as.matrix(rv$polyCoord))
@@ -756,7 +782,7 @@ server = function (input, output, session) {
             # Use over from the sp package to identify selected station
             selected_station = sp::over(station_coordinates, sp::SpatialPolygons(list(sp::Polygons(list(drawn_polygon), "drawn_polygon"))))
 
-            selectCode = meta()$Code[!is.na(selected_station)]
+            selectCode = rv$meta$Code[!is.na(selected_station)]
 
             if (rv$polyMode == "Add") {
                 rv$CodeSample = c(rv$CodeSample, selectCode)
@@ -782,11 +808,11 @@ server = function (input, output, session) {
 
 #### 2.2.5. Search ___________________________________________________
     meta_location = reactive({
-        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", meta()$Nom)
+        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", rv$meta$Nom)
     })
 
     meta_river = reactive({
-        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", meta()$Nom)
+        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", rv$meta$Nom)
     })
 
     meta_basin = reactive({
@@ -807,34 +833,34 @@ server = function (input, output, session) {
                                     rep('Rhône-Méditérannée & Corse', 5),
                                     rep('Îles', 1)
                                     ))
-        fL = substr(meta()$Code, 1, 1)
+        fL = substr(rv$meta$Code, 1, 1)
         df_basinName$basin[match(fL, df_basinName$letter)]
     })
     
     searchChoices = reactive({
         Values = c(
-            paste0("code:", meta()$Code),
-            paste0("name:", meta()$Nom),
-            paste0("region:", meta()$Region_Hydro),
-            # paste0("regime:", meta()$regime_hydro),
+            paste0("code:", rv$meta$Code),
+            paste0("name:", rv$meta$Nom),
+            paste0("region:", rv$meta$Region_Hydro),
+            # paste0("regime:", rv$meta$regime_hydro),
             paste0("location:", meta_location()),
             paste0("river:", meta_river()),
             paste0("basin:", meta_basin())
         )
         htmlValues = c(
-            paste0(meta()$Code,
+            paste0(rv$meta$Code,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.code"),
                    '</i>'),
-            paste0(meta()$Nom,
+            paste0(rv$meta$Nom,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.name"),
                    '</i>'),
-            paste0(meta()$Region_Hydro,
+            paste0(rv$meta$Region_Hydro,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.region"),
                    '</i>'),
-            # paste0(meta()$regime_hydro,
+            # paste0(rv$meta$regime_hydro,
                    # '<i style="font-size: 9pt; color: ',
                    # grey85COL, '">&emsp;', word("ana.search.regime"),
                    # '</i>'),
@@ -884,13 +910,13 @@ server = function (input, output, session) {
         Search = gsub("(.*?):", "", htmlSearch)
         searchType = gsub(":(.*)", "", htmlSearch)
 
-        Code = meta()$Code[meta()$Code %in% Search[searchType == "code"]]
-        CodeNom = meta()$Code[meta()$Nom %in% Search[searchType == "name"]]
-        CodeRegion = meta()$Code[meta()$Region_Hydro %in% Search[searchType == "region"]]
-        # CodeRegime = meta()$Code[meta()$regime_hydro %in% Search[searchType == "regime"]]
-        CodeLocation = meta()$Code[meta_location() %in% Search[searchType == "location"]]
-        CodeRiver = meta()$Code[meta_river() %in% Search[searchType == "river"]]
-        CodeBasin = meta()$Code[meta_basin() %in% Search[searchType == "basin"]]
+        Code = rv$meta$Code[rv$meta$Code %in% Search[searchType == "code"]]
+        CodeNom = rv$meta$Code[rv$meta$Nom %in% Search[searchType == "name"]]
+        CodeRegion = rv$meta$Code[rv$meta$Region_Hydro %in% Search[searchType == "region"]]
+        # CodeRegime = rv$meta$Code[rv$meta$regime_hydro %in% Search[searchType == "regime"]]
+        CodeLocation = rv$meta$Code[meta_location() %in% Search[searchType == "location"]]
+        CodeRiver = rv$meta$Code[meta_river() %in% Search[searchType == "river"]]
+        CodeBasin = rv$meta$Code[meta_basin() %in% Search[searchType == "basin"]]
 
         selectCode = levels(factor(c(Code,
                                      CodeNom,
@@ -900,7 +926,7 @@ server = function (input, output, session) {
                                      CodeRiver,
                                      CodeBasin)))
 
-        if (all(CodeAll() %in% rv$CodeSample)) {
+        if (all(rv$CodeAll %in% rv$CodeSample)) {
             rv$CodeSample = selectCode
         } else {
             codeRm = rv$CodeSearch[!(rv$CodeSearch %in% selectCode)]        
@@ -947,8 +973,17 @@ server = function (input, output, session) {
         }
     })
 
+    # event = reactive({
+        # if (!is.null(input$var_choice) & input$var_choice != FALSE) {
+            # Var$event[Var$var == input$var_choice]
+        # } else {
+            # Var$event[Var$var == "QA"]
+        # }        
+    # })
+
     proba_choices = reactive({
-        id = which(Var$var == var())
+        id = which(Var$var == var() &
+                   Var$event == input$event_choice)
         if (!identical(id, integer(0))) {
             Var$sub[[id]]
         } else {
@@ -965,7 +1000,8 @@ server = function (input, output, session) {
     })
 
     reverse = reactive({
-        id = which(Var$var == var())
+        id = which(Var$var == var() &
+                   Var$event == input$event_choice)
         if (!identical(id, integer(0))) {
             Var$reverse[id]
         } else {
@@ -1020,14 +1056,35 @@ server = function (input, output, session) {
     })
 
     output$dataHTML_ana = renderUI({
+
+
+        print("dataHTML_ana")
+        print(Var$var == var())
+        print(Var$event == input$event_choice)
+        print(Var$var == var() &
+              Var$event == input$event_choice)
+
+        id = which(Var$var == var() &
+                   Var$event == input$event_choice)
+
+        print(input$event_choice)
+
+        print("id")
+        print(id)
+        print(Var$name[[id]])
+        
+        
+        print("")
+        
+        
         if (is.null(proba())) {
-            data = paste0(Var$varHTML[Var$var == var()], ' : ',
-                          Var$name[Var$var == var()][[1]])
+            data = paste0(Var$varHTML[id], ' : ',
+                          Var$name[[id]][1])
         } else {
-            name = unlist(Var$name[Var$var == var()])
-            sub = unlist(Var$sub[Var$var == var()])
+            name = unlist(Var$name[id])
+            sub = unlist(Var$sub[id])
             name = name[sub == proba()]
-            var = Var$varHTML[Var$var == var()]
+            var = Var$varHTML[id]
             if (grepl("(month)|(season)", var)) {
                 var = gsub("(month)|(season)", proba(), var)
             } else {
@@ -1206,12 +1263,27 @@ server = function (input, output, session) {
                         hydroEnd))
         }
     })    
-    
+        
     dataAll = reactive({
-        if (file.exists(file.path(computer_data_path, 'fst', "data.fst"))) {
-            read_tibble(filedir=file.path(computer_data_path,
-                                          'fst'),
-                        filename='data.fst')
+        if (file.exists(file.path(computer_data_path,
+                                  'fst',
+                                  paste0('data_',
+                                         data_name(),
+                                         '.fst')))) {
+            dataAll = read_tibble(filedir=file.path(computer_data_path,
+                                                    'fst'),
+                                  filename=paste0('data_',
+                                                  data_name(),
+                                                  '.fst'))
+
+            # if (dev) {
+                # dataAll =
+                    # dplyr::filter(dataAll,
+                                  # Code ==
+                                  # levels(factor(dataAll$Code))[1:3])
+            # }
+            dataAll
+            
         } else {
             NULL
         }
@@ -1219,7 +1291,15 @@ server = function (input, output, session) {
 
     data = reactive({
         if (!is.null(dataAll()) & !is.null(CodeSample())) {
-            data = dataAll()[dataAll()$Code %in% CodeSample(),]
+            if (all(rv$CodeSample %in%
+                    levels(factor(dataAll()$Code)))) {
+                data = dataAll()[dataAll()$Code %in% CodeSample(),]
+            } else {
+                data = dataAll()
+                rv$CodeSample = CodeAll()
+                rv$CodeSample_save = CodeAll()
+            }
+            
             rv$idValue = c()
             for (id in 1:ncol(data)) {
                 x = data[[id]]
@@ -1245,15 +1325,24 @@ server = function (input, output, session) {
         samplePeriod()
         rv$photoMode
         rv$optimalMode
+        data_name()
     }, {
         if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
-            if (!all(CodeSample() %in% rv$CodeSample_act)) {
-                rv$CodeAdd = CodeSample()[!(CodeSample() %in% rv$CodeSample_act)]
+            if (!all(CodeSample() %in% rv$CodeSample_act) &
+                identical(data_name(), rv$data_name)) {
+                rv$CodeAdd = CodeSample()[!(CodeSample() %in%
+                                            rv$CodeSample_act)]
                 rv$actualiseForce = !rv$actualiseForce
             }
         }
-        
-        if (identical(var(), rv$var) & all(identical(period(), rv$period)) & identical(proba(), rv$proba) & all(identical(samplePeriod(), rv$samplePeriod)) & is.null(rv$helpPage) & identical(rv$optimalMode, rv$optimalMode_act)) {
+
+        if (identical(var(), rv$var) &
+            all(identical(period(), rv$period)) &
+            identical(proba(), rv$proba) &
+            all(identical(samplePeriod(), rv$samplePeriod)) &
+            is.null(rv$helpPage) &
+            identical(rv$optimalMode, rv$optimalMode_act) &
+            identical(data_name(), rv$data_name)) {
             hide(id="actualise_panelButton")    
         } else {
             if ((rv$var != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$samplePeriod)) & !rv$photoMode) {
@@ -1273,10 +1362,16 @@ server = function (input, output, session) {
         }
     })
 
+    
     observeEvent(rv$actualise, {
-        
         if (rv$actualise & rv$start) {
 
+            rv$data_name = data_name()
+            rv$dataAll = dataAll()
+            rv$CodeAll = CodeAll()
+            rv$data = data()
+            rv$meta = meta()
+            
             rv$CodeSample_act = c(CodeSample(), rv$CodeAdd)
             rv$CodeSample_act = sort(rv$CodeSample_act)
             rv$optimalMode_act = rv$optimalMode
@@ -1287,9 +1382,9 @@ server = function (input, output, session) {
             rv$reverse = reverse()
 
             if (!is.null(rv$CodeAdd)) {
-                data = data()[data()$Code %in% rv$CodeAdd,]
+                data = rv$data[rv$data$Code %in% rv$CodeAdd,]
             } else {
-                data = data()
+                data = rv$data
             }
             
             hide(id="actualise_panelButton")
@@ -1458,10 +1553,10 @@ server = function (input, output, session) {
     })
 
     missCode = reactive({
-        if (!is.null(dataAll())) {
+        if (!is.null(rv$dataAll)) {
             Start = rv$period[1]
             End = rv$period[2]
-            dataNoNA = dataAll()[!is.na(dataAll()$Q),]
+            dataNoNA = rv$dataAll[!is.na(rv$dataAll$Q),]
             
             df_Start = summarise(group_by(dataNoNA, Code),
                                  Start=min(Date, na.rm=TRUE))
@@ -1479,10 +1574,10 @@ server = function (input, output, session) {
     })
 
     invalidCode = reactive({
-        if (!is.null(dataAll())) {
+        if (!is.null(rv$dataAll)) {
             Start = rv$period[1]
             End = rv$period[2]
-            dataNoNA = dataAll()[!is.na(dataAll()$Q),]
+            dataNoNA = rv$dataAll[!is.na(rv$dataAll$Q),]
             dataNoNA = dataNoNA[Start <= dataNoNA$Date
                                       & dataNoNA$Date <= End,]
             
@@ -1533,8 +1628,8 @@ server = function (input, output, session) {
     })
 
     observeEvent(rv$codePlot, {
-        Lon = meta()$lon[meta()$Code == rv$codePlot]
-        Lat = meta()$lat[meta()$Code == rv$codePlot]
+        Lon = rv$meta$lon[rv$meta$Code == rv$codePlot]
+        Lat = rv$meta$lat[rv$meta$Code == rv$codePlot]
         names(Lon) = NULL
         names(Lat) = NULL
         
@@ -1558,13 +1653,13 @@ server = function (input, output, session) {
             
             showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
             
-            name = meta()$Nom[meta()$Code == rv$codePlot]
+            name = rv$meta$Nom[rv$meta$Code == rv$codePlot]
 
-            data_code = data()[data()$Code == rv$codePlot,]
+            data_code = rv$data[rv$data$Code == rv$codePlot,]
             maxQ_win = max(data_code$Q, na.rm=TRUE)*1.1            
             dataEX_code = rv$dataEX[rv$dataEX$Code == rv$codePlot,]
             trendEX_code = rv$trendEX[rv$trendEX$Code == rv$codePlot,]
-            color = rv$fillList[CodeAll() == rv$codePlot]
+            color = rv$fillList[rv$CodeAll == rv$codePlot]
             switchColor = switch_colorLabel(color)
             output$trend_plot = plotly::renderPlotly({
                 
@@ -1984,7 +2079,7 @@ server = function (input, output, session) {
         dir.create(outdir)
         outfile = paste0(rv$codePlot, "_Q", ".txt")
         outpath = file.path(outdir, outfile)
-        data_code = data()[data()$Code == rv$codePlot,]
+        data_code = rv$data[rv$data$Code == rv$codePlot,]
         write.table(data_code, outpath, sep=";", row.names=FALSE)
         
         output$downloadData = downloadHandler(
@@ -2512,9 +2607,9 @@ server = function (input, output, session) {
             if (rv$helpPage == 4) {
                 hideAll()
                 maskOnly(id="maskZoom_panelButton")
-                rv$CodeSample = CodeAll()[substr(CodeAll(), 1, 1) == "O"]
+                rv$CodeSample = rv$CodeAll[substr(rv$CodeAll, 1, 1) == "O"]
             } else {
-                rv$CodeSample = CodeAll()
+                rv$CodeSample = rv$CodeAll
             }
 
             if (rv$helpPage == 5) {
@@ -2608,7 +2703,7 @@ server = function (input, output, session) {
 
     observeEvent(input$closeHelp_button, {
         if (rv$helpPage == 4) {
-            rv$CodeSample = CodeAll()
+            rv$CodeSample = rv$CodeAll
         }
         rv$helpPage = NULL
         rv$helpPage_save = NULL

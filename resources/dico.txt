@@ -1,7 +1,9 @@
 id;FR
 ana.title;"Analyse"
 tt.ana.title;"Panneau des paramètres de l'analyse de tendance"
-ana.data;"Data"
+ana.data;"Données"
+tt.ana.data.RRSE;"Réseau de référence pour la surveillance des étiages"
+tt.ana.data.Explore2;"Données issues de la sélection du projet Explore2 - des futurs de l'eau"
 ana.date;"Date"
 ana.selec;"Sélection"
 ana.selec.all;"Toutes"
