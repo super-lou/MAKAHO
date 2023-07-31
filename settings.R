@@ -150,8 +150,6 @@ if (!file.exists(data_path) | !file.exists(meta_path)) {
     data = create_data_HYDRO(computer_data_path, filedir, "all")
     meta = create_meta_HYDRO(computer_data_path, filedir, "all")
     meta = get_lacune(data, meta)
-    # meta = get_hydrograph(data, meta,
-                          # period=hydrograph_period)$meta
     write_tibble(data,
                  filedir=file.path(computer_data_path, 'fst'),
                  filename='data.fst')
@@ -165,7 +163,7 @@ filedir = "RRSE"
 trend_period = list(c(1, 2))
 
 CARD_path = "CARD"
-CARD_dir = "__all__"
+CARD_dir = "MAKAHOapp"
 df_flag = NULL
 
 samplePeriod_opti = list(
@@ -174,8 +172,6 @@ samplePeriod_opti = list(
     'Moyennes Eaux' = 'min',
     'Étiage' = c('05-01', '11-30')
 )
-
-
 
 check_varSub = c("fQA[[:digit:]]+",
                  "QA[[:digit:]]+",
@@ -189,15 +185,16 @@ check_varSub = c("fQA[[:digit:]]+",
 
 
 
-
 get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
 
     CARD_dirpath = file.path(CARD_path, CARD_dir)
-    CARD_files = list.files(CARD_dirpath)
-    nVar = length(CARD_files)
+    CARD_filepath = list.files(CARD_dirpath,
+                               full.names=TRUE,
+                               recursive=TRUE)
+    nVar = length(CARD_filepath)
     Var = dplyr::tibble()
     
-    for (CARD in CARD_files) {
+    for (CARD in CARD_filepath) {
         list_path = list.files(file.path(CARD_path,
                                          "__tools__"),
                                pattern='*.R$',
@@ -211,7 +208,7 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
             file.path(CARD_path, "__default__.R"))
         
         Process = sourceProcess(
-            file.path(CARD_dirpath, CARD),
+            file.path(CARD),
             default=Process_default)
 
         principal = Process$P
@@ -222,7 +219,9 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
 
         CARD_var = var
         
-        var = gsub("[.]R", "", CARD)
+        var = gsub("^[[:digit:]]+[_]", "",
+                   gsub("[.]R", "", basename(CARD)))
+
         varHTML = var
         if (grepl('[_]', var)) {
             varHTML = paste0("<span>",
@@ -231,14 +230,14 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
         }
 
         if (any(sapply(check_varSub, grepl, var))) {
-            ok = which(sapply(check_varSub, grepl, var))
+            id = which(sapply(check_varSub, grepl, var))
             
             if (grepl("(month)|(season)", var)) {
-                if (!any(grepl(check_varSub[ok], Var$var))) {
+                if (!any(grepl(check_varSub[id], Var$var))) {
                     to_rm = gsub("(month)|(season)", "",
-                                 check_varSub[ok])
+                                 check_varSub[id])
                     sub = gsub(to_rm, "", CARD_var)
-                        
+                    
                     Var = bind_rows(
                         Var,
                         dplyr::tibble(event=topic[1],
@@ -250,7 +249,9 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                 }
                 
             } else {
-                sub = stringr::str_extract(var, "[[:digit:]]+$")
+                sub = paste0(stringr::str_extract(var,
+                                                  "[[:digit:]]+$"),
+                             "%")
                 var = gsub("[[:digit:]]+$", "p", var)
                 var_regexp = paste0("^", var, "$")
                 varHTML = var
@@ -259,8 +260,14 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                                      gsub('_', '<sub>', var),
                                      "</sub>", "</span>")
                 }
+
+                ok1 = grepl(var_regexp, Var$var)
+                ok2 = Var$event == topic[1]
+                if (identical(ok2, logical(0))) {
+                    ok2 = FALSE
+                }
                 
-                if (!any(grepl(var_regexp, Var$var))) {
+                if (!any(ok1 & ok2)) {
                     Var = bind_rows(
                         Var,
                         dplyr::tibble(event=topic[1],
@@ -270,9 +277,9 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                                       sub=list(sub),
                                       reverse=reverse_palette))
                 } else {
-                    ok2 = which(grepl(var_regexp, Var$var))
-                    Var$name[[ok2]] = c(Var$name[[ok2]], glose)
-                    Var$sub[[ok2]] = c(Var$sub[[ok2]], sub)
+                    id2 = which(ok1 & ok2)
+                    Var$name[[id2]] = c(Var$name[[id2]], glose)
+                    Var$sub[[id2]] = c(Var$sub[[id2]], sub)
                 }
             }
             

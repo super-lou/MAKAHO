@@ -541,11 +541,6 @@ server = function (input, output, session) {
             "</table>"
         )
 
-        print(Lon)
-        print(Lat)
-        print(markerListVoid)
-        print("")
-
         map = removeMarker(map, layerId=paste0("_", Code))
         map = addMarkers(map,
                          group="label",
@@ -933,6 +928,7 @@ server = function (input, output, session) {
         var_event = Var$var[Var$event == input$event_choice]
         varHTML_event = Var$varHTML[Var$event == input$event_choice]
         name_event = Var$name[Var$event == input$event_choice]
+        name_event = sapply(name_event, '[[', 1)
 
         updateRadioButton(session,
                           class="radioButton",
@@ -947,14 +943,14 @@ server = function (input, output, session) {
         if (!is.null(input$var_choice) & input$var_choice != FALSE) {
             input$var_choice
         } else {
-            Var$var[1]
+            "QA"
         }
     })
 
     proba_choices = reactive({
         id = which(Var$var == var())
         if (!identical(id, integer(0))) {
-            Var$proba[[id]]
+            Var$sub[[id]]
         } else {
             NULL
         }
@@ -985,29 +981,23 @@ server = function (input, output, session) {
                 "</b>"
             ))
         } else {
-            probaNum = as.numeric(gsub("%", "", rv$proba))
-            var = gsub('p', formatC(probaNum, width=2, flag="0"),
-                       Var$varHTML[Var$var == rv$var])
+            var = Var$varHTML[Var$var == rv$var]
+            if (grepl("(month)|(season)", var)) {
+                var = gsub("(month)|(season)", rv$proba, var)
+            } else {
+                var = gsub("p", gsub("[%]", "", rv$proba), var)
+            }
             HTML(paste0("<b>", var, "</b>"))
         }
     })
 
     output$nameHTML = renderUI({
-        if (is.null(rv$proba)) {
-            name = Var$name[Var$var == rv$var]
-        } else {
-            probaNum = as.numeric(gsub("%", "", rv$proba))
-            name = gsub('p ', paste0(formatC(probaNum,
-                                             width=2, flag="0"), " "),
-                        Var$name[Var$var == rv$var])
-            name = gsub('q[%]', paste0(formatC(100-probaNum,
-                                               width=2, flag="0"), "%"),
-                        name)
-            name = gsub('p[%]',
-                        paste0(formatC(probaNum,
-                                       width=2, flag="0"), "%"),
-                        name)
+        name = unlist(Var$name[Var$var == rv$var])
+        if (length(name) > 1) {
+            sub = unlist(Var$sub[Var$var == rv$var])
+            name = name[sub == rv$proba]
         }
+        
         nbNewline = 0
         nbLim = 24
         nbChar = nchar(name)
@@ -1032,21 +1022,18 @@ server = function (input, output, session) {
     output$dataHTML_ana = renderUI({
         if (is.null(proba())) {
             data = paste0(Var$varHTML[Var$var == var()], ' : ',
-                          Var$name[Var$var == var()])
+                          Var$name[Var$var == var()][[1]])
         } else {
-            probaNum = as.numeric(gsub("%", "", proba()))
-            data = paste0(Var$varHTML[Var$var == var()],
-                          ' : ',
-                          Var$name[Var$var == var()])
-            data = gsub('p ', paste0(formatC(probaNum,
-                                             width=2, flag="0"), " "),
-                        data)
-            data = gsub('q[%]', paste0(formatC(100-probaNum,
-                                               width=2, flag="0"), "%"),
-                        data)
-            data = gsub('p[%]', paste0(formatC(probaNum,
-                                               width=2, flag="0"), "%"),
-                        data)
+            name = unlist(Var$name[Var$var == var()])
+            sub = unlist(Var$sub[Var$var == var()])
+            name = name[sub == proba()]
+            var = Var$varHTML[Var$var == var()]
+            if (grepl("(month)|(season)", var)) {
+                var = gsub("(month)|(season)", proba(), var)
+            } else {
+                 var = gsub("p", gsub("[%]", "", proba()), var)
+            }
+            data = paste0(var, ' : ', name)
         }
         HTML(data)
     })
@@ -1330,8 +1317,6 @@ server = function (input, output, session) {
                 
                 data = dplyr::relocate(data, Code, .before=Date)
 
-                print(CARD_name)
-                
                 res = CARD_extraction(
                     data,
                     CARD_path=CARD_path,
@@ -1346,8 +1331,14 @@ server = function (input, output, session) {
                 metaEX = res$metaEX
                 dataEX = res$dataEX
 
-                print(dataEX)
-                print(rv$period)
+                if (!is.null(rv$proba) &
+                    grepl("(month)|(season)", CARD_name)) {
+                    var_sub = names(dataEX)[grepl(rv$proba,
+                                                  names(dataEX))]
+                    dataEX = dplyr::select(dataEX,
+                                           c("Code", "Date",
+                                             var_sub))
+                }
                 
                 trendEX = process_trend(
                     dataEX, metaEX,
@@ -1356,12 +1347,8 @@ server = function (input, output, session) {
                     period_trend=rv$period,
                     exProb=exProb,
                     verbose=verbose)
-
-                print(trendEX)
-
                 
-                
-                rv$unit = metaEX$unit
+                rv$unit = metaEX$unit[1]
                 trendEX = trendEX[!is.na(trendEX$a),]
 
                 if (!is.null(rv$CodeAdd)) {

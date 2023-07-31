@@ -49,7 +49,7 @@ if (any(file.exists(dev_path))) {
     print('Loading EXstat from local directory')
     list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE)
     for (path in list_path) {
-        source(path, encoding='UTF-8')    
+        source(path, encoding='UTF-8')
     }
 } else {
     print('Loading EXstat from package')
@@ -63,7 +63,7 @@ if (any(file.exists(dev_path))) {
     print('Loading ASHE from local directory')
     list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE)
     for (path in list_path) {
-        source(path, encoding='UTF-8')    
+        source(path, encoding='UTF-8')
     }
 } else {
     print('Loading ASHE from package')
@@ -80,7 +80,7 @@ if (any(file.exists(dev_path))) {
     list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE,
                            recursive=TRUE)
     for (path in list_path) {
-        source(path, encoding='UTF-8')    
+        source(path, encoding='UTF-8')
     }
 }
 
@@ -93,7 +93,7 @@ if (any(file.exists(dev_path))) {
     list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE,
                            recursive=TRUE)
     for (path in list_path) {
-        source(path, encoding='UTF-8')    
+        source(path, encoding='UTF-8')
     }
 }
 
