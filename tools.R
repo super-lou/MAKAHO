@@ -657,10 +657,6 @@ get_trendExtremesMOD = function (rv,
                                  CodeSample=NULL) {
     
     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
-
-        print(rv$var)
-        print(data)
-        
         df_mean =
             summarise(group_by(data, Code),
                       mean=mean(get(rv$var), na.rm=TRUE))
@@ -772,21 +768,9 @@ get_trendLabel = function (rv, code, dataEX, trendEX, unit,
         space = "&emsp;"
     }
 
-    # If it is a flow variable
-    if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
-        unitHTML = unit
-        unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
-        unitHTML = gsub('[/}]', '</sup>', unitHTML)
-        # Create the name of the trend
-        label = paste0(
-            "<b>", trendC, " x ",
-            "10<sup>", powerC, "</sup></b>", shiftC,
-            " [", unitHTML, ".an<sup>-1</sup>]",
-            space, "<b>",
-            trendMeanC, "</b> [%.an<sup>-1</sup>]")
-        
+
     # If it is a date variable
-    } else if (unit == 'jour' | unit == "jour de l'année") {
+    if (unit == 'jour' | unit == "jour de l'année") {
         # Create the name of the trend
         label = paste0(
             "<b>", trendC, " x ",
@@ -799,6 +783,18 @@ get_trendLabel = function (rv, code, dataEX, trendEX, unit,
             "<b>", trendC, " x ",
             "10<sup>", powerC, "</sup></b>", shiftC,
             " [jour.an<sup>-2</sup>]")
+        
+    } else {
+        unitHTML = unit
+        unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
+        unitHTML = gsub('[/}]', '</sup>', unitHTML)
+        # Create the name of the trend
+        label = paste0(
+            "<b>", trendC, " x ",
+            "10<sup>", powerC, "</sup></b>", shiftC,
+            " [", unitHTML, ".an<sup>-1</sup>]",
+            space, "<b>",
+            trendMeanC, "</b> [%.an<sup>-1</sup>]")
     }
 
     return (label)

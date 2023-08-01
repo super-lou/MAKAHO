@@ -60,8 +60,9 @@ server = function (input, output, session) {
                         map_bounds=NULL, 
                         mapPreview_bounds=NULL,
                         defaultBounds=NULL,
-                        value=NULL,
-                        valueSample=NULL,
+                        trend=NULL,
+                        # value=NULL,
+                        # valueSample=NULL,
                         minX=NULL,
                         maxX=NULL,
                         helpPage=NULL,
@@ -88,6 +89,7 @@ server = function (input, output, session) {
                         samplePeriod=NULL,
                         var=FALSE,
                         unit=NULL,
+                        normalize=NULL,
                         proba=NULL,
                         reverse=FALSE,
                         CodeSample_act=NULL,
@@ -98,7 +100,8 @@ server = function (input, output, session) {
                         dataAll=NULL,
                         CodeAll=NULL,
                         data=NULL,
-                        meta=NULL
+                        meta=NULL,
+                        dataHTML_ana=""
                         )
 
     startOBS = observe({
@@ -111,6 +114,26 @@ server = function (input, output, session) {
         # rv$start = TRUE
         rv$startHelp = TRUE
         startOBS$destroy()
+    })
+
+    Var = reactive({        
+        if (data_name() == "RRSE") {
+            Vartmp = Var_all[Var_all$event !=
+                             Var_all$event[Var_all$var == "PA"],]
+        } else {
+            Vartmp = Var_all
+        }
+
+        updateRadioButton(session,
+                          class="radioButton",
+                          inputId="event_choice",
+                          choices=unique(Vartmp$event),
+                          selected=unique(Vartmp$event)[2],
+                          choiceTooltips=
+                              paste(word("tt.ana.regime"),
+                                    tolower(unique(Vartmp$event))))
+        
+        Vartmp
     })
 
     
@@ -302,8 +325,6 @@ server = function (input, output, session) {
         if (!is.null(rv$dataEX) & !is.null(rv$trendEX) &
             all(rv$CodeSample %in% levels(factor(rv$dataEX$Code)))) {
                                                                  
-            print("a")
-            
             trendCode = rv$trendEX$Code
 
             sizeList = rep('small', length(rv$CodeAll))
@@ -324,8 +345,6 @@ server = function (input, output, session) {
 
             rv$shapeList = shapeList
 
-            print("b")
-            
             colorList = rep(none1Color, length(rv$CodeAll))
             colorList[match(CodeSample(), rv$CodeAll)] = validSColor
             colorList[match(CodeSample()[CodeSample() %in% CodeNS],
@@ -337,19 +356,9 @@ server = function (input, output, session) {
 
             rv$colorList = colorList
 
-            res = get_trendExtremesMOD(rv,
-                                       rv$dataEX, rv$trendEX,
-                                       unit=rv$unit,
-                                       minXprob=exProb,
-                                       maxXprob=1-exProb,
-                                       CodeSample=CodeSample())
-            
-            rv$df_value = res$df_value
-            rv$df_valueSample = res$df_valueSample
-            rv$minX = res$min
-            rv$maxX = res$max
-
-            print("c")
+            rv$trend= rv$trendEX$trend
+            rv$minX = rv$trendEX$trend_min
+            rv$maxX = rv$trendEX$trend_max
 
             res = compute_colorBin(rv$minX,
                                    rv$maxX,
@@ -360,16 +369,13 @@ server = function (input, output, session) {
             upBin = res$upBin
             lowBin = res$lowBin
         
-            fill = get_colors(rv$df_value$value,
+            fill = get_colors(rv$trend,
                               upBin=upBin,
                               lowBin=lowBin,
                               Palette=Palette)
             
-
-            print("d")
-            
             fillList = rep(none2Color, length(rv$CodeAll))
-            fillCode = rv$df_value$Code
+            fillCode = rv$trendEX$Code
             
             okCodeSample = fillCode %in% CodeSample()
             fillCodeSample = fillCode[okCodeSample]
@@ -377,15 +383,12 @@ server = function (input, output, session) {
 
             fillList[match(fillCodeSample, rv$CodeAll)] = fillSample
             rv$fillList = fillList
-
-
-            print("e")
             
         } else {
-            sizeList = rep('small', nrow(meta()))
-            shapeList = rep('o', nrow(meta()))                        
-            colorList = rep(none1Color, nrow(meta()))            
-            fillList = rep(none2Color, nrow(meta()))
+            sizeList = rep('small', nrow(rv$meta))
+            shapeList = rep('o', nrow(rv$meta))
+            colorList = rep(none1Color, nrow(rv$meta))
+            fillList = rep(none2Color, nrow(rv$meta))
         }
         
         get_markerList(sizeList,
@@ -408,9 +411,6 @@ server = function (input, output, session) {
         } else {
             okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
         }
-
-
-        print("f")
         
         rv$theme_choice_save = input$theme_choice
         rv$markerListAll_save = markerListAll()
@@ -429,8 +429,6 @@ server = function (input, output, session) {
         AltAll = rv$meta$Altitude_m
         trendColorAll = rv$fillList
         trendColorAll = sapply(trendColorAll, switch_colorLabel)
-
-        print("g")
         
         markerList$iconUrl = markerList$iconUrl
         Code = rv$CodeAll[okCode]
@@ -446,9 +444,6 @@ server = function (input, output, session) {
         ok21 = codeShapeList == 21
         okN21 = !ok21
 
-
-        print("h")
-        
         iconAnchorX = list(iconAnchorX=markerList$iconAnchorX)
         iconAnchorY = list(iconAnchorY=markerList$iconAnchorY)
 
@@ -486,8 +481,6 @@ server = function (input, output, session) {
                              options=markerOptions(zIndexOffset=1000))
         }
 
-        print("i")
-
         if (!is.null(rv$dataEX) & !is.null(rv$trendEX)) {            
             trendLabelAll = sapply(rv$CodeAll, get_trendLabel,
                                    rv=rv,
@@ -513,14 +506,12 @@ server = function (input, output, session) {
         
         Br = rep("<br>", times=length(Code))
         Br[trendLabel == ""] = ""
-
-        print("j")
         
         rv$trendLabelAll = trendLabelAll
 
         markerListVoid = get_markerList(rep("void", length(Code)),
                                         resources_path=resources_path)
-        
+
         n = 4
         label = paste0(
             '<b style="color:#00a3a6">', Code," </b>", ' - ',
@@ -555,8 +546,6 @@ server = function (input, output, session) {
             "</table>"
         )
 
-        print("k")
-
         map = removeMarker(map, layerId=paste0("_", Code))
         map = addMarkers(map,
                          group="label",
@@ -588,9 +577,11 @@ server = function (input, output, session) {
                                         data_name(),
                                         '.fst'))
 
-        # if (dev) {
-            # metatmp = metatmp[1:3,]
-        # }
+        if (dev) {
+            if (!is.null(nStation_dev)) {
+                metatmp = metatmp[1:nStation_dev,]
+            }
+        }
         crs_rgf93 = sf::st_crs(2154)
         crs_wgs84 = sf::st_crs(4326)
         sf_loca = sf::st_as_sf(metatmp[c("XL93_m", "YL93_m")],
@@ -950,12 +941,24 @@ server = function (input, output, session) {
 
 ### 2.3. Variable extration __________________________________________
     observeEvent(input$event_choice, {
+        
+        if (is.null(Var())) {
+            Var = Var_all
+        } else {
+            Var = Var()
+        }
 
-        var_event = Var$var[Var$event == input$event_choice]
-        varHTML_event = Var$varHTML[Var$event == input$event_choice]
-        name_event = Var$name[Var$event == input$event_choice]
+        if (input$event_choice == "FALSE") {
+            event = unique(Var$event)[2]
+        } else {
+            event = input$event_choice
+        }
+        
+        var_event = Var$var[Var$event == event]
+        varHTML_event = Var$varHTML[Var$event == event]
+        name_event = Var$name[Var$event == event]
         name_event = sapply(name_event, '[[', 1)
-
+        
         updateRadioButton(session,
                           class="radioButton",
                           inputId="var_choice",
@@ -973,19 +976,15 @@ server = function (input, output, session) {
         }
     })
 
-    # event = reactive({
-        # if (!is.null(input$var_choice) & input$var_choice != FALSE) {
-            # Var$event[Var$var == input$var_choice]
-        # } else {
-            # Var$event[Var$var == "QA"]
-        # }        
-    # })
+    event = reactive({
+        input$event_choice
+    })
 
     proba_choices = reactive({
-        id = which(Var$var == var() &
-                   Var$event == input$event_choice)
+        id = which(Var()$var == var() &
+                   Var()$event == event())
         if (!identical(id, integer(0))) {
-            Var$sub[[id]]
+            Var()$sub[[id]]
         } else {
             NULL
         }
@@ -1000,10 +999,10 @@ server = function (input, output, session) {
     })
 
     reverse = reactive({
-        id = which(Var$var == var() &
-                   Var$event == input$event_choice)
+        id = which(Var()$var == var() &
+                   Var()$event == event())
         if (!identical(id, integer(0))) {
-            Var$reverse[id]
+            Var()$reverse[id]
         } else {
             FALSE
         }
@@ -1013,11 +1012,11 @@ server = function (input, output, session) {
         if (is.null(rv$proba)) {
             HTML(paste0(
                 "<b>",
-                Var$varHTML[Var$var == rv$var],
+                Var()$varHTML[Var()$var == rv$var],
                 "</b>"
             ))
         } else {
-            var = Var$varHTML[Var$var == rv$var]
+            var = Var()$varHTML[Var()$var == rv$var]
             if (grepl("(month)|(season)", var)) {
                 var = gsub("(month)|(season)", rv$proba, var)
             } else {
@@ -1028,9 +1027,9 @@ server = function (input, output, session) {
     })
 
     output$nameHTML = renderUI({
-        name = unlist(Var$name[Var$var == rv$var])
+        name = unlist(Var()$name[Var()$var == rv$var])
         if (length(name) > 1) {
-            sub = unlist(Var$sub[Var$var == rv$var])
+            sub = unlist(Var()$sub[Var()$var == rv$var])
             name = name[sub == rv$proba]
         }
         
@@ -1056,45 +1055,45 @@ server = function (input, output, session) {
     })
 
     output$dataHTML_ana = renderUI({
-
-
-        print("dataHTML_ana")
-        print(Var$var == var())
-        print(Var$event == input$event_choice)
-        print(Var$var == var() &
-              Var$event == input$event_choice)
-
-        id = which(Var$var == var() &
-                   Var$event == input$event_choice)
-
-        print(input$event_choice)
-
-        print("id")
-        print(id)
-        print(Var$name[[id]])
+        id = which(Var()$var == var() &
+                   Var()$event == event())
         
-        
-        print("")
-        
-        
-        if (is.null(proba())) {
-            data = paste0(Var$varHTML[id], ' : ',
-                          Var$name[[id]][1])
+        if (identical(id, integer(0))) {
+            rv$dataHTML_ana
         } else {
-            name = unlist(Var$name[id])
-            sub = unlist(Var$sub[id])
-            name = name[sub == proba()]
-            var = Var$varHTML[id]
-            if (grepl("(month)|(season)", var)) {
-                var = gsub("(month)|(season)", proba(), var)
+        
+            if (is.null(proba())) {
+                data = paste0(Var()$varHTML[id], ' : ',
+                              Var()$name[[id]])
             } else {
-                 var = gsub("p", gsub("[%]", "", proba()), var)
+                name = unlist(Var()$name[id])
+                sub = unlist(Var()$sub[id])
+                name = name[sub == proba()]
+                var = Var()$varHTML[id]
+                if (grepl("(month)|(season)", var)) {
+                    var = gsub("(month)|(season)", proba(), var)
+                } else {
+                    var = gsub("p", gsub("[%]", "", proba()), var)
+                }
+                data = paste0(var, ' : ', name)
             }
-            data = paste0(var, ' : ', name)
+            rv$dataHTML_ana = data
+            HTML(data)
         }
-        HTML(data)
     })
 
+
+    output$probaRow = renderText({
+        if (grepl("month", var())) {
+            word("ana.month")
+        } else if (grepl("season", var())) {
+            word("ana.season")
+        } else {
+            word("ana.proba")
+        }
+    })
+    
+    
     observe({
         if (!is.null(proba_choices())) {
             showElement(id="proba_row")
@@ -1103,12 +1102,21 @@ server = function (input, output, session) {
             hide(id="proba_row")
             choices = FALSE
         }
+
+        if (grepl("month", var())) {
+            tt = word("tt.ana.month")
+        } else if (grepl("season", var())) {
+            tt = word("tt.ana.season")
+        } else {
+            tt = word("tt.ana.proba")
+        }
+        
         updateRadioButton(session,
                           class="radioButton",
                           inputId="proba_choice",
                           choiceNames=choices,
                           choiceTooltips=
-                              paste0(word("tt.ana.proba"), " ", choices))
+                              paste0(tt, " ", choices))
     })
 
 
@@ -1276,12 +1284,15 @@ server = function (input, output, session) {
                                                   data_name(),
                                                   '.fst'))
 
-            # if (dev) {
-                # dataAll =
-                    # dplyr::filter(dataAll,
-                                  # Code ==
-                                  # levels(factor(dataAll$Code))[1:3])
-            # }
+            if (dev) {
+                if (!is.null(nStation_dev)) {
+                    dataAll =
+                        dplyr::filter(
+                                   dataAll,
+                                   Code %in%
+                                   levels(factor(dataAll$Code))[1:nStation_dev])
+                }
+            }
             dataAll
             
         } else {
@@ -1366,6 +1377,11 @@ server = function (input, output, session) {
     observeEvent(rv$actualise, {
         if (rv$actualise & rv$start) {
 
+            if (rv$data_name != data_name()) {
+                map = leafletProxy("map")
+                map = clearMarkers(map)
+            }
+            
             rv$data_name = data_name()
             rv$dataAll = dataAll()
             rv$CodeAll = CodeAll()
@@ -1444,6 +1460,7 @@ server = function (input, output, session) {
                     verbose=verbose)
                 
                 rv$unit = metaEX$unit[1]
+                rv$normalize = metaEX$normalize[1]
                 trendEX = trendEX[!is.na(trendEX$a),]
 
                 if (!is.null(rv$CodeAdd)) {
@@ -1669,7 +1686,7 @@ server = function (input, output, session) {
                 fig1 = plotly::plot_ly()
 
                 x = data_code$Date
-                event = Var$event[Var$var == rv$var]
+                event = Var()$event[Var()$var == rv$var]
                 if (event == "Étiage") {
                     y = sqrt(data_code$Q)
                     varLabel = "&#8730;Q"
@@ -1873,32 +1890,34 @@ server = function (input, output, session) {
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
                 # Compute the y of the trend
-                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
-                    ord = abs_num * trendEX_code$a +
-                        trendEX_code$b
-                } else if (rv$unit == "jour de l'année") {
+                if (rv$unit == "jour de l'année") {
                     ord = as.Date(abs_num * trendEX_code$a +
                         trendEX_code$b, origin="1970-01-01")
+                } else {
+                    ord = abs_num * trendEX_code$a +
+                        trendEX_code$b
                 }
 
                 x = dataEX_code$Date
-                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}'| rv$unit == 'jour.an^{-1}' | rv$unit == 'jour') {
-                    y = dataEX_code[[rv$var]]
-                    yhoverformat = '.3r'
-                    unitLabel = rv$unit
-                    unitLabel = gsub('[/^][/{]', '<sup>', unitLabel)
-                    unitLabel = gsub('[/}]', '</sup>', unitLabel)
-                    unitLabel = paste0(" [", unitLabel, "]<br>")
-                } else if (rv$unit == "jour de l'année") {
+
+                if (rv$unit == "jour de l'année") {
                     y = as.Date(dataEX_code[[rv$var]], origin="1970-01-01")
                     yhoverformat = "%d %b"
                     unitLabel = ""
+                } else {
+                    y = dataEX_code[[rv$var]]
+                    yhoverformat = '.3r'
+                    unitLabel = rv$unit
+                    unitLabel = gsub('[/^][/{]', '<sup>',
+                                     unitLabel)
+                    unitLabel = gsub('[/}]', '</sup>', unitLabel)
+                    unitLabel = paste0(" [", unitLabel, "]<br>")
                 }
                 if (is.null(rv$proba)) {
-                    varLabel = Var$varHTML[Var$var == rv$var]
+                    varLabel = Var()$varHTML[Var()$var == rv$var]
                 } else {
                     varLabel = gsub('p', gsub("%", "", rv$proba),
-                               Var$varHTML[Var$var == rv$var])
+                               Var()$varHTML[Var()$var == rv$var])
                 }
 
                 fig2 = plotly::plot_ly()
@@ -1975,7 +1994,8 @@ server = function (input, output, session) {
                 if (rv$unit == "jour de l'année") {
                     fig2 = plotly::layout(
                                        fig2,
-                                       yaxis=list(tickformat="%b"))
+                                       yaxis=
+                                           list(tickformat="%b"))
                 }
 
                 fig2 = plotly::config(
@@ -2158,7 +2178,7 @@ server = function (input, output, session) {
         input$colorbar_choice
         rv$minX
         rv$maxX
-        rv$df_value
+        rv$trend
     }, {
         
         if (input$colorbar_choice == 'show' & !is.null(rv$trendEX)) {
@@ -2185,7 +2205,7 @@ server = function (input, output, session) {
                 X1 = rep(1, colorStep)
                 
                 # Computes the histogram of values
-                res = hist(rv$df_valueSample$value,
+                res = hist(rv$trend,
                            # breaks=c(-Inf, bin, Inf),
                            breaks=bin,
                            plot=FALSE)
@@ -2277,9 +2297,9 @@ server = function (input, output, session) {
                 Ylab = binNoINF / max(binNoINF)
 
                 ncharLim = 4
-                if (rv$unit == 'hm^{3}' | rv$unit == 'm^{3}.s^{-1}') {                    
+                if (rv$normalize) {                    
                     labelRaw = binNoINF*100
-                } else if (rv$unit == 'jour.an^{-1}' | rv$unit == 'jour' | rv$unit == "jour de l'année") {
+                } else {
                     labelRaw = binNoINF
                 }
                 

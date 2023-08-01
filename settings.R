@@ -157,4 +157,7 @@ check_varSub = c("fQA[[:digit:]]+",
                  "QA[_]season",
                  "QA[_]month")
 
-Var = get_Var2(CARD_path, CARD_dir, check_varSub)
+Var_all = get_Var2(CARD_path, CARD_dir, check_varSub)
+
+
+nStation_dev = NULL

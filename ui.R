@@ -376,11 +376,8 @@ ui = bootstrapPage(
                     radioButton(
                         class="radioButton",
                         inputId="event_choice",
-                        choiceNames=unique(Var$event),
-                        selected=unique(Var$event)[2],
-                        choiceTooltips=
-                            paste(word("tt.ana.regime"),
-                                  tolower(unique(Var$event)))))),
+                        choices=FALSE,
+                        selected=NULL))),
             
             div(class="Row",
                 div(class="row-label",
@@ -398,7 +395,8 @@ ui = bootstrapPage(
                 div(class="Row", id="proba_row",
                     div(class="row-label",
                         HTML(paste0("<span><b>",
-                                    word('ana.proba'),
+                                    textOutput("probaRow"),
+                                    # word('ana.proba'),
                                     "</b></span>"))),
                     div(class="sep"),
                     div(class="bunch",
