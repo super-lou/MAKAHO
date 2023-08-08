@@ -366,10 +366,26 @@ ui = bootstrapPage(
                     )),
 
 ### 2.4. Variable selection __________________________________________
+
+            hidden(
+                div(class="Row", id="type_row",
+                    div(class="row-label",
+                        HTML(paste0("<span><b>",
+                                    word('ana.type'),
+                                    "</b></span>"))),
+                    div(class="sep"),
+                    div(class="bunch",
+                        radioButton(class="radioButton",
+                                    inputId="type_choice",
+                                    choices=c(word('ana.type.Q'),
+                                              word('ana.type.P')),
+                                    selected=word('ana.type.Q'))))),
+
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('ana.regime'),
+                                textOutput("regimeRow"),
+                                # word('ana.regime'),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",

@@ -41,7 +41,6 @@ strong, b {
     padding-right: 1rem !important;
     background-color: rgba(5, 5, 10, 0.83) !important;
     border-radius: 0.5rem/0.5rem !important;
-    /* min-width: calc(100vw - 20px) !important; */
     width: 28rem !important;
     max-width: calc(100vw - 20px) !important;
 }

@@ -131,25 +131,24 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                              gsub('_', '<sub>', var),
                              "</sub>", "</span>")
         }
-
+        
         if (any(sapply(check_varSub, grepl, var))) {
             id = which(sapply(check_varSub, grepl, var))
             
             if (grepl("(month)|(season)", var)) {
-                if (!any(grepl(check_varSub[id], Var$var))) {
-                    to_rm = gsub("(month)|(season)", "",
-                                 check_varSub[id])
-                    sub = gsub(to_rm, "", CARD_var)
-                    
-                    Var = bind_rows(
-                        Var,
-                        dplyr::tibble(event=topic[1],
-                                      var=var,
-                                      varHTML=varHTML,
-                                      name=list(glose),
-                                      sub=list(sub),
-                                      reverse=reverse_palette))
-                }
+                to_rm = gsub("(month)|(season)", "",
+                             var)
+                sub = gsub(to_rm, "", CARD_var)
+
+                Var = bind_rows(
+                    Var,
+                    dplyr::tibble(type=topic[1],
+                                  event=topic[2],
+                                  var=var,
+                                  varHTML=varHTML,
+                                  name=list(glose),
+                                  sub=list(sub),
+                                  reverse=reverse_palette))
                 
             } else {
                 sub = paste0(stringr::str_extract(var,
@@ -173,7 +172,8 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                 if (!any(ok1 & ok2)) {
                     Var = bind_rows(
                         Var,
-                        dplyr::tibble(event=topic[1],
+                        dplyr::tibble(type=topic[1],
+                                      event=topic[2],
                                       var=var,
                                       varHTML=varHTML,
                                       name=list(glose),
@@ -189,7 +189,8 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
         } else {
             Var = bind_rows(
                 Var,
-                dplyr::tibble(event=topic[1],
+                dplyr::tibble(type=topic[1],
+                              event=topic[2],
                               var=var,
                               varHTML=varHTML,
                               name=list(glose),

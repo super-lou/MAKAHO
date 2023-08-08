@@ -51,7 +51,9 @@ if (!file.exists(data_RRSE_path) | !file.exists(meta_RRSE_path)) {
 ## Explore2
 NC_path = "/home/louis/Documents/bouleau/INRAE/data/Explore2/hydrologie/diagnostic/SMASH_20230303.nc"
 tools_path = "/home/louis/Documents/bouleau/INRAE/project/Explore2_project/Explore2_toolbox/tools.R"
-codes_hydro_selection_file = "Selection_points_simulation_V20230510.txt"
+codes_hydro_selection_path = file.path(computer_data_path, "Explore2", "hydrologie", "Selection_points_simulation_V20230510.txt")
+codes_hydro_check_security_path = file.path(computer_data_path, "hydrologie", "BanqueHydro_Export2021")
+    
 
 data_Explore2_path = file.path(MAKAHO_data_path, 'fst',
                                'data_Explore2.fst')
@@ -60,16 +62,22 @@ meta_Explore2_path = file.path(MAKAHO_data_path, 'fst',
 if (!file.exists(data_Explore2_path) |
     !file.exists(meta_Explore2_path)) {
 
-    codes_selection_data = read_tibble(file.path(
-        computer_data_path, "Explore2", "hydrologie",
-        codes_hydro_selection_file))
+    codes_selection_data = read_tibble(codes_hydro_selection_path)
     
     codes_selection_data = dplyr::filter(codes_selection_data,
                                          !grepl("Supprimer", X))
 
+    secure_files = list.files(codes_hydro_check_security_path)
+    secure_codes = gsub("[_].*$", "", secure_files)
+
+    ### /!\ ###
     codes_selection_data =
-        codes_selection_data[codes_selection_data$Référence %in%
-                             1,]
+        codes_selection_data[codes_selection_data$CODE %in%
+                             secure_codes,]
+    ###########    
+    
+    codes_selection_data =
+        codes_selection_data[codes_selection_data$Référence %in% 1,]
     codes8_selection = codes_selection_data$CODE
     codes10_selection = codes_selection_data$SuggestionCode
     codes8_selection = codes8_selection[!is.na(codes8_selection)]

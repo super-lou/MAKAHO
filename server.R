@@ -116,26 +116,6 @@ server = function (input, output, session) {
         startOBS$destroy()
     })
 
-    Var = reactive({        
-        if (data_name() == "RRSE") {
-            Vartmp = Var_all[Var_all$event !=
-                             Var_all$event[Var_all$var == "PA"],]
-        } else {
-            Vartmp = Var_all
-        }
-
-        updateRadioButton(session,
-                          class="radioButton",
-                          inputId="event_choice",
-                          choices=unique(Vartmp$event),
-                          selected=unique(Vartmp$event)[2],
-                          choiceTooltips=
-                              paste(word("tt.ana.regime"),
-                                    tolower(unique(Vartmp$event))))
-        
-        Vartmp
-    })
-
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________
@@ -566,7 +546,13 @@ server = function (input, output, session) {
 
 ### 2.1. Station metadata ____________________________________________
     data_name = reactive({
-        input$data_choice
+        data_name = input$data_choice        
+        if (data_name == "Explore2") {
+            showElement(id="type_row")
+        } else {
+            hide(id="type_row")
+        }
+        data_name
     })
 
     meta = reactive({        
@@ -940,6 +926,27 @@ server = function (input, output, session) {
     })
 
 ### 2.3. Variable extration __________________________________________
+    type = reactive({
+        if (data_name() == "RRSE") {
+            word("ana.type.Q")
+        } else {
+            input$type_choice   
+        }
+    })
+    
+    Var = reactive({
+        Vartmp = Var_all[Var_all$type == type(),]
+        updateRadioButton(session,
+                          class="radioButton",
+                          inputId="event_choice",
+                          choices=unique(Vartmp$event),
+                          selected=unique(Vartmp$event)[2],
+                          choiceTooltips=
+                              paste(word("tt.ana.regime"),
+                                    tolower(unique(Vartmp$event))))
+        Vartmp
+    })
+
     observeEvent(input$event_choice, {
         
         if (is.null(Var())) {
@@ -1007,16 +1014,24 @@ server = function (input, output, session) {
             FALSE
         }
     })
+            
+    output$regimeRow = renderText({
+        if (type() == word("ana.type.Q")) {
+            word("ana.regime")
+        } else if (type() == word("ana.type.P")) {
+            word("ana.pluviometrie")
+        }
+    })
     
     output$varHTML = renderUI({
         if (is.null(rv$proba)) {
             HTML(paste0(
                 "<b>",
-                Var()$varHTML[Var()$var == rv$var],
+                Var_all$varHTML[Var_all$var == rv$var],
                 "</b>"
             ))
         } else {
-            var = Var()$varHTML[Var()$var == rv$var]
+            var = Var_all$varHTML[Var_all$var == rv$var]
             if (grepl("(month)|(season)", var)) {
                 var = gsub("(month)|(season)", rv$proba, var)
             } else {
@@ -1027,12 +1042,11 @@ server = function (input, output, session) {
     })
 
     output$nameHTML = renderUI({
-        name = unlist(Var()$name[Var()$var == rv$var])
+        name = unlist(Var_all$name[Var_all$var == rv$var])
         if (length(name) > 1) {
-            sub = unlist(Var()$sub[Var()$var == rv$var])
+            sub = unlist(Var_all$sub[Var_all$var == rv$var])
             name = name[sub == rv$proba]
         }
-        
         nbNewline = 0
         nbLim = 24
         nbChar = nchar(name)

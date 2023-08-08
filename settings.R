@@ -154,10 +154,10 @@ df_flag = NULL
 
 check_varSub = c("fQA[[:digit:]]+",
                  "QA[[:digit:]]+",
-                 "QA[_]season",
-                 "QA[_]month")
+                 "[_]season",
+                 "[_]month")
 
 Var_all = get_Var2(CARD_path, CARD_dir, check_varSub)
 
 
-nStation_dev = 10
+nStation_dev = 100
