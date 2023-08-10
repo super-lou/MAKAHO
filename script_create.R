@@ -40,10 +40,10 @@ if (!file.exists(data_RRSE_path) | !file.exists(meta_RRSE_path)) {
                                   "all")
     meta_RRSE = get_lacune(data_RRSE, meta_RRSE)
     # hydrograph
-    write_tibble(data_RRSE,
+    ASHE::write_tibble(data_RRSE,
                  filedir=file.path(MAKAHO_data_path, 'fst'),
                  filename='data_RRSE.fst')
-    write_tibble(meta_RRSE,
+    ASHE::write_tibble(meta_RRSE,
                  filedir=file.path(MAKAHO_data_path, 'fst'),
                  filename='meta_RRSE.fst')
 }
@@ -62,7 +62,7 @@ meta_Explore2_path = file.path(MAKAHO_data_path, 'fst',
 if (!file.exists(data_Explore2_path) |
     !file.exists(meta_Explore2_path)) {
 
-    codes_selection_data = read_tibble(codes_hydro_selection_path)
+    codes_selection_data = ASHE::read_tibble(codes_hydro_selection_path)
     
     codes_selection_data = dplyr::filter(codes_selection_data,
                                          !grepl("Supprimer", X))
@@ -119,14 +119,14 @@ if (!file.exists(data_Explore2_path) |
     data_Explore2 = dplyr::inner_join(data_obs,
                              dplyr::select(data_sim,
                                            c("Code", "Date",
-                                             "P", "Pl", "Ps")),
+                                             "P", "Pl", "Ps", "T")),
                              by=c("Code", "Date"))
 
     # hydrograph
-    write_tibble(data_Explore2,
+    ASHE::write_tibble(data_Explore2,
                  filedir=file.path(MAKAHO_data_path, 'fst'),
                  filename='data_Explore2.fst')
-    write_tibble(meta_Explore2,
+    ASHE::write_tibble(meta_Explore2,
                  filedir=file.path(MAKAHO_data_path, 'fst'),
                  filename='meta_Explore2.fst')
 }

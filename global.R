@@ -97,6 +97,15 @@ if (any(file.exists(dev_path))) {
     }
 }
 
+# Check if you are in dev mod
+if (dir.exists(dev_lib_path)) {
+    dev = TRUE
+    verbose = TRUE
+} else {
+    dev = FALSE
+    verbose = FALSE
+}
+
 # Sourcing R files
 source('tools.R', encoding='UTF-8')
 source('settings.R', encoding='UTF-8')

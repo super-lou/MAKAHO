@@ -377,7 +377,8 @@ ui = bootstrapPage(
                     div(class="bunch",
                         radioButton(class="radioButton",
                                     inputId="type_choice",
-                                    choices=c(word('ana.type.Q'),
+                                    choices=c(word('ana.type.T'),
+                                              word('ana.type.Q'),
                                               word('ana.type.P')),
                                     selected=word('ana.type.Q'))))),
 

@@ -90,6 +90,8 @@ get_Var = function (dico, varProba) {
 
 get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
 
+    if (verbose) print("plot_trend")
+    
     CARD_dirpath = file.path(CARD_path, CARD_dir)
     CARD_filepath = list.files(CARD_dirpath,
                                full.names=TRUE,
@@ -164,7 +166,7 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                 }
 
                 ok1 = grepl(var_regexp, Var$var)
-                ok2 = Var$event == topic[1]
+                ok2 = Var$event == topic[2]
                 if (identical(ok2, logical(0))) {
                     ok2 = FALSE
                 }
@@ -703,6 +705,8 @@ count_decimal = function(x) {
 
 get_trendLabel = function (rv, code, dataEX, trendEX, unit,
                            space=FALSE) {
+
+    if (verbose) print("get_trendLabel")
     
     CodeEx = dataEX$Code[!duplicated(dataEX$Code)]
     CodeXtrend = trendEX$Code[!duplicated(trendEX$Code)]
@@ -717,10 +721,16 @@ get_trendLabel = function (rv, code, dataEX, trendEX, unit,
     if (is.na(trendEX_code$a)) {
         return (NA)
     }
+
+    print(dataEX_code)
+    print(rv$var)
+    
     
     # Computes the mean of the data on the period
     dataMean = mean(dataEX_code[[rv$var]],
                     na.rm=TRUE)
+
+    print(dataMean)
     
     # Gets the trend
     trend = trendEX_code$a

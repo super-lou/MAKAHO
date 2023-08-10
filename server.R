@@ -25,15 +25,11 @@
 
 server = function (input, output, session) {
 
+    # Check if you are in dev mod
     if (dir.exists(dev_lib_path)) {
         session$onSessionEnded(stopApp)
-        dev = TRUE
-        verbose = TRUE
-    } else {
-        dev = FALSE
-        verbose = FALSE
     }
-
+    
     rv = reactiveValues(startHelp=FALSE,
                         start=FALSE,
                         width=0,
@@ -88,6 +84,7 @@ server = function (input, output, session) {
                         period=NULL,
                         samplePeriod=NULL,
                         var=FALSE,
+                        event=FALSE,
                         unit=NULL,
                         normalize=NULL,
                         proba=NULL,
@@ -289,7 +286,8 @@ server = function (input, output, session) {
 
 ### 1.3. Marker ______________________________________________________
     markerListAll = reactive({
-
+        if (verbose) print("markerListAll")        
+        
         if (input$theme_choice == 'terrain' | input$theme_choice == 'light') {
             none1Color = none1Color_light
         } else if (input$theme_choice == 'dark') {
@@ -384,6 +382,9 @@ server = function (input, output, session) {
         rv$meta
         markerListAll()
     }, {
+
+        if (verbose) print("observeEvent.marker")   
+        
         map = leafletProxy("map")
         
         if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
@@ -546,6 +547,7 @@ server = function (input, output, session) {
 
 ### 2.1. Station metadata ____________________________________________
     data_name = reactive({
+        if (verbose) print("data_name")
         data_name = input$data_choice        
         if (data_name == "Explore2") {
             showElement(id="type_row")
@@ -555,7 +557,8 @@ server = function (input, output, session) {
         data_name
     })
 
-    meta = reactive({        
+    meta = reactive({
+        if (verbose) print("meta") 
         metatmp =
             read_tibble(filedir=file.path(computer_data_path,
                                           'fst'),
@@ -588,6 +591,7 @@ server = function (input, output, session) {
 
 ### 2.2. Station selection ___________________________________________
     CodeAll = reactive({
+        if (verbose) print("CodeAll")
         CodeAll = levels(factor(meta()$Code))
         if (is.null(rv$CodeAll)) {
             rv$CodeAll = CodeAll
@@ -600,6 +604,7 @@ server = function (input, output, session) {
     rv$theme_choice_save = isolate(input$theme_choice)
 
     CodeSampleCheck = reactive({
+        if (verbose) print("CodeSampleCheck")
         if (!rv$warningMode) {
             rv$CodeSample[!(rv$CodeSample %in% badCode())]
         } else {
@@ -608,6 +613,7 @@ server = function (input, output, session) {
     })
 
     CodeSample = reactive({
+        if (verbose) print("CodeSample")
         if (identical(CodeSampleCheck(), character(0))) {
             NULL
         } else {
@@ -927,6 +933,7 @@ server = function (input, output, session) {
 
 ### 2.3. Variable extration __________________________________________
     type = reactive({
+        if (verbose) print("type")
         if (data_name() == "RRSE") {
             word("ana.type.Q")
         } else {
@@ -935,12 +942,20 @@ server = function (input, output, session) {
     })
     
     Var = reactive({
+        if (verbose) print("Var")
         Vartmp = Var_all[Var_all$type == type(),]
+        if (type() == word("ana.type.T")) {
+            selected = unique(Vartmp$event)[1]
+        } else if (type() == word("ana.type.Q")) {
+            selected = unique(Vartmp$event)[2]
+        } else if (type() == word("ana.type.P")) {
+            selected = unique(Vartmp$event)[2]
+        }
         updateRadioButton(session,
                           class="radioButton",
                           inputId="event_choice",
                           choices=unique(Vartmp$event),
-                          selected=unique(Vartmp$event)[2],
+                          selected=selected,
                           choiceTooltips=
                               paste(word("tt.ana.regime"),
                                     tolower(unique(Vartmp$event))))
@@ -948,7 +963,7 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$event_choice, {
-        
+        if (verbose) print("observeEvent.var_choice")
         if (is.null(Var())) {
             Var = Var_all
         } else {
@@ -956,7 +971,13 @@ server = function (input, output, session) {
         }
 
         if (input$event_choice == "FALSE") {
-            event = unique(Var$event)[2]
+            if (type() == word("ana.type.T")) {
+                event = unique(Var$event)[1]
+            } else if (type() == word("ana.type.Q")) {
+                event = unique(Var$event)[2]
+            } else if (type() == word("ana.type.P")) {
+                event = unique(Var$event)[2]
+            }
         } else {
             event = input$event_choice
         }
@@ -976,6 +997,7 @@ server = function (input, output, session) {
     })
 
     var = reactive({
+        if (verbose) print("var")
         if (!is.null(input$var_choice) & input$var_choice != FALSE) {
             input$var_choice
         } else {
@@ -988,6 +1010,7 @@ server = function (input, output, session) {
     })
 
     proba_choices = reactive({
+        if (verbose) print("proba_choices")
         id = which(Var()$var == var() &
                    Var()$event == event())
         if (!identical(id, integer(0))) {
@@ -1016,7 +1039,10 @@ server = function (input, output, session) {
     })
             
     output$regimeRow = renderText({
-        if (type() == word("ana.type.Q")) {
+        if (verbose) print("regimeRow")
+        if (type() == word("ana.type.T")) {
+            word("ana.temperature")
+        } else if (type() == word("ana.type.Q")) {
             word("ana.regime")
         } else if (type() == word("ana.type.P")) {
             word("ana.pluviometrie")
@@ -1024,6 +1050,7 @@ server = function (input, output, session) {
     })
     
     output$varHTML = renderUI({
+        if (verbose) print("varHTML")
         if (is.null(rv$proba)) {
             HTML(paste0(
                 "<b>",
@@ -1031,7 +1058,8 @@ server = function (input, output, session) {
                 "</b>"
             ))
         } else {
-            var = Var_all$varHTML[Var_all$var == rv$var]
+            var = Var_all$varHTML[Var_all$var == rv$var &
+                                  Var_all$event == rv$event]
             if (grepl("(month)|(season)", var)) {
                 var = gsub("(month)|(season)", rv$proba, var)
             } else {
@@ -1042,6 +1070,7 @@ server = function (input, output, session) {
     })
 
     output$nameHTML = renderUI({
+        if (verbose) print("nameHTML")
         name = unlist(Var_all$name[Var_all$var == rv$var])
         if (length(name) > 1) {
             sub = unlist(Var_all$sub[Var_all$var == rv$var])
@@ -1069,6 +1098,7 @@ server = function (input, output, session) {
     })
 
     output$dataHTML_ana = renderUI({
+        if (verbose) print("dataHTML_ana")
         id = which(Var()$var == var() &
                    Var()$event == event())
         
@@ -1084,6 +1114,7 @@ server = function (input, output, session) {
                 sub = unlist(Var()$sub[id])
                 name = name[sub == proba()]
                 var = Var()$varHTML[id]
+                
                 if (grepl("(month)|(season)", var)) {
                     var = gsub("(month)|(season)", proba(), var)
                 } else {
@@ -1098,6 +1129,7 @@ server = function (input, output, session) {
 
 
     output$probaRow = renderText({
+        if (verbose) print("probaRow")
         if (grepl("month", var())) {
             word("ana.month")
         } else if (grepl("season", var())) {
@@ -1109,6 +1141,7 @@ server = function (input, output, session) {
     
     
     observe({
+        if (verbose) print("observe.proba_choice")
         if (!is.null(proba_choices())) {
             showElement(id="proba_row")
             choices = proba_choices()
@@ -1227,6 +1260,7 @@ server = function (input, output, session) {
         
 
     samplePeriodB = reactive({
+        if (verbose) print("samplePeriod")
         if (!is.null(input$samplePeriod_slider)) {
             if (rv$sampleSliderMode & length(input$samplePeriod_slider) == 2) {
                 if (rv$invertSliderMode) {
@@ -1287,6 +1321,7 @@ server = function (input, output, session) {
     })    
         
     dataAll = reactive({
+        if (verbose) print("dataAll")
         if (file.exists(file.path(computer_data_path,
                                   'fst',
                                   paste0('data_',
@@ -1315,6 +1350,7 @@ server = function (input, output, session) {
     })
 
     data = reactive({
+        if (verbose) print("data")
         if (!is.null(dataAll()) & !is.null(CodeSample())) {
             if (all(rv$CodeSample %in%
                     levels(factor(dataAll()$Code)))) {
@@ -1352,6 +1388,7 @@ server = function (input, output, session) {
         rv$optimalMode
         data_name()
     }, {
+        if (verbose) print("observeEvent.check_actualise")
         if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
             if (!all(CodeSample() %in% rv$CodeSample_act) &
                 identical(data_name(), rv$data_name)) {
@@ -1381,6 +1418,7 @@ server = function (input, output, session) {
         rv$actualiseForce
         rv$start
     }, {
+        if (verbose) print("observeEvent.press_actualise")
         if (!is.null(data()) & !is.null(meta()) & var() != FALSE & !is.null(period())) {
             rv$actualise = TRUE
             showElement(id="loading_panel")
@@ -1389,6 +1427,7 @@ server = function (input, output, session) {
 
     
     observeEvent(rv$actualise, {
+        if (verbose) print("actualise")
         if (rv$actualise & rv$start) {
 
             if (rv$data_name != data_name()) {
@@ -1416,6 +1455,7 @@ server = function (input, output, session) {
             rv$CodeSample_act = sort(rv$CodeSample_act)
             rv$optimalMode_act = rv$optimalMode
             rv$var = var()
+            rv$event = event()
             rv$period = period()
             rv$proba = proba()
             rv$samplePeriod = samplePeriod()
@@ -1452,6 +1492,7 @@ server = function (input, output, session) {
                 
                 data = dplyr::relocate(data, Code, .before=Date)
 
+                if (verbose) print("CARD_extraction")
                 res = CARD_extraction(
                     data,
                     CARD_path=CARD_path,
@@ -1466,15 +1507,26 @@ server = function (input, output, session) {
                 metaEX = res$metaEX
                 dataEX = res$dataEX
 
-                if (!is.null(rv$proba) &
-                    grepl("(month)|(season)", CARD_name)) {
-                    var_sub = names(dataEX)[grepl(rv$proba,
-                                                  names(dataEX))]
-                    dataEX = dplyr::select(dataEX,
-                                           c("Code", "Date",
-                                             var_sub))
+                if (!is.null(rv$proba)) {
+                    if (grepl("(month)|(season)", CARD_name)) {
+                        var_sub = names(dataEX)[grepl(rv$proba,
+                                                      names(dataEX))]
+                        dataEX = dplyr::select(dataEX,
+                                               c("Code", "Date",
+                                                 var_sub))
+                    } else {
+                        var_sub = metaEX$var
+                    }
+                    dataEX = dplyr::rename(dataEX,
+                                           !!rv$var:=var_sub)
+                    metaEX = metaEX[metaEX$var == var_sub,]
+                    metaEX$var = rv$var
                 }
-                
+
+                print(metaEX)
+                print(dataEX)
+
+                if (verbose) print("process_trend")
                 trendEX = process_trend(
                     dataEX, metaEX,
                     take_not_signif_into_account=TRUE,
@@ -1482,6 +1534,9 @@ server = function (input, output, session) {
                     period_trend=rv$period,
                     exProb=exProb,
                     verbose=verbose)
+
+                
+                if (verbose) print("trendEX")
                 
                 rv$unit = metaEX$unit[1]
                 rv$normalize = metaEX$normalize[1]
@@ -1509,6 +1564,9 @@ server = function (input, output, session) {
                         rv$idExValue = c(rv$idExValue, id)
                     }
                 }
+
+                if (verbose) print("end actualise")
+                
                 rv$dataEX = dataEX
                 rv$trendEX = trendEX
 
@@ -1524,7 +1582,7 @@ server = function (input, output, session) {
 
 ### 2.4. Period ______________________________________________________
     periodB = reactive({
-
+        if (verbose) print("period")
         if (!is.null(input$dateYear_slider)) {
             startYear = input$dateYear_slider[1]
             endYear = input$dateYear_slider[2]
@@ -1594,6 +1652,7 @@ server = function (input, output, session) {
     })
 
     missCode = reactive({
+        if (verbose) print("missCode")
         if (!is.null(rv$dataAll)) {
             Start = rv$period[1]
             End = rv$period[2]
@@ -1615,6 +1674,7 @@ server = function (input, output, session) {
     })
 
     invalidCode = reactive({
+        if (verbose) print("invalidCode")
         if (!is.null(rv$dataAll)) {
             Start = rv$period[1]
             End = rv$period[2]
@@ -1636,6 +1696,7 @@ server = function (input, output, session) {
 
     
     badCode = reactive({
+        if (verbose) print("badCode")
         badCode = c(missCode(), invalidCode())
         badCode[!duplicated(badCode)]
     })
@@ -1689,6 +1750,8 @@ server = function (input, output, session) {
         rv$var
         rv$width
     }, {
+
+        if (verbose) print("plot_trend")
         
         if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(rv$codePlot)) {
             
@@ -2129,7 +2192,8 @@ server = function (input, output, session) {
                                )     
                 
 
-                DateNoNA = dataEX_code$Date[!is.na(dataEX_code[[rv$var]])]
+                DateNoNA =
+                    dataEX_code$Date[!is.na(dataEX_code[[rv$var]])]
                 abs = c(min(DateNoNA), max(DateNoNA))
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
@@ -2145,7 +2209,8 @@ server = function (input, output, session) {
                 x = dataEX_code$Date
 
                 if (rv$unit == "jour de l'année") {
-                    y = as.Date(dataEX_code[[rv$var]], origin="1970-01-01")
+                    y = as.Date(dataEX_code[[rv$var]],
+                                origin="1970-01-01")
                     yhoverformat = "%d %b"
                     unitLabel = ""
                 } else {
@@ -2442,6 +2507,8 @@ server = function (input, output, session) {
         rv$maxX
         rv$trend
     }, {
+
+        if (verbose) print("plot_colorbar")
         
         if (input$colorbar_choice == 'show' & !is.null(rv$trendEX)) {
             output$colorbar_plot = plotly::renderPlotly({
