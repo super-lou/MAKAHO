@@ -70,33 +70,6 @@ if (any(file.exists(dev_path))) {
     library(ASHE)
 }
 
-
-# Import dataSHEEP
-dev_path = file.path(dev_lib_path,
-                     c('', 'dataSHEEP_project'), 'dataSHEEP',
-                     "R")
-if (any(file.exists(dev_path))) {
-    print('Loading dataSHEEP')
-    list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE,
-                           recursive=TRUE)
-    for (path in list_path) {
-        source(path, encoding='UTF-8')
-    }
-}
-
-# Import SHEEPfold
-dev_path = file.path(dev_lib_path,
-                     c('', 'SHEEPfold_project'), 'SHEEPfold',
-                     "__SHEEP__")
-if (any(file.exists(dev_path))) {
-    print('Loading SHEEPfold')
-    list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE,
-                           recursive=TRUE)
-    for (path in list_path) {
-        source(path, encoding='UTF-8')
-    }
-}
-
 # Check if you are in dev mod
 if (dir.exists(dev_lib_path)) {
     dev = TRUE
