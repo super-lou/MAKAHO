@@ -310,9 +310,11 @@ ui = bootstrapPage(
                     radioButton(
                         class="radioButton",
                         inputId="data_choice",
-                        choiceNames=c("RRSE", "Explore2"),
+                        choiceNames=c("RRSE", "RRExplore2"),
                         selected="RRSE",
-                        choiceTooltips=word("tt.ana.data.RRSE")))),
+                        choiceTooltips=
+                            c(word("tt.ana.data.RRSE"),
+                              word("tt.ana.data.Explore2"))))),
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",

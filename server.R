@@ -549,7 +549,7 @@ server = function (input, output, session) {
     data_name = reactive({
         if (verbose) print("data_name")
         data_name = input$data_choice        
-        if (data_name == "Explore2") {
+        if (data_name == "RRExplore2") {
             showElement(id="type_row")
         } else {
             hide(id="type_row")
@@ -1772,7 +1772,7 @@ server = function (input, output, session) {
                                      message=FALSE))
 
 
-                if (rv$data_name == "Explore2") {
+                if (rv$data_name == "RRExplore2") {
                     maxP_win = max(data_code$P, na.rm=TRUE)*1.1 
                     fig0 = plotly::plot_ly()
 
@@ -2080,7 +2080,7 @@ server = function (input, output, session) {
                 }
 
 
-                if (rv$data_name != "Explore2") {
+                if (rv$data_name != "RRExplore2") {
                     # Gets the p value
                     pVal = trendEX_code$p
 
@@ -2160,7 +2160,7 @@ server = function (input, output, session) {
                                    paper_bgcolor='transparent',
                                    showlegend=FALSE)
 
-                # if (rv$data_name == "Explore2") {
+                # if (rv$data_name == "RRExplore2") {
                 #     fig1 = plotly::layout(
                 #                        fig1,
                 #                        xaxis=list(range=rv$period,
@@ -2325,7 +2325,7 @@ server = function (input, output, session) {
                                )
 
 
-                if (rv$data_name == "Explore2") {
+                if (rv$data_name == "RRExplore2") {
                     fig = plotly::subplot(fig0, fig1, fig2,
                                           nrows=3,
                                           heights=c(3/12,
