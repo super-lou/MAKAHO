@@ -314,7 +314,7 @@ ui = bootstrapPage(
                         selected="RRSE",
                         choiceTooltips=
                             c(word("tt.ana.data.RRSE"),
-                              word("tt.ana.data.Explore2"))))),
+                              word("tt.ana.data.RRExplore2"))))),
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",
