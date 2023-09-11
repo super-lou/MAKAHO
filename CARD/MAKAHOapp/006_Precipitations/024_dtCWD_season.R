@@ -1,0 +1,21 @@
+CARD$P.var = c("dtCWD_DJF", "dtCWD_MAM", "dtCWD_JJA", "dtCWD_SON")
+CARD$P.unit = "jour"
+CARD$P.is_date = FALSE
+CARD$P.normalize = FALSE
+CARD$P.reverse_palette = FALSE
+CARD$P.glose = c("Nombre maximal de jours consécutifs dans l'hiver avec au moins de 1 mm de précipitation",
+                 "Nombre maximal de jours consécutifs au printemps avec au moins de 1 mm de précipitation",
+                 "Nombre maximal de jours consécutifs en été avec au moins de 1 mm de précipitation",
+                 "Nombre maximal de jours consécutifs en automne avec au moins de 1 mm de précipitation")
+CARD$P.topic = c("Précipitations", "Faibles")
+
+CARD$P1.funct = list(dtCWD=apply_threshold)
+CARD$P1.funct_args = list("P", lim=1,
+                          where=">=",
+                          what="length",
+                          select="longest")
+CARD$P1.timeStep = "year-season"
+CARD$P1.Seasons = c("DJF", "MAM", "JJA", "SON")
+CARD$P1.NApct_lim = 3
+CARD$P1.NAyear_lim = 10
+CARD$P1.compress = TRUE

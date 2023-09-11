@@ -1,0 +1,23 @@
+CARD$P.var = "var"
+CARD$P.unit = "unit"
+CARD$P.is_date = FALSE
+CARD$P.normalize = TRUE
+CARD$P.reverse_palette = FALSE
+CARD$P.glose = "glose"
+CARD$P.topic = "event"
+CARD$P.samplePeriod = NULL
+
+CARD$P1.funct = NULL
+CARD$P1.funct_args = NULL
+CARD$P1.timeStep = "year"
+CARD$P1.samplePeriod = NULL
+CARD$P1.isDate = FALSE
+CARD$P1.NApct_lim = NULL
+CARD$P1.NAyear_lim = NULL
+CARD$P1.Seasons = c("DJF", "MAM", "JJA", "SON")
+CARD$P1.onlyDate4Season = FALSE
+CARD$P1.nameEX = "X"
+CARD$P1.keep = NULL
+CARD$P1.compress = FALSE
+CARD$P1.expand = FALSE
+CARD$P1.rmNApct = TRUE
