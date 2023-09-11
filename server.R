@@ -98,7 +98,8 @@ server = function (input, output, session) {
                         CodeAll=NULL,
                         data=NULL,
                         meta=NULL,
-                        dataHTML_ana=""
+                        dataHTML_ana="",
+                        Palette=Palette
                         )
 
     startOBS = observe({
@@ -350,7 +351,7 @@ server = function (input, output, session) {
             fill = get_colors(rv$trend,
                               upBin=upBin,
                               lowBin=lowBin,
-                              Palette=Palette)
+                              Palette=rv$Palette)
             
             fillList = rep(none2Color, length(rv$CodeAll))
             fillCode = rv$trendEX$Code
@@ -387,10 +388,16 @@ server = function (input, output, session) {
         
         map = leafletProxy("map")
         
-        if (input$theme_choice != rv$theme_choice_save | is.null(unlist(rv$markerListAll_save$iconUrl))) {
+        if (input$theme_choice != rv$theme_choice_save |
+            is.null(unlist(rv$markerListAll_save$iconUrl))) {
             okCode = rep(TRUE, length(rv$CodeAll))
         } else {
-            okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+            if (length(unlist(markerListAll()$iconUrl)) !=
+                length(unlist(rv$markerListAll_save$iconUrl))) {
+                okCode = rep(TRUE, length(rv$CodeAll))
+            } else {
+                okCode = unlist(markerListAll()$iconUrl) != unlist(rv$markerListAll_save$iconUrl)
+            }
         }
         
         rv$theme_choice_save = input$theme_choice
@@ -473,8 +480,13 @@ server = function (input, output, session) {
         }
 
         trendLabelAll[is.na(trendLabelAll)] = ""
-        
-        okCode = rv$trendLabelAll != trendLabelAll
+
+        if (length(rv$trendLabelAll) !=
+            length(trendLabelAll)) {
+            okCode = rep(TRUE, length(rv$CodeAll))
+        } else {
+            okCode = rv$trendLabelAll != trendLabelAll
+        }
         
         Code = rv$CodeAll[okCode]
         Lon = LonAll[okCode]
@@ -1161,7 +1173,7 @@ server = function (input, output, session) {
         updateRadioButton(session,
                           class="radioButton",
                           inputId="proba_choice",
-                          choiceNames=choices,
+                          choices=choices,
                           choiceTooltips=
                               paste0(tt, " ", choices))
     })
@@ -1322,16 +1334,34 @@ server = function (input, output, session) {
         
     dataAll = reactive({
         if (verbose) print("dataAll")
-        if (file.exists(file.path(computer_data_path,
-                                  'fst',
-                                  paste0('data_',
-                                         data_name(),
-                                         '.fst')))) {
-            dataAll = read_tibble(filedir=file.path(computer_data_path,
-                                                    'fst'),
-                                  filename=paste0('data_',
-                                                  data_name(),
-                                                  '.fst'))
+        test = file.path(computer_data_path,
+                         'fst',
+                         paste0('data_',
+                                data_name(),
+                                '.fst'))
+        if (file.exists(test)) {
+
+            # if (data_name() == "RRExplore2") {
+            #     data1 = read_tibble(filedir=file.path(computer_data_path,
+            #                                           'fst'),
+            #                         filename=paste0('data_',
+            #                                         data_name(),
+            #                                         '_1.fst'))
+            #     data2 = read_tibble(filedir=file.path(computer_data_path,
+            #                                           'fst'),
+            #                         filename=paste0('data_',
+            #                                         data_name(),
+            #                                         '_2.fst'))
+            #     dataAll = dplyr::bind_rows(data1, data2)
+
+            # } else {
+
+                dataAll = read_tibble(filedir=file.path(computer_data_path,
+                                                        'fst'),
+                                      filename=paste0('data_',
+                                                      data_name(),
+                                                      '.fst'))
+            # }
 
             if (dev) {
                 if (!is.null(nStation_dev)) {
@@ -1461,6 +1491,13 @@ server = function (input, output, session) {
             rv$samplePeriod = samplePeriod()
             rv$reverse = reverse()
 
+
+            if (rv$reverse) {
+                rv$Palette = rev(Palette)
+            } else {
+                rv$Palette = Palette
+            }
+
             if (!is.null(rv$CodeAdd)) {
                 data = rv$data[rv$data$Code %in% rv$CodeAdd,]
             } else {
@@ -1511,20 +1548,20 @@ server = function (input, output, session) {
                     if (grepl("(month)|(season)", CARD_name)) {
                         var_sub = names(dataEX)[grepl(rv$proba,
                                                       names(dataEX))]
-                        dataEX = dplyr::select(dataEX,
-                                               c("Code", "Date",
-                                                 var_sub))
+                        dataEX =
+                            dplyr::select(dataEX,
+                                          c("Code",
+                                            "Date",
+                                            tidyr::all_of(var_sub)))
                     } else {
                         var_sub = metaEX$var
                     }
                     dataEX = dplyr::rename(dataEX,
-                                           !!rv$var:=var_sub)
+                                           !!rv$var:=
+                                               tidyr::all_of(var_sub))
                     metaEX = metaEX[metaEX$var == var_sub,]
                     metaEX$var = rv$var
                 }
-
-                print(metaEX)
-                print(dataEX)
 
                 if (verbose) print("process_trend")
                 trendEX = process_trend(
@@ -1769,7 +1806,7 @@ server = function (input, output, session) {
             output$trend_plot = plotly::renderPlotly({
                 
                 shiny::validate(need(!is.null(rv$codePlot),
-                                     message=FALSE))
+                                     print=FALSE))
 
 
                 if (rv$data_name == "RRExplore2") {
@@ -2441,7 +2478,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
+        session$sendCustomPrint(type='jsCode',
                                   list(value=jsinject))
     })
 
@@ -2473,7 +2510,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
+        session$sendCustomPrint(type='jsCode',
                                   list(value=jsinject))
     })
     
@@ -2557,7 +2594,7 @@ server = function (input, output, session) {
                                       y=c(Y0[i], Y1[i],
                                           Y1[i], Y0[i], Y0[i]),
                                       fill="toself",
-                                      fillcolor=Palette[i],
+                                      fillcolor=rv$Palette[i],
                                       line=list(width=0),
                                       text=paste0("<b>",
                                                   counts[i],
@@ -2591,7 +2628,7 @@ server = function (input, output, session) {
                                   x=c(0, 1, 0.5, 0),
                                   y=c(1, 1, 1+dY*2/3, 1),
                                   fill="toself",
-                                  fillcolor=Palette[colorStep],
+                                  fillcolor=rv$Palette[colorStep],
                                   line=list(width=0),
                                   text=paste0("<b>",
                                               counts[colorStep],
@@ -2610,7 +2647,7 @@ server = function (input, output, session) {
                                   x=c(0, 1, 0.5, 0),
                                   y=c(-1, -1, -1-dY*2/3, -1),
                                   fill="toself",
-                                  fillcolor=Palette[1],
+                                  fillcolor=rv$Palette[1],
                                   line=list(width=0),
                                   text=paste0("<b>",
                                               counts[1],
@@ -2694,6 +2731,13 @@ server = function (input, output, session) {
                                    word("unit.by"), " ",
                                    word("unit.year"), "<sup>2</sup>"),
                             unit)
+
+                unit =
+                    gsub('(C$)|(mm$)',
+                         paste0("C", " ", word("unit.by"), " ",
+                                word("unit.year")),
+                         unit)
+                
                 title = paste0("<b>", word("cb.title"), "</b>",
                                " ", unit)
                 
@@ -2823,7 +2867,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
+        session$sendCustomPrint(type='jsCode',
                                   list(value=jsinject))  
     })
 
@@ -2853,7 +2897,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
+        session$sendCustomPrint(type='jsCode',
                                   list(value=jsinject))
     })
 
@@ -2873,7 +2917,7 @@ server = function (input, output, session) {
             jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-            session$sendCustomMessage(type='jsCode',
+            session$sendCustomPrint(type='jsCode',
                                       list(value=jsinject))    
         }
     })
@@ -3045,7 +3089,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
+        session$sendCustomPrint(type='jsCode',
                                   list(value=jsinject))
     })
     

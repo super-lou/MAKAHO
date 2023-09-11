@@ -415,6 +415,7 @@ radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
 
 updateRadioButton = function (session, class='', choiceIcons=NULL,
                               choiceNames=NULL, choiceValues=NULL,
+                              choices=NULL,
                               choiceTooltips=NULL, ...) {
 
     if (!is.null(choiceNames)) {
@@ -429,6 +430,7 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
                                     length(choiceIcons)),
                                 "", simplify=FALSE)
     }
+    
     if (!is.null(choiceIcons)) {
         inter = lapply(choiceIcons, img, align="right",
                        style="text-align: center;
@@ -443,14 +445,23 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
         choiceItems = lapply(choiceItems,
                              div, class="Tooltip bunch")
     }
-    
-    updateRadioGroupButtons(
-        session=session,
-        status=class,
-        label=NULL,
-        choiceNames=choiceItems,
-        choiceValues=choiceValues,
-        ...)
+
+    if (!is.null(choices)) {
+        updateRadioGroupButtons(
+            session=session,
+            status=class,
+            label=NULL,
+            choices=choices,
+            ...)
+    } else {
+        updateRadioGroupButtons(
+            session=session,
+            status=class,
+            label=NULL,
+            choiceNames=choiceItems,
+            choiceValues=choiceValues,
+            ...) 
+    }
 }
 
 
@@ -722,15 +733,9 @@ get_trendLabel = function (rv, code, dataEX, trendEX, unit,
         return (NA)
     }
 
-    print(dataEX_code)
-    print(rv$var)
-    
-    
     # Computes the mean of the data on the period
     dataMean = mean(dataEX_code[[rv$var]],
                     na.rm=TRUE)
-
-    print(dataMean)
     
     # Gets the trend
     trend = trendEX_code$a

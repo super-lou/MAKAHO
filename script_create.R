@@ -44,10 +44,10 @@ if (!file.exists(data_RRSE_path) | !file.exists(meta_RRSE_path)) {
                                   "all")
     meta_RRSE = get_lacune(data_RRSE, meta_RRSE)
     # hydrograph
-    ASHE::write_tibble(data_RRSE,
+    write_tibble(data_RRSE,
                        filedir=file.path(MAKAHO_data_path, 'fst'),
                        filename='data_RRSE.fst')
-    ASHE::write_tibble(meta_RRSE,
+    write_tibble(meta_RRSE,
                        filedir=file.path(MAKAHO_data_path, 'fst'),
                        filename='meta_RRSE.fst')
 }
@@ -65,7 +65,7 @@ meta_Explore2_path = file.path(MAKAHO_data_path, 'fst',
 if (!file.exists(data_Explore2_path) |
     !file.exists(meta_Explore2_path)) {
 
-    codes_selection_data = ASHE::read_tibble(codes_hydro_selection_path)
+    codes_selection_data = read_tibble(codes_hydro_selection_path)
     
     codes_selection_data = dplyr::filter(codes_selection_data,
                                          !grepl("Supprimer", X))
@@ -100,13 +100,13 @@ if (!file.exists(data_Explore2_path) |
     Code = levels(factor(data_sim$Code))
     Code_filename = paste0(Code, "_HYDRO_QJM.txt")
 
-    meta_Explore2 = ASHE::create_meta_HYDRO(
+    meta_Explore2 = create_meta_HYDRO(
                               computer_data_path,
                               "Explore2/hydrologie/Explore2 HYDRO QJM critiques 2023",
                               Code_filename,
                               verbose=FALSE)
 
-    data_obs = ASHE::create_data_HYDRO(
+    data_obs = create_data_HYDRO(
                          computer_data_path,
                          "Explore2/hydrologie/Explore2 HYDRO QJM critiques 2023",
                          Code_filename,
@@ -115,7 +115,7 @@ if (!file.exists(data_Explore2_path) |
 
     
     data_obs = dplyr::arrange(data_obs, Code)
-    meta_Explore2 = ASHE::get_lacune(data_obs, meta_Explore2)
+    meta_Explore2 = get_lacune(data_obs, meta_Explore2)
     
 
     data_Explore2 = dplyr::inner_join(data_obs,
@@ -125,10 +125,10 @@ if (!file.exists(data_Explore2_path) |
                                       by=c("Code", "Date"))
 
     # hydrograph
-    ASHE::write_tibble(data_Explore2,
+    write_tibble(data_Explore2,
                        filedir=file.path(MAKAHO_data_path, 'fst'),
                        filename='data_Explore2.fst')
-    ASHE::write_tibble(meta_Explore2,
+    write_tibble(meta_Explore2,
                        filedir=file.path(MAKAHO_data_path, 'fst'),
                        filename='meta_Explore2.fst')
 }

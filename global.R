@@ -31,6 +31,7 @@ library(leaflet)
 library(icons)
 library(dplyr)
 library(stringr)
+library(zoo)
 # already ::
 library(RcppRoll)
 library(CircStats)
@@ -40,7 +41,10 @@ library(sf)
 library(sp)
 
 
-dev_lib_path = "/home/louis/Documents/bouleau/INRAE/project/"
+dev_lib_path =
+    "/home/louis/Documents/bouleau/INRAE/project/"
+    # ""
+
 
 # Import EXstat
 dev_path = file.path(dev_lib_path,
@@ -70,6 +74,7 @@ if (any(file.exists(dev_path))) {
     library(ASHE)
 }
 
+
 # Check if you are in dev mod
 if (dir.exists(dev_lib_path)) {
     dev = TRUE
@@ -78,6 +83,7 @@ if (dir.exists(dev_lib_path)) {
     dev = FALSE
     verbose = FALSE
 }
+
 
 # Sourcing R files
 source('tools.R', encoding='UTF-8')
@@ -90,3 +96,4 @@ source('ui.R', encoding='UTF-8')
 
 # Running app localy
 shinyApp(ui=ui, server=server)
+

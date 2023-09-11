@@ -307,6 +307,9 @@ ui = bootstrapPage(
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
+
+                    ### /!\ ###
+
                     radioButton(
                         class="radioButton",
                         inputId="data_choice",
@@ -315,6 +318,17 @@ ui = bootstrapPage(
                         choiceTooltips=
                             c(word("tt.ana.data.RRSE"),
                               word("tt.ana.data.RRExplore2"))))),
+
+                    # radioButton(
+                    #     class="radioButton",
+                    #     inputId="data_choice",
+                    #     choiceNames="RRSE",
+                    #     selected="RRSE",
+                    #     choiceTooltips=word("tt.ana.data.RRSE")))),
+
+                    ######
+
+    
             
 ### 2.3. Station selection ___________________________________________
             div(class="Row",
