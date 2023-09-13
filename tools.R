@@ -74,14 +74,12 @@ get_Var = function (dico, varProba) {
                 proba = NA
             }
 
-            reverse = get_reverse(var)
             Var = bind_rows(Var, tibble(event=event,
                                         var=var,
                                         varHTML=varHTML,
                                         name=name,
                                         type=type,
-                                        proba=proba,
-                                        reverse=reverse))
+                                        proba=proba))
         }
     } 
     return (Var)
@@ -150,7 +148,8 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                                   varHTML=varHTML,
                                   name=list(glose),
                                   sub=list(sub),
-                                  reverse=reverse_palette))
+                                  palette=str_split(palette,
+                                                    " ")))
                 
             } else {
                 sub = paste0(stringr::str_extract(var,
@@ -180,7 +179,8 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                                       varHTML=varHTML,
                                       name=list(glose),
                                       sub=list(sub),
-                                      reverse=reverse_palette))
+                                      palette=str_split(palette,
+                                                        " ")))
                 } else {
                     id2 = which(ok1 & ok2)
                     Var$name[[id2]] = c(Var$name[[id2]], glose)
@@ -197,7 +197,8 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
                               varHTML=varHTML,
                               name=list(glose),
                               sub=NA,
-                              reverse=reverse_palette))
+                              palette=str_split(palette,
+                                                " ")))
         }
     }
     
@@ -805,13 +806,21 @@ get_trendLabel = function (rv, code, dataEX, trendEX, unit,
         unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
         unitHTML = gsub('[/}]', '</sup>', unitHTML)
         # Create the name of the trend
-        label = paste0(
-            "<b>", trendC, " x ",
-            "10<sup>", powerC, "</sup></b>", shiftC,
-            " [", unitHTML, ".an<sup>-1</sup>]",
-            space, "<b>",
-            trendMeanC, "</b> [%.an<sup>-1</sup>]")
-    }
+        if (rv$normalize) {
+            label = paste0(
+                "<b>", trendC, " x ",
+                "10<sup>", powerC, "</sup></b>", shiftC,
+                " [", unitHTML, ".an<sup>-1</sup>]",
+                space, "<b>",
+                trendMeanC, "</b> [%.an<sup>-1</sup>]")
 
+        } else {
+            label = paste0(
+                "<b>", trendC, " x ",
+                "10<sup>", powerC, "</sup></b>", shiftC,
+                " [", unitHTML, ".an<sup>-1</sup>]")
+        }
+
+    }
     return (label)
 }

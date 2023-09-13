@@ -88,7 +88,8 @@ sigVal = as.numeric(gsub('%', '' , sigProba))/100
 colorStep = 10
 
 # colorStep = 10
-Palette = get_IPCC_Palette("MAKAHO_ground")
+# Palette = get_IPCC_Palette("MAKAHO_ground")
+Palette_void = rep("transparent", 10)
 
 exProb = 0.01
 

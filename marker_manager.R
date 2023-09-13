@@ -56,7 +56,12 @@ save_marker = function (y, shape, color, fill, size, sizeName,
     return (filename)
 }
 
-create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, sizeList, strokeSizeList, nameSizeList, svgSizeList, fillPalette, resources_path, filedir='marker', colorStep=256, relY=1, fillAdd=NULL, colorAdd=NULL, ...) {
+create_marker = function (shapeList, sizeShapeList, colorList,
+                          strokeColorList, sizeList, strokeSizeList,
+                          nameSizeList, svgSizeList, fillPalette,
+                          resources_path, filedir='marker',
+                          colorStep=256, relY=1, fillAdd=NULL,
+                          colorAdd=NULL, overwrite=FALSE, ...) {
 
     # Names of a temporary directory to store all the independent pages
     outdir = file.path(resources_path, filedir)
@@ -65,7 +70,7 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
         dir.create(outdir)
     # If it already exists it deletes the pre-existent directory
     # and recreates one
-    } else {
+    } else if (overwrite) {
         unlink(outdir, recursive=TRUE)
         dir.create(outdir)
     }
@@ -78,8 +83,7 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 
     nColor = length(colorList)
     
-    fillList = get_palette(colorStep=colorStep,
-                           Palette=fillPalette)
+    fillList = fillPalette
     nFill = length(fillList)
 
     nAdd = length(fillAdd)
@@ -128,6 +132,8 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
     return (Urls)
 }
 
+# library(ggplot2)
+
 # markerAdd = list(
 #     c(color=missColor,
 #       fill=none2Color_light,
@@ -161,10 +167,37 @@ create_marker = function (shapeList, sizeShapeList, colorList, strokeColorList, 
 #               strokeSizeList=c(1, 1, 1.4),
 #               nameSizeList=c('small', 'small', 'big'),
 #               svgSizeList=c(100, 100, 125),
-#               fillPalette=Palette,
+#               fillPalette=get_IPCC_Palette("MAKAHO_hydro"),
 #               resources_path=resources_path,
 #               filedir='marker',
-#               colorStep=colorStep,
+#               relY=c(0, -0.02, 0.02),
+#               markerAdd=markerAdd)
+
+# create_marker(shapeList=c(21, 24, 25),
+#               sizeShapeList=c(5, 7, 7),
+#               colorList=c(validSColor, validNSColor, invalidColor),
+#               strokeColorList=c(0.8, 0.8, 1),
+#               sizeList=c(0.8, 0.8, 1.2),
+#               strokeSizeList=c(1, 1, 1.4),
+#               nameSizeList=c('small', 'small', 'big'),
+#               svgSizeList=c(100, 100, 125),
+#               fillPalette=get_IPCC_Palette("MAKAHO_temperature"),
+#               resources_path=resources_path,
+#               filedir='marker',
+#               relY=c(0, -0.02, 0.02),
+#               markerAdd=markerAdd)
+
+# create_marker(shapeList=c(21, 24, 25),
+#               sizeShapeList=c(5, 7, 7),
+#               colorList=c(validSColor, validNSColor, invalidColor),
+#               strokeColorList=c(0.8, 0.8, 1),
+#               sizeList=c(0.8, 0.8, 1.2),
+#               strokeSizeList=c(1, 1, 1.4),
+#               nameSizeList=c('small', 'small', 'big'),
+#               svgSizeList=c(100, 100, 125),
+#               fillPalette=get_IPCC_Palette("MAKAHO_date"),
+#               resources_path=resources_path,
+#               filedir='marker',
 #               relY=c(0, -0.02, 0.02),
 #               markerAdd=markerAdd)
 

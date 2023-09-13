@@ -88,7 +88,7 @@ server = function (input, output, session) {
                         unit=NULL,
                         normalize=NULL,
                         proba=NULL,
-                        reverse=FALSE,
+                        Palette=NULL,
                         CodeSample_act=NULL,
                         CodeAdd=NULL,
                         actualiseForce=FALSE,
@@ -98,8 +98,7 @@ server = function (input, output, session) {
                         CodeAll=NULL,
                         data=NULL,
                         meta=NULL,
-                        dataHTML_ana="",
-                        Palette=Palette
+                        dataHTML_ana=""
                         )
 
     startOBS = observe({
@@ -1040,13 +1039,13 @@ server = function (input, output, session) {
         }
     })
 
-    reverse = reactive({
+    Palette = reactive({
         id = which(Var()$var == var() &
                    Var()$event == event())
         if (!identical(id, integer(0))) {
-            Var()$reverse[id]
+            unlist(Var()$palette[id])
         } else {
-            FALSE
+            unlist(Var_all$palette[Var_all$var == "QA"])
         }
     })
             
@@ -1489,14 +1488,8 @@ server = function (input, output, session) {
             rv$period = period()
             rv$proba = proba()
             rv$samplePeriod = samplePeriod()
-            rv$reverse = reverse()
+            rv$Palette = Palette()
 
-
-            if (rv$reverse) {
-                rv$Palette = rev(Palette)
-            } else {
-                rv$Palette = Palette
-            }
 
             if (!is.null(rv$CodeAdd)) {
                 data = rv$data[rv$data$Code %in% rv$CodeAdd,]
@@ -1806,7 +1799,7 @@ server = function (input, output, session) {
             output$trend_plot = plotly::renderPlotly({
                 
                 shiny::validate(need(!is.null(rv$codePlot),
-                                     print=FALSE))
+                                     message=FALSE))
 
 
                 if (rv$data_name == "RRExplore2") {
@@ -1814,7 +1807,7 @@ server = function (input, output, session) {
                     fig0 = plotly::plot_ly()
 
                     x = data_code$Date
-                    event = Var()$event[Var()$var == rv$var]
+                    event = Var_all$event[Var_all$var == rv$var]
                     y = data_code$P
                     varLabel = "P"
                     unitLabel = " [mm]"
@@ -2011,8 +2004,8 @@ server = function (input, output, session) {
                 fig1 = plotly::plot_ly()
 
                 x = data_code$Date
-                event = Var()$event[Var()$var == rv$var]
-                if (event == "Étiage") {
+                if (rv$event == "Basses Eaux") {
+                    maxQ_win = sqrt(maxQ_win)
                     y = sqrt(data_code$Q)
                     varLabel = "&#8730;Q"
                     unitLabel = " [m<sup>3/2</sup>.s<sup>-1/2</sup>]"
@@ -2260,10 +2253,10 @@ server = function (input, output, session) {
                     unitLabel = paste0(" [", unitLabel, "]<br>")
                 }
                 if (is.null(rv$proba)) {
-                    varLabel = Var()$varHTML[Var()$var == rv$var]
+                    varLabel = Var_all$varHTML[Var_all$var == rv$var]
                 } else {
                     varLabel = gsub('p', gsub("%", "", rv$proba),
-                               Var()$varHTML[Var()$var == rv$var])
+                               Var_all$varHTML[Var_all$var == rv$var])
                 }
 
                 fig2 = plotly::plot_ly()
@@ -2733,8 +2726,14 @@ server = function (input, output, session) {
                             unit)
 
                 unit =
-                    gsub('(C$)|(mm$)',
+                    gsub('C$',
                          paste0("C", " ", word("unit.by"), " ",
+                                word("unit.year")),
+                         unit)
+
+                unit =
+                    gsub('mm$',
+                         paste0("mm", " ", word("unit.by"), " ",
                                 word("unit.year")),
                          unit)
                 
