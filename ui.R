@@ -327,7 +327,6 @@ ui = bootstrapPage(
                     #     choiceTooltips=word("tt.ana.data.RRSE")))),
 
                     ######
-
     
             
 ### 2.3. Station selection ___________________________________________

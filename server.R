@@ -1459,6 +1459,20 @@ server = function (input, output, session) {
         if (verbose) print("actualise")
         if (rv$actualise & rv$start) {
 
+
+            if (!is.null(rv$codePlot)) {
+                map = leafletProxy("map")
+                map = fitBounds(map,
+                                lng1=defaultLimits()$east,
+                                lat1=defaultLimits()$south,
+                                lng2=defaultLimits()$west,
+                                lat2=defaultLimits()$north,
+                                options=list(padding=c(20, 20)))
+                
+                rv$codePlot = NULL
+                hide(id='plot_panel')
+            }
+            
             if (rv$data_name != data_name()) {
                 map = leafletProxy("map")
                 map = clearMarkers(map)
@@ -1512,10 +1526,8 @@ server = function (input, output, session) {
             }
 
             if (!is.null(CARD_name)) {
-
                 if (rv$optimalMode_act) {
                     samplePeriod_overwrite = NULL
-                    
                 } else {
                     samplePeriod_overwrite = rv$samplePeriod
                 }
@@ -1546,6 +1558,9 @@ server = function (input, output, session) {
                                           c("Code",
                                             "Date",
                                             tidyr::all_of(var_sub)))
+                        dataEX = dplyr::filter(dataEX,
+                                               !is.na(get(var_sub)))
+
                     } else {
                         var_sub = metaEX$var
                     }
@@ -1565,7 +1580,6 @@ server = function (input, output, session) {
                     exProb=exProb,
                     verbose=verbose)
 
-                
                 if (verbose) print("trendEX")
                 
                 rv$unit = metaEX$unit[1]
@@ -1782,7 +1796,7 @@ server = function (input, output, session) {
     }, {
 
         if (verbose) print("plot_trend")
-        
+
         if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode & !is.null(rv$codePlot)) {
             
             showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
@@ -2252,11 +2266,19 @@ server = function (input, output, session) {
                     unitLabel = gsub('[/}]', '</sup>', unitLabel)
                     unitLabel = paste0(" [", unitLabel, "]<br>")
                 }
+
                 if (is.null(rv$proba)) {
                     varLabel = Var_all$varHTML[Var_all$var == rv$var]
                 } else {
-                    varLabel = gsub('p', gsub("%", "", rv$proba),
-                               Var_all$varHTML[Var_all$var == rv$var])
+                    if (grepl("(month)|(season)", rv$var)) {
+                        varLabel = gsub('(month)|(season)', rv$proba,
+                                        Var_all$varHTML[Var_all$var ==
+                                                        rv$var])
+                    } else {
+                        varLabel = gsub('p', gsub("%", "", rv$proba),
+                                        Var_all$varHTML[Var_all$var ==
+                                                        rv$var])
+                    }
                 }
 
                 fig2 = plotly::plot_ly()
