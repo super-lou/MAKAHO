@@ -310,21 +310,21 @@ ui = bootstrapPage(
 
                     ### /!\ ###
 
-                    radioButton(
-                        class="radioButton",
-                        inputId="data_choice",
-                        choiceNames=c("RRSE", "RRExplore2"),
-                        selected="RRSE",
-                        choiceTooltips=
-                            c(word("tt.ana.data.RRSE"),
-                              word("tt.ana.data.RRExplore2"))))),
-
                     # radioButton(
                     #     class="radioButton",
                     #     inputId="data_choice",
-                    #     choiceNames="RRSE",
+                    #     choiceNames=c("RRSE", "RRExplore2"),
                     #     selected="RRSE",
-                    #     choiceTooltips=word("tt.ana.data.RRSE")))),
+                    #     choiceTooltips=
+                    #         c(word("tt.ana.data.RRSE"),
+                    #           word("tt.ana.data.RRExplore2"))))),
+
+                    radioButton(
+                        class="radioButton",
+                        inputId="data_choice",
+                        choiceNames="RRSE",
+                        selected="RRSE",
+                        choiceTooltips=word("tt.ana.data.RRSE")))),
 
                     ######
     
