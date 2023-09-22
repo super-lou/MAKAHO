@@ -1549,6 +1549,13 @@ server = function (input, output, session) {
                 metaEX = res$metaEX
                 dataEX = res$dataEX
 
+                print(dataEX)
+                dataEX = dplyr::filter(dataEX,
+                                       !all(is.na(get(rv$var))),
+                                       .by="Code")
+                print(dataEX)
+                print("")
+                
                 if (!is.null(rv$proba)) {
                     if (grepl("(month)|(season)", CARD_name)) {
                         var_sub = names(dataEX)[grepl(rv$proba,

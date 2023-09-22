@@ -99,10 +99,12 @@ apply_threshold = function (X, lim, where="<=", what="X",
         if (what == "X") {
             res = X[period_select]
         } else if (what == "length") {
-            print(period_select)
             # res = period_select[length(period_select)] -
             #     period_select[1] + 1
             res = length(period_select)
+            if (res == 0) {
+                res = NA
+            }
         } else if (what == "last") {
             res = period_select[length(period_select)]
         } else if (what == "first") {
@@ -115,6 +117,9 @@ apply_threshold = function (X, lim, where="<=", what="X",
         } else if (what == "length") {
             # res = ID[length(ID)] - ID[1] + 1
             res = length(ID)
+            if (res == 0) {
+                res = NA
+            }
         } else if (what == "last") {
             res = ID[length(ID)]
         } else if (what == "first") {
