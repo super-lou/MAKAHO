@@ -99,8 +99,10 @@ apply_threshold = function (X, lim, where="<=", what="X",
         if (what == "X") {
             res = X[period_select]
         } else if (what == "length") {
-            res = period_select[length(period_select)] -
-                period_select[1] + 1
+            print(period_select)
+            # res = period_select[length(period_select)] -
+            #     period_select[1] + 1
+            res = length(period_select)
         } else if (what == "last") {
             res = period_select[length(period_select)]
         } else if (what == "first") {
@@ -111,7 +113,8 @@ apply_threshold = function (X, lim, where="<=", what="X",
         if (what == "X") {
             res = X[ID]            
         } else if (what == "length") {
-            res = ID[length(ID)] - ID[1] + 1
+            # res = ID[length(ID)] - ID[1] + 1
+            res = length(ID)
         } else if (what == "last") {
             res = ID[length(ID)]
         } else if (what == "first") {
@@ -120,6 +123,11 @@ apply_threshold = function (X, lim, where="<=", what="X",
     }
     return (res)
 }
+
+# set.seed(1)
+# X = rnorm(100, 0, 1)
+# apply_threshold(X, 0, where=">=", what="length", select="longest")
+
 
 ## 2. USE ____________________________________________________________
 compute_VolDef = function (X, upLim, select_longest=TRUE) {
