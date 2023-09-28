@@ -2500,7 +2500,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomPrint(type='jsCode',
+        session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))
     })
 
@@ -2532,7 +2532,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomPrint(type='jsCode',
+        session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))
     })
     
@@ -2895,7 +2895,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomPrint(type='jsCode',
+        session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))  
     })
 
@@ -2925,7 +2925,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomPrint(type='jsCode',
+        session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))
     })
 
@@ -2945,7 +2945,7 @@ server = function (input, output, session) {
             jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-            session$sendCustomPrint(type='jsCode',
+            session$sendCustomMessage(type='jsCode',
                                       list(value=jsinject))    
         }
     })
@@ -3117,7 +3117,7 @@ server = function (input, output, session) {
         jsinject = "setTimeout(function()
                         {window.open($('#downloadData')
                         .attr('href'))}, 100);"
-        session$sendCustomPrint(type='jsCode',
+        session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))
     })
     
