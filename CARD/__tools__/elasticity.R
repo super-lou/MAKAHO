@@ -33,9 +33,9 @@
 #' precipitation elasticity of mean flow".
 #' This is this last estimator that is use in the below function.
 #' @param Q
-#' @param P
+#' @param X
 #' @return Elasticity given by :
-#' eps_P = median((Q-Qmean)/(P-Pmean) * Pmean/Qmean)
+#' eps_X = median((Q-Qmean)/(X-Xmean) * Xmean/Qmean)
 #' @export
 compute_elasticity = function (Q, X) {
     Qmean = mean(Q, na.rm=TRUE)

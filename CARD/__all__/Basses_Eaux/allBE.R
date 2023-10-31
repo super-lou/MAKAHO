@@ -72,4 +72,3 @@ CARD$P4.isDate = c(TRUE,
                    FALSE,
                    FALSE)
 CARD$P4.NApct_lim = 3
-CARD$P4.compress = TRUE

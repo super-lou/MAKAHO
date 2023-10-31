@@ -16,13 +16,16 @@ CARD$P1.funct_args = list(list("Q", na.rm=TRUE),
                           list("T", na.rm=TRUE))
 CARD$P1.timeStep = "year-season"
 CARD$P1.Seasons = c("DJF", "MAM", "JJA", "SON")
-CARD$P1.onlyDate4Season = TRUE
 CARD$P1.NApct_lim = 3
 CARD$P1.NAyear_lim = 10
+CARD$P1.compress = TRUE
 
-CARD$P2.funct = list("epsilon_T"=compute_elasticity)
-CARD$P2.funct_args = list(Q="QA", X="TA")
-CARD$P2.timeStep = "season"
-CARD$P2.Seasons = c("DJF", "MAM", "JJA", "SON")
-CARD$P2.compress = TRUE
-CARD$P2.NApct_lim = 3
+CARD$P2.funct = list("epsilon_T_DJF"=compute_elasticity,
+                     "epsilon_T_MAM"=compute_elasticity,
+                     "epsilon_T_JJA"=compute_elasticity,
+                     "epsilon_T_SON"=compute_elasticity)
+CARD$P2.funct_args = list(list(Q="QA_DJF", X="TA_DJF"),
+                          list(Q="QA_MAM", X="TA_MAM"),
+                          list(Q="QA_JJA", X="TA_JJA"),
+                          list(Q="QA_SON", X="TA_SON"))
+CARD$P2.timeStep = "none"

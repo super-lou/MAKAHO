@@ -9,7 +9,7 @@ CARD$P.glose = paste0("Nombre de jours de forte pluie de chaque ",
 CARD$P.topic = c("Précipitations", "Forte")
     
 CARD$P1.funct = list(dtR20mm=apply_threshold)
-CARD$P1.funct_args = list("P", lim=20,
+CARD$P1.funct_args = list("R", lim=20,
                           where=">=",
                           what="length",
                           select="all")

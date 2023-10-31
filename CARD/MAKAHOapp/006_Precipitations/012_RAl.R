@@ -7,8 +7,8 @@ CARD$P.glose = "Cumul des précipitations liquides annuelles"
 CARD$P.topic = c("Précipitations", "Modérée")
 CARD$P.samplePeriod = "09-01"
 
-CARD$P1.funct = list(RAl=sum)
-CARD$P1.funct_args = list("Pl", na.rm=TRUE)
+CARD$P1.funct = list(RAl=sumNA)
+CARD$P1.funct_args = list("Rl", na.rm=TRUE)
 CARD$P1.timeStep = "year"
 CARD$P1.samplePeriod = "09-01"
 CARD$P1.NApct_lim = 3

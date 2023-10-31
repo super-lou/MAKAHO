@@ -161,9 +161,12 @@ ui = bootstrapPage(
                    right=105, bottom=10,
                    width="auto", height="auto",
                    Button(class="Button-icon",
+                          style="color: rgba(5, 5, 10, 0.90) !important;
+                                 padding-left: 0.5rem !important;
+                                 padding-right: 0.5rem !important;",
                           inputId='help_button',
-                          label=NULL,
-                          icon_name=iconLib$help_outline_grey,
+                          label=word("help"),
+                          icon_name=iconLib$help_outline,
                           tooltip=word("tt.help"))
                    )
     ),
@@ -569,9 +572,9 @@ ui = bootstrapPage(
                    width="auto", height="auto",
                    Button(class="SmallButton-actualise",
                       inputId='actualise_button',
-                      label=NULL,
+                      label=word("actualise.title"),
                       icon_name=iconLib$refresh_white,
-                      tooltip=word("tt.actualise.title"))
+                      tooltip=NULL)
                    )
     ),
     
@@ -869,7 +872,7 @@ ui = bootstrapPage(
                    width="auto", height="auto",
                    Button(class="maskSmallButton-actualise",
                           inputId='mask',
-                          label=NULL,
+                          label=word("actualise.title"),
                           icon_name=iconLib$none)
                    )
     ),
@@ -1101,8 +1104,9 @@ ui = bootstrapPage(
                    h1(HTML(word("help.p10.s1"))),
                    h4(HTML(word("help.p10.ss1"))),
                    p(HTML(word("help.p10.p1"))),
+                   p(HTML(word("help.p10.p2"))),
                    h4(HTML(word("help.p10.ss2"))),
-                   p(HTML(word("help.p10.p2")))
+                   p(HTML(word("help.p10.p3")))
                    )
     ),
 
@@ -1240,10 +1244,12 @@ ui = bootstrapPage(
                    bottom=bottomNavHelp,
                    width="auto", height="auto",
                    Button(class="Button-icon",
+                          style="padding-left: 0.5rem !important;
+                                 padding-right: 0.5rem !important;",
                           inputId='closeHelp_button',
-                          label=NULL,
+                          label=word("help.close"),
                           icon_name=iconLib$close_white,
-                          tooltip=word("tt.help.close")) 
+                          tooltip=NULL)
                    )
     ),
 

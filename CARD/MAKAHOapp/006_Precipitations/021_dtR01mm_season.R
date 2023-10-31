@@ -10,7 +10,7 @@ CARD$P.glose = c("Nombre de jours pluvieux en hiver (nombre de jours avec au moi
 CARD$P.topic = c("Précipitations", "Faible")
 
 CARD$P1.funct = list(dtR01mm=apply_threshold)
-CARD$P1.funct_args = list("P", lim=1,
+CARD$P1.funct_args = list("R", lim=1,
                           where=">=",
                           what="length",
                           select="all")

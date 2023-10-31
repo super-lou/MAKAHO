@@ -40,15 +40,15 @@
 #' coefficient should be compute from the start of a hydrological
 #' year to the end of a hydrological year.
 #' @param Q Streamflow vector
-#' @param P Precipitation vector
+#' @param R Precipitation vector
 #' @param na.rm Should missing values be omited ?
 #' @return Runoff coefficient
 #' @export
-compute_Rc = function(Q, P, na.rm=TRUE) {
-    if (length(Q) != length(P)) {
-        warning("'Q' and 'P' don't have the same length!")
+compute_Rc = function(Q, R, na.rm=TRUE) {
+    if (length(Q) != length(R)) {
+        warning("'Q' and 'R' don't have the same length!")
     }
-    res = sum(Q, na.rm=na.rm) / sum(P, na.rm=na.rm)
+    res = sum(Q, na.rm=na.rm) / sum(R, na.rm=na.rm)
     return (res)
 }
 
@@ -92,30 +92,30 @@ hsaCumsum = function(x, na.action = "interpolate") {
 # TODO : check dims of inputs !
 #' @title pq_slopes
 #' @description Computes the cumulative inter-annual daily average of
-#' P and Q as well as the difference P-Q. Then, compute the seasonal
-#' response change signatures following the so-called P-Q approach :
+#' R and Q as well as the difference R-Q. Then, compute the seasonal
+#' response change signatures following the so-called R-Q approach :
 #' breackpoint date, first period slope (dry), second period slope
 #' (wet) and the intercepts associated with these two slopes (only
 #' there for plotting purposes).
 #' @param Q Streamflow vector
-#' @param P precipitation vector
+#' @param R precipitation vector
 #' @param hdays Days of the (Hydrological) years vector
-#' @param start start of period to search for change of trend in P-Q
-#' @param end end of period to search for change of trend in P-Q
+#' @param start start of period to search for change of trend in R-Q
+#' @param end end of period to search for change of trend in R-Q
 #' @param bp initial guess of threshold date
 #' @param intercept should the intercept be estimated (default: TRUE)
 #' or fixed to c(0, 0) (FALSE) ?
 #' @return
 #' @export
-pq_slopes = function(Q, P, hdays, start=15, end=183, bp=mean(c(start, end)), intercept=TRUE) {
-    PQ = data.frame(Q, P, hdays) %>% 
+rq_slopes = function(Q, R, hdays, start=15, end=183, bp=mean(c(start, end)), intercept=TRUE) {
+    RQ = data.frame(Q, R, hdays) %>% 
         group_by(hdays) %>%
         summarise_all(mean, na.rm = TRUE) %>%
-        mutate_at(vars(Q, P), hsaCumsum) %>%
-        mutate(P_Q = P - Q)
-    PQ = PQ$P_Q
+        mutate_at(vars(Q, R), hsaCumsum) %>%
+        mutate(R_Q = R - Q)
+    RQ = RQ$R_Q
     x = start:end
-    y = PQ[x]
+    y = RQ[x]
     if (intercept) {
         reg = segmented(lm(y ~ x), psi = bp)
         coefs = reg$coefficients

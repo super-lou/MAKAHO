@@ -78,6 +78,14 @@ maxNA = function (X, div=1, na.rm=TRUE) {
     }
 }
 
+sumNA = function (X, div=1, na.rm=TRUE) {
+    if (all(is.na(X))) {
+        return (NA)
+    } else {
+        return (sum(X, na.rm=na.rm) / div)
+    }
+}
+
 
 ## 2. WHICH MIN MAX __________________________________________________
 which.minNA = function (X) {

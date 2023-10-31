@@ -346,7 +346,7 @@ server = function (input, output, session) {
             bin = res$bin
             upBin = res$upBin
             lowBin = res$lowBin
-        
+
             fill = get_colors(rv$trend,
                               upBin=upBin,
                               lowBin=lowBin,
@@ -1549,13 +1549,6 @@ server = function (input, output, session) {
                 metaEX = res$metaEX
                 dataEX = res$dataEX
 
-                print(dataEX)
-                dataEX = dplyr::filter(dataEX,
-                                       !all(is.na(get(rv$var))),
-                                       .by="Code")
-                print(dataEX)
-                print("")
-                
                 if (!is.null(rv$proba)) {
                     if (grepl("(month)|(season)", CARD_name)) {
                         var_sub = names(dataEX)[grepl(rv$proba,
@@ -1565,8 +1558,8 @@ server = function (input, output, session) {
                                           c("Code",
                                             "Date",
                                             tidyr::all_of(var_sub)))
-                        dataEX = dplyr::filter(dataEX,
-                                               !is.na(get(var_sub)))
+                        # dataEX = dplyr::filter(dataEX,
+                                               # !is.na(get(var_sub)))
 
                     } else {
                         var_sub = metaEX$var
@@ -1576,7 +1569,16 @@ server = function (input, output, session) {
                                                tidyr::all_of(var_sub))
                     metaEX = metaEX[metaEX$var == var_sub,]
                     metaEX$var = rv$var
+                    
                 }
+
+                dataEX = dplyr::filter(dataEX,
+                                       !all(is.na(get(rv$var))),
+                                       .by="Code")
+                print(dataEX)
+                print("")
+                
+                
 
                 if (verbose) print("process_trend")
                 trendEX = process_trend(
@@ -2968,6 +2970,9 @@ server = function (input, output, session) {
         rv$helpPage_save = 0
 
         hideAll()
+        rv$codePlot = NULL
+        hide(id='plot_panel')
+        
         deselect_mode(session, rv)
         maskAll()
         

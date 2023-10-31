@@ -7,10 +7,10 @@ CARD$P.glose = "Ratio des précipitations annuelles solides sur les précipitati
 CARD$P.topic = c("Précipitations", "Modérée")
 CARD$P.samplePeriod = "09-01"
 
-CARD$P1.funct = list(RA=sum,
-                     RAs=sum)
-CARD$P1.funct_args = list(list("P", na.rm=TRUE),
-                          list("Ps", na.rm=TRUE))
+CARD$P1.funct = list(RA=sumNA,
+                     RAs=sumNA)
+CARD$P1.funct_args = list(list("R", na.rm=TRUE),
+                          list("Rs", na.rm=TRUE))
 CARD$P1.timeStep = "year"
 CARD$P1.samplePeriod = "09-01"
 CARD$P1.NApct_lim = 3

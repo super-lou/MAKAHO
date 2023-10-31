@@ -12,6 +12,3 @@ CARD$P1.timeStep = "year-month"
 CARD$P1.NApct_lim = 3
 CARD$P1.NAyear_lim = 10
 CARD$P1.compress = TRUE
-
-
-"#053061 #2166AC #4393C3 #92C5DE #D1E5F0 #FDDBC7 #F4A582 #D6604D #B2182B #67001F"

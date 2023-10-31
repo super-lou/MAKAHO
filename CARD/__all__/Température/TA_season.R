@@ -2,7 +2,7 @@ CARD$P.var = c("TA_DJF", "TA_MAM", "TA_JJA", "TA_SON")
 CARD$P.unit = "°C"
 CARD$P.is_date = FALSE
 CARD$P.normalize = FALSE
-CARD$P.palette = "#67001F #B2182B #D6604D #F4A582 #FDDBC7 #D1E5F0 #92C5DE #4393C3 #2166AC #053061"
+CARD$P.palette = "#053061 #2166AC #4393C3 #92C5DE #D1E5F0 #FDDBC7 #F4A582 #D6604D #B2182B #67001F"
 CARD$P.glose = c("Température hivernales annuelle", "Température printanières annuelle",
                  "Température estivales annuelle", "Température automnales annuelle")
 CARD$P.topic = c("Température", "Moyenne")

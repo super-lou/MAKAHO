@@ -8,7 +8,7 @@ CARD$P.topic = c("Précipitations", "Forte")
 CARD$P.samplePeriod = "09-01"
 
 CARD$P1.funct = list(dtRA50mm=apply_threshold)
-CARD$P1.funct_args = list("P", lim=50,
+CARD$P1.funct_args = list("R", lim=50,
                           where=">=",
                           what="length",
                           select="all")

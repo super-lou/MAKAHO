@@ -10,7 +10,7 @@ CARD$P.glose = c("Nombre maximal de jours consécutifs dans l'hiver avec au moin
 CARD$P.topic = c("Précipitations", "Faibles")
 
 CARD$P1.funct = list(dtCWD=apply_threshold)
-CARD$P1.funct_args = list("P", lim=1,
+CARD$P1.funct_args = list("R", lim=1,
                           where=">=",
                           what="length",
                           select="longest")

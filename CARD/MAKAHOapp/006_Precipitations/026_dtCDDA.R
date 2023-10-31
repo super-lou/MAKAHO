@@ -8,7 +8,7 @@ CARD$P.topic = c("Précipitations", "Période sèche")
 CARD$P.samplePeriod = "09-01"
 
 CARD$P1.funct = list(dtCDDA=apply_threshold)
-CARD$P1.funct_args = list("P", lim=1,
+CARD$P1.funct_args = list("R", lim=1,
                           where="<",
                           what="length",
                           select="longest")
