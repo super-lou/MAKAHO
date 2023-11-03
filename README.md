@@ -19,7 +19,7 @@ This project was carried out for National Research Institute for Agriculture, Fo
 
 
 ## Installation
-For latest development version
+For latest development version 
 ``` 
 git clone https://github.com/super-lou/MAKAHO.git
 ```
