@@ -11,7 +11,7 @@
 
 It is a [R Shiny](https://shiny.rstudio.com/) website based on [ASHE](https://github.com/super-lou/ASHE) and [EXstat](https://github.com/super-lou/EXstat) packages with [CARD](https://github.com/super-lou/CARD) code bundle. It provides an interactive cartographic solution to analyze the hydrological stationarity of French surface flows based on the data of the hydrometric stations where the flows are little influenced by the human actions.
 
-[<img src="https://github.com/super-lou/MAKAHO/blob/0fad3c354954ebc2d8605a2ec9dd3d4f11a36920/www/screen.png" width="600">](https://makaho.sk8.inrae.fr/)
+[<img src="https://github.com/super-lou/MAKAHO/blob/2f1ea7fab7c867041d707cee1bd68d5c3b3bfd04/www/screen.png" width="600">](https://makaho.sk8.inrae.fr/)
 
 Data came from [Hydroportail](https://www.hydro.eaufrance.fr/) and the selection of stations follows the Reference Network for Low Water Monitoring (Réseau de référence pour la surveillance des étiages, [RRSE](https://geo.data.gouv.fr/en/datasets/29819c27c73f29ee1a962450da7c2d49f6e11c15) in french).
 
