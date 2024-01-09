@@ -74,6 +74,20 @@ if (any(file.exists(dev_path))) {
     library(ASHE)
 }
 
+# Import dataSHEEP
+dev_path = file.path(dev_lib_path,
+                     c('', 'dataSHEEP_project'), 'dataSHEEP', 'R')
+if (any(file.exists(dev_path))) {
+    print('Loading dataSHEEP from local directory')
+    list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE)
+    for (path in list_path) {
+        source(path, encoding='UTF-8')
+    }
+} else {
+    print('Loading dataSHEEP from package')
+    library(dataSHEEP)
+}
+
 
 # Check if you are in dev mod
 if (dir.exists(dev_lib_path)) {

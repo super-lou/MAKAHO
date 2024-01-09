@@ -12,7 +12,7 @@ CARD$P.is_date = c(TRUE,
                    FALSE)
 CARD$P.normalize = c(FALSE,
                      FALSE,
-                     TRUE,
+                     FALSE,
                      TRUE)
 CARD$P.palette = NULL
 CARD$P.glose = c("Médiane du début des basses eaux, date de la première moyenne sur 10 jours sous le maximum des minimums annuels de la moyenne sur 10 jours du débit journalier",

@@ -1,7 +1,7 @@
 CARD$P.var = "dtBE"
 CARD$P.unit = "jour"
 CARD$P.is_date = FALSE
-CARD$P.normalize = TRUE
+CARD$P.normalize = FALSE
 CARD$P.palette = "#003C30 #01665E #35978F #80CDC1 #C7EAE5 #F6E8C3 #DFC27D #BF812D #8C510A #543005"
 CARD$P.glose = "Durée des basses eaux, durée de la plus longue période continue de la moyenne sur 10 jours sous le maximum des VCN10"
 CARD$P.topic = c("Débit", "Basses Eaux")
