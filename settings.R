@@ -161,4 +161,4 @@ check_varSub = c("fQA[[:digit:]]+",
 Var_all = get_Var2(CARD_path, CARD_dir, check_varSub)
 
 
-nStation_dev = 10
+nStation_dev = 100

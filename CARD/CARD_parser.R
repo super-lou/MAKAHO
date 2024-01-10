@@ -36,11 +36,11 @@ parser$add_argument('-t', '--tmp', type="character",
 parser$add_argument('-l', '--layout', nargs='+', type="character",
                     default="EX [ QA ]",
                     help="A character vector specifying the layout of files to be managed. The default layout is c('EX', '[', 'QA', ']').")
-parser$add_argument("-w", "--underscore_to_white", action="store_true", default=TRUE,
+parser$add_argument("-w", "--underscore_to_white", action="store_true", default=FALSE,
                     help="Logical. If TRUE, underscores in file names will be replaced with spaces. Default is TRUE.")
-parser$add_argument("-i", "--add_id", action="store_true", default=TRUE,
+parser$add_argument("-i", "--add_id", action="store_true", default=FALSE,
                     help="Logical. If TRUE, numerical id will be added to the start of the file names. Default is TRUE.")
-parser$add_argument("-o", "--overwrite", action="store_true", default=TRUE,
+parser$add_argument("-o", "--overwrite", action="store_true", default=FALSE,
                     help="Logical. If TRUE, existing files in the temporary directory will be overwritten. Default is TRUE.")
 parser$add_argument("-v", "--verbose", action="store_true", default=FALSE,
                     help="Logical. If TRUE, intermediate messages will be printed during the execution of the function. Default is FALSE.")
