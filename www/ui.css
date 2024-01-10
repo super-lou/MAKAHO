@@ -461,7 +461,7 @@ a:hover {
 .selectize-input {
     border: 1px solid #43494c !important;
     margin-top: 0.25rem !important;
-    margin-bottom: -0.8rem !important;
+    /* margin-bottom: -0.8rem !important; */
     margin-left: 0 !important;
     margin-right: 0 !important;
     color: #979797 !important;
