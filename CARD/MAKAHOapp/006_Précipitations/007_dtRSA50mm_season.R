@@ -1,0 +1,72 @@
+#   ___                _ 
+#  / __| __ _  _ _  __| |
+# | (__ / _` || '_|/ _` |
+#  \___|\__,_||_|  \__,_|
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1
+#
+# *1   INRAE, France
+#
+# This file is part of CARD R library.
+#
+# CARD R library is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# CARD R library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with CARD R library.
+# If not, see <https://www.gnu.org/licenses/>.
+
+
+## INFO ______________________________________________________________
+### English __________________________________________________________
+CARD$P.variable_en = c("dtRSA50mm_DJF", "dtRSA50mm_MAM",
+                       "dtRSA50mm_JJA", "dtRSA50mm_SON")
+CARD$P.unit_en = "day"
+CARD$P.name_en = c("Number of extreme rain days in winter",
+                   "Number of extreme rain days in spring",
+                   "Number of extreme rain days in summer",
+                   "Number of extreme rain days in autumn")
+CARD$P.description_en = c("Number of days with at least 50 mm of precipitation (months of December, January, and February)",
+                          "Number of days with at least 50 mm of precipitation (months of March, April, and May)",
+                          "Number of days with at least 50 mm of precipitation (months of June, July, and August)",
+                          "Number of days with at least 50 mm of precipitation (months of September, October, and November)")
+CARD$P.method_en = ""
+CARD$P.topic_en = "Precipitations, Heavy, Duration"
+
+### French ___________________________________________________________
+CARD$P.variable_fr = c("dtRSA50mm_DJF", "dtRSA50mm_MAM",
+                       "dtRSA50mm_JJA", "dtRSA50mm_SON")
+CARD$P.unit_fr = "jour"
+CARD$P.name_fr = c("Nombre de jours de pluie extrème en hiver",
+                   "Nombre de jours de pluie extrème au printemps",
+                   "Nombre de jours de pluie extrème en été",
+                   "Nombre de jours de pluie extrème en automne")
+CARD$P.description_fr = c("Nombre de jours dans l'hiver avec au moins 50 mm de précipitations (mois de décembre, janvier et février)",
+                          "Nombre de jours au printemps avec au moins 50 mm de précipitations (mois de mars, avril et mai)",
+                          "Nombre de jours en été avec au moins 50 mm de précipitations (mois de juin, juillet et août)",
+                          "Nombre de jours en automne avec au moins 50 mm de précipitations (mois de septembre, octobre et novembre)")
+CARD$P.method_fr = ""
+CARD$P.topic_fr = "Précipitations, Forte, Durée"
+
+### Global ___________________________________________________________
+CARD$P.is_date = FALSE
+CARD$P.to_normalise = FALSE
+CARD$P.palette = "#452C1A #7F4A23 #B3762A #D4B86A #EFE0B0 #BCE6DB #7ACEB9 #449C93 #2A6863 #193830"
+
+
+## PROCESS ___________________________________________________________
+### P1 _______________________________________________________________
+CARD$P1.funct = list(dtRSA50mm=apply_threshold)
+CARD$P1.funct_args = list("R", lim=50, where=">=", what="length", select="all")
+CARD$P1.time_step = "year-season"
+CARD$P1.Seasons = c("DJF", "MAM", "JJA", "SON")
+CARD$P1.NApct_lim = 3
+CARD$P1.NAyear_lim = 10
+CARD$P1.compress = TRUE
+
