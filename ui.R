@@ -24,8 +24,7 @@
 
 
 ui = bootstrapPage(
-
-
+    
     tags$head(tags$script('
                         var dimension = [0, 0];
                         $(document).on("shiny:connected", function(e) {
@@ -46,7 +45,7 @@ ui = bootstrapPage(
 
     tags$head(tags$meta(property="og:title", content="MAKAHO"),
               tags$meta(property="og:image", content="https://forgemia.inra.fr/sk8/sk8-apps/ara/riverly/makaho/-/raw/main/www/screen.png"),
-              tags$meta(property="og:description", content=gsub("<b>|</b>", "", word("help.p1.p1")))),
+              tags$meta(property="og:description", content=gsub("<b>|</b>", "", word("help.p1.p1", lg)))),
 
     tags$head(tags$script('
     var dimension = [0, 0];
@@ -61,8 +60,8 @@ ui = bootstrapPage(
         Shiny.onInputChange("dimension", dimension);
     });')),
     
-## 1. MAP ____________________________________________________________
-### 1.1. Background __________________________________________________    
+    ## 1. MAP ____________________________________________________________
+    ### 1.1. Background __________________________________________________    
     tags$style(type="text/css",
                "html, body {width: 100%; height: 100%}"),
     tags$head(tags$style(
@@ -77,7 +76,7 @@ ui = bootstrapPage(
                  style="position: absolute;
                              top: 0; bottom: 0; left: 0; right: 0;",
                  leafletOutput("mapPreview", width="100%",
-                                    height="100%")),
+                               height="100%")),
              
              div(id='map_div',
                  style="position: absolute;
@@ -87,7 +86,7 @@ ui = bootstrapPage(
              ),
 
 
-### 3.5. Palette panel _______________________________________________
+    ### 3.5. Palette panel _______________________________________________
     hidden(
         absolutePanel(
             id="colorbar_panel",
@@ -108,7 +107,7 @@ ui = bootstrapPage(
         )
     ),
 
-### 3.6. Resume panel ________________________________________________
+    ### 3.6. Resume panel ________________________________________________
     hidden(
         absolutePanel(
             id='resume_panel',
@@ -121,7 +120,7 @@ ui = bootstrapPage(
             div(class="card-insert-text",
                 
                 h4(class="no-margin-v",
-                   htmlOutput("varHTML")),
+                   htmlOutput("variableHTML")),
 
                 hr(style="margin-top: 0.1rem;
                           margin-bottom: 0.1rem;
@@ -138,7 +137,7 @@ ui = bootstrapPage(
 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
                    HTML(paste0(
-                       htmlOutput("samplePeriodHTML")
+                       htmlOutput("sampling_periodHTML")
                    ))),
                 
                 h6(class="no-margin-v", style="font-size: 0.8em;",
@@ -155,7 +154,7 @@ ui = bootstrapPage(
     ),
     
 
-## 6. HELP ___________________________________________________________
+    ## 6. HELP ___________________________________________________________
     hidden(
         fixedPanel(id='help_panelButton',
                    right=105, bottom=10,
@@ -165,51 +164,51 @@ ui = bootstrapPage(
                                  padding-left: 0.5rem !important;
                                  padding-right: 0.5rem !important;",
                           inputId='help_button',
-                          label=word("help"),
+                          label=word("help", lg),
                           icon_name=iconLib$help_outline,
-                          tooltip=word("tt.help"))
+                          tooltip=word("tt.help", lg))
                    )
     ),
     
     hidden(
         fixedPanel(id='blur_panel',
                    class="Panel card-blur"   
-        )
+                   )
     ),
     
 
-### 1.2. Zoom ________________________________________________________
+    ### 1.2. Zoom ________________________________________________________
     hidden(
         fixedPanel(id="zoom_panelButton",
-            hidden(
-                fixedPanel(id='focusZoom_panelButton',
-                           left=10, top=10,
-                           width="auto", height="auto",
-                           Button(class="SmallButton-menu",
-                                  inputId='focusZoom_button',
-                                  label=NULL,
-                                  icon_name=iconLib$focus_white,
-                                  tooltip=word("tt.z.focus"))
-                           )
-            ),
-            
-            hidden(
-                fixedPanel(id='defaultZoom_panelButton',
-                           left=10, top=10,
-                           width="auto", height="auto",
-                           Button(class="SmallButton-menu",
-                                  inputId='defaultZoom_button',
-                                  label=NULL,
-                                  icon_name=iconLib$default_white,
-                                  tooltip=word("tt.z.default"))
-                           )
-            )
-        )
+                   hidden(
+                       fixedPanel(id='focusZoom_panelButton',
+                                  left=10, top=10,
+                                  width="auto", height="auto",
+                                  Button(class="SmallButton-menu",
+                                         inputId='focusZoom_button',
+                                         label=NULL,
+                                         icon_name=iconLib$focus_white,
+                                         tooltip=word("tt.z.focus", lg))
+                                  )
+                   ),
+                   
+                   hidden(
+                       fixedPanel(id='defaultZoom_panelButton',
+                                  left=10, top=10,
+                                  width="auto", height="auto",
+                                  Button(class="SmallButton-menu",
+                                         inputId='defaultZoom_button',
+                                         label=NULL,
+                                         icon_name=iconLib$default_white,
+                                         tooltip=word("tt.z.default", lg))
+                                  )
+                   )
+                   )
     ),
 
     
-## 2. ANALYSE ________________________________________________________
-### 2.7. Trend plot __________________________________________________
+    ## 2. ANALYSE ________________________________________________________
+    ### 2.7. Trend plot __________________________________________________
     hidden(
         absolutePanel(
             id='plot_panel',
@@ -256,22 +255,22 @@ ui = bootstrapPage(
         )
     ),
 
-### 2.1. Panel button ________________________________________________
+    ### 2.1. Panel button ________________________________________________
     hidden(
         fixedPanel(id='ana_panelButton',
                    left=10, bottom=10,
                    width="auto", height="auto",
                    Button(class="Button-menu",
-                      inputId='ana_button',
-                      label=HTML(paste0("<b>",
-                                        word("ana.title"),
-                                        "</b>")),
-                      icon_name=iconLib$show_chart_white,
-                      tooltip=word("tt.ana.title"))
+                          inputId='ana_button',
+                          label=HTML(paste0("<b>",
+                                            word("ana.title", lg),
+                                            "</b>")),
+                          icon_name=iconLib$show_chart_white,
+                          tooltip=word("tt.ana.title", lg))
                    )
     ),
     
-### 2.2. Panel _______________________________________________________
+    ### 2.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='ana_panel',
@@ -280,7 +279,7 @@ ui = bootstrapPage(
             height="auto",
             left=10, bottom=49,
 
-### 3.1. Panel button ________________________________________________
+            ### 3.1. Panel button ________________________________________________
             div(style="position: absolute;
                        bottom: 0.6rem;
                        right: 0.6rem;",
@@ -288,16 +287,16 @@ ui = bootstrapPage(
                        inputId='theme_button',
                        label=NULL,
                        icon_name=iconLib$settings_white,
-                       tooltip=word("tt.c.title"))),
+                       tooltip=word("tt.c.title", lg))),
 
-### 2.2. Panel _______________________________________________________
+            ### 2.2. Panel _______________________________________________________
             div(class="Row",
                 htmlOutput("dataHTML_ana")),
 
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("ana.date"),
+                                word("ana.date", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -306,7 +305,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("ana.data"),
+                                word("ana.data", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -317,7 +316,7 @@ ui = bootstrapPage(
                     #     class="radioButton",
                     #     inputId="data_choice",
                     #     choiceNames=c("RRSE", "RRExplore2"),
-                    #     selected="RRSE",
+                    #     selected=default_data,
                     #     choiceTooltips=
                     #         c(word("tt.ana.data.RRSE"),
                     #           word("tt.ana.data.RRExplore2"))))),
@@ -326,104 +325,104 @@ ui = bootstrapPage(
                         class="radioButton",
                         inputId="data_choice",
                         choiceNames="RRSE",
-                        selected="RRSE",
-                        choiceTooltips=word("tt.ana.data.RRSE")))),
+                        selected=default_data,
+                        choiceTooltips=word("tt.ana.data.RRSE", lg)))),
 
-                    ######
-    
+            ######
             
-### 2.3. Station selection ___________________________________________
+            
+            ### 2.3. Station selection ___________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("ana.selec"),
+                                word("ana.selec", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     
                     Button(class="Button",
                            'all_button',
-                           label=word("ana.selec.all"),
+                           label=word("ana.selec.all", lg),
                            icon_name=iconLib$check_circle_white,
-                           tooltip=word("tt.ana.selec.all")),
+                           tooltip=word("tt.ana.selec.all", lg)),
                     
                     Button(class="Button",
                            'none_button',
-                           label=word("ana.selec.none"),
+                           label=word("ana.selec.none", lg),
                            icon_name=iconLib$cross_circle_white,
-                           tooltip=word("tt.ana.selec.none")),
+                           tooltip=word("tt.ana.selec.none", lg)),
                     
                     selectButton(
                         class="selectButton",
                         inputId="click_select",
-                        label=word("ana.selec.click"),
+                        label=word("ana.selec.click", lg),
                         icon_name=iconLib$click_white,
                         selected=FALSE,
-                        tooltip=word("tt.ana.selec.click")),
+                        tooltip=word("tt.ana.selec.click", lg)),
 
                     selectButton(
                         class="selectButton",
                         inputId="poly_select",
-                        label=word("ana.selec.poly"),
+                        label=word("ana.selec.poly", lg),
                         icon_name=iconLib$polyline_white,
                         selected=FALSE,
-                        tooltip=word("tt.ana.selec.poly")),
+                        tooltip=word("tt.ana.selec.poly", lg)),
 
                     selectButton(
                         class="selectButton",
                         inputId="warning_select",
-                        label=word("ana.selec.warning"),
+                        label=word("ana.selec.warning", lg),
                         icon_name=iconLib$error_outline_white,
                         selected=TRUE,
-                        tooltip=word("tt.ana.selec.warning")),
-  
+                        tooltip=word("tt.ana.selec.warning", lg)),
+                    
                     selectizeInput(inputId="search_input", 
                                    label=NULL,
                                    multiple=TRUE,
                                    choices=NULL),
                     )),
 
-### 2.4. Variable selection __________________________________________
+            ### 2.4. Variable selection __________________________________________
 
             hidden(
                 div(class="Row", id="type_row",
                     div(class="row-label",
                         HTML(paste0("<span><b>",
-                                    word('ana.type'),
+                                    word('ana.type', lg),
                                     "</b></span>"))),
                     div(class="sep"),
                     div(class="bunch",
                         radioButton(class="radioButton",
                                     inputId="type_choice",
-                                    choices=c(word('ana.type.T'),
-                                              word('ana.type.Q'),
-                                              word('ana.type.P')),
-                                    selected=word('ana.type.Q'))))),
+                                    choices=c(word('ana.type.T', lg),
+                                              word('ana.type.Q', lg),
+                                              word('ana.type.P', lg)),
+                                    selected=word('ana.type.Q', lg))))),
 
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
                                 textOutput("regimeRow"),
-                                # word('ana.regime'),
+                                # word('ana.regime', lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     radioButton(
                         class="radioButton",
                         inputId="event_choice",
-                        choices=FALSE,
+                        choices=default_event,
                         selected=NULL))),
             
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('ana.var'),
+                                word('ana.var', lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     radioButton(class="radioButton",
-                                inputId="var_choice",
-                                choices=FALSE,
+                                inputId="variable_choice",
+                                choices=default_variable,
                                 selected=NULL))),
 
             hidden(
@@ -431,7 +430,7 @@ ui = bootstrapPage(
                     div(class="row-label",
                         HTML(paste0("<span><b>",
                                     textOutput("probaRow"),
-                                    # word('ana.proba'),
+                                    # word('ana.proba', lg),
                                     "</b></span>"))),
                     div(class="sep"),
                     div(class="bunch",
@@ -440,36 +439,36 @@ ui = bootstrapPage(
                                     choices=FALSE,
                                     selected=NULL)))),
 
-### 2.5. Period selection ____________________________________________
+            ### 2.5. Period selection ____________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('ana.dm'),
+                                word('ana.dm', lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     style="margin-bottom: -16px !important;",
 
                     div(style="margin-left: 8px !important;",
-                        uiOutput("samplePeriod_slider")),
+                        uiOutput("sampling_period_slider")),
 
                     div(selectButton(
                         class="selectButton",
                         inputId="optimalSlider_select",
-                        label=word("ana.optimal.slider"),
+                        label=word("ana.optimal.slider", lg),
                         icon_name=iconLib$auto_awesome_white,
                         selected=FALSE,
-                        tooltip=word("tt.ana.optimal.slider"))),
+                        tooltip=word("tt.ana.optimal.slider", lg))),
                     
                     hidden(
                         div(id="sampleSlider",
                             selectButton(
                                 class="selectButton",
                                 inputId="sampleSlider_select",
-                                label=word("ana.sample.slider"),
+                                label=word("ana.sample.slider", lg),
                                 icon_name=iconLib$data_array_white,
                                 selected=FALSE,
-                                tooltip=word("tt.ana.sample.slider")))
+                                tooltip=word("tt.ana.sample.slider", lg)))
                     ),
                     
                     hidden(
@@ -477,29 +476,29 @@ ui = bootstrapPage(
                             selectButton(
                                 class="selectButton",
                                 inputId="invertSlider_select",
-                                label=word("ana.invert.slider"),
+                                label=word("ana.invert.slider", lg),
                                 icon_name=iconLib$contrast_white,
                                 selected=FALSE,
-                                tooltip=word("tt.ana.invert.slider")))
+                                tooltip=word("tt.ana.invert.slider", lg)))
                     )
                     )),
 
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word('ana.dy'),
+                                word('ana.dy', lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     div(style="margin-left: 8px !important;",
                         uiOutput("dateYear_slider")))),
 
-### 2.6. Statistical option ______________________________________________
+            ### 2.6. Statistical option ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(
                         paste0("<span><b>",
-                               word("ana.sig"),
+                               word("ana.sig", lg),
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -508,13 +507,13 @@ ui = bootstrapPage(
                                 choiceValues=sigVal,
                                 choiceNames=sigProba,
                                 choiceTooltips=
-                                    paste(word("tt.ana.sig.p"),
+                                    paste(word("tt.ana.sig.p", lg),
                                           sigProba),
-                                selected=sigVal[3])))
+                                selected=default_alpha)))
         )
     ),
 
-#### 2.3.1. Click bar ________________________________________________
+    #### 2.3.1. Click bar ________________________________________________
     hidden(
         absolutePanel(
             id='click_bar',
@@ -527,14 +526,14 @@ ui = bootstrapPage(
                 div(class="bunch",
                     Button(class="Button",
                            'clickOk_button',
-                           label=word("bar.ok"),
+                           label=word("bar.ok", lg),
                            icon_name=iconLib$done_white,
-                           tooltip=word("tt.bar.ok")))),
+                           tooltip=word("tt.bar.ok", lg)))),
             )
-     ),
+    ),
 
-#### 2.3.2. Poly bar _________________________________________________
-     hidden(
+    #### 2.3.2. Poly bar _________________________________________________
+    hidden(
         absolutePanel(
             id='poly_bar',
             class="Panel card-bar-l",
@@ -550,37 +549,38 @@ ui = bootstrapPage(
                                                   "Rm"),
                                 choiceIcons=list(iconLib$add_white,
                                                  iconLib$remove_white),
-                                choiceNames=list(word("poly.bar.Add"),
-                                                 word("poly.bar.Rm")),
-                                choiceTooltips=list(word("tt.poly.bar.Add"),
-                                                    word("tt.poly.bar.Rm")),
+                                choiceNames=list(word("poly.bar.Add", lg),
+                                                 word("poly.bar.Rm", lg)),
+                                choiceTooltips=list(
+                                    word("tt.poly.bar.Add", lg),
+                                    word("tt.poly.bar.Rm", lg)),
                                 selected="Add"),
                     
                     Button(class="Button",
                            'polyOk_button',
-                           label=word("bar.ok"),
+                           label=word("bar.ok", lg),
                            icon_name=iconLib$done_white,
-                       tooltip=word("tt.bar.ok")))),
+                           tooltip=word("tt.bar.ok", lg)))),
             )
-     ),
+    ),
 
 
-### 2.7. Actualise button ____________________________________________
+    ### 2.7. Actualise button ____________________________________________
     hidden(
         fixedPanel(id='actualise_panelButton',
                    left=124, bottom=11,
                    width="auto", height="auto",
                    Button(class="SmallButton-actualise",
-                      inputId='actualise_button',
-                      label=word("actualise.title"),
-                      icon_name=iconLib$refresh_white,
-                      tooltip=NULL)
+                          inputId='actualise_button',
+                          label=word("actualise.title", lg),
+                          icon_name=iconLib$refresh_white,
+                          tooltip=NULL)
                    )
     ),
     
 
-## 3. CUSTOMIZATION __________________________________________________
-### 3.2. Panel _______________________________________________________
+    ## 3. CUSTOMIZATION __________________________________________________
+    ### 3.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='theme_panel',
@@ -598,46 +598,46 @@ ui = bootstrapPage(
                        label=NULL,
                        icon_name=iconLib$close_white)),
 
-### 3.3. Palette button ______________________________________________
+            ### 3.3. Palette button ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("c.cb"),
+                                word("c.cb", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     radioButton(class="radioButton",
                                 inputId="colorbar_choice",
                                 choiceNames=
-                                    list(word("c.show"),
-                                         word("c.none")),
+                                    list(word("c.show", lg),
+                                         word("c.none", lg)),
                                 choiceValues=
                                     list("show", "none"),
-                                selected="show"))),
+                                selected=default_colorbar_choice))),
 
-### 3.4. Resume button ______________________________________________
+            ### 3.4. Resume button ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("c.resume"),
+                                word("c.resume", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
                     radioButton(class="radioButton",
                                 inputId="resume_choice",
                                 choiceNames=
-                                    list(word("c.show"),
-                                         word("c.none")),
+                                    list(word("c.show", lg),
+                                         word("c.none", lg)),
                                 choiceValues=
                                     list("show", "none"),
-                                selected="show"))),
+                                selected=default_resume_choice))),
 
-### 3.2. Background theme ____________________________________________
+            ### 3.2. Background theme ____________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(
                         paste0("<span><b>",
-                               word("c.theme"),
+                               word("c.theme", lg),
                                "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -651,19 +651,20 @@ ui = bootstrapPage(
                                          iconLib$terrain_white,
                                          iconLib$dark_white),
                                 choiceNames=
-                                    list(word("c.theme.light"),
-                                         word("c.theme.terrain"),
-                                         word("c.theme.dark")),
+                                    list(word("c.theme.light", lg),
+                                         word("c.theme.terrain", lg),
+                                         word("c.theme.dark", lg)),
                                 choiceTooltips=
-                                    list(word("tt.c.theme.light"),
-                                         word("tt.c.theme.terrain"),
-                                         word("tt.c.theme.dark")))))
-            )
+                                    list(word("tt.c.theme.light", lg),
+                                         word("tt.c.theme.terrain", lg),
+                                         word("tt.c.theme.dark", lg)),
+                                selected=default_theme)))
+        )
     ),
 
     
-## 4. INFO ___________________________________________________________
-### 4.1. Panel button ________________________________________________ 
+    ## 4. INFO ___________________________________________________________
+    ### 4.1. Panel button ________________________________________________ 
     fixedPanel(id="info_panelButton",
                right=10, bottom=4,
                width="auto", height="auto",
@@ -671,10 +672,10 @@ ui = bootstrapPage(
                       inputId='info_button',
                       label=NULL,
                       icon_name=iconLib$INRAElogo,
-                      tooltip=word("tt.i.title"))
+                      tooltip=word("tt.i.title", lg))
                ),
     
-### 4.2. Panel _______________________________________________________
+    ### 4.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='info_panel',
@@ -683,11 +684,11 @@ ui = bootstrapPage(
             width="auto", height="auto",
             right=10, bottom=49,
 
-### 4.3. Contact info ________________________________________________
+            ### 4.3. Contact info ________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("i.dev"),
+                                word("i.dev", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -697,7 +698,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("i.ref"),
+                                word("i.ref", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
@@ -707,7 +708,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("i.code"),
+                                word("i.code", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(a(href="https://github.com/super-lou/MAKAHO",
@@ -721,7 +722,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("i.sk8"),
+                                word("i.sk8", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(a(href="https://sk8.inrae.fr",
@@ -734,7 +735,7 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("i.ui"),
+                                word("i.ui", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div("inspirée de ",
@@ -744,16 +745,16 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("i.maj"),
+                                word("i.maj", lg),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(word("i.maj.version")))
+                div(word("i.maj.version", lg)))
         )
     ),
 
     
-## 5. SAVE ___________________________________________________________
-### 5.1. Screenshot __________________________________________________
+    ## 5. SAVE ___________________________________________________________
+    ### 5.1. Screenshot __________________________________________________
     hidden(
         fixedPanel(id='photo_panelButton',
                    right=45, top=10,
@@ -762,11 +763,11 @@ ui = bootstrapPage(
                           inputId='photo_button',
                           label=NULL,
                           icon_name=iconLib$photo_white,
-                          tooltip=word("tt.p.title"))
+                          tooltip=word("tt.p.title", lg))
                    )
     ),
     
-### 5.2. Download ____________________________________________________
+    ### 5.2. Download ____________________________________________________
     hidden(
         fixedPanel(id='download_panelButton',
                    right=10, top=10,
@@ -775,7 +776,7 @@ ui = bootstrapPage(
                           inputId='download_button',
                           label=NULL,
                           icon_name=iconLib$download_white,
-                          tooltip=word("tt.d.title"))
+                          tooltip=word("tt.d.title", lg))
                    )
     ),
 
@@ -795,29 +796,29 @@ ui = bootstrapPage(
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
-                                word("d.dl"),
+                                word("d.dl", lg),
                                 "</b></span>"))),
                 div(class="sep"),
                 div(class="bunch",
 
                     selectButton(class="selectButton",
                                  inputId="dlClick_select",
-                                 label=word("d.click"),
+                                 label=word("d.click", lg),
                                  icon_name=iconLib$click_white,
                                  selected=FALSE,
-                                 tooltip=word("tt.d.click")),
+                                 tooltip=word("tt.d.click", lg)),
 
                     Button(class="Button",
                            inputId="dlSelec_button",
-                           label=word("d.selec"),
+                           label=word("d.selec", lg),
                            icon_name=iconLib$scatter_plot_white,
-                           tooltip=word("tt.d.selec")),
+                           tooltip=word("tt.d.selec", lg)),
 
                     Button(class="Button",
                            inputId="dlAll_button",
-                           label=word("d.all"),
+                           label=word("d.all", lg),
                            icon_name=iconLib$check_circle_white,
-                           tooltip=word("tt.d.all"))))
+                           tooltip=word("tt.d.all", lg))))
         )
     ),
 
@@ -833,15 +834,15 @@ ui = bootstrapPage(
                 div(class="bunch",
                     Button(class="Button",
                            'dlClickOk_button',
-                           label=word("bar.ok"),
+                           label=word("bar.ok", lg),
                            icon_name=iconLib$done_white,
-                           tooltip=word("tt.bar.ok"))))
+                           tooltip=word("tt.bar.ok", lg))))
         )
     ),
 
 
-## 6. HELP ___________________________________________________________
-### 6.2. Button mask ________________________________________________
+    ## 6. HELP ___________________________________________________________
+    ### 6.2. Button mask ________________________________________________
     hidden(
         fixedPanel(id='maskZoom_panelButton',
                    left=10, top=10,
@@ -860,7 +861,7 @@ ui = bootstrapPage(
                    Button(class="maskButton-menu",
                           inputId='mask',
                           label=HTML(paste0("<b>",
-                                            word("ana.title"),
+                                            word("ana.title", lg),
                                             "</b>")),
                           icon_name=iconLib$none)
                    )
@@ -872,7 +873,7 @@ ui = bootstrapPage(
                    width="auto", height="auto",
                    Button(class="maskSmallButton-actualise",
                           inputId='mask',
-                          label=word("actualise.title"),
+                          label=word("actualise.title", lg),
                           icon_name=iconLib$none)
                    )
     ),
@@ -913,15 +914,15 @@ ui = bootstrapPage(
                           inputId='mask',
                           label=NULL,
                           icon_name=iconLib$none)
-               )
+                   )
     ),
 
-### 6.3. Pages _______________________________________________________
-#### 6.3.1. Page 1 ___________________________________________________
+    ### 6.3. Pages _______________________________________________________
+    #### 6.3.1. Page 1 ___________________________________________________
     page_circle(n=1, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p1")),
+                dh=dhNavHelp, tooltip=word("tt.help.p1", lg)),
     
     hidden(
         fixedPanel(id="help1_panel",
@@ -930,16 +931,16 @@ ui = bootstrapPage(
                    width="auto", height="auto",
                    
                    h1(style="font-size: 4em;",
-                      HTML(word("help.p1.s1"))),
-                   p(HTML(word("help.p1.p1")))
+                      HTML(word("help.p1.s1", lg))),
+                   p(HTML(word("help.p1.p1", lg)))
                    )
     ),
 
-#### 6.3.2. Page 2 ___________________________________________________
+    #### 6.3.2. Page 2 ___________________________________________________
     page_circle(n=2, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p2")),
+                dh=dhNavHelp, tooltip=word("tt.help.p2", lg)),
 
     hidden(
         fixedPanel(id="help2_panel",
@@ -947,17 +948,17 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p2.s1"))),
-                   h4(HTML(word("help.p2.ss1"))),
-                   p(HTML(word("help.p2.p1")))
+                   h1(HTML(word("help.p2.s1", lg))),
+                   h4(HTML(word("help.p2.ss1", lg))),
+                   p(HTML(word("help.p2.p1", lg)))
                    )
     ),
     
-#### 6.3.3. Page 3 ___________________________________________________
+    #### 6.3.3. Page 3 ___________________________________________________
     page_circle(n=3, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p3")),
+                dh=dhNavHelp, tooltip=word("tt.help.p3", lg)),
 
     hidden(
         fixedPanel(id="help3_panel",
@@ -965,18 +966,18 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p3.s1"))),
-                   h4(HTML(word("help.p3.ss1"))),
-                   p(HTML(word("help.p3.p1"))),
-                   p(HTML(word("help.p3.p2")))
+                   h1(HTML(word("help.p3.s1", lg))),
+                   h4(HTML(word("help.p3.ss1", lg))),
+                   p(HTML(word("help.p3.p1", lg))),
+                   p(HTML(word("help.p3.p2", lg)))
                    )  
     ),
     
-#### 6.3.4. Page 4 ___________________________________________________
+    #### 6.3.4. Page 4 ___________________________________________________
     page_circle(n=4, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p4")),
+                dh=dhNavHelp, tooltip=word("tt.help.p4", lg)),
 
     hidden(
         fixedPanel(id="help4_panel",
@@ -984,17 +985,17 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p4.s1"))),
-                   p(HTML(word("help.p4.p1"))),
-                   p(HTML(word("help.p4.p2")))
+                   h1(HTML(word("help.p4.s1", lg))),
+                   p(HTML(word("help.p4.p1", lg))),
+                   p(HTML(word("help.p4.p2", lg)))
                    )
     ),
 
-#### 6.3.5. Page 5 ___________________________________________________
+    #### 6.3.5. Page 5 ___________________________________________________
     page_circle(n=5, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p5")),
+                dh=dhNavHelp, tooltip=word("tt.help.p5", lg)),
 
     hidden(
         fixedPanel(id="help5_panel",
@@ -1002,19 +1003,19 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p5.s1"))),
-                   h4(HTML(word("help.p5.ss1"))),
-                   p(HTML(word("help.p5.p1"))),
-                   p(HTML(word("help.p5.p2"))),
-                   p(HTML(word("help.p5.p3")))
+                   h1(HTML(word("help.p5.s1", lg))),
+                   h4(HTML(word("help.p5.ss1", lg))),
+                   p(HTML(word("help.p5.p1", lg))),
+                   p(HTML(word("help.p5.p2", lg))),
+                   p(HTML(word("help.p5.p3", lg)))
                    )
     ),
     
-#### 6.3.6. Page 6 ___________________________________________________
+    #### 6.3.6. Page 6 ___________________________________________________
     page_circle(n=6, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p6")),
+                dh=dhNavHelp, tooltip=word("tt.help.p6", lg)),
 
     hidden(
         fixedPanel(id="help6_panel",
@@ -1022,19 +1023,19 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p6.s1"))),
-                   h4(HTML(word("help.p6.ss1"))),
-                   p(HTML(word("help.p6.p1"))),
-                   p(HTML(word("help.p6.p2")))
+                   h1(HTML(word("help.p6.s1", lg))),
+                   h4(HTML(word("help.p6.ss1", lg))),
+                   p(HTML(word("help.p6.p1", lg))),
+                   p(HTML(word("help.p6.p2", lg)))
                    )
     ),
 
     
-#### 6.3.7. Page 7 ___________________________________________________
+    #### 6.3.7. Page 7 ___________________________________________________
     page_circle(n=7, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p7")),
+                dh=dhNavHelp, tooltip=word("tt.help.p7", lg)),
 
     hidden(
         fixedPanel(id="help7_panel",
@@ -1042,19 +1043,19 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p7.s1"))),
-                   h4(HTML(word("help.p7.ss1"))),
-                   p(HTML(word("help.p7.p1"))),
-                   p(HTML(word("help.p7.p2"))),
-                   p(HTML(word("help.p7.p3")))
+                   h1(HTML(word("help.p7.s1", lg))),
+                   h4(HTML(word("help.p7.ss1", lg))),
+                   p(HTML(word("help.p7.p1", lg))),
+                   p(HTML(word("help.p7.p2", lg))),
+                   p(HTML(word("help.p7.p3", lg)))
                    )
     ),
 
-#### 6.3.8. Page 8 ___________________________________________________
+    #### 6.3.8. Page 8 ___________________________________________________
     page_circle(n=8, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p8")),
+                dh=dhNavHelp, tooltip=word("tt.help.p8", lg)),
 
     hidden(
         fixedPanel(id="help8_panel",
@@ -1062,18 +1063,18 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p8.s1"))),
-                   h4(HTML(word("help.p8.ss1"))),
-                   p(HTML(word("help.p8.p1"))),
-                   p(HTML(word("help.p8.p2")))
+                   h1(HTML(word("help.p8.s1", lg))),
+                   h4(HTML(word("help.p8.ss1", lg))),
+                   p(HTML(word("help.p8.p1", lg))),
+                   p(HTML(word("help.p8.p2", lg)))
                    ) 
     ),
 
-#### 6.3.9. Page 9 ___________________________________________________
+    #### 6.3.9. Page 9 ___________________________________________________
     page_circle(n=9, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p9")),
+                dh=dhNavHelp, tooltip=word("tt.help.p9", lg)),
     
     hidden(
         fixedPanel(id="help9_panel",
@@ -1081,19 +1082,19 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p9.s1"))),
-                   h4(HTML(word("help.p9.ss1"))),
-                   p(HTML(word("help.p9.p1"))),
-                   h4(HTML(word("help.p9.ss2"))),
-                   p(HTML(word("help.p9.p2")))
+                   h1(HTML(word("help.p9.s1", lg))),
+                   h4(HTML(word("help.p9.ss1", lg))),
+                   p(HTML(word("help.p9.p1", lg))),
+                   h4(HTML(word("help.p9.ss2", lg))),
+                   p(HTML(word("help.p9.p2", lg)))
                    )
     ),
 
-#### 6.3.10. Page 10 ___________________________________________________
+    #### 6.3.10. Page 10 ___________________________________________________
     page_circle(n=10, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p10")),
+                dh=dhNavHelp, tooltip=word("tt.help.p10", lg)),
     
     hidden(
         fixedPanel(id="help10_panel",
@@ -1101,20 +1102,20 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p10.s1"))),
-                   h4(HTML(word("help.p10.ss1"))),
-                   p(HTML(word("help.p10.p1"))),
-                   p(HTML(word("help.p10.p2"))),
-                   h4(HTML(word("help.p10.ss2"))),
-                   p(HTML(word("help.p10.p3")))
+                   h1(HTML(word("help.p10.s1", lg))),
+                   h4(HTML(word("help.p10.ss1", lg))),
+                   p(HTML(word("help.p10.p1", lg))),
+                   p(HTML(word("help.p10.p2", lg))),
+                   h4(HTML(word("help.p10.ss2", lg))),
+                   p(HTML(word("help.p10.p3", lg)))
                    )
     ),
 
-#### 6.3.11. Page 11 _________________________________________________
+    #### 6.3.11. Page 11 _________________________________________________
     page_circle(n=11, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p11")),
+                dh=dhNavHelp, tooltip=word("tt.help.p11", lg)),
 
     hidden(
         fixedPanel(id="help11_panel",
@@ -1122,18 +1123,18 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p11.s1"))),
-                   h4(HTML(word("help.p11.ss1"))),
-                   p(HTML(word("help.p11.p1"))),
-                   p(HTML(word("help.p11.p2")))
+                   h1(HTML(word("help.p11.s1", lg))),
+                   h4(HTML(word("help.p11.ss1", lg))),
+                   p(HTML(word("help.p11.p1", lg))),
+                   p(HTML(word("help.p11.p2", lg)))
                    )
     ),
 
-#### 6.3.12. Page 12 _________________________________________________
+    #### 6.3.12. Page 12 _________________________________________________
     page_circle(n=12, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p12")),
+                dh=dhNavHelp, tooltip=word("tt.help.p12", lg)),
 
     hidden(
         fixedPanel(id="help12_panel",
@@ -1141,19 +1142,19 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
 
-                   h1(HTML(word("help.p12.s1"))),
-                   h4(HTML(word("help.p12.ss1"))),
-                   p(HTML(word("help.p12.p1"))),
-                   h4(HTML(word("help.p12.ss2"))),
-                   p(HTML(word("help.p12.p2")))
+                   h1(HTML(word("help.p12.s1", lg))),
+                   h4(HTML(word("help.p12.ss1", lg))),
+                   p(HTML(word("help.p12.p1", lg))),
+                   h4(HTML(word("help.p12.ss2", lg))),
+                   p(HTML(word("help.p12.p2", lg)))
                    )
     ),    
 
-#### 6.3.13. Page 13 _________________________________________________
+    #### 6.3.13. Page 13 _________________________________________________
     page_circle(n=13, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p13")),
+                dh=dhNavHelp, tooltip=word("tt.help.p13", lg)),
     
     hidden(
         fixedPanel(id="help13_panel",
@@ -1161,16 +1162,16 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p13.s1"))),
-                   p(HTML(word("help.p13.p1")))
+                   h1(HTML(word("help.p13.s1", lg))),
+                   p(HTML(word("help.p13.p1", lg)))
                    )
     ),
 
-#### 6.3.14. Page 14 _________________________________________________
+    #### 6.3.14. Page 14 _________________________________________________
     page_circle(n=14, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p14")),
+                dh=dhNavHelp, tooltip=word("tt.help.p14", lg)),
     
     hidden(
         fixedPanel(id="help14_panel",
@@ -1178,19 +1179,19 @@ ui = bootstrapPage(
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
-                   h1(HTML(word("help.p14.s1"))),
-                   p(HTML(word("help.p14.p1"))),
-                   p(HTML(word("help.p14.p2"))),
-                   p(HTML(word("help.p14.p3")))
+                   h1(HTML(word("help.p14.s1", lg))),
+                   p(HTML(word("help.p14.p1", lg))),
+                   p(HTML(word("help.p14.p2", lg))),
+                   p(HTML(word("help.p14.p3", lg)))
                    )
     ),
 
-#### 6.3.15. Page 15 _________________________________________________
+    #### 6.3.15. Page 15 _________________________________________________
     page_circle(n=15,
                 leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
-                dh=dhNavHelp, tooltip=word("tt.help.p15")),
+                dh=dhNavHelp, tooltip=word("tt.help.p15", lg)),
     
     hidden(
         fixedPanel(id="help15_panel",
@@ -1199,12 +1200,12 @@ ui = bootstrapPage(
                    width="auto",
                    height="auto",
                    
-                   h1(HTML(word("help.p15.s1"))),
-                   p(HTML(word("help.p15.p1")))
+                   h1(HTML(word("help.p15.s1", lg))),
+                   p(HTML(word("help.p15.p1", lg)))
                    )
-        ),
+    ),
 
-#### 6.4. Nave button ______________________________________________
+    #### 6.4. Nave button ______________________________________________
     hidden(
         fixedPanel(id="before_panelButton",
                    left=paste0("calc(", leftHelp,
@@ -1216,7 +1217,7 @@ ui = bootstrapPage(
                           inputId='before_button',
                           label=NULL,
                           icon_name=iconLib$navigate_before_white,
-                          tooltip=word("tt.help.pb"))
+                          tooltip=word("tt.help.pb", lg))
                    )
     ),
 
@@ -1232,7 +1233,7 @@ ui = bootstrapPage(
                           inputId='next_button',
                           label=NULL,
                           icon_name=iconLib$navigate_next_white,
-                          tooltip=word("tt.help.pn"))
+                          tooltip=word("tt.help.pn", lg))
                    )
     ),
 
@@ -1247,7 +1248,7 @@ ui = bootstrapPage(
                           style="padding-left: 0.5rem !important;
                                  padding-right: 0.5rem !important;",
                           inputId='closeHelp_button',
-                          label=word("help.close"),
+                          label=word("help.close", lg),
                           icon_name=iconLib$close_white,
                           tooltip=NULL)
                    )
@@ -1263,7 +1264,7 @@ ui = bootstrapPage(
                           style="padding-left: 0.5rem !important;
                                  padding-right: 0.5rem !important;",
                           inputId='dlHelp_button',
-                          label=word("help.dl"),
+                          label=word("help.dl", lg),
                           icon_name=iconLib$newspaper_white,
                           tooltip=NULL) 
                    )

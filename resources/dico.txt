@@ -1,205 +1,211 @@
-id;FR
-ana.title;"Analyse"
-tt.ana.title;"Panneau des paramètres de l'analyse de tendance"
-ana.data;"Données"
-tt.ana.data.RRSE;"Réseau de référence pour la surveillance des étiages"
-tt.ana.data.RRExplore2;"Réseau de référence Explore2"
-ana.date;"Date"
-ana.selec;"Sélection"
-ana.selec.all;"Toutes"
-tt.ana.selec.all;"Sélection de toutes les stations"
-ana.selec.none;"Aucune"
-tt.ana.selec.none;"Sélection d'aucunes des stations"
-ana.selec.click;"Clic"
-tt.ana.selec.click;"Sélection par clic sur la carte"
-ana.selec.poly;"Polygone"
-tt.ana.selec.poly;"Sélection par polygone sur la carte"
-ana.selec.warning;"Avertissement"
-tt.ana.selec.warning;"Sélection des stations aux chroniques inférieures à 30 ans ou manquantes"
-ana.temperature;"Température"
-ana.regime;"Régime"
-ana.pluviometrie;"Pluviométrie"
-tt.ana.regime;"Afficher les variables d'intérêt dans l'étude des"
-ana.type;"Type"
-ana.type.T;"Température"
-ana.type.Q;"Débit"
-ana.type.P;"Précipitations"
-ana.var;"Variable"
-ana.proba;"Probabilité"
-ana.month;"Mois"
-ana.season;"Saison"
-tt.ana.proba;"Probabilité de"
-tt.ana.month;"Mois de"
-tt.ana.season;"Saison de"
-ana.dm;"Année hydrologique"
-ana.optimal.slider;"Optimale"
-tt.ana.optimal.slider;"Année hydrologique optimisée pour chaque station"
-ana.sample.slider;"Intervalle"
-tt.ana.sample.slider;"Sélection de l'année hydrologique par intervalle"
-ana.invert.slider;"Inverser"
-tt.ana.invert.slider;"Inverse l'intervalle de sélection de l'année hydrologique"
-tt.ana.dm;"Mois de début de l'année hydrologique"
-ana.m01;"Janv"
-ana.m02;"Févr"
-ana.m03;"Mars"
-ana.m04;"Avr"
-ana.m05;"Mai"
-ana.m06;"Juin"
-ana.m07;"Juill"
-ana.m08;"Août"
-ana.m09;"Sept"
-ana.m10;"Oct"
-ana.m11;"Nov"
-ana.m12;"Déc"
-ana.dy;"Période"
-tt.ana.dy;"Année de début et de fin de l'analyse de tendance"
-ana.sig;"Significativité"
-tt.ana.sig.p;"Test statistique significatif à un risque de"
-ana.cm;"Mode ..."
-ana.cms;"sites"
-ana.cmr;"régions"
-ana.search;"Rechercher"
-tt.ana.search;"Sélection par recherche textuelle d'infomation sur les stations"
-ana.search.code;"code"
-ana.search.name;"station"
-ana.search.region;"région hydro."
-ana.search.regime;"régime hydro."
-ana.search.location;"lieu"
-ana.search.river;"cours d'eau"
-ana.search.basin;"bassin hydro."
-actualise.title;"Actualiser l'analyse de tendance"
-click.bar;"Sélection par clic"
-poly.bar;"Sélection par polygone"
-poly.bar.Add;"Additive"
-tt.poly.bar.Add;"Sélection additive à la sélection pré-existante"
-poly.bar.Rm;"Soustractive"
-tt.poly.bar.Rm;"Sélection soustractive à la sélection pré-existante"
-bar.ok;"Terminer"
-tt.bar.ok;"Fin du mode de sélection en cours"
-c.title;"Style"
-tt.c.title;"Panneau de personnalisation de l'interface"
-c.cb;"Échelle de couleur"
-plot.day;"jour"
-plot.miss;"jours manquants"
-out.hp;"Année hydrologique"
-out.from;"du"
-out.to;"au"
-out.optimal;"Année hydrologique optimisée<br>pour chaque station"
-c.resume;"Résumé"
-c.show;"Afficher"
-c.none;"Aucune"
-c.theme;"Fond de carte"
-c.theme.light;"Clair"
-tt.c.theme.light;"Fond de carte de couleurs blanches"
-c.theme.terrain;"Terrain"
-tt.c.theme.terrain;"Fond de carte de couleurs en lien avec les reliefs"
-c.theme.dark;"Sombre"
-tt.c.theme.dark;"Fond de carte de couleurs gris sombres"
-tt.i.title;"Panneau d'information et de contact"
-i.dev;"Développeur"
-i.ref;"Référent"
-i.code;"Code source"
-i.sk8;"Hébergé par"
-i.ui;"Interface"
-i.maj;"Mise à jour"
-i.maj.version;"janvier 2023"
-tt.z.focus;"Focus sur la sélection de stations"
-tt.z.default;"Vue par défaut"
-tt.p.title;"Mode photo"
-tt.d.title;"Téléchargement de fiches stations"
-d.dl;"Fiches stations"
-dl.bar;"Téléchargement de fiches stations par clic"
-d.click;"Clic"
-d.selec;"Sélection"
-d.all;"Toutes"
-tt.d.click;"Téléchargement de fiches stations par clic sur la carte"
-tt.d.selec;"Téléchargement des fiches stations de la sélection"
-tt.d.all;"Téléchargement de toutes les fiches stations"
-m.hov.lat;"Lat"
-m.hov.lon;"Long"
-m.hov.sup;"Superficie"
-m.hov.alt;"Altitude"
-cb.title;"TENDANCES OBSERVÉES"
-unit.by;"par"
-unit.day;"jour"
-unit.year;"an"
-plotly.language;fr
-help;"Aide"
-tt.help;"Aide guidée"
-help.dl;"Télécharger la notice"
-help.close;"Fin de l'aide"
-tt.help.pb;"Page précédente"
-tt.help.pn;"Page suivante"
-tt.help.p1;"Introduction"
-help.p1.s1;"<b>MAKAHO</b>"
-help.p1.p1;"MAKAHO (pour MAnn-Kendall Analysis of Hydrological Observations) est un système de <b>visualisation cartographique interactif</b> permettant d’examiner les <b>tendances</b> présentes dans les données des <b>stations hydrométriques aux débits peu influencés</b> par les actions humaines. Le test de <b>Mann-Kendall</b> permet d’analyser la significativité des tendances de variables hydrologiques sur les différentes composantes du régime des cours d'eau (étiages, moyennes-eaux, crues), à mettre ensuite en relation avec les impacts du <b>changement climatique</b> sur l’hydrologie de surface."
-tt.help.p2;"Fond de carte / Structure"
-help.p2.s1;"<b>FOND DE CARTE</b>"
-help.p2.ss1;"<b>STRUCTURE</b>"
-help.p2.p1;"L’interface de MAKAHO se concentre autour d’une <b>carte interactive</b>. Le planisphère est recouvert de cercles et de triangles de couleur différentes qui permettent de situer les stations hydrométriques sélectionnées et de donner une idée de l’intensité de la tendance estimée. Un <b>cercle</b> indique que la tendance n’est <b>pas significative</b> alors qu’un <b>triangle</b> indique que la tendance est <b>significative</b>. Un triangle pointant <b>vers le haut</b> (respectivement <b>vers le bas</b>) indique que la tendance est à la <b>hausse</b> (respectivement à la <b>baisse</b>). Une station non-sélectionnée pour l'analyse est représentée par un cercle de couleur <b>neutre</b>."
-tt.help.p3;"Fond de carte / Interaction"
-help.p3.s1;"<b>FOND DE CARTE</b>"
-help.p3.ss1;"<b>INTERACTION</b>"
-help.p3.p1;"Le fond de carte est interactif, cela veut dire qu’il est possible de se <b>déplacer</b> sur le planisphère en effectuant un <b>clic gauche glisser</b>. De la même manière, il est aussi possible de <b>zoomer</b> en effectuant un <b>roulement de la molette de souris</b>."
-help.p3.p2;"Les <b>cercles</b> et <b>triangles</b> sont aussi cliquables. Par défaut, le <b>clic</b> sur une station permet d’afficher le <b>graphique détaillé de l’analyse de tendance</b> de la variable étudiée."
-tt.help.p4;"Zoom"
-help.p4.s1;"<b>ZOOM</b>"
-help.p4.p1;"Les interactions avec le fond de carte font apparaître le <b>bouton de zoom en haut à gauche</b> qui permet de re‐faire le <b>focus</b> sur l’ensemble des stations sélectionnées. Ainsi, si la sélection de stations est réduite, ce même bouton peut apparaître afin de laisser la possibilité à l’utilisateur de laisser l’application choisir le zoom et le <b>positionnement de carte le plus adapté</b>. Lorsque le positionnement est optimal sur une sélection, un bouton de zoom différent apparaît à la même place. Ce nouveau bouton permet alors de <b>re‐faire le focus</b> non pas sur la sélection de station mais <b>sur la France</b> entière."
-help.p4.p2;"Le mieux c'est d'essayer !"
-tt.help.p5;"Analyse / Sélection 1"
-help.p5.s1;"<b>ANALYSE</b>"
-help.p5.ss1;"<b>SÉLECTION</b>"
-help.p5.p1;"Les deux premiers boutons de la section de sélection permettent respectivement de sélectionner <b>toutes</b> les stations ou <b>aucunes</b>."
-help.p5.p2;"Le troisième bouton de la ligne est le bouton de <b>sélection par clic</b> sur la carte. Une fois ce mode activé, un clic sur une station permet de <b>changer son état de sélection</b>. Lors du lancement de ce mode, une <b>barre d'outil</b> apparaît en haut à gauche et permet de terminer la sélection."
-help.p5.p3;"Le quatrième bouton correspond au bouton de <b>sélection par polygone</b> sur la carte. Un polygone peut donc être tracé en plaçant des points sur la carte. Comme dans le mode précédent, une <b>barre d'outil</b> apparaît en haut à gauche de l’interface et permet de rendre la sélection par polygone additive ou soustractive."
-tt.help.p6;"Analyse / Sélection 2"
-help.p6.s1;"<b>ANALYSE</b>"
-help.p6.ss1;"<b>SÉLECTION</b>"
-help.p6.p1;"Le bouton <b>avertissement</b> est présent sur la seconde ligne. Lorsqu'il est sélectionné, comme par défaut, les stations qui présentent des <b>chroniques de moins de 30 ans</b> sont localisées par des symboles aux <b>contours jaunes</b> et lorsque les chroniques sont complètement <b>manquantes</b>, les symboles utilisés sont des cercles aux <b>contours rouges</b>. Dans le cas où le bouton <b>avertissement</b> est déselectionné, les stations qui présentent des avertissements sont <b>retirées automatiquement</b> de la sélection."
-help.p6.p2;"Enfin, la sélection peut se faire à l'aide d'une <b>barre de recherche textuelle</b> avec complétion automatique. Des stations peuvent être sélectionnées à l’aide de <b>mots-clés</b> contenus dans leur nom, le nom de leur cours d’eau, le lieu où elles sont situées de même que leur région‐hydrographique et bassin‐hydrographique. Ce mode de sélection est <b>additif</b> et il est possible d’ajouter ou de supprimer plusieurs recherches textuelles."
-tt.help.p7;"Analyse / Régime et variable"
-help.p7.s1;"<b>ANALYSE</b>"
-help.p7.ss1;"<b>RÉGIME ET VARIABLE</b>"
-help.p7.p1;"La sélection de la <b>variable hydrologique utilisée pour l'analyse de tendance</b> s'effectue à l'aide des sections Régime et Variable."
-help.p7.p2;"La section <b>Régime</b> permet de sélectionner la composantes du <b>régime des cours d'eau</b> que l'on souhaite étudié : <b>Crue</b>, <b>Écoulements Lents</b>, <b>Moyennes Eaux</b> ou <b>Étiage</b>. Chaque bouton permet d'afficher un panneau de variables caractéristiques de l'étude du régime choisi."
-help.p7.p3;"La section <b>Variable</b> permet dans un second temps de sélectionner la <b>variable que l'on souhaite étudier</b>."
-tt.help.p8;"Analyse / Année hydrologique"
-help.p8.s1;"<b>ANALYSE</b>"
-help.p8.ss1;"<b>ANNÉE HYDROLOGIQUE</b>"
-help.p8.p1;"L’analyse de tendance présente un premier <b>paramètre temporel</b> qui est sélectionné grâce à la section <b>Année Hydrologique</b>. Le <b>mois de début de l’Année Hydrologique</b> est par défaut est fixé sur le mois de <b>janvier</b>. Ce choix se fait à l’aide d’un <b>curseur horizontal simple</b>."
-help.p8.p2;"Juste en dessous, le bouton <b>Optimale</b> permet de sélectionner <b>automatiquement</b> une <b>année hydrologique</b>. Ce choix est basé sur des <b>considérations hydrologiques</b> propres à chaque station. Pour une variable de <b>Crue</b> ou de <b>Moyennes Eaux</b> le mois de début de l'année hydrologique est sélectionné pour chaque station comme le mois où le <b>débit moyen mensuel</b> est <b>minimal</b>. Pour une variable de <b>Écoulements Lents</b>, le mois de <b>janvier</b> est pris pour mois de début et pour une variable d'<b>Étiage</b> l'année hydrologique <b>commence en mai</b> et <b>finie fin novembre</b>."
-tt.help.p9;"Analyse / Année hydrologique et Période"
-help.p9.s1;"<b>ANALYSE</b>"
-help.p9.ss1;"<b>ANNÉE HYDROLOGIQUE</b>"
-help.p9.p1;"Lorsque le bouton <b>Optimale</b> n'est pas sélectionné, il est possible d'appuyer sur le bouton <b>Intervalle</b>. Ce mode permet de sélectionner une année hydrologique tronquée pour réaliser une <b>analyse saisonnalisée</b>. Ce choix se fait à l'aide d'un <b>double curseur horizontal</b> et peut être inversé à l'aide du bouton <b>inverser</b> qui apparaît à la suite en mode intervalle."
-help.p9.ss2;"<b>PÉRIODE</b>"
-help.p9.p2;"Le second aspect temporel est le choix de la <b>période d’analyse de tendance</b>. Cette sélection se fait avec un <b>double curseur horizontal</b> qui permet de choisir une date de début et de fin de la période d’analyse. L’année de fin est incluse et <b>par défaut</b> la période temporelle s’étend de l’année <b>1968</b> à <b>2020</b>."
-tt.help.p10;"Analyse / Significativité et actualisation"
-help.p10.s1;"<b>ANALYSE</b>"
-help.p10.ss1;"<b>SIGNIFICATIVITÉ</b>"
-help.p10.p1;"La dernière section correspond au seuil de <b>significativité du test statistique de Mann‐Kendall</b>, c’est‐à‐dire <b>la probabilité avec laquelle on accepte de se tromper</b> sur l’affirmation de l’existence d’une tendance. Le choix de ce seuil est fait à l’aide de boutons qui permettent de sélectionner la valeur de <b>1%</b>, <b>5%</b> ou <b>10%</b>. Par défaut, la valeur de <b>10%</b> est sélectionnée ce qui s’avère être la valeur la moins contraignante."
-help.p10.p2;"Il est important de noter que la <b>valeur numérique</b> de la tendance est calculée grâce à l'<b>estimateur de Sen</b> mais cette dernière <b>ne renseigne en rien sur la significativité</b> de cette tendance. Il est tout à fait possible de calculer une <b>forte tendance</b> avec Sen mais de ne trouver <b>aucune significativité</b> avec Mann-Kendall."
-help.p10.ss2;"<b>ACTUALISATION</b>"
-help.p10.p3;"Une fois les paramètres de l'<b>analyse modifiés</b> comme souhaité, il est nécessaire d'appuyer sur le bouton d'<b>actualisation</b> apparu à droite du bouton d'analyse pour afficher les <b>nouveaux résultats</b>."
-tt.help.p11;"Affichage / Échelle de couleur"
-help.p11.s1;"<b>AFFICHAGE</b>"
-help.p11.ss1;"<b>ÉCHELLE DE COULEUR</b>"
-help.p11.p1;"Lorsque l'utilisateur appui sur la <b>roue dentée</b> en bas à droite du panneau d'analyse, la fenêtre de <b>paramètre d'affichage graphique</b> s'affiche."
-help.p11.p2;"Il est possible d’afficher ou non sur l’interface l'<b>échelle de couleur des tendances</b>. Cette échelle est <b>évolutive</b> en fonction de la <b>sélection de stations</b> et associe une couleur <b>marron</b> à une tendance avec un <b>impact `négatif`</b> et <b>turquoise</b> à une tendance avec un impact <b>`positif`</b>. Elle est <b>symétrique</b>, <b>centrée sur zéro</b> et <b>discrète</b> en dix classes. La classe <b>extrême positive</b> (respectivement négative) comprend les valeurs du <b>quantile 99%</b> (respectivement 1%) à l'<b>infini</b> (respectivement moins l'infini)."
-tt.help.p12;"Affichage / Fond de carte et résumé"
-help.p12.s1;"<b>AFFICHAGE</b>"
-help.p12.ss1;"<b>RESUMÉ</b>"
-help.p12.p1;"Le panneau de <b>résumé</b> de l'analyse statistique présent en haut du côté droit de l'interface peut être affiché ou non selon la volonté de l'utilisateur. Le <b>nom de la variable</b> étudiée et sa <b>définition</b> sont récapitulés dans cet encart suivi de l'<b>année hydrologique</b> utilisée, de la <b>période d'analyse</b> et la <b>significativé</b> du test de tendance réalisé."
-help.p12.ss2;"<b>FOND DE CARTE</b>"
-help.p12.p2;"Trois <b>thèmes de couleur</b> sont disponibles pour personnaliser le <b>fond de carte</b> : un thème <b>Clair</b>, un thème en couleur appelé <b>Terrain</b> qui représente les reliefs et un thème <b>Sombre</b>. Le thème par <b>défaut</b> est le thème <b>Clair</b>."
-tt.help.p13;"Mode photo"
-help.p13.s1;"<b>MODE PHOTO</b>"
-help.p13.p1;"Ce mode permet d'enlever l'<b>interface inutile à la capture d'écran</b> du fond de carte. Seuls les panneaux de l'<b>échelle de couleur</b> et du <b>résumé</b> de l'analyse resteront visibles. L'utilisateur peut donc redimensionner la fenêtre de son navigateur afin d'effectuer une capture d'écran. Un simple <b>clic sur la carte</b> permet de faire <b>réapparaître l'interface</b>."
-tt.help.p14;"Fiches stations"
-help.p14.s1;"<b>FICHES STATIONS</b>"
-help.p14.p1;"Il est possible de <b>télécharger des fiches stations</b> récapitulative de l'analyse de tendance en cliquant sur le bouton en haut à droite. Dans la barre d'outil qui est apparue, le premier bouton est le bouton de <b>téléchargement par clic</b> sur la carte. Une fois ce mode activé, un clic sur une station permet de <b>télécharger la fiche station</b> associée. Lors du lancement de ce mode, une nouvelle <b>barre d'outil</b> apparaît en haut à droite et permet de terminer la sélection."
-help.p14.p2;"L'ensemble des fiches stations de <b>la sélection</b> précédemment réalisée dans l'analyse peut aussi être <b>téléchargé</b> en cliquant sur le bouton <b>Sélection</b>. Il est aussi possible de <b>télécharger l'entièreté des fiches stations</b> en cliquant sur le bouton <b>Toutes</b>."
-help.p14.p3;"Enfin, il est à noter que la <b>génération des fiches stations</b> est <b>antérieure</b> à l'analyse réalisée par MAKAHO. Les résultats présents dans ces fiches sont donc certainement <b>différents</b> des résultats obtenus dans votre analyse interactive mais se veulent le plus fiable possible scientifiquement."
-tt.help.p15;"Information"
-help.p15.s1;"<b>INFORMATION</b>"
-help.p15.p1;"Le logo <b>INRAE</b> en bas à droite de l'interface est un bouton cliquable qui permet d'<b>afficher des informations</b>. Il est mentionné les <b>noms</b> du <b>développeur</b> et du <b>référent INRAE</b> sous forme de liens vers leurs <b>adresses emails</b>. Ensuite, le lien vers la page <b>GitHub</b> hébergeant le <b>code source</b> est donné. La ligne suivante renseigne sur l'<b>hébergeur SK8</b> et la dernière ligne donne un lien vers le site qui a donné l'<b>inspiration de l'interface</b>."
+id;fr;en
+var.month;mois;month
+var.season;saison;season
+ana.title;Analyse;Analysis
+tt.ana.title;Panneau des paramètres de l'analyse de tendance;Trend analysis settings panel
+ana.data;Données;Data
+tt.ana.data.RRSE;Réseau de référence pour la surveillance des étiages;Reference network for low flow monitoring
+tt.ana.data.RRExplore2;Réseau de référence Explore2;Reference network Explore2
+ana.date;Date;Date
+ana.selec;Sélection;Selection
+ana.selec.all;Toutes;All
+tt.ana.selec.all;Sélection de toutes les stations;Select all stations
+ana.selec.none;Aucune;None
+tt.ana.selec.none;Sélection d'aucunes des stations;Select none of the stations
+ana.selec.click;Clic;Click
+tt.ana.selec.click;Sélection par clic sur la carte;Selection by clicking on the map
+ana.selec.poly;Polygone;Polygon
+tt.ana.selec.poly;Sélection par polygone sur la carte;Selection by polygon on the map
+ana.selec.warning;Avertissement;Warning
+tt.ana.selec.warning;Sélection des stations aux chroniques inférieures à 30 ans ou manquantes;Selection of stations with records less than 30 years or missing
+ana.temperature;Température;Temperature
+ana.regime;Régime;Regime
+ana.pluviometrie;Pluviométrie;Rainfall
+tt.ana.regime;Afficher les variables d'intérêt dans l'étude des;Display variables of interest in the study of
+ana.type;Type;Type
+ana.type.T;Température;Temperature
+ana.type.Q;Débit;Flow
+ana.type.P;Précipitations;Precipitation
+ana.var;Variable;Variable
+ana.proba;Probabilité;Probability
+ana.month;Mois;Month
+ana.season;Saison;Season
+tt.ana.proba;Probabilité de;Probability of
+tt.ana.month;Mois de;Month of
+tt.ana.season;Saison de;Season of
+ana.dm;Année hydrologique;Hydrological year
+ana.optimal.slider;Optimale;Optimal
+tt.ana.optimal.slider;Année hydrologique optimisée pour chaque station;Optimized hydrological year for each station
+ana.sample.slider;Intervalle;Interval
+tt.ana.sample.slider;Sélection de l'année hydrologique par intervalle;Selection of hydrological year by interval
+ana.invert.slider;Inverser;Invert
+tt.ana.invert.slider;Inverse l'intervalle de sélection de l'année hydrologique;Invert the hydrological year selection interval
+tt.ana.dm;Mois de début de l'année hydrologique;Month of the start of the hydrological year
+ana.m01;Janv;Jan
+ana.m02;Févr;Feb
+ana.m03;Mars;Mar
+ana.m04;Avr;Apr
+ana.m05;Mai;May
+ana.m06;Juin;Jun
+ana.m07;Juill;Jul
+ana.m08;Août;Aug
+ana.m09;Sept;Sep
+ana.m10;Oct;Oct
+ana.m11;Nov;Nov
+ana.m12;Déc;Dec
+ana.dy;Période;Period
+tt.ana.dy;Année de début et de fin de l'analyse de tendance;Year of start and end of trend analysis
+ana.sig;Significativité;Significance
+tt.ana.sig.p;Test statistique significatif à un risque de;Statistical test significant at a risk of
+ana.cm;Mode ...;Mode ...
+ana.cms;sites;sites
+ana.cmr;régions;regions
+ana.search;Rechercher;Search
+tt.ana.search;Sélection par recherche textuelle d'infomation sur les stations;Selection by text search for information on stations
+ana.search.code;code;code
+ana.search.name;station;station
+ana.search.region;région hydro.;hydro region
+ana.search.regime;régime hydro.;hydro regime
+ana.search.location;lieu;location
+ana.search.river;cours d'eau;river
+ana.search.basin;bassin hydro.;hydro basin
+actualise.title;Actualiser l'analyse de tendance;Refresh trend analysis
+click.bar;Sélection par clic;Selection by click
+poly.bar;Sélection par polygone;Selection by polygon
+poly.bar.Add;Additive;Additive
+tt.poly.bar.Add;Sélection additive à la sélection pré-existante;Additive selection to the pre-existing selection
+poly.bar.Rm;Soustractive;Subtractive
+tt.poly.bar.Rm;Sélection soustractive à la sélection pré-existante;Subtractive selection to the pre-existing selection
+bar.ok;Terminer;Finish
+tt.bar.ok;Fin du mode de sélection en cours;End of the current selection mode
+c.title;Style;Style
+tt.c.title;Panneau de personnalisation de l'interface;Interface customization panel
+c.cb;Échelle de couleur;Color scale
+plot.day;jour;day
+plot.miss;jours manquants;missing days
+out.date_format;%d/%m/%Y;%m/%d/%Y
+out.hp;Année hydrologique;Hydrological year
+out.from;du;from
+out.From;Du;From
+out.to;au;to
+out.optimal;Année hydrologique optimisée<br>pour chaque station;Optimized hydrological year<br>for each station
+out.period;Période;Period
+out.sig;Significativité de;Significance of
+c.resume;Résumé;Summary
+c.show;Afficher;Show
+c.none;Aucune;None
+c.theme;Fond de carte;Map background
+c.theme.light;Clair;Light
+tt.c.theme.light;Fond de carte de couleurs blanches;Map background with white colors
+c.theme.terrain;Terrain;Terrain
+tt.c.theme.terrain;Fond de carte de couleurs en lien avec les reliefs;Map background with colors related to relief
+c.theme.dark;Sombre;Dark
+tt.c.theme.dark;Fond de carte de couleurs gris sombres;Map background with dark gray colors
+tt.i.title;Panneau d'information et de contact;Information and contact panel
+i.dev;Développeur;Developer
+i.ref;Référent;Reference
+i.code;Code source;Source code
+i.sk8;Hébergé par;Hosted by
+i.ui;Interface;Interface
+i.maj;Mise à jour;Update
+i.maj.version;mars 2024;March 2024
+tt.z.focus;Focus sur la sélection de stations;Focus on the selection of stations
+tt.z.default;Vue par défaut;Default view
+tt.p.title;Mode photo;Photo mode
+tt.d.title;Téléchargement de fiches stations;Download station cards
+d.dl;Fiches stations;Station cards
+dl.bar;Téléchargement de fiches stations par clic;Download station cards by click
+d.click;Clic;Click
+d.selec;Sélection;Selection
+d.all;Toutes;All
+tt.d.click;Téléchargement de fiches stations par clic sur la carte;Download station cards by click on the map
+tt.d.selec;Téléchargement des fiches stations de la sélection;Download station cards from the selection
+tt.d.all;Téléchargement de toutes les fiches stations;Download all station cards
+m.hov.lat;Lat;Lat
+m.hov.lon;Long;Long
+m.hov.sup;Superficie;Area
+m.hov.alt;Altitude;Altitude
+cb.title;TENDANCES OBSERVÉES;OBSERVED TRENDS
+unit.by;par;by
+unit.day;jour;day
+unit.year;an;year
+plotly.language;fr;en
+help;Aide;Help
+tt.help;Aide guidée;Guided help
+help.dl;Télécharger la notice;Download the manual
+help.close;Fin de l'aide;End of help
+tt.help.pb;Page précédente;Previous page
+tt.help.pn;Page suivante;Next page
+tt.help.p1;Introduction;Introduction
+help.p1.s1;<b>MAKAHO</b>;<b>MAKAHO</b>
+help.p1.p1;MAKAHO (pour MAnn-Kendall Analysis of Hydrological Observations) est un système de <b>visualisation cartographique interactif</b> permettant d’examiner les <b>tendances</b> présentes dans les données des <b>stations hydrométriques aux débits peu influencés</b> par les actions humaines. Le test de <b>Mann-Kendall</b> permet d’analyser la significativité des tendances de variables hydrologiques sur les différentes composantes du régime des cours d'eau (étiages, moyennes-eaux, crues), à mettre ensuite en relation avec les impacts du <b>changement climatique</b> sur l’hydrologie de surface.;MAKAHO (for MAnn-Kendall Analysis of Hydrological Observations) is an <b>interactive cartographic visualization</b> system designed to examine <b>trends</b> present in data from <b>streamflow gauging stations with minimal human influence</b>. The <b>Mann-Kendall</b> test is used to analyze the significance of trends in hydrological variables across different components of streamflow regimes (low flows, mean flows, high flows), which are then related to the impacts of <b>climate change</b> on surface hydrology.
+help.p1.p2;Fond de carte / Structure;Map background / Structure
+help.p2.s1;<b>FOND DE CARTE</b>;<b>MAP BACKGROUND</b>
+help.p2.ss1;<b>STRUCTURE</b>;<b>STRUCTURE</b>
+help.p2.p1;L’interface de MAKAHO se concentre autour d’une <b>carte interactive</b>. Le planisphère est recouvert de cercles et de triangles de couleur différentes qui permettent de situer les stations hydrométriques sélectionnées et de donner une idée de l’intensité de la tendance estimée. Un <b>cercle</b> indique que la tendance n’est <b>pas significative</b> alors qu’un <b>triangle</b> indique que la tendance est <b>significative</b>. Un triangle pointant <b>vers le haut</b> (respectivement <b>vers le bas</b>) indique que la tendance est à la <b>hausse</b> (respectivement à la <b>baisse</b>). Une station non-sélectionnée pour l'analyse est représentée par un cercle de couleur <b>neutre</b>.;The MAKAHO interface revolves around an <b>interactive map</b>. The map is covered with circles and triangles of different colors that allow locating the selected hydrometric stations and give an idea of the intensity of the estimated trend. A <b>circle</b> indicates that the trend is <b>not significant</b>, while a <b>triangle</b> indicates that the trend is <b>significant</b>. A triangle pointing <b>upward</b> (respectively <b>downward</b>) indicates that the trend is <b>rising</b> (respectively <b>falling</b>). A station not selected for analysis is represented by a circle of <b>neutral</b> color.
+help.p2.p3;Fond de carte / Interaction;Map background / Interaction
+help.p3.s1;<b>FOND DE CARTE</b>;<b>BASE MAP</b>
+help.p3.ss1;<b>INTERACTION</b>;<b>INTERACTION</b>
+help.p3.p1;Le fond de carte est interactif, cela veut dire qu’il est possible de se <b>déplacer</b> sur le planisphère en effectuant un <b>clic gauche glisser</b>. De la même manière, il est aussi possible de <b>zoomer</b> en effectuant un <b>roulement de la molette de souris</b>.;The base map is interactive, meaning that it is possible to <b>move</b> around the map by performing a <b>left-click and drag</b>. Similarly, it is also possible to <b>zoom in</b> by using the <b>mouse wheel</b>.
+help.p3.p2;Les <b>cercles</b> et <b>triangles</b> sont aussi cliquables. Par défaut, le <b>clic</b> sur une station permet d’afficher le <b>graphique détaillé de l’analyse de tendance</b> de la variable étudiée.;The <b>circles</b> and <b>triangles</b> are also clickable. By default, clicking on a station displays the detailed trend analysis <b>graph</b> for the variable under study.
+tt.help.p4;Zoom;Zoom
+help.p4.s1;<b>ZOOM</b>;<b>ZOOM</b>
+help.p4.p1;Les interactions avec le fond de carte font apparaître le <b>bouton de zoom en haut à gauche</b> qui permet de re‐faire le <b>focus</b> sur l’ensemble des stations sélectionnées. Ainsi, si la sélection de stations est réduite, ce même bouton peut apparaître afin de laisser la possibilité à l’utilisateur de laisser l’application choisir le zoom et le <b>positionnement de carte le plus adapté</b>. Lorsque le positionnement est optimal sur une sélection, un bouton de zoom différent apparaît à la même place. Ce nouveau bouton permet alors de <b>re‐faire le focus</b> non pas sur la sélection de station mais <b>sur la France</b> entière.;Interactions with the base map reveal the <b>zoom button in the top left corner</b>, which allows re-focusing on the selected stations. If the station selection is reduced, this button may appear to allow the application to choose the most suitable zoom and map positioning. When the positioning is optimal for a selection, a different zoom button appears in the same place. This new button allows re-focusing not on the station selection but on the entire <b>France</b>.
+help.p4.p2;Le mieux c'est d'essayer !;The best way is to try it out!
+tt.help.p5;Analyse / Sélection 1;Analysis / Selection 1
+help.p5.s1;<b>ANALYSE</b>;<b>ANALYSIS</b>
+help.p5.ss1;<b>SÉLECTION</b>;<b>SELECTION</b>
+help.p5.p1;Les deux premiers boutons de la section de sélection permettent respectivement de sélectionner <b>toutes</b> les stations ou <b>aucunes</b>.;The first two buttons in the selection section allow you to select <b>all</b> or <b>none</b> of the stations, respectively.
+help.p5.p2;Le troisième bouton de la ligne est le bouton de <b>sélection par clic</b> sur la carte. Une fois ce mode activé, un clic sur une station permet de <b>changer son état de sélection</b>. Lors du lancement de ce mode, une <b>barre d'outil</b> apparaît en haut à gauche et permet de terminer la sélection.;The third button in the line is the <b>selection by click</b> button on the map. Once this mode is activated, a click on a station changes its selection state. When this mode is launched, a <b>toolbar</b> appears in the top left corner and allows you to finish the selection.
+help.p5.p3;Le quatrième bouton correspond au bouton de <b>sélection par polygone</b> sur la carte. Un polygone peut donc être tracé en plaçant des points sur la carte. Comme dans le mode précédent, une <b>barre d'outil</b> apparaît en haut à gauche de l’interface et permet de rendre la sélection par polygone additive ou soustractive.;The fourth button corresponds to the <b>selection by polygon</b> button on the map. A polygon can be drawn by placing points on the map. As in the previous mode, a <b>toolbar</b> appears in the top left corner of the interface and allows you to make the selection by polygon additive or subtractive.
+tt.help.p6;Analyse / Sélection 2;Analysis / Selection 2
+help.p6.s1;<b>ANALYSE</b>;<b>ANALYSIS</b>
+help.p6.ss1;<b>SÉLECTION</b>;<b>SELECTION</b>
+help.p6.p1;Le bouton <b>avertissement</b> est présent sur la seconde ligne. Lorsqu'il est sélectionné, comme par défaut, les stations qui présentent des <b>chroniques de moins de 30 ans</b> sont localisées par des symboles aux <b>contours jaunes</b> et lorsque les chroniques sont complètement <b>manquantes</b>, les symboles utilisés sont des cercles aux <b>contours rouges</b>. Dans le cas où le bouton <b>avertissement</b> est déselectionné, les stations qui présentent des avertissements sont <b>retirées automatiquement</b> de la sélection.;The <b>warning</b> button is present on the second line. When selected, as by default, stations with <b>chronicles of less than 30 years</b> are located by symbols with <b>yellow borders</b>, and when the chronicles are completely <b>missing</b>, the symbols used are circles with <b>red borders</b>. If the <b>warning</b> button is deselected, stations with warnings are <b>automatically removed</b> from the selection.
+help.p6.p2;Enfin, la sélection peut se faire à l'aide d'une <b>barre de recherche textuelle</b> avec complétion automatique. Des stations peuvent être sélectionnées à l’aide de <b>mots-clés</b> contenus dans leur nom, le nom de leur cours d’eau, le lieu où elles sont situées de même que leur région‐hydrographique et bassin‐hydrographique. Ce mode de sélection est <b>additif</b> et il est possible d’ajouter ou de supprimer plusieurs recherches textuelles.;Finally, the selection can be made using a <b>text search bar</b> with automatic completion. Stations can be selected using <b>keywords</b> found in their name, the name of their watercourse, the location where they are situated, as well as their hydrographic region and basin. This selection mode is <b>additive</b>, and it is possible to add or remove multiple text searches.
+tt.help.p7;Analyse / Régime et variable;Analysis / Regime and Variable
+help.p7.s1;<b>ANALYSE</b>;<b>ANALYSIS</b>
+help.p7.ss1;<b>RÉGIME ET VARIABLE</b>;<b>REGIME AND VARIABLE</b>
+help.p7.p1;La sélection de la <b>variable hydrologique utilisée pour l'analyse de tendance</b> s'effectue à l'aide des sections Régime et Variable.;The selection of the <b>hydrological variable used for trend analysis</b> is made using the Regime and Variable sections.
+help.p7.p2;La section <b>Régime</b> permet de sélectionner la composantes du <b>régime des cours d'eau</b> que l'on souhaite étudié : <b>Crue</b>, <b>Écoulements Lents</b>, <b>Moyennes Eaux</b> ou <b>Étiage</b>. Chaque bouton permet d'afficher un panneau de variables caractéristiques de l'étude du régime choisi.;The <b>Regime</b> section allows you to select the components of the <b>river flow regime</b> that you want to study: <b>Flood</b>, <b>Slow Flows</b>, <b>Mean Flows</b>, or <b>Low Flow</b>. Each button displays a panel of characteristic variables for the chosen regime study.
+help.p7.p3;La section <b>Variable</b> permet dans un second temps de sélectionner la <b>variable que l'on souhaite étudier</b>.;The <b>Variable</b> section allows you, in the second step, to select the <b>variable you want to study</b>.
+tt.help.p8;Analyse / Année hydrologique;Analysis / Hydrological Year
+help.p8.s1;<b>ANALYSE</b>;<b>ANALYSIS</b>
+help.p8.ss1;<b>ANNÉE HYDROLOGIQUE</b>;<b>HYDROLOGICAL YEAR</b>
+help.p8.p1;L’analyse de tendance présente un premier <b>paramètre temporel</b> qui est sélectionné grâce à la section <b>Année Hydrologique</b>. Le <b>mois de début de l’Année Hydrologique</b> est par défaut est fixé sur le mois de <b>janvier</b>. Ce choix se fait à l’aide d’un <b>curseur horizontal simple</b>.;The trend analysis has a first <b>temporal parameter</b> selected through the <b>Hydrological Year</b> section. The <b>start month of the Hydrological Year</b> is set by default to the month of <b>January</b>. This choice is made using a <b>simple horizontal cursor</b>.
+help.p8.p2;Juste en dessous, le bouton <b>Optimale</b> permet de sélectionner <b>automatiquement</b> une <b>année hydrologique</b>. Ce choix est basé sur des <b>considérations hydrologiques</b> propres à chaque station. Pour une variable de <b>Crue</b> ou de <b>Moyennes Eaux</b> le mois de début de l'année hydrologique est sélectionné pour chaque station comme le mois où le <b>débit moyen mensuel</b> est <b>minimal</b>. Pour une variable de <b>Écoulements Lents</b>, le mois de <b>janvier</b> est pris pour mois de début et pour une variable d'<b>Étiage</b> l'année hydrologique <b>commence en mai</b> et <b>finie fin novembre</b>.;Just below, the <b>Optimal</b> button allows automatically selecting an <b>hydrological year</b>. This choice is based on hydrological considerations specific to each station. For a <b>Flood</b> or <b>Mean Flows</b> variable, the start month of the hydrological year is selected for each station as the month where the <b>average monthly flow</b> is <b>minimal</b>. For a <b>Slow Flows</b> variable, the month of <b>January</b> is taken as the start month, and for a <b>Low Flow</b> variable, the hydrological year <b>starts in May</b> and <b>ends in late November</b>.
+tt.help.p9;Analyse / Année hydrologique et Période;Analysis / Hydrological Year and Period
+help.p9.s1;<b>ANALYSE</b>;<b>ANALYSIS</b>
+help.p9.ss1;<b>ANNÉE HYDROLOGIQUE</b>;<b>HYDROLOGICAL YEAR</b>
+help.p9.p1;Lorsque le bouton <b>Optimale</b> n'est pas sélectionné, il est possible d'appuyer sur le bouton <b>Intervalle</b>. Ce mode permet de sélectionner une année hydrologique tronquée pour réaliser une <b>analyse saisonnalisée</b>. Ce choix se fait à l'aide d'un <b>double curseur horizontal</b> et peut être inversé à l'aide du bouton <b>inverser</b> qui apparaît à la suite en mode intervalle.;When the <b>Optimal</b> button is not selected, it is possible to press the <b>Interval</b> button. This mode allows selecting a truncated hydrological year for a <b>seasonal analysis</b>. This choice is made using a <b>double horizontal cursor</b> and can be reversed using the <b>reverse</b> button that appears following the interval mode.
+help.p9.ss2;<b>PÉRIODE</b>;<b>PERIOD</b>
+help.p9.p2;Le second aspect temporel est le choix de la <b>période d’analyse de tendance</b>. Cette sélection se fait avec un <b>double curseur horizontal</b> qui permet de choisir une date de début et de fin de la période d’analyse. L’année de fin est incluse et <b>par défaut</b> la période temporelle s’étend de l’année <b>1968</b> à <b>2020</b>.;The second temporal aspect is the choice of the <b>trend analysis period</b>. This selection is made with a <b>double horizontal cursor</b> that allows choosing a start and end date for the analysis period. The end year is included, and <b>by default</b>, the temporal period extends from the year <b>1968</b> to <b>2020</b>.
+tt.help.p10;Analyse / Significativité et actualisation;Analysis / Significance and Update
+help.p10.s1;<b>ANALYSE</b>;<b>ANALYSIS</b>
+help.p10.ss1;<b>SIGNIFICATIVITÉ</b>;<b>SIGNIFICANCE</b>
+help.p10.p1;La dernière section correspond au seuil de <b>significativité du test statistique de Mann‐Kendall</b>, c’est‐à‐dire <b>la probabilité avec laquelle on accepte de se tromper</b> sur l’affirmation de l’existence d’une tendance. Le choix de ce seuil est fait à l’aide de boutons qui permettent de sélectionner la valeur de <b>1%</b>, <b>5%</b> ou <b>10%</b>. Par défaut, la valeur de <b>10%</b> est sélectionnée ce qui s’avère être la valeur la moins contraignante.;The last section corresponds to the threshold of <b>significance of the Mann-Kendall statistical test</b>, that is, <b>the probability of accepting an error</b> in asserting the existence of a trend. The choice of this threshold is made using buttons that allow selecting the value of <b>1%</b>, <b>5%</b>, or <b>10%</b>. By default, the value of <b>10%</b> is selected, which is the least restrictive value.
+help.p10.p2;Il est important de noter que la <b>valeur numérique</b> de la tendance est calculée grâce à l'<b>estimateur de Sen</b> mais cette dernière <b>ne renseigne en rien sur la significativité</b> de cette tendance. Il est tout à fait possible de calculer une <b>forte tendance</b> avec Sen mais de ne trouver <b>aucune significativité</b> avec Mann-Kendall.;It is important to note that the <b>numeric value</b> of the trend is calculated using the <b>Sen estimator</b>, but this does <b>not provide any information about the significance</b> of this trend. It is entirely possible to calculate a <b>strong trend</b> with Sen but find <b>no significance</b> with Mann-Kendall.
+help.p10.ss2;<b>ACTUALISATION</b>;<b>UPDATE</b>
+help.p10.p3;Une fois les paramètres de l'<b>analyse modifiés</b> comme souhaité, il est nécessaire d'appuyer sur le bouton d'<b>actualisation</b> apparu à droite du bouton d'analyse pour afficher les <b>nouveaux résultats</b>.;Once the parameters of the <b>analysis have been modified</b> as desired, it is necessary to press the <b>update button</b> that appears to the right of the analysis button to display the <b>new results</b>.
+tt.help.p11;Affichage / Échelle de couleur;Display / Color Scale
+help.p11.s1;<b>AFFICHAGE</b>;<b>DISPLAY</b>
+help.p11.ss1;<b>ÉCHELLE DE COULEUR</b>;<b>COLOR SCALE</b>
+help.p11.p1;Lorsque l'utilisateur appui sur la <b>roue dentée</b> en bas à droite du panneau d'analyse, la fenêtre de <b>paramètre d'affichage graphique</b> s'affiche.;When the user clicks on the <b>gear icon</b> at the bottom right of the analysis panel, the <b>graphic display settings window</b> appears.
+help.p11.p2;Il est possible d’afficher ou non sur l’interface l'<b>échelle de couleur des tendances</b>. Cette échelle est <b>évolutive</b> en fonction de la <b>sélection de stations</b> et associe une couleur <b>marron</b> à une tendance avec un <b>impact `négatif`</b> et <b>turquoise</b> à une tendance avec un impact <b>`positif`</b>. Elle est <b>symétrique</b>, <b>centrée sur zéro</b> et <b>discrète</b> en dix classes. La classe <b>extrême positive</b> (respectivement négative) comprend les valeurs du <b>quantile 99%</b> (respectivement 1%) à l'<b>infini</b> (respectivement moins l'infini).;It is possible to display or not on the interface the <b>color scale of trends</b>. This scale is <b>adaptive</b> based on the <b>station selection</b> and associates a <b>brown color</b> with a trend with a <b>`negative` impact</b> and <b>turquoise</b> with a trend with a <b>`positive` impact</b>. It is <b>symmetrical</b>, <b>centered on zero</b>, and <b>discrete</b> in ten classes. The <b>extremely positive</b> (respectively negative) class includes values from the <b>99%</b> (respectively 1%) <b>quantile</b> to <b>infinity</b> (respectively minus infinity).
+tt.help.p12;Affichage / Fond de carte et résumé;Display / Map Background and Summary
+help.p12.s1;<b>AFFICHAGE</b>;<b>DISPLAY</b>
+help.p12.ss1;<b>RESUMÉ</b>;<b>SUMMARY</b>
+help.p12.p1;Le panneau de <b>résumé</b> de l'analyse statistique présent en haut du côté droit de l'interface peut être affiché ou non selon la volonté de l'utilisateur. Le <b>nom de la variable</b> étudiée et sa <b>définition</b> sont récapitulés dans cet encart suivi de l'<b>année hydrologique</b> utilisée, de la <b>période d'analyse</b> et la <b>significativé</b> du test de tendance réalisé.;The panel of <b>summary</b> of the statistical analysis present at the top right of the interface can be displayed or not according to the user's preference. The <b>name of the variable</b> studied and its <b>definition</b> are summarized in this section, followed by the <b>hydrological year</b> used, the <b>analysis period</b>, and the <b>significance</b> of the trend test conducted.
+help.p12.ss2;<b>FOND DE CARTE</b>;<b>MAP BACKGROUND</b>
+help.p12.p2;Trois <b>thèmes de couleur</b> sont disponibles pour personnaliser le <b>fond de carte</b> : un thème <b>Clair</b>, un thème en couleur appelé <b>Terrain</b> qui représente les reliefs et un thème <b>Sombre</b>. Le thème par <b>défaut</b> est le thème <b>Clair</b>.;Three <b>color themes</b> are available to customize the <b>map background</b>: a <b>Light</b> theme, a colored theme called <b>Terrain</b> representing reliefs, and a <b>Dark</b> theme. The <b>default</b> theme is the <b>Light</b> theme.
+tt.help.p13;Mode photo;Photo Mode
+help.p13.s1;<b>MODE PHOTO</b>;<b>PHOTO MODE</b>
+help.p13.p1;Ce mode permet d'enlever l'<b>interface inutile à la capture d'écran</b> du fond de carte. Seuls les panneaux de l'<b>échelle de couleur</b> et du <b>résumé</b> de l'analyse resteront visibles. L'utilisateur peut donc redimensionner la fenêtre de son navigateur afin d'effectuer une capture d'écran. Un simple <b>clic sur la carte</b> permet de faire <b>réapparaître l'interface</b>.;This mode allows removing the <b>unnecessary interface for screenshot capture</b> of the map background. Only the panels of the <b>color scale</b> and the <b>summary</b> of the analysis will remain visible. The user can resize the browser window to take a screenshot. A simple <b>click on the map</b> brings back the <b>interface</b>.
+tt.help.p14;Fiches stations;Station Cards
+help.p14.s1;<b>FICHES STATIONS</b>;<b>STATION CARDS</b>
+help.p14.p1;Il est possible de <b>télécharger des fiches stations</b> récapitulative de l'analyse de tendance en cliquant sur le bouton en haut à droite. Dans la barre d'outil qui est apparue, le premier bouton est le bouton de <b>téléchargement par clic</b> sur la carte. Une fois ce mode activé, un clic sur une station permet de <b>télécharger la fiche station</b> associée. Lors du lancement de ce mode, une nouvelle <b>barre d'outil</b> apparaît en haut à droite et permet de terminer la sélection.;It is possible to <b>download station cards</b> summarizing the trend analysis by clicking on the button at the top right. In the toolbar that appears, the first button is the <b>download by click</b> on the map button. Once this mode is activated, a click on a station allows you to <b>download the associated station card</b>. When this mode is launched, a new <b>toolbar</b> appears at the top right and allows you to complete the selection.
+help.p14.p2;L'ensemble des fiches stations de <b>la sélection</b> précédemment réalisée dans l'analyse peut aussi être <b>téléchargé</b> en cliquant sur le bouton <b>Sélection</b>. Il est aussi possible de <b>télécharger l'entièreté des fiches stations</b> en cliquant sur le bouton <b>Toutes</b>.;All station cards from the <b>selection</b> previously made in the analysis can also be <b>downloaded</b> by clicking on the <b>Selection</b> button. It is also possible to <b>download all station cards</b> by clicking on the <b>All</b> button.
+help.p14.p3;Enfin, il est à noter que la <b>génération des fiches stations</b> est <b>antérieure</b> à l'analyse réalisée par MAKAHO. Les résultats présents dans ces fiches sont donc certainement <b>différents</b> des résultats obtenus dans votre analyse interactive mais se veulent le plus fiable possible scientifiquement.;Finally, it is worth noting that the <b>generation of station cards</b> precedes the analysis carried out by MAKAHO. The results in these cards are therefore likely to be <b>different</b> from the results obtained in your interactive analysis but aim to be as scientifically reliable as possible.
+tt.help.p15;Information;Information
+help.p15.s1;<b>INFORMATION</b>;<b>INFORMATION</b>
+help.p15.p1;Le logo <b>INRAE</b> en bas à droite de l'interface est un bouton cliquable qui permet d'<b>afficher des informations</b>. Il est mentionné les <b>noms</b> du <b>développeur</b> et du <b>référent INRAE</b> sous forme de liens vers leurs <b>adresses emails</b>. Ensuite, le lien vers la page <b>GitHub</b> hébergeant le <b>code source</b> est donné. La ligne suivante renseigne sur l'<b>hébergeur SK8</b> et la dernière ligne donne un lien vers le site qui a donné l'<b>inspiration de l'interface</b>.;The <b>INRAE</b> logo at the bottom right of the interface is a clickable button that allows you to <b>display information</b>. The <b>names</b> of the <b>developer</b> and the <b>INRAE referent</b> are mentioned as links to their <b>email addresses</b>. Next, the link to the <b>GitHub</b> page hosting the <b>source code</b> is provided. The next line provides information about the <b>SK8 host</b>, and the last line provides a link to the site that <b>inspired the interface</b>.

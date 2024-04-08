@@ -23,70 +23,18 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-word = function (id) {
-    w = dico[[language]][dico$id == id]
+# word_default = function (id) {
+    # w = dico[[default_lg]][dico$id == id]
+    # return (w)
+# }
+
+word = function (id, lg) {
+    w = dico[[lg]][dico$id == id]
     return (w)
 }
 
-create_dico = function (dico_file, resources_path) {
-    dico_path = file.path(resources_path, dico_file)
-    dico = tibble(read.table(dico_path, header=TRUE, sep=";"))
-    for (j in 1:ncol(dico)) {
-        dico[j] = as.character(dico[[j]])
-    }
-    return (dico)
-}
 
-
-get_Var = function (dico, varProba) {
-    OkEvent = as.vector(regexpr("^ana.var[0-9]$", dico[[1]])) != -1
-    IdEvent = which(OkEvent)
-    nbEvent = sum(as.numeric(OkEvent))
-
-    Var = tibble()
-
-    for (i in 1:nbEvent) {
-        event = word(paste0("ana.var", i))
-        
-        OkNumVar = as.vector(regexpr(paste0("^ana.var", i,
-                                            ".[0-9]$"), dico[[1]]))
-        nbVar = sum(OkNumVar[OkNumVar == 1])        
-        
-        for (j in 1:nbVar) {
-            var = word(paste0("ana.var", i, "." , j))
-
-            varHTML = var
-            if (grepl('[_]', var)) {
-                varHTML = paste0("<span>", gsub('_', '<sub>', var), "</sub>", "</span>")
-            }
-            
-            name = word(paste0("tt.ana.var", i, "." , j))
-            
-            if (grepl('^t.*', var) | grepl('^dt.*', var)) {
-                type = 'saisonnalité'
-            } else {
-                type = 'sévérité'
-            } ### /!\ attention si y'a d'autre type
-            
-            if (var %in% names(varProba)) {
-                proba = list(varProba[[which(names(varProba) == var)]])
-            } else {
-                proba = NA
-            }
-
-            Var = bind_rows(Var, tibble(event=event,
-                                        var=var,
-                                        varHTML=varHTML,
-                                        name=name,
-                                        type=type,
-                                        proba=proba))
-        }
-    } 
-    return (Var)
-}
-
-
-get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
+get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
 
     if (verbose) print("plot_trend")
     
@@ -94,8 +42,8 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
     CARD_filepath = list.files(CARD_dirpath,
                                full.names=TRUE,
                                recursive=TRUE)
-    nVar = length(CARD_filepath)
-    Var = dplyr::tibble()
+    nVariable = length(CARD_filepath)
+    Variable = dplyr::tibble()
     
     for (CARD in CARD_filepath) {
         list_path = list.files(file.path(CARD_path,
@@ -120,93 +68,126 @@ get_Var2 = function (CARD_path, CARD_dir, check_varSub) {
             assign(principal_names[pp], principal[[pp]])
         }
 
-        CARD_var = var
-        
-        var = gsub("^[[:digit:]]+[_]", "",
-                   gsub("[.]R", "", basename(CARD)))
+        variable = get(paste0("variable_", lg))
+        variable_CARD = gsub("^[[:digit:]]+[_]", "",
+                             gsub("[.]R", "", basename(CARD)))
 
-        varHTML = var
-        if (grepl('[_]', var)) {
-            varHTML = paste0("<span>",
-                             gsub('_', '<sub>', var),
-                             "</sub>", "</span>")
-        }
+        # print(paste0("variable : ", paste0(variable, collapse=" ")))
+        # print(paste0("variable_CARD : ", variable_CARD))
+
+        topic = unlist(strsplit(get(paste0("topic_", lg)),
+                                ", "))
+        name = get(paste0("name_", lg))
         
-        if (any(sapply(check_varSub, grepl, var))) {
-            id = which(sapply(check_varSub, grepl, var))
+        if (any(sapply(check_varSub, grepl, variable_CARD))) {
+            id = which(sapply(check_varSub, grepl, variable_CARD))
             
-            if (grepl("(month)|(season)", var)) {
+            if (grepl("(month)|(season)", variable_CARD)) {
                 to_rm = gsub("(month)|(season)", "",
-                             var)
-                sub = gsub(to_rm, "", CARD_var)
+                             variable_CARD)
+                sub = gsub(to_rm, "", variable)
+                pattern = paste0("(",
+                                 paste0(sub, collapse=")|("),
+                                 ")")
+                variable = gsub(pattern, "", variable[1])
 
-                Var = bind_rows(
-                    Var,
+                if (grepl("month", variable_CARD)) {
+                    variable = paste0(variable, word("var.month", lg))
+                } else if (grepl("season", variable_CARD)) {
+                    variable = paste0(variable, word("var.season", lg))
+                }
+                
+                # print(paste0("sub : ", paste0(sub, collapse=" ")))
+
+                variableHTML = variable
+                if (grepl('[_]', variable)) {
+                    variableHTML = paste0("<span>",
+                                          gsub('_', '<sub>', variable),
+                                          "</sub>", "</span>")
+                }
+                
+                Variable = bind_rows(
+                    Variable,
                     dplyr::tibble(type=topic[1],
                                   event=topic[2],
-                                  var=var,
-                                  varHTML=varHTML,
-                                  name=list(glose),
+                                  variable_CARD=variable_CARD,
+                                  variable=variable,
+                                  variableHTML=variableHTML,
+                                  name=list(name),
                                   sub=list(sub),
                                   palette=str_split(palette,
                                                     " ")))
                 
             } else {
-                sub = paste0(stringr::str_extract(var,
-                                                  "[[:digit:]]+$"),
+                sub = paste0(stringr::str_extract(variable,
+                                                  "[[:digit:]]+"),
                              "%")
-                var = gsub("[[:digit:]]+$", "p", var)
-                var_regexp = paste0("^", var, "$")
-                varHTML = var
-                if (grepl('[_]', var)) {
-                    varHTML = paste0("<span>",
-                                     gsub('_', '<sub>', var),
-                                     "</sub>", "</span>")
-                }
+                variable = gsub("[[:digit:]]+", "p", variable)
+                variable_regexp = paste0("^", variable, "$")
 
-                ok1 = grepl(var_regexp, Var$var)
-                ok2 = Var$event == topic[2]
+                ok1 = grepl(variable_regexp, Variable$variable)
+                ok2 = Variable$event == topic[2]
                 if (identical(ok2, logical(0))) {
                     ok2 = FALSE
                 }
+
+                # print(paste0("sub : ", paste0(sub, collapse=" ")))
+
+                variableHTML = variable
+                if (grepl('[_]', variable)) {
+                    variableHTML = paste0("<span>",
+                                          gsub('_', '<sub>', variable),
+                                          "</sub>", "</span>")
+                }
                 
                 if (!any(ok1 & ok2)) {
-                    Var = bind_rows(
-                        Var,
+                    Variable = bind_rows(
+                        Variable,
                         dplyr::tibble(type=topic[1],
                                       event=topic[2],
-                                      var=var,
-                                      varHTML=varHTML,
-                                      name=list(glose),
+                                      variable_CARD=variable,
+                                      variable=variable,
+                                      variableHTML=variableHTML,
+                                      name=list(name),
                                       sub=list(sub),
                                       palette=str_split(palette,
                                                         " ")))
                 } else {
                     id2 = which(ok1 & ok2)
-                    Var$name[[id2]] = c(Var$name[[id2]], glose)
-                    Var$sub[[id2]] = c(Var$sub[[id2]], sub)
+                    Variable$name[[id2]] = c(Variable$name[[id2]],
+                                             name)
+                    Variable$sub[[id2]] = c(Variable$sub[[id2]], sub)
                 }
             }
             
         } else {
-            Var = bind_rows(
-                Var,
+            variableHTML = variable
+            if (grepl('[_]', variable)) {
+                variableHTML = paste0("<span>",
+                                      gsub('_', '<sub>', variable),
+                                      "</sub>", "</span>")
+            }
+            
+            Variable = bind_rows(
+                Variable,
                 dplyr::tibble(type=topic[1],
                               event=topic[2],
-                              var=var,
-                              varHTML=varHTML,
-                              name=list(glose),
+                              variable_CARD=variable_CARD,
+                              variable=variable,
+                              variableHTML=variableHTML,
+                              name=list(name),
                               sub=NA,
                               palette=str_split(palette,
                                                 " ")))
         }
+        # print(paste0("variable : ", variable))
+        # cat("\n")
     }
-    
-    return (Var) 
+    return (Variable) 
 }
 
-
-# get_Var(dico, varProba)
+# get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
+# stop()
 
 
 get_urlTile = function (theme, provider, theme_file, resources_path, token=NULL) {
@@ -675,7 +656,7 @@ get_trendExtremesMOD = function (rv,
     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
         df_mean =
             summarise(group_by(data, Code),
-                      mean=mean(get(rv$var), na.rm=TRUE))
+                      mean=mean(get(rv$variable), na.rm=TRUE))
 
         df_join = full_join(df_trend, df_mean, by="Code")
         value = df_join$a / df_join$mean
@@ -716,68 +697,11 @@ count_decimal = function(x) {
     }
 }
 
-get_trendLabel = function (rv, code, dataEX, trendEX, unit,
-                           space=FALSE) {
-
-    if (verbose) print("get_trendLabel")
+get_trendLabel = function (rv, code, lg, space=FALSE) {
     
-    CodeEx = dataEX$Code[!duplicated(dataEX$Code)]
-    CodeXtrend = trendEX$Code[!duplicated(trendEX$Code)]
-    
-    if (!(code %in% CodeEx) | !(code %in% CodeXtrend)) {
-        return (NA)
-    }
-    
-    dataEX_code = dataEX[dataEX$Code == code,]
-    trendEX_code = trendEX[trendEX$Code == code,]
-
+    trendEX_code = rv$trendEX[rv$trendEX$Code == code,]
     if (is.na(trendEX_code$a)) {
         return (NA)
-    }
-
-    # Computes the mean of the data on the period
-    dataMean = mean(dataEX_code[[rv$var]],
-                    na.rm=TRUE)
-    
-    # Gets the trend
-    trend = trendEX_code$a
-    
-    # Computes the mean trend
-    trendMean = trend/dataMean
-    # Computes the magnitude of the trend
-    power = get_power(trend)
-    # Converts it to character
-    powerC = as.character(power)
-    
-    # If the power is positive
-    if (power >= 0) {
-        # Adds a space in order to compensate for the minus
-        # sign that sometimes is present for the other periods
-        shiftC = '  '
-        # Otherwise
-    } else {
-        # No space is added
-        shiftC = ''
-    }
-
-    # Gets the power of ten of magnitude
-    brk = 10^power
-    # Converts trend to character for sientific expression
-    trendC = as.character(format(round(trend / brk, 2),
-                                 nsmall=2))
-    # If the trend is positive
-    if (trend >= 0) {
-        # Adds two space in order to compensate for the minus
-        # sign that sometimes is present for the other periods
-        trendC = paste(' ', trendC, sep='')
-    }
-    # Converts mean trend to character
-    trendMeanC = as.character(format(round(trendMean*100, 2),
-                                     nsmall=2))
-    if (trendMean >= 0) {
-        # Adds two space in order to compensate for the minus
-        # sign that sometimes is present for the other periods
-        trendMeanC = paste(' ', trendMeanC, sep='')
     }
 
     if (space) {
@@ -785,43 +709,89 @@ get_trendLabel = function (rv, code, dataEX, trendEX, unit,
     } else {
         space = "&emsp;"
     }
+    unitHTML = rv$unit
+    unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
+    unitHTML = gsub('[/}]', '</sup>', unitHTML)
+    
+    power = get_power(trendEX_code$a)
 
+    a_normaliseC =
+        as.character(format(round(trendEX_code$a_normalise, 2),
+                            nsmall=2))
 
-    # If it is a date variable
-    if (unit == 'jour' | unit == "jour de l'année") {
-        # Create the name of the trend
-        label = paste0(
-            "<b>", trendC, " x ",
-            "10<sup>", powerC, "</sup></b>", shiftC,
-            " [jour.an<sup>-1</sup>]")
+    if (-1 <= power & power <= 1) {
+        aC = as.character(signif(trendEX_code$a, 3))
 
-    } else if (unit == 'jour.an^{-1}') {
-        # Create the name of the trend
-        label = paste0(
-            "<b>", trendC, " x ",
-            "10<sup>", powerC, "</sup></b>", shiftC,
-            " [jour.an<sup>-2</sup>]")
-        
-    } else {
-        unitHTML = unit
-        unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
-        unitHTML = gsub('[/}]', '</sup>', unitHTML)
-        # Create the name of the trend
-        if (rv$normalize) {
+        if (rv$type == word("ana.type.Q", lg)) {
+            if (rv$to_normalise) {
+                label = paste0(
+                    "<b>", aC, "</b>",
+                    " [", unitHTML, ".",
+                    word("unit.year", lg), "<sup>-1</sup>]",
+                    space,
+                    "<b>", a_normaliseC,
+                    "</b> [%.", word("unit.year", lg), "<sup>-1</sup>]")
+                
+            } else {
+                label = paste0(
+                    "<b>", aC, "</b>",
+                    " [", unitHTML, ".",
+                    word("unit.year", lg), "<sup>-1</sup>]")
+            }
+            
+        } else if (rv$type == word("ana.type.T", lg)) {
             label = paste0(
-                "<b>", trendC, " x ",
-                "10<sup>", powerC, "</sup></b>", shiftC,
-                " [", unitHTML, ".an<sup>-1</sup>]",
-                space, "<b>",
-                trendMeanC, "</b> [%.an<sup>-1</sup>]")
+                "<b>", aC, "</b>",
+                " [", unitHTML, ".",
+                word("unit.year", lg), "<sup>-1</sup>]")
 
-        } else {
+        } else if (rv$type == word("ana.type.P", lg)) {
             label = paste0(
-                "<b>", trendC, " x ",
-                "10<sup>", powerC, "</sup></b>", shiftC,
-                " [", unitHTML, ".an<sup>-1</sup>]")
+                "<b>", aC, "</b>",
+                " [", unitHTML, ".",
+                word("unit.year", lg), "<sup>-1</sup>]")
         }
 
+        
+    } else {
+        brk = 10^power
+        aC = as.character(format(round(trendEX_code$a / brk, 2),
+                                 nsmall=2))
+
+        if (rv$type == word("ana.type.Q", lg)) {
+            if (rv$to_normalise) {
+                label = paste0(
+                    "<b>", aC, " x ",
+                    "10<sup>", power, "</sup></b>",
+                    " [", unitHTML, ".",
+                    word("unit.year", lg), "<sup>-1</sup>]",
+                    space,
+                    "<b>", a_normaliseC,
+                    "</b> [%.", word("unit.year", lg), "<sup>-1</sup>]")
+            
+            } else {
+                label = paste0(
+                    "<b>", aC, " x ",
+                    "10<sup>", power, "</sup></b>",
+                    " [", unitHTML, ".",
+                    word("unit.year", lg), "<sup>-1</sup>]")
+            }
+            
+        } else if (rv$type == word("ana.type.T", lg)) {
+            label = paste0(
+                "<b>", aC, " x ",
+                "10<sup>", power, "</sup></b>",
+                " [", unitHTML, ".",
+                word("unit.year", lg), "<sup>-1</sup>]")
+
+        } else if (rv$type == word("ana.type.P", lg)) {
+            label = paste0(
+                "<b>", aC, " x ",
+                "10<sup>", power, "</sup></b>",
+                " [", unitHTML, ".",
+                word("unit.year", lg), "<sup>-1</sup>]")
+        }
     }
+
     return (label)
 }

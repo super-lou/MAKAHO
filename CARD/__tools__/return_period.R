@@ -111,7 +111,14 @@ compute_LogNormal = function(X, returnPeriod) {
 
 
 ## 3. USE ____________________________________________________________
-get_Xn = function (X, returnPeriod, waterType='low') {
+get_Xn = function (X, returnPeriod, waterType='low',
+                   Date=NULL, period=NULL) {
+
+    if (!is.null(Date) & !is.null(period)) {
+        ok = period[1] <= Date & Date <= period[2]
+        X = X[ok]
+    }
+    
     if (waterType == "high") {
         res = compute_GumbelParams(X)
         a = res$a

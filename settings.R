@@ -40,20 +40,24 @@ iconLib = create_iconLib(icon_dir, resources_path)
 
 # Filename of the map tiles theme available
 theme_file = 'theme.txt'
+default_theme = "light"
+
 # Selection of the provider of map
 provider =
     'jawg'
     # 'stadia'
 
-# Token for the map 
+# Token for the map
 jawg_token =
     "hEjAgwvvpEJBpIR62stbJUflOVZXM73MoB1hQGAR69fCtoNVQiHJOKp8lVlPOdFH"
 
 # today's date
 today = Sys.Date()
 
-# Language
-language = 'FR'
+default_data = "RRSE"
+default_variable = "QA"
+default_event = "Moyennes Eaux"
+
 
 # Localisation
 lonFR = 2.213749
@@ -63,20 +67,18 @@ boundsFR = list(north=51.4677, east=17.68799,
                 south=41.52503, west=-13.24951)
 
 # Min and max zoom of the map
-minZoom = 1
+minZoom = 5
 maxZoom = 20
 
 # Name of the dictionnary to use for the translation
 dico_file = 'dico.txt'
 # Creates the dictionnary
-dico = create_dico(dico_file, resources_path)
-
-
+dico = ASHE::read_tibble(file.path(resources_path, dico_file))
 # Creates a vector of months name
-Months = c(word("ana.m01"), word("ana.m02"), word("ana.m03"),
-           word("ana.m04"), word("ana.m05"), word("ana.m06"),
-           word("ana.m07"), word("ana.m08"), word("ana.m09"),
-           word("ana.m10"), word("ana.m11"), word("ana.m12"))
+# Months = c(word("ana.m01"), word("ana.m02"), word("ana.m03"),
+           # word("ana.m04"), word("ana.m05"), word("ana.m06"),
+           # word("ana.m07"), word("ana.m08"), word("ana.m09"),
+           # word("ana.m10"), word("ana.m11"), word("ana.m12"))
 
 # Creates a vector of years
 Years = 1900:as.numeric(format(today, "%Y"))
@@ -84,6 +86,7 @@ Years = 1900:as.numeric(format(today, "%Y"))
 # Level of risk
 sigProba = c("1%", "5%", "10%")
 sigVal = as.numeric(gsub('%', '' , sigProba))/100
+default_alpha = sigVal[3]
 
 colorStep = 10
 
@@ -91,7 +94,7 @@ colorStep = 10
 # Palette = get_IPCC_Palette("MAKAHO_ground")
 Palette_void = rep("transparent", 10)
 
-exProb = 0.01
+extreme_prob = 0.01
 
 analyseMinYear = 30
 
@@ -134,7 +137,16 @@ none2Color_light = grey94COL
 none1Color_dark = grey9COL
 none2Color_dark = grey18COL
 
+color_to_switch = c(
+    "#EFD695"="#F6E8C3",
+    "#A1DCD3"="#C7EAE5",
+    "#DBBECE"="#EFE2E9",
+    "#E7BDB8"="#F5E4E2"
+)
 
+default_colorbar_choice = "show"
+default_resume_choice = "show"
+    
 N_helpPage = 15
 widthHelp = 350
 leftHelp = "51%"
@@ -153,12 +165,10 @@ CARD_dir = "MAKAHOapp"
 df_flag = NULL
 
 
-check_varSub = c("fQA[[:digit:]]+",
-                 "QA[[:digit:]]+",
+check_varSub = c("fQ[[:digit:]]+A",
+                 "Q[[:digit:]]+A",
                  "[_]season",
                  "[_]month")
 
-Var_all = get_Var2(CARD_path, CARD_dir, check_varSub)
+nStation_dev = 10
 
-
-nStation_dev = 100

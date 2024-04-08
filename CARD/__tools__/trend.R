@@ -26,25 +26,25 @@
 ## 1. MANN-KENDALL TREND TEST ________________________________________
 ## 1.1. Alpha ________________________________________________________
 get_MKalpha = function (X, level=0.1) {
-    alpha = GeneralMannKendall_WRAP(X, level=level,
-                                    timeDep_option='AR1',
-                                    DoDetrending=TRUE)$a
+    alpha = EXstat::GeneralMannKendall_WRAP(X, level=level,
+                                            timeDep_option='AR1',
+                                            DoDetrending=TRUE)$a
     return (alpha)
 }
 
 ## 1.2. Test result __________________________________________________
 get_MKH = function (X, level=0.1) {
-    H = GeneralMannKendall_WRAP(X, level=level,
-                                timeDep_option='AR1',
-                                DoDetrending=TRUE)$H
+    H = EXstat::GeneralMannKendall_WRAP(X, level=level,
+                                        timeDep_option='AR1',
+                                        DoDetrending=TRUE)$H
     return (H)    
 }
 
 ## 1.2. Test result __________________________________________________
 get_MKp = function (X, level=0.1) {
-    p = GeneralMannKendall_WRAP(X, level=level,
-                                timeDep_option='AR1',
-                                DoDetrending=TRUE)$p
+    p = EXstat::GeneralMannKendall_WRAP(X, level=level,
+                                        timeDep_option='AR1',
+                                        DoDetrending=TRUE)$p
     return (p)    
 }
 

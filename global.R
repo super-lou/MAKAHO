@@ -98,6 +98,7 @@ if (dir.exists(dev_lib_path)) {
     verbose = FALSE
 }
 
+lg = "fr"
 
 # Sourcing R files
 source('tools.R', encoding='UTF-8')
@@ -108,6 +109,8 @@ source('marker_manager.R', encoding='UTF-8')
 source('server.R', encoding='UTF-8')
 source('ui.R', encoding='UTF-8')
 
+
 # Running app localy
+options(shiny.port=3838)
 shinyApp(ui=ui, server=server)
 

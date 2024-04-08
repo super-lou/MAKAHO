@@ -64,56 +64,138 @@ approxExtrap = function(x, y, xout, method='linear', n=50, rule=2,
 }
 
 ## 1. BASEFLOW SEPARATION ____________________________________________
-BFS = function (Q, d=5, w=0.9) {
+# Wal : Gustard, A., A. Bullock, et J. M. Dixon. Low Flow Estimation in the United Kingdom. Report / Institute of Hydrology 108. Wallingford: Institute of Hydrology, 1992.
+# LH : Lyne & Hollick
+BFS = function (Q, d=5, w=0.9, a=0.925, passes=3, method='Wal') {
 
-    N = length(Q)
-    if (all(is.na(Q))) {
-        return (NA)
-    }
-    Slices = split(Q, ceiling(seq_along(Q)/d))    
-    idMinSlices = unlist(lapply(Slices, which.minNA),
-                         use.names=FALSE)
-    
-    idShift = c(0, cumsum(unlist(lapply(Slices, length),
-                                 use.names=FALSE)))
-    idShift = idShift[-length(idShift)]
-    idMin = idMinSlices + idShift
-    Qmin_k = Q[idMin]
-
-    if (length(Qmin_k) == 1) {
-        BF = rep(NA, N)
-        return (BF)
-    }
-
-    n = length(Qmin_k)
-    Qmin_kp1 = c(Qmin_k[2:n], NA)
-    Qmin_km1 = c(NA, Qmin_k[1:(n-1)])
-    test = w * Qmin_k < pmin(Qmin_km1, Qmin_kp1)
-    test[is.na(test)] = FALSE
-    idPivots = idMin[which(test)]
-    Pivots = Qmin_k[test]
-
-    nbNAid = length(idPivots[!is.na(idPivots)])
-    nbNA = length(Pivots[!is.na(Pivots)])
-    if (nbNAid >= 2 & nbNA >= 2) {
-        BF = approxExtrap(idPivots, Pivots, xout=1:N,
-                          method="linear", na.rm=TRUE)$y  
-        BF[is.na(Q)] = NA
-        BF[BF < 0] = 0
-        test = BF > Q
-        test[is.na(test)] = FALSE
-        BF[test] = Q[test]
+    if (method == "Wal") {
+        N = length(Q)
+        if (all(is.na(Q))) {
+            return (NA)
+        }
+        Slices = split(Q, ceiling(seq_along(Q)/d))    
+        idMinSlices = unlist(lapply(Slices, which.minNA),
+                             use.names=FALSE)
         
-    } else {
-        BF = rep(NA, N)
-    }    
+        idShift = c(0, cumsum(unlist(lapply(Slices, length),
+                                     use.names=FALSE)))
+        idShift = idShift[-length(idShift)]
+        idMin = idMinSlices + idShift
+        Qmin_k = Q[idMin]
+
+        if (length(Qmin_k) == 1) {
+            BF = rep(NA, N)
+            return (BF)
+        }
+
+        n = length(Qmin_k)
+        Qmin_kp1 = c(Qmin_k[2:n], NA)
+        Qmin_km1 = c(NA, Qmin_k[1:(n-1)])
+        test = w * Qmin_k < pmin(Qmin_km1, Qmin_kp1)
+        test[is.na(test)] = FALSE
+        idPivots = idMin[which(test)]
+        Pivots = Qmin_k[test]
+
+        nbNAid = length(idPivots[!is.na(idPivots)])
+        nbNA = length(Pivots[!is.na(Pivots)])
+        if (nbNAid >= 2 & nbNA >= 2) {
+            BF = approxExtrap(idPivots, Pivots, xout=1:N,
+                              method="linear", na.rm=TRUE)$y  
+            BF[is.na(Q)] = NA
+            BF[BF < 0] = 0
+            test = BF > Q
+            test[is.na(test)] = FALSE
+            BF[test] = Q[test]
+            
+        } else {
+            BF = rep(NA, N)
+        }
+        
+    } else if (method == "LH") {
+        
+        BF_LH_hide = function (SFim1, i, Q) {
+            if (!is.na(Q[i]) & !is.na(Q[i-1])) {
+                SFi = a*SFim1 + (1+a)/2 * (Q[i]-Q[i-1])
+            } else {
+                SFi = 0
+            }
+            return (SFi)
+        }
+        
+        n = length(Q)
+        Qtmp = Q
+        
+        for (p in 1:passes) {
+            if (p %% 2 == 0) {
+                Qtmp = rev(Qtmp)
+            }
+            SF = purrr::accumulate(2:n,
+                                   .f=BF_LH_hide,
+                                   Q=Qtmp, .init=0)
+            SF[SF < 0] = 0
+            Qtmp = Qtmp - SF
+            if (p %% 2 == 0) {
+                Qtmp = rev(Qtmp)
+            }
+        }
+        BF = Qtmp
+    }
     return (BF)
 }
 
-dBFS = function (Q, d=5, w=0.9) {
-    BF = BFS(Q, d=d, w=w)
+dBFS = function (Q, d=5, w=0.9, a=0.925, passes=3, method='Wal') {
+    BF = BFS(Q, d=d, w=w, a=a, passes=passes, method=method)
     dBF = Q - BF
     return (dBF)
+}
+
+
+verif_LH = function (na.omit=FALSE) {
+    library(plotly)
+    Q = ASHE::create_data_HYDRO(
+                  "/home/louis/Documents/bouleau/INRAE/data/hydrologie",
+                  "AEAG_selection", "O0362510_HYDRO_QJM.txt", "Qm3s")$Q
+    Q[c(32921, 32922, 32926)] = NA
+
+    if (na.omit) {
+        Q = Q[!is.na(Q)]
+    }
+    
+    a = 0.925
+    passes = 3
+
+    X = 1:length(Q)
+    BFme = BFS(Q, a=a, passes=passes, method='LH')
+    BFgrwat = grwat::gr_baseflow(Q, a=a, passes=passes, padding=0)
+    BFadc = adc::bf_sep_lh(Q, a=a, n=passes, reflect=0) 
+
+    plot = plot_ly()
+    plot =  add_lines(plot,
+                      x=X,
+                      y=Q,
+                      name="Q",
+                      line=list(color='blue'))
+    plot = add_lines(plot,
+                     x=X,
+                     y=BFgrwat,
+                     name="BF_LH_grwat",
+                     line=list(color='black'))
+    plot = add_lines(plot,
+                     x=X,
+                     y=BFadc,
+                     name="BF_LH_adc",
+                     line=list(color='green'))
+    plot = add_lines(plot,
+                     x=X,
+                     y=BFme,
+                     name="BR_LH_louis",
+                     line=list(color='red'))
+    plot = layout(plot,
+                  xaxis=list(title="step"),
+                  yaxis=list(title="m3s-1"))
+
+    filename = paste0("BF_LH", ".html")
+    htmlwidgets::saveWidget(plot, file=filename)
 }
 
 
@@ -130,7 +212,9 @@ dBFS = function (Q, d=5, w=0.9) {
 #' @return
 #' @export
 get_BFI = function (Q, BF, na.rm=TRUE) {
-    if (length(Q) != length(BF)) warning("'Q' and 'BF' don't have the same length!")
+    if (length(Q) != length(BF)) {
+        warning("'Q' and 'BF' don't have the same length!")
+    }
     res = sum(BF, na.rm=na.rm) / sum(Q, na.rm=na.rm)
     return (res)
 } 
@@ -160,15 +244,17 @@ get_BFM = function (BFA) {
 
 ## 4. USE ____________________________________________________________
 ### 4.1. Volumic _____________________________________________________
-compute_VolSnowmelt = function (X) {
-    BF = BFS(X)
+compute_VolSnowmelt = function (X, d=5, w=0.9, a=0.925, passes=3,
+                                method='Wal') {
+    BF = BFS(X, d=d, w=w, a=a, passes=passes, method=method)
     VolSnowmelt = sum(BF, na.rm=TRUE)*24*3600 / 10^6 # m^3.s-1 * jour / 10^6 -> hm^3
     return (VolSnowmelt)
 }
 
 ### 4.2. Temporal_____________________________________________________
-compute_tVolSnowmelt = function (X, p) {
-    BF = BFS(X)
+compute_tVolSnowmelt = function (X, p, d=5, w=0.9, a=0.925, passes=3,
+                                 method='Wal') {
+    BF = BFS(X, d=d, w=w, a=a, passes=passes, method=method)
     VolSnowmelt = cumsum(BF)
     pVolSnowmelt = VolSnowmelt / maxNA(VolSnowmelt, na.rm=TRUE)
     idp = which.minNA(abs(pVolSnowmelt - p))
@@ -176,8 +262,9 @@ compute_tVolSnowmelt = function (X, p) {
 }
 
 ### 4.3. Duration ____________________________________________________
-compute_tSnowmelt = function (X, p1, p2) {
-    BF = BFS(X)
+compute_tSnowmelt = function (X, p1, p2, d=5, w=0.9, a=0.925,
+                              passes=3, method='Wal') {
+    BF = BFS(X, d=d, w=w, a=a, passes=passes, method=method)
     VolSnowmelt = cumsum(BF)
     pVolSnowmelt = VolSnowmelt / maxNA(VolSnowmelt, na.rm=TRUE)
     idp1 = which.minNA(abs(pVolSnowmelt - p1))

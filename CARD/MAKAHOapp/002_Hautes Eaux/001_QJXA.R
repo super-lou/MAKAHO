@@ -1,15 +1,59 @@
-CARD$P.var = "QJXA"
-CARD$P.unit = "m^{3}.s^{-1}"
+#   ___                _ 
+#  / __| __ _  _ _  __| |
+# | (__ / _` || '_|/ _` |
+#  \___|\__,_||_|  \__,_|
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1
+#
+# *1   INRAE, France
+#
+# This file is part of CARD R library.
+#
+# CARD R library is free software: you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# CARD R library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with CARD R library.
+# If not, see <https://www.gnu.org/licenses/>.
+
+
+## INFO ______________________________________________________________
+### English __________________________________________________________
+CARD$P.variable_en = "QJXA"
+CARD$P.unit_en = "m^{3}.s^{-1}"
+CARD$P.name_en = "Annual maximum daily flow"
+CARD$P.description_en = ""
+CARD$P.method_en = "1. annual aggregation [Month of minimum monthly flows] - maximum"
+CARD$P.sampling_period_en = "Month of minimum monthly flows"
+CARD$P.topic_en = "Flow, High Flows, Intensity"
+
+### French ___________________________________________________________
+CARD$P.variable_fr = "QJXA"
+CARD$P.unit_fr = "m^{3}.s^{-1}"
+CARD$P.name_fr = "Débit journalier maximal annuel"
+CARD$P.description_fr = ""
+CARD$P.method_fr = "1. agrégation annuelle [Mois du minimum des débits mensuels] - maximum"
+CARD$P.sampling_period_fr = "Mois du minimum des débits mensuels"
+CARD$P.topic_fr = "Débit, Hautes Eaux, Intensité"
+
+### Global ___________________________________________________________
 CARD$P.is_date = FALSE
-CARD$P.normalize = TRUE
-CARD$P.palette = "#543005 #8C510A #BF812D #DFC27D #F6E8C3 #C7EAE5 #80CDC1 #35978F #01665E #003C30"
-CARD$P.glose = "Maximum annuel du débit journalier"
-CARD$P.topic = c("Débit", "Hautes Eaux")
-CARD$P.samplePeriod = "Mois du minimum des débits mensuels"
-    
+CARD$P.to_normalise = TRUE
+CARD$P.palette = "#193830 #2A6863 #449C93 #7ACEB9 #BCE6DB #FDDBC7 #F4A582 #D6604D #B2182B #67001F"
+
+
+## PROCESS ___________________________________________________________
+### P1 _______________________________________________________________
 CARD$P1.funct = list(QJXA=maxNA)
 CARD$P1.funct_args = list("Q", na.rm=TRUE)
-CARD$P1.timeStep = "year"
-CARD$P1.samplePeriod = list(min, list("Q", na.rm=TRUE))
+CARD$P1.time_step = "year"
+CARD$P1.sampling_period = list(min, list("Q", na.rm=TRUE))
 CARD$P1.NApct_lim = 3
 CARD$P1.NAyear_lim = 10
+

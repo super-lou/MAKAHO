@@ -25,11 +25,16 @@
 #   |_|  |_||_||_|  \___|/__/|_||_|\___/|_|\__,_| ____________________
 ## 1. THRESHOLD __________________________________________________________  
 apply_threshold = function (X, lim, where="<=", what="X",
-                            select="all") {
+                            select="all", Date=NULL, period=NULL) {
 
 
     if (all(is.na(lim))) {
         return (NA)
+    }
+
+    if (!is.null(Date) & !is.null(period)) {
+        ok = period[1] <= Date & Date <= period[2]
+        X = X[ok]
     }
     
     limRLE = rle(lim[!is.na(lim)])
@@ -109,6 +114,8 @@ apply_threshold = function (X, lim, where="<=", what="X",
             res = period_select[length(period_select)]
         } else if (what == "first") {
             res = period_select[1]
+        } else {
+            res = period_select[1] + get(what)(X[period_select]) - 1
         }
         
     } else if (select == "all") {
@@ -124,6 +131,8 @@ apply_threshold = function (X, lim, where="<=", what="X",
             res = ID[length(ID)]
         } else if (what == "first") {
             res = ID[1]
+        } else {
+            res = ID[1] + get(what)(X[ID]) - 1
         }
     }
     return (res)

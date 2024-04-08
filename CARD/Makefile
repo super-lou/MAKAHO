@@ -13,7 +13,7 @@ MAKAHO:
 
 ### 2.2. _____________________________________________________________
 MAKAHOapp:
-	./CARD_parser.R -iow -l MAKAHOapp [ Température [ TA TA_season TA_month ] Hautes_Eaux [ QJXA tQJXA QA05 QA10 fQA10 fQA05 fQA01 VCX3 dtCrue ] Moyennes_Eaux [ QA QA25 QA50 QA75 QA_season QA_month ] Basses_Eaux [ QMNA VCN3 VCN10 VCN30 QA90 QA95 QNA debutBE tVCN10 finBE dtBE vBE ] Ecoulements_Lents [ debutBF centreBF finBF dtBF vBF ] Precipitations [ RCXA1 RCXA5 dtRA20mm dtR20mm_season dtR20mm_month dtRA50mm dtR50mm_season dtR50mm_month RA RA_season RA_month RAl RAl_season RAl_month RAl_r RAs RAs_season RAs_month RAs_r dtRA01mm dtR01mm_season dtR01mm_month dtCWDA dtCWD_season dtCWD_month dtCDDA dtCDD_season dtCDD_month ] ]
+	./CARD_parser.R -iow -l MAKAHOapp [ Température [ TA TSA_season TMA_month ] Hautes_Eaux [ QJXA tQJXA VCX3 tVCX3 VCX10 tVCX10 Q01A Q05A Q10A fQ01A fQ05A fQ10A dtFlood ] Moyennes_Eaux [ QA Q75A Q50A Q25A QSA_season QMA_month ] Basses_Eaux [ VCN10 tVCN10 QNA QMNA VCN3 VCN30 Q90A Q95A Q99A startLF centerLF endLF dtLF vLF ] Débit_de_Base [ startBF centerBF endBF dtBF vBF ] Précipitations [ RCXA1 RCXA5 dtRA20mm dtRSA20mm_season dtRMA20mm_month dtRA50mm dtRSA50mm_season dtRMA50mm_month RA RSA_season RMA_month RAl RSAl_season RMAl_month RAl_ratio RAs RSAs_season RMAs_month RAs_ratio dtRA01mm dtRSA01mm_season dtRMA01mm_month dtCWDA dtCWDSA_season dtCWDMA_month dtCDDA dtCDDSA_season dtCDDMA_month ] ]              
 
 
 ## 3. ________________________________________________________________
