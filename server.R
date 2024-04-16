@@ -118,21 +118,7 @@ server = function (input, output, session) {
         startOBS$destroy()
     })
 
-
-    SeasonMonth_pattern = reactive({
-        paste0("(",
-               paste0(c(word("var.month", lg),
-                        word("var.season", lg)),
-                      collapse=")|("),
-               ")")
-    })
-
-    Months  = reactive({
-        c(word("ana.m01", lg), word("ana.m02", lg), word("ana.m03", lg),
-          word("ana.m04", lg), word("ana.m05", lg), word("ana.m06", lg),
-          word("ana.m07", lg), word("ana.m08", lg), word("ana.m09", lg),
-          word("ana.m10", lg), word("ana.m11", lg), word("ana.m12", lg))
-    })
+    
     
 ## 1. MAP ____________________________________________________________
 ### 1.1. Background __________________________________________________
@@ -1127,8 +1113,8 @@ server = function (input, output, session) {
         } else {
             variable = Variable_ALL()$variableHTML[Variable_ALL()$variable == rv$variable &
                                   Variable_ALL()$event == rv$event]
-            if (grepl(SeasonMonth_pattern(), variable)) {
-                variable = gsub(SeasonMonth_pattern(), rv$proba, variable)
+            if (grepl(SeasonMonth_pattern, variable)) {
+                variable = gsub(SeasonMonth_pattern, rv$proba, variable)
             } else {
                 variable = gsub("p", gsub("[%]", "", rv$proba), variable)
             }
@@ -1182,8 +1168,8 @@ server = function (input, output, session) {
                 name = name[sub == proba()]
                 variable = Variable()$variableHTML[id]
                 
-                if (grepl(SeasonMonth_pattern(), variable)) {
-                    variable = gsub(SeasonMonth_pattern(), proba(), variable)
+                if (grepl(SeasonMonth_pattern, variable)) {
+                    variable = gsub(SeasonMonth_pattern, proba(), variable)
                 } else {
                     variable = gsub("p", gsub("[%]", "", proba()), variable)
                 }
@@ -1278,28 +1264,28 @@ server = function (input, output, session) {
         
         if (rv$optimalMode) {
             class = "size1Slider noneSlider"
-            selected = Months()[hydroMonths[1]]
+            selected = Months[hydroMonths[1]]
 
         } else if (rv$sampleSliderMode) {
             if (rv$invertSliderMode) {
                 class = "size1Slider invertSlider"
                 if (length(hydroMonths) == 1) {
-                    selected = Months()[c(1, hydroMonths)]
+                    selected = Months[c(1, hydroMonths)]
                 } else {
-                    selected = Months()[hydroMonths]
+                    selected = Months[hydroMonths]
                 }
                 
             } else {
                 class = "size1Slider"
                 if (length(input$sampling_period_slider) == 1) {
-                    selected = Months()[c(hydroMonths, 12)]
+                    selected = Months[c(hydroMonths, 12)]
                 } else {
-                    selected = Months()[hydroMonths]
+                    selected = Months[hydroMonths]
                 }
             }           
         } else {
             class = "size1Slider soloSlider"
-            selected = Months()[hydroMonths[1]]
+            selected = Months[hydroMonths[1]]
         }
         
         output$sampling_period_slider = renderUI({
@@ -1309,7 +1295,7 @@ server = function (input, output, session) {
                    label=NULL,
                    grid=TRUE,
                    force_edges=FALSE,
-                   choices=Months(),
+                   choices=Months,
                    selected=selected)
         })
     })
@@ -1332,11 +1318,11 @@ server = function (input, output, session) {
             if (rv$sampleSliderMode & length(input$sampling_period_slider) == 2) {
                 if (rv$invertSliderMode) {
                     nameMonthStart = input$sampling_period_slider[2]
-                    idMonthStart = which(Months() == nameMonthStart)
+                    idMonthStart = which(Months == nameMonthStart)
                     monthStart = formatC(idMonthStart, width=2, flag=0)
 
                     nameMonthEnd = input$sampling_period_slider[1]
-                    idMonthEnd = which(Months() == nameMonthEnd)
+                    idMonthEnd = which(Months == nameMonthEnd)
                     monthEnd = formatC(idMonthEnd, width=2, flag=0)            
                     dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
                     
@@ -1345,11 +1331,11 @@ server = function (input, output, session) {
                     
                 } else {
                     nameMonthStart = input$sampling_period_slider[1]
-                    idMonthStart = which(Months() == nameMonthStart)
+                    idMonthStart = which(Months == nameMonthStart)
                     monthStart = formatC(idMonthStart, width=2, flag=0)
 
                     nameMonthEnd = input$sampling_period_slider[2]
-                    idMonthEnd = which(Months() == nameMonthEnd)
+                    idMonthEnd = which(Months == nameMonthEnd)
                     monthEnd = formatC(idMonthEnd, width=2, flag=0)
                     dateEnd = as.Date(paste0("1972-", monthEnd, "-01"))
 
@@ -1362,7 +1348,7 @@ server = function (input, output, session) {
                 rv$sampling_period
             } else {
                 nameMonthStart = input$sampling_period_slider[1]
-                idMonthStart = which(Months() == nameMonthStart)
+                idMonthStart = which(Months == nameMonthStart)
                 monthStart = formatC(idMonthStart, width=2, flag=0)
                 sampling_periodStart = paste0(monthStart, "-01")
                 sampling_periodStart
@@ -1619,8 +1605,8 @@ server = function (input, output, session) {
                 dataEX = res$dataEX
 
                 if (!is.null(rv$proba)) {
-                    if (grepl(SeasonMonth_pattern(), rv$variable)) {
-                        variable_tmp = gsub(SeasonMonth_pattern(),
+                    if (grepl(SeasonMonth_pattern, rv$variable)) {
+                        variable_tmp = gsub(SeasonMonth_pattern,
                                             rv$proba, rv$variable)
                         rv$variable_en =
                             metaEX$variable_en[metaEX[paste0("variable_",
@@ -2346,8 +2332,8 @@ server = function (input, output, session) {
                            Variable_ALL()$variable == rv$variable)
                 varLabel = Variable_ALL()$variableHTML[id]
                 if (!is.null(rv$proba)) {
-                    if (grepl(SeasonMonth_pattern(), rv$variable)) {
-                        varLabel = gsub(SeasonMonth_pattern(), rv$proba,
+                    if (grepl(SeasonMonth_pattern, rv$variable)) {
+                        varLabel = gsub(SeasonMonth_pattern, rv$proba,
                                         varLabel)
                     } else {
                         varLabel = gsub('p', gsub("%", "", rv$proba),

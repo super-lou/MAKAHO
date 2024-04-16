@@ -56,8 +56,24 @@ today = Sys.Date()
 
 default_data = "RRSE"
 default_variable = "QA"
-default_event = "Moyennes Eaux"
+if (lg == "fr") {
+    default_event = "Moyennes Eaux"
+} else if (lg == "en") {
+    default_event = "Mean Flows"
+}
 
+SeasonMonth_pattern =
+    paste0("(",
+           paste0(c(word("var.month", lg),
+                    word("var.season", lg)),
+                  collapse=")|("),
+           ")")
+
+Months =
+    c(word("ana.m01", lg), word("ana.m02", lg), word("ana.m03", lg),
+      word("ana.m04", lg), word("ana.m05", lg), word("ana.m06", lg),
+      word("ana.m07", lg), word("ana.m08", lg), word("ana.m09", lg),
+      word("ana.m10", lg), word("ana.m11", lg), word("ana.m12", lg))
 
 # Localisation
 lonFR = 2.213749

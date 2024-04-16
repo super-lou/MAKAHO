@@ -31,7 +31,7 @@ CARD$P.name_en = "Annual minimum of daily discharge"
 CARD$P.description_en = ""
 CARD$P.method_en = ""
 CARD$P.sampling_period_en = "Month of maximum monthly flows"
-CARD$P.topic_en = "Flow, Low Water, Intensity"
+CARD$P.topic_en = "Flow, Low Flows, Intensity"
 
 ### French ___________________________________________________________
 CARD$P.variable_fr = "QNA"

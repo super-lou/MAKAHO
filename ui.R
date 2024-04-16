@@ -23,6 +23,7 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
+
 ui = bootstrapPage(
     
     tags$head(tags$script('
@@ -59,6 +60,11 @@ ui = bootstrapPage(
         dimension[1] = window.innerHeight;
         Shiny.onInputChange("dimension", dimension);
     });')),
+
+    tags$head(tags$script(HTML('Shiny.addCustomMessageHandler("jsCode",
+                                function(message) {
+                                eval(message.value);});'))),
+
     
     ## 1. MAP ____________________________________________________________
     ### 1.1. Background __________________________________________________    
@@ -781,9 +787,6 @@ ui = bootstrapPage(
     ),
 
     downloadLink("downloadData", label=""),
-    tags$head(tags$script(HTML('Shiny.addCustomMessageHandler("jsCode",
-                                function(message) {
-                                eval(message.value);});'))),
 
     hidden(
         absolutePanel(

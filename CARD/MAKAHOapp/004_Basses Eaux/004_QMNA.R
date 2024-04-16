@@ -32,7 +32,7 @@ CARD$P.description_en = ""
 CARD$P.method_en = "1. monthly aggregation - mean
 2. annual aggregation [Month of maximum monthly flows] - minimum"
 CARD$P.sampling_period_en = "Month of maximum monthly flows"
-CARD$P.topic_en = "Flow, Low Flow, Intensity"
+CARD$P.topic_en = "Flow, Low Flows, Intensity"
 
 ### French ___________________________________________________________
 CARD$P.variable_fr = "QMNA"

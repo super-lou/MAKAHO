@@ -31,7 +31,7 @@ CARD$P.name_en = "End of Base Flow"
 CARD$P.description_en = "Date when 90 % of the annual cumulative base flow is reached"
 CARD$P.method_en = "1. annual aggregation [09-01, 08-31] - date when the sum of base flow (Wallingford) Qb corresponds to 90 % of the total sum"
 CARD$P.sampling_period_en = '09-01'
-CARD$P.topic_en = "Flow, Base Flow, Seasonality"
+CARD$P.topic_en = "Flow, Baseflow, Seasonality"
 
 ### French ___________________________________________________________
 CARD$P.variable_fr = "finQB"

@@ -31,14 +31,14 @@ library(leaflet)
 library(icons)
 library(dplyr)
 library(stringr)
-library(zoo)
+# library(zoo)
 # already ::
-library(RcppRoll)
-library(CircStats)
-library(Hmisc)
+# library(RcppRoll)
+# library(CircStats)
+# library(Hmisc)
 library(lubridate)
 library(sf)
-library(sp)
+# library(sp)
 
 
 dev_lib_path =
@@ -98,7 +98,7 @@ if (dir.exists(dev_lib_path)) {
     verbose = FALSE
 }
 
-lg = "fr"
+lg = "en"
 
 # Sourcing R files
 source('tools.R', encoding='UTF-8')
