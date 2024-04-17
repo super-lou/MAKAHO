@@ -111,6 +111,5 @@ source('ui.R', encoding='UTF-8')
 
 
 # Running app localy
-options(shiny.port=3838)
 shinyApp(ui=ui, server=server)
 
