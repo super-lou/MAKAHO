@@ -110,6 +110,6 @@ source('server.R', encoding='UTF-8')
 source('ui.R', encoding='UTF-8')
 
 
-# Running app localy
+# Running app local
 shinyApp(ui=ui, server=server)
 

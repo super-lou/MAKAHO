@@ -43,9 +43,6 @@ icon_dir = 'icons'
 # Creates icon library 
 iconLib = create_iconLib(icon_dir, resources_path)
 
-message("aaa")
-message(iconLib)
-
 # Filename of the map tiles theme available
 theme_file = 'theme.txt'
 default_theme = "light"
