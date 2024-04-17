@@ -33,6 +33,11 @@ resources_path = 'resources'
 INRAElogo_path = file.path(resources_path,
                            "logo", "Logo-INRAE_Transparent.png")
 
+# Name of the dictionnary to use for the translation
+dico_file = 'dico.txt'
+# Creates the dictionnary
+dico = ASHE::read_tibble(file.path(resources_path, dico_file))
+
 # Icon directory
 icon_dir = 'icons'
 # Creates icon library 
@@ -85,16 +90,6 @@ boundsFR = list(north=51.4677, east=17.68799,
 # Min and max zoom of the map
 minZoom = 5
 maxZoom = 20
-
-# Name of the dictionnary to use for the translation
-dico_file = 'dico.txt'
-# Creates the dictionnary
-dico = ASHE::read_tibble(file.path(resources_path, dico_file))
-# Creates a vector of months name
-# Months = c(word("ana.m01"), word("ana.m02"), word("ana.m03"),
-           # word("ana.m04"), word("ana.m05"), word("ana.m06"),
-           # word("ana.m07"), word("ana.m08"), word("ana.m09"),
-           # word("ana.m10"), word("ana.m11"), word("ana.m12"))
 
 # Creates a vector of years
 Years = 1900:as.numeric(format(today, "%Y"))
