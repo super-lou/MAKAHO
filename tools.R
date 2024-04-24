@@ -266,27 +266,29 @@ Button = function (inputId, label=NULL, icon_name=NULL,
 
     if (is.null(tooltip)) {
         actionButton(inputId=inputId,
-                     label=div(label,
+                     label=div(icon_name,
+                               label,
                                style="float:right;
                                           padding-left:0.2rem;"),
                      icon=NULL,
                      width=width,
-                     img(icon_name, align="right",
-                         style="text-align: center;
-                                display: flex; align-items: center;"),
+                     # img=img(icon_name, align="right",
+                         # style="text-align: center;
+                                # display: flex; align-items: center;"),
                      ...)
     } else {
         div(class="Tooltip bunch",
             HTML(paste0(
                 actionButton(inputId=inputId,
-                             label=div(label,
+                             label=div(icon_name,
+                                       label,
                                        style="float:right;
                                           padding-left:0.2rem;"),
                              icon=NULL,
                              width=width,
-                             img(icon_name, align="right",
-                                 style="text-align: center;
-                                        display: flex; align-items: center;"),
+                             # img=img(icon_name, align="right",
+                                 # style="text-align: center;
+                                        # display: flex; align-items: center;"),
                              ...),
                 '<span class="Tooltiptext">', tooltip, '</span>')))
     }

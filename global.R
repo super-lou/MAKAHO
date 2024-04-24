@@ -98,7 +98,7 @@ if (dir.exists(dev_lib_path)) {
     verbose = FALSE
 }
 
-lg = "en"
+lg = "fr"
 
 # Sourcing R files
 source('tools.R', encoding='UTF-8')

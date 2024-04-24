@@ -1632,13 +1632,11 @@ server = function (input, output, session) {
 
                 if (verbose) print("process_trend")
 
-
-
-                
                 trendEX = process_trend(
                     dataEX, metaEX,
                     extreme_take_not_signif_into_account=TRUE,
                     MK_level=as.numeric(alpha()),
+                    time_dependency_option="AR1",
                     period_trend=rv$period,
                     extreme_prob=extreme_prob,
                     show_advance_stat=TRUE,
