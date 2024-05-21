@@ -83,6 +83,7 @@ server = function (input, output, session) {
                         trendEX=NULL,
                         period=NULL,
                         sampling_period=NULL,
+                        alpha=NULL,
                         type=NULL,
                         variable=NULL,
                         variable_en=FALSE,
@@ -109,7 +110,8 @@ server = function (input, output, session) {
         showElement(id='ana_panelButton')
         showElement(id='theme_panelButton')
         showElement(id='photo_panelButton')
-        showElement(id='download_panelButton')
+        showElement(id='download_data_panelButton')
+        showElement(id='download_sheet_panelButton')
         showElement(id='help_panelButton')
         rv$startHelp = TRUE
         startOBS$destroy()
@@ -678,7 +680,7 @@ server = function (input, output, session) {
             hide(id='theme_panel')
             hide(id='info_panel')
             hide(id='photo_bar')
-            hide(id='download_bar')
+            hide(id='download_sheet_bar')
             hide(id='poly_bar')
             hide(id='dlClick_bar')
             showElement(id='click_bar')
@@ -719,7 +721,7 @@ server = function (input, output, session) {
                 hide(id='theme_panel')
                 hide(id='info_panel')
                 hide(id='photo_bar')
-                hide(id='download_bar')
+                hide(id='download_sheet_bar')
                 hide(id='click_bar')
                 hide(id='dlClick_bar')
                 showElement(id='poly_bar')
@@ -1619,6 +1621,7 @@ server = function (input, output, session) {
             rv$period = period()
             rv$proba = proba()
             rv$sampling_period = sampling_period()
+            rv$alpha = alpha()
             rv$Palette = Palette()
 
 
@@ -2541,68 +2544,6 @@ server = function (input, output, session) {
         hide(id='plot_panel')
     })
 
-### 8.5. Download data _______________________________________________
-    observeEvent(input$downloadData_button, {
-        if (verbose) print("downloadData_button")
-        outdir = file.path(computer_data_path, "tmp")
-        if (file.exists(outdir)) {
-            unlink("outdir", recursive=TRUE)
-        }
-        dir.create(outdir)
-        outfile = paste0(rv$codePlot, "_Q", ".txt")
-        outpath = file.path(outdir, outfile)
-        data_code = rv$data[rv$data$Code == rv$codePlot,]
-        write.table(data_code, outpath, sep=";", row.names=FALSE)
-        
-        output$downloadData = downloadHandler(
-            filename = function () {
-                outfile
-            },
-            content = function (file) {
-                from = outpath
-                file.copy(from, file)
-            }
-        )
-        jsinject = "setTimeout(function()
-                        {window.open($('#downloadData')
-                        .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
-                                  list(value=jsinject))
-    })
-
-    observeEvent(input$downloadDataEx_button, {
-        if (verbose) print("downloadDataEx_button")
-        outdir = file.path(computer_data_path, "tmp")
-        if (file.exists(outdir)) {
-            unlink("outdir", recursive=TRUE)
-        }
-        dir.create(outdir)
-        if (is.null(rv$proba)) {
-            variable = rv$variable
-        } else {
-            variable = gsub('p', rv$proba ,rv$variable)
-        }
-        outfile = paste0(rv$codePlot, "_", variable, ".txt")
-        outpath = file.path(outdir, outfile)
-        dataEX_code = rv$dataEX[rv$dataEX$Code == rv$codePlot,]
-        write.table(dataEX_code, outpath, sep=";", row.names=FALSE)
-        
-        output$downloadData = downloadHandler(
-            filename = function () {
-                outfile
-            },
-            content = function (file) {
-                from = outpath
-                file.copy(from, file)
-            }
-        )
-        jsinject = "setTimeout(function()
-                        {window.open($('#downloadData')
-                        .attr('href'))}, 100);"
-        session$sendCustomMessage(type='jsCode',
-                                  list(value=jsinject))
-    })
-
     
 ## 9. COLORBAR PLOT __________________________________________________
     observeEvent({
@@ -2899,7 +2840,8 @@ server = function (input, output, session) {
         hide(id="ana_panelButton")
         hide(id="theme_panelButton")
         hide(id="photo_panelButton")
-        hide(id="download_panelButton")
+        hide(id="download_data_panelButton")
+        hide(id="download_sheet_panelButton")
         hide(id="help_panelButton")
         hide(id="actualise_panelButton")
         
@@ -2916,7 +2858,8 @@ server = function (input, output, session) {
             showElement(id="ana_panelButton")
             showElement(id="theme_panelButton")
             showElement(id="photo_panelButton")
-            showElement(id="download_panelButton")
+            showElement(id="download_data_panelButton")
+            showElement(id="download_sheet_panelButton")
             showElement(id="help_panelButton")
             # showElement(id="actualise_panelButton")
             rv$photoMode = FALSE
@@ -2925,9 +2868,111 @@ server = function (input, output, session) {
     
 
 ## 13. DOWNLOAD ______________________________________________________
-### 13.0. show/ hide _________________________________________________
-    observeEvent(input$download_button, {
-        toggleOnly(id="download_bar")
+
+    
+
+
+
+
+### 13.1. Data _______________________________________________
+    observeEvent(input$download_data_button, {
+        if (verbose) print("downloadData_button")
+        outdir = file.path(computer_data_path, "tmp")
+        if (file.exists(outdir)) {
+            unlink(outdir, recursive=TRUE)
+        }
+        dir.create(outdir)
+        
+        files = c("data.csv", "meta.csv", "metaEX.csv",
+                  "dataEX.csv", "trendEX.csv")
+        ASHE::write_tibble(rv$data, filedir=outdir,
+                           filename="data.csv")
+        ASHE::write_tibble(rv$meta, filedir=outdir,
+                           filename="meta.csv")
+        ASHE::write_tibble(rv$metaEX, filedir=outdir,
+                           filename="metaEX.csv")
+        ASHE::write_tibble(rv$dataEX, filedir=outdir,
+                           filename="dataEX.csv")
+        tmp = rv$trendEX
+        tmp$period_trend = sapply(tmp$period_trend, paste0, collapse=" ")
+        ASHE::write_tibble(tmp, filedir=outdir,
+                           filename="trendEX.csv")
+
+        readme = readLines(readme_path)
+        sep = " -> "
+        readme = c(readme,
+                   paste0(word("ana.data", lg), sep, rv$data_name))
+        readme = c(readme,
+                   paste0(word("ana.type", lg), sep, rv$type))
+
+        if (rv$type == word("ana.type.T", lg)) {
+            event_name = word("ana.temperature", lg)
+        } else if (rv$type == word("ana.type.Q", lg)) {
+            event_name = word("ana.regime", lg)
+        } else if (rv$type == word("ana.type.P", lg)) {
+            event_name = word("ana.pluviometrie", lg)
+        }
+        readme = c(readme,
+                   paste0(event_name, sep, rv$event))
+        readme = c(readme,
+                   paste0(word('ana.var', lg), sep, rv$variable))
+
+        if (grepl(word("var.month", lg), rv$variable)) {
+            proba_name = word("ana.month", lg)
+        } else if (grepl(word("var.season", lg), rv$variable)) {
+            proba_name = word("ana.season", lg)
+        } else {
+            proba_name = word("ana.proba", lg)
+        }
+        readme = c(readme,
+                   paste0(proba_name, sep, rv$proba))
+
+        if (rv$optimalMode_act) {
+            sampling_period_overwrite = word("ana.optimal.slider", lg)
+        } else {
+            sampling_period_overwrite = paste0(rv$sampling_period,
+                                               collapse=" ")
+        }
+        
+        readme = c(readme,
+                   paste0(word('ana.dm', lg), sep,
+                               sampling_period_overwrite))
+        readme = c(readme,
+                   paste0(word('ana.dy', lg), sep,
+                          paste0(rv$period, collapse=" ")))
+        readme = c(readme,
+                   paste0(word('ana.sig', lg), sep, rv$alpha))
+        
+        writeLines(readme, readme_tmp_path)
+        
+        outfile = "MAKAHO_analyse.zip"
+        outpath = file.path(outdir, outfile)
+        paths = file.path(outdir, files)
+        paths = c(paths, licence_path, readme_tmp_path)
+        zip(zipfile=outpath, files=paths, flags = '-r9Xj')
+        
+        output$downloadData = downloadHandler(
+            filename = function () {
+                outfile
+            },
+            content = function (file) {
+                from = outpath
+                file.copy(from, file)
+            }
+        )
+        jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+        session$sendCustomMessage(type='jsCode',
+                                  list(value=jsinject))
+    })
+    
+
+
+
+    ### 13.0. show/ hide _________________________________________________
+    observeEvent(input$download_sheet_button, {
+        toggleOnly(id="download_sheet_bar")
         deselect_mode(session, rv)
     })
 
@@ -2937,7 +2982,7 @@ server = function (input, output, session) {
             hide(id='theme_panel')
             hide(id='info_panel')
             hide(id='photo_bar')
-            hide(id='download_bar')
+            hide(id='download_sheet_bar')
             hide(id='click_bar')
             hide(id='poly_bar')
             showElement(id='dlClick_bar')
@@ -2946,7 +2991,7 @@ server = function (input, output, session) {
             if (rv$dlClickMode) {
                 deselect_mode(session, rv)
                 hide(id='dlClick_bar')
-                showElement(id='download_bar')
+                showElement(id='download_sheet_bar')
             }
         }
     })
@@ -2954,7 +2999,7 @@ server = function (input, output, session) {
     observeEvent(input$dlClickOk_button, {
         deselect_mode(session, rv)
         hide(id='dlClick_bar')
-        showElement(id='download_bar')
+        showElement(id='download_sheet_bar')
     })
 
 ### 13.1. Click ______________________________________________________
@@ -2983,7 +3028,7 @@ server = function (input, output, session) {
         
         outdir = file.path(computer_data_path, "tmp")
         if (file.exists(outdir)) {
-            unlink("outdir", recursive=TRUE)
+            unlink(outdir, recursive=TRUE)
         }
         dir.create(outdir)
 
@@ -3109,6 +3154,7 @@ server = function (input, output, session) {
     observePage(input, rv, n=13, N=N_helpPage)
     observePage(input, rv, n=14, N=N_helpPage)
     observePage(input, rv, n=15, N=N_helpPage)
+    observePage(input, rv, n=16, N=N_helpPage)
 
 ### 14.3. Update page ________________________________________________
     observeEvent({
@@ -3181,12 +3227,17 @@ server = function (input, output, session) {
 
             if (rv$helpPage == 14) {
                 if (rv$width > width_lim) {
-                    showOnly(id="download_bar")
+                    showOnly(id="download_sheet_bar")
                 }
-                maskOnly(id="maskDownload_panelButton")
+                maskOnly(id="maskDownload_sheet_panelButton")
             }
 
             if (rv$helpPage == 15) {
+                hideAll()
+                maskOnly(id="maskDownload_data_panelButton")
+            }
+
+            if (rv$helpPage == 16) {
                 if (rv$width > width_lim) {
                     showOnly(id="info_panel")
                 }

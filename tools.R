@@ -538,7 +538,8 @@ IdList_mask = c("maskZoom_panelButton",
                 "maskInfo_panelButton",
                 "maskPhoto_panelButton",
                 "opacPhoto_panelButton",
-                "maskDownload_panelButton")
+                "maskDownload_data_panelButton",
+                "maskDownload_sheet_panelButton")
 
 maskAll = function (except=NULL, None=FALSE,
                     IdList=IdList_mask) {
@@ -573,7 +574,7 @@ IdList_panel = c('ana_panel',
                  'theme_panel',
                  'info_panel',
                  'photo_bar',
-                 'download_bar',
+                 'download_sheet_bar',
                  'click_bar',
                  'dlClick_bar',
                  'poly_bar')

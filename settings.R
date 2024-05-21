@@ -70,6 +70,14 @@ if (lg == "fr") {
     default_event = "Mean Flows"
 }
 
+licence_file = "ETALAB-Licence-Ouverte-v2.0.pdf"
+licence_path = file.path(computer_data_path,
+                         licence_file)
+readme_file = "README"
+readme_path = file.path(computer_data_path,
+                        readme_file)
+readme_tmp_path = file.path(computer_data_path,
+                            "tmp", readme_file)
 
 ### 3.2. Info about variable _________________________________________
 check_varSub = c("fQ[[:digit:]]+A",
@@ -173,7 +181,7 @@ default_resume_choice = "show"
 
 
 ### 3.7. Help option _________________________________________________
-N_helpPage = 15
+N_helpPage = 16
 widthHelp = 350
 leftHelp = "51%"
 topHelp = "45%"
@@ -187,4 +195,4 @@ CARD_dir = "MAKAHOapp"
 
 
 ### 3.9. Dev _________________________________________________________
-nStation_dev = 10
+nStation_dev = 2

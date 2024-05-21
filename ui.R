@@ -235,29 +235,29 @@ ui = bootstrapPage(
                               left: 0.15rem;",
                        inputId='closePlot_button',
                        label=NULL,
-                       icon_name=iconLib$close_black)),
+                       icon_name=iconLib$close_black))
             
-            div(Button(class="Button-icon",
-                       style="position: absolute;
-                              top: 26%;
-                              height: 85px;
-                              left: 15px; 
-                              width: 28px;
-                              transform: translate(0, -50%);",
-                       inputId='downloadData_button',
-                       label=NULL,
-                       icon_name=NULL)),
+            # div(Button(class="Button-icon",
+            #            style="position: absolute;
+            #                   top: 26%;
+            #                   height: 85px;
+            #                   left: 15px; 
+            #                   width: 28px;
+            #                   transform: translate(0, -50%);",
+            #            inputId='graph_downloadData_button',
+            #            label=NULL,
+            #            icon_name=NULL)),
             
-            div(Button(class="Button-icon",
-                       style="position: absolute;
-                              top: 63.5%; 
-                              height: 115px;
-                              left: 15px; 
-                              width: 28px;
-                              transform: translate(0, -50%);",
-                       inputId='downloadDataEx_button',
-                       label=NULL,
-                       icon_name=NULL))
+            # div(Button(class="Button-icon",
+            #            style="position: absolute;
+            #                   top: 63.5%; 
+            #                   height: 115px;
+            #                   left: 15px; 
+            #                   width: 28px;
+            #                   transform: translate(0, -50%);",
+            #            inputId='graph_downloadDataEx_button',
+            #            label=NULL,
+            #            icon_name=NULL))
         )
     ),
 
@@ -776,7 +776,7 @@ ui = bootstrapPage(
 ## 9. SCREENSHOT _____________________________________________________
     hidden(
         fixedPanel(id='photo_panelButton',
-                   right=45, top=10,
+                   right=10, top=10,
                    width="auto", height="auto",
                    Button(class="SmallButton-menu",
                           inputId='photo_button',
@@ -787,24 +787,37 @@ ui = bootstrapPage(
     ),
     
 ## 10. DOWNLOAD ______________________________________________________
+        downloadLink("downloadData", label=""),
 ### 10.1. Button _____________________________________________________
     hidden(
-        fixedPanel(id='download_panelButton',
-                   right=10, top=10,
+        fixedPanel(id='download_data_panelButton',
+                   right=90, top=10,
                    width="auto", height="auto",
+
                    Button(class="SmallButton-menu",
-                          inputId='download_button',
+                          inputId='download_data_button',
                           label=NULL,
                           icon_name=iconLib$download_white,
-                          tooltip=word("tt.d.title", lg))
+                          tooltip=word("tt.d.data.title", lg))
                    )
     ),
-    downloadLink("downloadData", label=""),
+    hidden(
+        fixedPanel(id='download_sheet_panelButton',
+                   right=50, top=10,
+                   width="auto", height="auto",
+
+                   Button(class="SmallButton-menu",
+                          inputId='download_sheet_button',
+                          label=NULL,
+                          icon_name=iconLib$description_white,
+                          tooltip=word("tt.d.sheet.title", lg))
+                   )
+    ),
 
 ### 10.2. Panel ______________________________________________________
     hidden(
         absolutePanel(
-            id='download_bar',
+            id='download_sheet_bar',
             class="Panel card-bar-r",
             fixed=TRUE,
             width="auto", height="auto",
@@ -824,21 +837,21 @@ ui = bootstrapPage(
                                  label=word("d.click", lg),
                                  icon_name=iconLib$click_white,
                                  selected=FALSE,
-                                 tooltip=word("tt.d.click", lg)),
+                                 tooltip=word("tt.d.sheet.click", lg)),
 
 #### 10.2.2. selection _______________________________________________
                     Button(class="Button",
                            inputId="dlSelec_button",
                            label=word("d.selec", lg),
                            icon_name=iconLib$scatter_plot_white,
-                           tooltip=word("tt.d.selec", lg)),
+                           tooltip=word("tt.d.sheet.selec", lg)),
 
 #### 10.2.3. all _____________________________________________________
                     Button(class="Button",
                            inputId="dlAll_button",
                            label=word("d.all", lg),
                            icon_name=iconLib$check_circle_white,
-                           tooltip=word("tt.d.all", lg))))
+                           tooltip=word("tt.d.sheet.all", lg))))
         )
     ),
 
@@ -912,7 +925,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="maskPhoto_panelButton",
-                   right=45, top=10,
+                   right=10, top=10,
                    width="auto", height="auto",
                    Button(class="maskSmallButton-menu",
                           inputId='mask',
@@ -928,8 +941,19 @@ ui = bootstrapPage(
     ),
 
     hidden(
-        fixedPanel(id="maskDownload_panelButton",
-                   right=10, top=10,
+        fixedPanel(id="maskDownload_data_panelButton",
+                   right=90, top=10,
+                   width="auto", height="auto",
+                   Button(class="maskSmallButton-menu",
+                          inputId='mask',
+                          label=NULL,
+                          icon_name=iconLib$none)
+                   )
+    ),
+
+    hidden(
+        fixedPanel(id="maskDownload_sheet_panelButton",
+                   right=50, top=10,
                    width="auto", height="auto",
                    Button(class="maskSmallButton-menu",
                           inputId='mask',
@@ -1189,7 +1213,8 @@ ui = bootstrapPage(
     ),
 
 #### 11.2.14. page 14 ________________________________________________
-    page_circle(n=14, leftBase=leftHelp,
+    page_circle(n=14,
+                leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
                 dh=dhNavHelp, tooltip=word("tt.help.p14", lg)),
@@ -1218,11 +1243,30 @@ ui = bootstrapPage(
         fixedPanel(id="help15_panel",
                    class="Panel card-text",
                    left=leftHelp, top=topHelp,
+                   width="auto", height="auto",
+                   
+                   h1(HTML(word("help.p15.s1", lg))),
+                   p(HTML(word("help.p15.p1", lg))),
+                   p(HTML(word("help.p15.p2", lg)))
+                   )
+    ),
+    
+#### 11.2.16. page 16 ________________________________________________
+    page_circle(n=16,
+                leftBase=leftHelp,
+                widthHelp=widthHelp,
+                bottom=bottomNavHelp,
+                dh=dhNavHelp, tooltip=word("tt.help.p16", lg)),
+    
+    hidden(
+        fixedPanel(id="help16_panel",
+                   class="Panel card-text",
+                   left=leftHelp, top=topHelp,
                    width="auto",
                    height="auto",
                    
-                   h1(HTML(word("help.p15.s1", lg))),
-                   p(HTML(word("help.p15.p1", lg)))
+                   h1(HTML(word("help.p16.s1", lg))),
+                   p(HTML(word("help.p16.p1", lg)))
                    )
     ),
 
@@ -1265,7 +1309,7 @@ ui = bootstrapPage(
                    left=paste0("calc(", leftHelp,
                                " - ", 0.5*widthHelp, "px",
                                " + ", dhNavHelp*(N_helpPage+1), "px)"),
-                   bottom=bottomNavHelp,
+                   bottom=bottomNavHelp+1,
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           style="padding-left: 0.5rem !important;
