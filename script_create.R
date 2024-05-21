@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -23,16 +23,17 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-
+## 0. LIBRARY _________________________________________________________
 library(stringr)
 library(dplyr)
 
-# Path to the data
+
+## 1. PATH ___________________________________________________________
 computer_data_path = '/home/louis/Documents/bouleau/INRAE/data/'
 MAKAHO_data_path = "data"
 
 
-## RRSE
+## 2. RRSE ___________________________________________________________
 data_RRSE_path = file.path(MAKAHO_data_path, 'fst', 'data_RRSE.fst')
 meta_RRSE_path = file.path(MAKAHO_data_path, 'fst', 'meta_RRSE.fst')
 if (!file.exists(data_RRSE_path) | !file.exists(meta_RRSE_path)) {
@@ -52,7 +53,8 @@ if (!file.exists(data_RRSE_path) | !file.exists(meta_RRSE_path)) {
                        filename='meta_RRSE.fst')
 }
 
-## Explore2
+
+## 3. Explore2 _______________________________________________________
 NC_path = "/home/louis/Documents/bouleau/INRAE/data/Explore2/hydrologie/diagnostic/SMASH_20230303.nc"
 tools_path = "/home/louis/Documents/bouleau/INRAE/project/Explore2_project/Explore2_toolbox/tools.R"
 codes_hydro_selection_path = file.path(computer_data_path, "Explore2", "hydrologie", "Selection_points_simulation_V20230510.txt")

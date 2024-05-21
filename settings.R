@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -23,6 +23,7 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
+## 1. PATH AND RESOURCES______________________________________________
 # Path to the data
 computer_data_path = 'data'
 
@@ -36,7 +37,7 @@ INRAElogo_path = file.path(resources_path,
 # Name of the dictionnary to use for the translation
 dico_file = 'dico.txt'
 # Creates the dictionnary
-dico = ASHE::read_tibble(file.path(resources_path, dico_file))
+dico = ASHE::read_tibble(file.path(resources_path, dico_file), sep=";")
 
 # Icon directory
 icon_dir = 'icons'
@@ -47,6 +48,8 @@ iconLib = create_iconLib(icon_dir, resources_path)
 theme_file = 'theme.txt'
 default_theme = "light"
 
+
+## 2. MAP PROVIDER ___________________________________________________
 # Selection of the provider of map
 provider =
     'jawg'
@@ -56,9 +59,9 @@ provider =
 jawg_token =
     "hEjAgwvvpEJBpIR62stbJUflOVZXM73MoB1hQGAR69fCtoNVQiHJOKp8lVlPOdFH"
 
-# today's date
-today = Sys.Date()
 
+## 3. DEFAULT PARAMETERS _____________________________________________
+### 3.1. Dataset and variable ________________________________________
 default_data = "RRSE"
 default_variable = "QA"
 if (lg == "fr") {
@@ -66,6 +69,13 @@ if (lg == "fr") {
 } else if (lg == "en") {
     default_event = "Mean Flows"
 }
+
+
+### 3.2. Info about variable _________________________________________
+check_varSub = c("fQ[[:digit:]]+A",
+                 "Q[[:digit:]]+A",
+                 "[_]season",
+                 "[_]month")
 
 SeasonMonth_pattern =
     paste0("(",
@@ -80,7 +90,8 @@ Months =
       word("ana.m07", lg), word("ana.m08", lg), word("ana.m09", lg),
       word("ana.m10", lg), word("ana.m11", lg), word("ana.m12", lg))
 
-# Localisation
+
+### 3.3. Localisation and map ________________________________________
 lonFR = 2.213749
 latFR = 46.727638
 zoomFR = 6
@@ -91,22 +102,24 @@ boundsFR = list(north=51.4677, east=17.68799,
 minZoom = 5
 maxZoom = 20
 
+
+### 3.4. Time and date _______________________________________________
+# today's date
+today = Sys.Date()
 # Creates a vector of years
 Years = 1900:as.numeric(format(today, "%Y"))
 
+
+### 3.5. Statistical option __________________________________________
 # Level of risk
 sigProba = c("1%", "5%", "10%")
 sigVal = as.numeric(gsub('%', '' , sigProba))/100
 default_alpha = sigVal[3]
 
+
+### 3.6. Plotting parameters _________________________________________
 colorStep = 10
-
-# colorStep = 10
-# Palette = get_IPCC_Palette("MAKAHO_ground")
-Palette_void = rep("transparent", 10)
-
 extreme_prob = 0.01
-
 analyseMinYear = 30
 
 # Personnal colors
@@ -157,7 +170,9 @@ color_to_switch = c(
 
 default_colorbar_choice = "show"
 default_resume_choice = "show"
-    
+
+
+### 3.7. Help option _________________________________________________
 N_helpPage = 15
 widthHelp = 350
 leftHelp = "51%"
@@ -166,20 +181,10 @@ bottomNavHelp = 45
 dhNavHelp = 21
 
 
-## ASHE
-to_do = c('station_trend_analyse')
-filedir = "RRSE"
-trend_period = list(c(1, 2))
-
+### 3.8. CARD parameters _____________________________________________
 CARD_path = "CARD"
 CARD_dir = "MAKAHOapp"
-df_flag = NULL
 
 
-check_varSub = c("fQ[[:digit:]]+A",
-                 "Q[[:digit:]]+A",
-                 "[_]season",
-                 "[_]month")
-
+### 3.9. Dev _________________________________________________________
 nStation_dev = 10
-

@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -23,7 +23,7 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-
+## 0. META ___________________________________________________________
 ui = bootstrapPage(
     
     tags$head(tags$script('
@@ -66,8 +66,7 @@ ui = bootstrapPage(
                                 eval(message.value);});'))),
 
     
-    ## 1. MAP ____________________________________________________________
-    ### 1.1. Background __________________________________________________    
+## 1. MAP ____________________________________________________________
     tags$style(type="text/css",
                "html, body {width: 100%; height: 100%}"),
     tags$head(tags$style(
@@ -92,7 +91,8 @@ ui = bootstrapPage(
              ),
 
 
-    ### 3.5. Palette panel _______________________________________________
+## 2. FLOATING PANEL _________________________________________________
+### 1.1. Palette _____________________________________________________
     hidden(
         absolutePanel(
             id="colorbar_panel",
@@ -113,7 +113,7 @@ ui = bootstrapPage(
         )
     ),
 
-    ### 3.6. Resume panel ________________________________________________
+### 1.2. Resume ______________________________________________________
     hidden(
         absolutePanel(
             id='resume_panel',
@@ -160,7 +160,7 @@ ui = bootstrapPage(
     ),
     
 
-    ## 6. HELP ___________________________________________________________
+## 3. HELP BACKGROUND ________________________________________________
     hidden(
         fixedPanel(id='help_panelButton',
                    right=105, bottom=10,
@@ -183,7 +183,7 @@ ui = bootstrapPage(
     ),
     
 
-    ### 1.2. Zoom ________________________________________________________
+## 4. ZOOM ___________________________________________________________
     hidden(
         fixedPanel(id="zoom_panelButton",
                    hidden(
@@ -213,8 +213,8 @@ ui = bootstrapPage(
     ),
 
     
-    ## 2. ANALYSE ________________________________________________________
-    ### 2.7. Trend plot __________________________________________________
+## 5. ANALYSE ________________________________________________________
+### 5.1. Trend plot __________________________________________________
     hidden(
         absolutePanel(
             id='plot_panel',
@@ -261,7 +261,7 @@ ui = bootstrapPage(
         )
     ),
 
-    ### 2.1. Panel button ________________________________________________
+### 5.2. Panel button ________________________________________________
     hidden(
         fixedPanel(id='ana_panelButton',
                    left=10, bottom=10,
@@ -276,7 +276,7 @@ ui = bootstrapPage(
                    )
     ),
     
-    ### 2.2. Panel _______________________________________________________
+### 5.3. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='ana_panel',
@@ -285,7 +285,7 @@ ui = bootstrapPage(
             height="auto",
             left=10, bottom=49,
 
-            ### 3.1. Panel button ________________________________________________
+#### 5.3.1. customize button _________________________________________
             div(style="position: absolute;
                        bottom: 0.6rem;
                        right: 0.6rem;",
@@ -295,7 +295,7 @@ ui = bootstrapPage(
                        icon_name=iconLib$settings_white,
                        tooltip=word("tt.c.title", lg))),
 
-            ### 2.2. Panel _______________________________________________________
+#### 5.3.2. info _____________________________________________________
             div(class="Row",
                 htmlOutput("dataHTML_ana")),
 
@@ -307,7 +307,8 @@ ui = bootstrapPage(
                 div(class="sep"),
                 div(class="bunch",
                     textOutput("period_ana"))),
-            
+
+#### 5.3.3. dataset __________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -337,7 +338,7 @@ ui = bootstrapPage(
             ######
             
             
-            ### 2.3. Station selection ___________________________________________
+#### 5.3.4. station __________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -388,8 +389,7 @@ ui = bootstrapPage(
                                    choices=NULL),
                     )),
 
-            ### 2.4. Variable selection __________________________________________
-
+#### 5.3.5. variable _________________________________________________
             hidden(
                 div(class="Row", id="type_row",
                     div(class="row-label",
@@ -445,7 +445,7 @@ ui = bootstrapPage(
                                     choices=FALSE,
                                     selected=NULL)))),
 
-            ### 2.5. Period selection ____________________________________________
+#### 5.3.5. period ___________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -499,7 +499,7 @@ ui = bootstrapPage(
                     div(style="margin-left: 8px !important;",
                         uiOutput("dateYear_slider")))),
 
-            ### 2.6. Statistical option ______________________________________________
+#### 5.3.6. statistical option _______________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(
@@ -519,7 +519,7 @@ ui = bootstrapPage(
         )
     ),
 
-    #### 2.3.1. Click bar ________________________________________________
+### 5.4. Click selection bar _________________________________________
     hidden(
         absolutePanel(
             id='click_bar',
@@ -538,7 +538,7 @@ ui = bootstrapPage(
             )
     ),
 
-    #### 2.3.2. Poly bar _________________________________________________
+### 5.5. Poly selection bar __________________________________________
     hidden(
         absolutePanel(
             id='poly_bar',
@@ -571,10 +571,10 @@ ui = bootstrapPage(
     ),
 
 
-    ### 2.7. Actualise button ____________________________________________
+## 6. ACTUALISE ______________________________________________________
     hidden(
         fixedPanel(id='actualise_panelButton',
-                   left=124, bottom=11,
+                   left=135, bottom=11,
                    width="auto", height="auto",
                    Button(class="SmallButton-actualise",
                           inputId='actualise_button',
@@ -585,8 +585,8 @@ ui = bootstrapPage(
     ),
     
 
-    ## 3. CUSTOMIZATION __________________________________________________
-    ### 3.2. Panel _______________________________________________________
+## 7. CUSTOMIZATION __________________________________________________
+### 7.1. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='theme_panel',
@@ -604,7 +604,7 @@ ui = bootstrapPage(
                        label=NULL,
                        icon_name=iconLib$close_white)),
 
-            ### 3.3. Palette button ______________________________________________
+#### 7.1.1. colorbar _________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -621,7 +621,7 @@ ui = bootstrapPage(
                                     list("show", "none"),
                                 selected=default_colorbar_choice))),
 
-            ### 3.4. Resume button ______________________________________________
+#### 7.1.2. resume ___________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -638,7 +638,7 @@ ui = bootstrapPage(
                                     list("show", "none"),
                                 selected=default_resume_choice))),
 
-            ### 3.2. Background theme ____________________________________________
+#### 7.1.3. map background theme _____________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(
@@ -669,8 +669,8 @@ ui = bootstrapPage(
     ),
 
     
-    ## 4. INFO ___________________________________________________________
-    ### 4.1. Panel button ________________________________________________ 
+## 8. INFO ___________________________________________________________
+### 8.1. Button ______________________________________________________
     fixedPanel(id="info_panelButton",
                right=10, bottom=4,
                width="auto", height="auto",
@@ -681,7 +681,7 @@ ui = bootstrapPage(
                       tooltip=word("tt.i.title", lg))
                ),
     
-    ### 4.2. Panel _______________________________________________________
+### 8.2. Panel _______________________________________________________
     hidden(
         absolutePanel(
             id='info_panel',
@@ -690,7 +690,7 @@ ui = bootstrapPage(
             width="auto", height="auto",
             right=10, bottom=49,
 
-            ### 4.3. Contact info ________________________________________________
+#### 8.2.1. contact __________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -711,6 +711,18 @@ ui = bootstrapPage(
                     a(href="mailto:michel.lang@inrae.fr",
                       "Michel Lang"))),
 
+#### 8.2.2. dataset ______________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("i.data", lg),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(a(href="https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.57745/LNBEGZ",
+                      "Recherche Data Gouv",
+                      target="_blank"))),
+            
+#### 8.2.3. source code ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -724,7 +736,7 @@ ui = bootstrapPage(
                     a(href="https://github.com/super-lou/MAKAHO",
                       "GitHub", target="_blank"))),
 
-            
+#### 8.2.4. host _____________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -738,6 +750,7 @@ ui = bootstrapPage(
                     a(href="https://sk8.inrae.fr",
                       "SK8", target="_blank"))),
 
+#### 8.2.5. inspiration ______________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -748,6 +761,7 @@ ui = bootstrapPage(
                     a(href="https://earth.nullschool.net/",
                       "earth.nullschool.net", target="_blank"))),
 
+#### 8.2.6. maj ______________________________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(paste0("<span><b>",
@@ -759,8 +773,7 @@ ui = bootstrapPage(
     ),
 
     
-    ## 5. SAVE ___________________________________________________________
-    ### 5.1. Screenshot __________________________________________________
+## 9. SCREENSHOT _____________________________________________________
     hidden(
         fixedPanel(id='photo_panelButton',
                    right=45, top=10,
@@ -773,7 +786,8 @@ ui = bootstrapPage(
                    )
     ),
     
-    ### 5.2. Download ____________________________________________________
+## 10. DOWNLOAD ______________________________________________________
+### 10.1. Button _____________________________________________________
     hidden(
         fixedPanel(id='download_panelButton',
                    right=10, top=10,
@@ -785,9 +799,9 @@ ui = bootstrapPage(
                           tooltip=word("tt.d.title", lg))
                    )
     ),
-
     downloadLink("downloadData", label=""),
 
+### 10.2. Panel ______________________________________________________
     hidden(
         absolutePanel(
             id='download_bar',
@@ -804,6 +818,7 @@ ui = bootstrapPage(
                 div(class="sep"),
                 div(class="bunch",
 
+#### 10.2.1. click ___________________________________________________
                     selectButton(class="selectButton",
                                  inputId="dlClick_select",
                                  label=word("d.click", lg),
@@ -811,12 +826,14 @@ ui = bootstrapPage(
                                  selected=FALSE,
                                  tooltip=word("tt.d.click", lg)),
 
+#### 10.2.2. selection _______________________________________________
                     Button(class="Button",
                            inputId="dlSelec_button",
                            label=word("d.selec", lg),
                            icon_name=iconLib$scatter_plot_white,
                            tooltip=word("tt.d.selec", lg)),
 
+#### 10.2.3. all _____________________________________________________
                     Button(class="Button",
                            inputId="dlAll_button",
                            label=word("d.all", lg),
@@ -825,6 +842,7 @@ ui = bootstrapPage(
         )
     ),
 
+### 10.3. Click bar __________________________________________________
     hidden(
         absolutePanel(
             id='dlClick_bar',
@@ -844,8 +862,8 @@ ui = bootstrapPage(
     ),
 
 
-    ## 6. HELP ___________________________________________________________
-    ### 6.2. Button mask ________________________________________________
+## 11. HELP CONTENT __________________________________________________
+### 11.1. Button mask ________________________________________________
     hidden(
         fixedPanel(id='maskZoom_panelButton',
                    left=10, top=10,
@@ -872,7 +890,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="maskActualise_panelButton",
-                   left=124, bottom=11,
+                   left=135, bottom=11,
                    width="auto", height="auto",
                    Button(class="maskSmallButton-actualise",
                           inputId='mask',
@@ -883,7 +901,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="maskInfo_panelButton",
-                   right=10, bottom=4,
+                   right=11, bottom=5,
                    width="auto", height="auto",
                    Button(class="maskButton-info",
                           inputId='mask',
@@ -920,8 +938,8 @@ ui = bootstrapPage(
                    )
     ),
 
-    ### 6.3. Pages _______________________________________________________
-    #### 6.3.1. Page 1 ___________________________________________________
+### 11.2. Pages ______________________________________________________
+#### 11.2.1. page 1 __________________________________________________
     page_circle(n=1, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -939,7 +957,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.2. Page 2 ___________________________________________________
+#### 11.2.2. page 2 __________________________________________________
     page_circle(n=2, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -956,8 +974,8 @@ ui = bootstrapPage(
                    p(HTML(word("help.p2.p1", lg)))
                    )
     ),
-    
-    #### 6.3.3. Page 3 ___________________________________________________
+
+#### 11.2.3. page 3 __________________________________________________
     page_circle(n=3, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -975,8 +993,8 @@ ui = bootstrapPage(
                    p(HTML(word("help.p3.p2", lg)))
                    )  
     ),
-    
-    #### 6.3.4. Page 4 ___________________________________________________
+
+#### 11.2.4. page 4 __________________________________________________
     page_circle(n=4, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -994,7 +1012,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.5. Page 5 ___________________________________________________
+#### 11.2.5. page 5 __________________________________________________
     page_circle(n=5, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1013,8 +1031,8 @@ ui = bootstrapPage(
                    p(HTML(word("help.p5.p3", lg)))
                    )
     ),
-    
-    #### 6.3.6. Page 6 ___________________________________________________
+
+#### 11.2.6. page 6 __________________________________________________
     page_circle(n=6, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1033,8 +1051,8 @@ ui = bootstrapPage(
                    )
     ),
 
-    
-    #### 6.3.7. Page 7 ___________________________________________________
+
+#### 11.2.7. page 7 __________________________________________________
     page_circle(n=7, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1054,7 +1072,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.8. Page 8 ___________________________________________________
+#### 11.2.8. page 8 __________________________________________________
     page_circle(n=8, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1073,7 +1091,7 @@ ui = bootstrapPage(
                    ) 
     ),
 
-    #### 6.3.9. Page 9 ___________________________________________________
+#### 11.2.9. page 9 __________________________________________________
     page_circle(n=9, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1093,7 +1111,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.10. Page 10 ___________________________________________________
+#### 11.2.10. page 10 ________________________________________________
     page_circle(n=10, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1114,7 +1132,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.11. Page 11 _________________________________________________
+#### 11.2.11. page 11 ________________________________________________
     page_circle(n=11, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1133,7 +1151,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.12. Page 12 _________________________________________________
+#### 11.2.12. page 12 ________________________________________________
     page_circle(n=12, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1153,7 +1171,7 @@ ui = bootstrapPage(
                    )
     ),    
 
-    #### 6.3.13. Page 13 _________________________________________________
+#### 11.2.13. page 13 ________________________________________________
     page_circle(n=13, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1170,7 +1188,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.14. Page 14 _________________________________________________
+#### 11.2.14. page 14 ________________________________________________
     page_circle(n=14, leftBase=leftHelp,
                 widthHelp=widthHelp,
                 bottom=bottomNavHelp,
@@ -1189,7 +1207,7 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.3.15. Page 15 _________________________________________________
+#### 11.2.15. page 15 ________________________________________________
     page_circle(n=15,
                 leftBase=leftHelp,
                 widthHelp=widthHelp,
@@ -1208,7 +1226,8 @@ ui = bootstrapPage(
                    )
     ),
 
-    #### 6.4. Nave button ______________________________________________
+### 11.3. Nave button ________________________________________________
+#### 11.3.1. before __________________________________________________
     hidden(
         fixedPanel(id="before_panelButton",
                    left=paste0("calc(", leftHelp,
@@ -1224,7 +1243,7 @@ ui = bootstrapPage(
                    )
     ),
 
-
+#### 11.3.2. after ___________________________________________________
     hidden(
         fixedPanel(id="next_panelButton",
                    left=paste0("calc(", leftHelp,
@@ -1240,6 +1259,7 @@ ui = bootstrapPage(
                    )
     ),
 
+#### 11.3.3. close ___________________________________________________
     hidden(
         fixedPanel(id='closeHelp_panelButton',
                    left=paste0("calc(", leftHelp,
@@ -1257,6 +1277,7 @@ ui = bootstrapPage(
                    )
     ),
 
+### 11.4. Download help ______________________________________________
     hidden(
         fixedPanel(id='dlHelp_panelButton',
                    left=paste0("calc(", leftHelp,
@@ -1274,7 +1295,7 @@ ui = bootstrapPage(
     ),
 
 
-
+## 12. LOADING SYMBOL ________________________________________________
     hidden(
         fixedPanel(id='loading_panel',
                    class="card-load",
@@ -1286,5 +1307,4 @@ ui = bootstrapPage(
                        HTML('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>'))
                    )
     )
-
 )

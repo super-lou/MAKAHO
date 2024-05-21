@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -23,7 +23,8 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-# Import library
+## 1. PACKAGES _______________________________________________________
+### 1.1. Library _____________________________________________________
 library(shiny)
 library(shinyjs)
 library(shinyWidgets)
@@ -41,12 +42,13 @@ library(sf)
 # library(sp)
 
 
+### 1.2. Source ______________________________________________________
+#### 1.2.0. work path ________________________________________________
 dev_lib_path =
     "/home/louis/Documents/bouleau/INRAE/project/"
     # ""
 
-
-# Import EXstat
+#### 1.2.1. EXstat ___________________________________________________
 dev_path = file.path(dev_lib_path,
                      c('', 'EXstat_project'), 'EXstat', 'R')
 if (any(file.exists(dev_path))) {
@@ -60,7 +62,7 @@ if (any(file.exists(dev_path))) {
     library(EXstat)
 }
 
-# Import ASHE
+#### 1.2.2. ASHE _____________________________________________________
 dev_path = file.path(dev_lib_path,
                      c('', 'ASHE_project'), 'ASHE', 'R')
 if (any(file.exists(dev_path))) {
@@ -74,7 +76,7 @@ if (any(file.exists(dev_path))) {
     library(ASHE)
 }
 
-# Import dataSHEEP
+#### 1.2.3. dataSHEEP ________________________________________________
 dev_path = file.path(dev_lib_path,
                      c('', 'dataSHEEP_project'), 'dataSHEEP', 'R')
 if (any(file.exists(dev_path))) {
@@ -89,6 +91,7 @@ if (any(file.exists(dev_path))) {
 }
 
 
+## 2. INITIALISATION _________________________________________________
 # Check if you are in dev mod
 if (dir.exists(dev_lib_path)) {
     dev = TRUE
@@ -98,6 +101,7 @@ if (dir.exists(dev_lib_path)) {
     verbose = FALSE
 }
 
+# language
 lg = "fr"
 
 # Sourcing R files

@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -23,17 +23,14 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-# word_default = function (id) {
-    # w = dico[[default_lg]][dico$id == id]
-    # return (w)
-# }
 
+## 1. LANGUAGE _______________________________________________________
 word = function (id, lg) {
     w = dico[[lg]][dico$id == id]
     return (w)
 }
 
-
+## 2. VARIABLE _______________________________________________________
 get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
 
     if (verbose) print("plot_trend")
@@ -190,6 +187,7 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
 # stop()
 
 
+## 3. MAP ____________________________________________________________
 get_urlTile = function (theme, provider, theme_file, resources_path, token=NULL) {
     
     theme_path = file.path(resources_path, theme_file)
@@ -226,41 +224,23 @@ get_urlTile = function (theme, provider, theme_file, resources_path, token=NULL)
     }
     return (urlTile)
 }
-
 # get_urlTile('light', 'stadia',
 #             'theme.txt',
 #             resources_path,
 #             token=jawg_token)
 
 
+## 4. ICON ___________________________________________________________
 create_iconLib = function (icon_dir, resources_path) {
     iconLib = icon_set(file.path(resources_path, icon_dir))#, icon_file))
     return (iconLib)
 }
 
-create_centroids = function (centroids_file, resources_path) {
-    # Path of the list of centroids of every countries
-    centroids_path = file.path(resources_path, centroids_file)
-    
-    centroids = tibble(read.table(centroids_path, header=TRUE,
-                                  quote='', sep=";"))
-    for (j in 1:ncol(centroids)) {
-        if (is.factor(centroids[[j]])) {
-            centroids[j] = as.character(centroids[[j]])
-        }
-    }
-    return (centroids)
-}
 
-create_area = function (area_file, resources_path) {
-    area_path = file.path(resources_path, area_file)
-    area = tibble(read.table(area_path, header=TRUE,
-                             quote='', sep=";"))
-    area$country = as.character(area$country)
-    area$area = as.double(area$area)
-    return (area)
-}
 
+
+## 5. BUTTON _________________________________________________________
+### 5.1. Button ______________________________________________________
 Button = function (inputId, label=NULL, icon_name=NULL,
                    width=NULL, tooltip=NULL, ...){
 
@@ -269,7 +249,8 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                      label=div(icon_name,
                                label,
                                style="float:right;
-                                          padding-left:0.2rem;"),
+                                      padding-left:0.2rem;
+                                      padding-right: 0.2rem;"),
                      icon=NULL,
                      width=width,
                      # img=img(icon_name, align="right",
@@ -283,7 +264,8 @@ Button = function (inputId, label=NULL, icon_name=NULL,
                              label=div(icon_name,
                                        label,
                                        style="float:right;
-                                          padding-left:0.2rem;"),
+                                          padding-left:0.2rem;
+                                          padding-right: 0.2rem;"),
                              icon=NULL,
                              width=width,
                              # img=img(icon_name, align="right",
@@ -294,6 +276,7 @@ Button = function (inputId, label=NULL, icon_name=NULL,
     }
 }
 
+### 5.2. Select button _______________________________________________
 selectButton = function (inputId, label=NULL, icon_name=NULL,
                          class='', selected=FALSE, tooltip=NULL, ...){
 
@@ -331,6 +314,7 @@ selectButton = function (inputId, label=NULL, icon_name=NULL,
     }
 }
 
+### 5.3. Update select button ________________________________________
 updateSelectButton = function (session, inputId, label=NULL,
                                icon_name=NULL, class='',
                                selected=FALSE, ...){
@@ -358,6 +342,7 @@ updateSelectButton = function (session, inputId, label=NULL,
         ...)
 }
 
+### 5.4. Radio button ________________________________________________
 radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
                         choiceValues=NULL, choiceTooltips=NULL, ...) {
 
@@ -396,7 +381,7 @@ radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
         ...)
 }
 
-
+### 5.5. Update radio button _________________________________________
 updateRadioButton = function (session, class='', choiceIcons=NULL,
                               choiceNames=NULL, choiceValues=NULL,
                               choices=NULL,
@@ -449,6 +434,7 @@ updateRadioButton = function (session, class='', choiceIcons=NULL,
 }
 
 
+## 6. SLIDER _________________________________________________________
 Slider = function (class, modeText=FALSE, ...) {
     if (modeText) {
         div(class=class,
@@ -469,6 +455,8 @@ updateSlider = function (class, modeText=FALSE, ...) {
 }
 
 
+## 7. HELP ___________________________________________________________
+### 7.1. Circle ______________________________________________________
 page_circle = function (n, leftBase, widthHelp,
                         bottom, dh, tooltip=NULL) {
     hidden(
@@ -499,6 +487,7 @@ page_circle = function (n, leftBase, widthHelp,
     )
 }
 
+### 7.2. Page ________________________________________________________
 show_page = function (n, N) {
     
     for (i in 1:N) {
@@ -527,7 +516,6 @@ hide_page = function (N) {
     }
 }
 
-
 observePage = function (input, rv, n, N) {
     observeEvent(input[[paste0("c", n ,"U_button")]], {
         rv$helpPage = n
@@ -539,6 +527,11 @@ observePage = function (input, rv, n, N) {
     })
 }
 
+
+
+
+## 8. MASK / HIDE / SHOW _____________________________________________
+### 8.1. Mask ________________________________________________________
 IdList_mask = c("maskZoom_panelButton",
                 "maskAna_panelButton",
                 "maskActualise_panelButton",
@@ -575,7 +568,7 @@ maskOnly = function (id, IdList=IdList_mask) {
     }
 }
 
-
+### 8.2. Hide / Show panel ___________________________________________
 IdList_panel = c('ana_panel',
                  'theme_panel',
                  'info_panel',
@@ -613,7 +606,7 @@ toggleOnly = function (id, IdList=IdList_panel) {
     }
 }
 
-
+### 8.3. Hide / Show mode ____________________________________________
 deselect_mode = function (session, rv) {
     updateSelectButton(
         session=session,
@@ -641,15 +634,7 @@ deselect_mode = function (session, rv) {
 }
 
 
-# read_FST = function (resdir, filename, filedir='fst') {
-#     outfile = file.path(resdir, filedir, filename)
-#     df = tibble(fst::read_fst(outfile))
-#     return (df)
-# }
-# data = read_FST(computer_data_path, 'QIXAEx_01.fst', filedir='fst')
-# meta = read_FST(computer_data_path, 'meta.fst', filedir='fst')
-
-
+## 9. PLOTTING _______________________________________________________
 get_trendExtremesMOD = function (rv,
                                  data, df_trend, unit,
                                  minXprob=0, maxXprob=1,
@@ -686,17 +671,6 @@ get_trendExtremesMOD = function (rv,
     res = list(df_value=df_value, df_valueSample=df_valueSample,
                min=minX, max=maxX)
     return (res)
-}
-
-
-count_decimal = function(x) {
-    if ((x %% 1) != 0) {
-        nchar(strsplit(sub('0+$', '',
-                           as.character(x)), ".",
-                       fixed=TRUE)[[1]][[2]])
-    } else {
-        return(0)
-    }
 }
 
 get_trendLabel = function (rv, code, lg, space=FALSE) {
@@ -796,4 +770,16 @@ get_trendLabel = function (rv, code, lg, space=FALSE) {
     }
 
     return (label)
+}
+
+
+## 10. OTHER _________________________________________________________
+count_decimal = function(x) {
+    if ((x %% 1) != 0) {
+        nchar(strsplit(sub('0+$', '',
+                           as.character(x)), ".",
+                       fixed=TRUE)[[1]][[2]])
+    } else {
+        return(0)
+    }
 }

@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -24,12 +24,13 @@
 
 
 server = function (input, output, session) {
-
-    # Check if you are in dev mod
+## 0. START __________________________________________________________
+### 0.1. Dev check ___________________________________________________
     if (dir.exists(dev_lib_path)) {
         session$onSessionEnded(stopApp)
     }
 
+### 0.2. Reactive value (common to all reactive or observer) _________
     rv = reactiveValues(startHelp=FALSE,
                         start=FALSE,
                         width=0,
@@ -57,8 +58,6 @@ server = function (input, output, session) {
                         mapPreview_bounds=NULL,
                         defaultBounds=NULL,
                         trend=NULL,
-                        # value=NULL,
-                        # valueSample=NULL,
                         minX=NULL,
                         maxX=NULL,
                         helpPage=NULL,
@@ -96,7 +95,6 @@ server = function (input, output, session) {
                         CodeSample_act=NULL,
                         CodeAdd=NULL,
                         actualiseForce=FALSE,
-                        loading=FALSE,
                         data_name="RRSE",
                         dataAll=NULL,
                         CodeAll=NULL,
@@ -105,7 +103,7 @@ server = function (input, output, session) {
                         dataHTML_ana=""
                         )
 
-    
+### 0.3. Start observer ______________________________________________
     startOBS = observe({
         showElement(id="zoom_panelButton")
         showElement(id='ana_panelButton')
@@ -113,7 +111,6 @@ server = function (input, output, session) {
         showElement(id='photo_panelButton')
         showElement(id='download_panelButton')
         showElement(id='help_panelButton')
-        # rv$start = TRUE
         rv$startHelp = TRUE
         startOBS$destroy()
     })
@@ -149,7 +146,8 @@ server = function (input, output, session) {
         list(north=max(Lat), east=max(Lon),
              south=min(Lat), west=min(Lon))
     })
-    
+
+### 1.2. Leaflet render ______________________________________________
     output$map = renderLeaflet({
         map = leaflet(options=leafletOptions(minZoom=minZoom,
                                              maxZoom=maxZoom,
@@ -186,7 +184,8 @@ server = function (input, output, session) {
         }
     })
 
-### 1.2. Zoom ________________________________________________________    
+## 2. ZOOM ___________________________________________________________
+### 2.1. Default _____________________________________________________
     observeEvent({
         input$dimension
     }, {
@@ -199,11 +198,12 @@ server = function (input, output, session) {
                         options=list(padding=c(20, 20)))
     })
 
+### 2.2. Map preview _________________________________________________
+#### 2.2.1. Definition _______________________________________________
     observeEvent({
         CodeSample()
         rv$meta
     }, {
-        
         if (!is.null(CodeSample())) {
             Lon = rv$meta$lon[rv$meta$Code %in% CodeSample()]
             Lat = rv$meta$lat[rv$meta$Code %in% CodeSample()]
@@ -227,6 +227,7 @@ server = function (input, output, session) {
         }        
     })
 
+#### 2.2.2. Auto zoom ________________________________________________
     observeEvent({
         input$mapPreview_bounds
     }, {
@@ -242,7 +243,8 @@ server = function (input, output, session) {
                         lat2=rv$currentLimits$north,
                         options=list(padding=c(20, 20)))
     })
-    
+
+### 2.3. Map _________________________________________________________
     observeEvent(input$defaultZoom_button, {
         map = leafletProxy("map")
         map = fitBounds(map,
@@ -258,7 +260,6 @@ server = function (input, output, session) {
         rv$mapPreview_bounds
         theme()
     }, {
-
         windowChange = input$dimension[1] != rv$width | input$dimension[2] != rv$height
 
         if (!identical(windowChange, logical(0))) {
@@ -269,9 +270,7 @@ server = function (input, output, session) {
             }
 
             error = 0.1
-            
             isDefault = all(abs(unlist(input$map_bounds) - unlist(rv$defaultBounds)) <= error)
-            
             isFocus = all(abs(unlist(input$map_bounds) - unlist(rv$mapPreview_bounds)) <= error)
 
             if (windowChange) {
@@ -298,7 +297,8 @@ server = function (input, output, session) {
         }
     })
 
-### 1.3. Marker ______________________________________________________
+## 3. MARKER _________________________________________________________
+### 3.1. Get marker list _____________________________________________
     markerListAll = reactive({
         if (verbose) print("markerListAll")        
         
@@ -316,7 +316,7 @@ server = function (input, output, session) {
 
         if (!is.null(rv$dataEX) & !is.null(rv$trendEX) &
             all(rv$CodeSample %in% levels(factor(rv$dataEX$Code)))) {
-                                                                 
+            
             trendCode = rv$trendEX$Code
 
             sizeList = rep('small', length(rv$CodeAll))
@@ -389,7 +389,8 @@ server = function (input, output, session) {
                        fillList,
                        resources_path)
     })
-    
+
+### 3.2. Plot marker list ____________________________________________
     observeEvent({
         theme()
         alpha()
@@ -398,7 +399,6 @@ server = function (input, output, session) {
     }, {
 
         if (verbose) print("observeEvent.marker")   
-        
         map = leafletProxy("map")
         
         if (theme() != rv$theme_choice_save |
@@ -563,13 +563,14 @@ server = function (input, output, session) {
     })
     
 
-## 2. ANALYSE ________________________________________________________
+## 4. ANALYSE ________________________________________________________
+### 4.0. Button ______________________________________________________
     observeEvent(input$ana_button, {
         toggleOnly(id="ana_panel")
         deselect_mode(session, rv)
     })
 
-### 2.1. Station metadata ____________________________________________
+### 4.1. Dataset _____________________________________________________
     data_name = reactive({
         if (verbose) print("data_name")
         if (is.null(input$data_choice)) {
@@ -586,6 +587,7 @@ server = function (input, output, session) {
         }
     })
 
+### 4.2. Metadata ____________________________________________________
     meta = reactive({
         if (verbose) print("meta") 
         metatmp =
@@ -617,7 +619,8 @@ server = function (input, output, session) {
         metatmp
     })
 
-### 2.2. Station selection ___________________________________________
+### 4.3. Station selection ___________________________________________
+#### 4.3.0. sample ___________________________________________________
     CodeAll = reactive({
         if (verbose) print("CodeAll")
         CodeAll = levels(factor(meta()$Code))
@@ -649,7 +652,7 @@ server = function (input, output, session) {
         }
     })
 
-#### 2.2.1. All/none _________________________________________________
+#### 4.3.1. all/none _________________________________________________
     observeEvent(input$all_button, {
         rv$CodeSample = rv$CodeAll
     })
@@ -659,8 +662,8 @@ server = function (input, output, session) {
                              selected="")
         rv$CodeSample = NULL
     })
-    
-#### 2.2.2. Map click ________________________________________________
+
+#### 4.3.2. click on map _____________________________________________
     codeClick = reactive({
         if (is.null(input$map_marker_click)) {
             NULL
@@ -691,7 +694,7 @@ server = function (input, output, session) {
 
     observeEvent(codeClick(), {
         if (rv$polyMode == 'false' & rv$clickMode & !rv$dlClickMode & !rv$photoMode) {
-                        CodeSample = rv$CodeSample
+            CodeSample = rv$CodeSample
             if (codeClick() %in% CodeSample) {
                 newCodeSample = CodeSample[CodeSample != codeClick()]
             } else {
@@ -708,7 +711,7 @@ server = function (input, output, session) {
         showElement(id='ana_panel')
     })
 
-#### 2.2.3. Polygone _________________________________________________
+#### 4.3.3. polygone on map __________________________________________
     observe({
         if (!is.null(input$poly_select)) {
             if (rv$polyMode != 'Add' & rv$polyMode != 'Rm') {
@@ -733,7 +736,6 @@ server = function (input, output, session) {
     })
 
     observeEvent(input$poly_choice, {
-
         if (!is.null(input$poly_choice) & !is.null(rv$polyCoord)) {
             if (input$poly_choice == 'Add') {
                 rv$polyMode = "Add"
@@ -782,10 +784,10 @@ server = function (input, output, session) {
     
     observeEvent(input$polyOk_button, {
         if (nrow(rv$polyCoord) != 0) {
-        
+            
             station_coordinates = sp::SpatialPointsDataFrame(
-                rv$meta[c('lon', 'lat')],
-                rv$meta['Code'])
+                                          rv$meta[c('lon', 'lat')],
+                                          rv$meta['Code'])
 
             # Transform them to an sp Polygon
             drawn_polygon = sp::Polygon(as.matrix(rv$polyCoord))
@@ -808,7 +810,8 @@ server = function (input, output, session) {
         deselect_mode(session, rv)
     })
 
-#### 2.2.4. Warning __________________________________________________
+    
+### 4.4. Warning _____________________________________________________
     observe({        
         if (!is.null(input$warning_select)) {
             rv$warningMode = TRUE
@@ -817,7 +820,7 @@ server = function (input, output, session) {
         }
     })
 
-#### 2.2.5. Search ___________________________________________________
+### 4.5. Search ______________________________________________________
     meta_location = reactive({
         gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", rv$meta$Nom)
     })
@@ -872,9 +875,9 @@ server = function (input, output, session) {
                    grey85COL, '">&emsp;', word("ana.search.region", lg),
                    '</i>'),
             # paste0(rv$meta$regime_hydro,
-                   # '<i style="font-size: 9pt; color: ',
-                   # grey85COL, '">&emsp;', word("ana.search.regime", lg),
-                   # '</i>'),
+            # '<i style="font-size: 9pt; color: ',
+            # grey85COL, '">&emsp;', word("ana.search.regime", lg),
+            # '</i>'),
             paste0(meta_location(),
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.location", lg),
@@ -908,12 +911,12 @@ server = function (input, output, session) {
                     return "<div>" + item.html + "</div>";
                  }
                                  }'),
-                                 onDropdownOpen=
-                                     I('function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}'),
-                                 onType=
-                                     I('function (str) {if (str === \"\") {this.close();}}'),
-                                 onItemAdd=
-                                     I('function() {this.close();}')))
+                 onDropdownOpen=
+                     I('function($dropdown) {if (!this.lastQuery.length) {this.close(); this.settings.openOnFocus = false;}}'),
+                 onType=
+                     I('function (str) {if (str === \"\") {this.close();}}'),
+                 onItemAdd=
+                     I('function() {this.close();}')))
     })
     
     observeEvent(input$search_input, {
@@ -948,7 +951,6 @@ server = function (input, output, session) {
         rv$CodeSearch = selectCode
     })
     
-    
     observe({
         if (verbose) print("search")
         if (is.null(input$search_input) & !is.null(rv$Search_save)) {
@@ -960,7 +962,14 @@ server = function (input, output, session) {
         rv$Search_save = input$search_input
     })
 
-### 2.3. Variable extration __________________________________________
+
+### 4.5. Variable ____________________________________________________
+#### 4.5.0. all variables ____________________________________________
+    Variable_ALL = reactive({
+        get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
+    })
+
+#### 4.5.1. type _____________________________________________________
     type = reactive({
         if (verbose) print("type")
         if (data_name() == "RRSE") {
@@ -970,11 +979,7 @@ server = function (input, output, session) {
         }
     })
 
-    
-    Variable_ALL = reactive({
-        get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
-    })
-    
+#### 4.5.2. variables selection ______________________________________
     Variable = reactive({
         if (verbose) print("Variable")
         Variable_tmp = Variable_ALL()[Variable_ALL()$type == type(),]
@@ -996,6 +1001,7 @@ server = function (input, output, session) {
         Variable_tmp
     })
 
+#### 4.5.3. event ____________________________________________________
     observeEvent(input$event_choice, {
         if (verbose) print("observeEvent.variable_choice")
         if (is.null(Variable())) {
@@ -1031,15 +1037,6 @@ server = function (input, output, session) {
                           selected=variable_event[1])
     })
 
-    variable = reactive({
-        if (verbose) print("variable")
-        if (is.null(input$variable_choice)) {
-            default_variable
-        } else {
-            input$variable_choice
-        }
-    })
-
     event = reactive({
         if (verbose) print("event")
         if (is.null(input$event_choice)) {
@@ -1049,6 +1046,17 @@ server = function (input, output, session) {
         }
     })
 
+#### 4.5.4. variable _________________________________________________
+    variable = reactive({
+        if (verbose) print("variable")
+        if (is.null(input$variable_choice)) {
+            default_variable
+        } else {
+            input$variable_choice
+        }
+    })
+
+#### 4.5.5. alpha risk level _________________________________________
     alpha = reactive({
         if (verbose) print("alpha")
         if (is.null(input$alpha_choice)) {
@@ -1058,13 +1066,11 @@ server = function (input, output, session) {
         }
     })
 
-
-
-    
+#### 4.5.6. proba / month / season ___________________________________    
     proba_choices = reactive({
         if (verbose) print("proba_choices")
         id = which(Variable()$variable == variable() &
-                   Variable()$event == event())
+                             Variable()$event == event())
         if (!identical(id, integer(0))) {
             Variable()$sub[[id]]
         } else {
@@ -1080,17 +1086,19 @@ server = function (input, output, session) {
         }
     })
 
+#### 4.5.7. palette __________________________________________________
     Palette = reactive({
         if (verbose) print("palette")
         id = which(Variable()$variable == variable() &
-                   Variable()$event == event())
+                             Variable()$event == event())
         if (!identical(id, integer(0))) {
             unlist(Variable()$palette[id])
         } else {
             unlist(Variable_ALL()$palette[Variable_ALL()$variable == default_variable])
         }
     })
-            
+
+#### 4.5.8. html output ______________________________________________
     output$regimeRow = renderText({
         if (verbose) print("regimeRow")
         if (type() == word("ana.type.T", lg)) {
@@ -1112,7 +1120,7 @@ server = function (input, output, session) {
             ))
         } else {
             variable = Variable_ALL()$variableHTML[Variable_ALL()$variable == rv$variable &
-                                  Variable_ALL()$event == rv$event]
+                                                                 Variable_ALL()$event == rv$event]
             if (grepl(SeasonMonth_pattern, variable)) {
                 variable = gsub(SeasonMonth_pattern, rv$proba, variable)
             } else {
@@ -1153,12 +1161,12 @@ server = function (input, output, session) {
     output$dataHTML_ana = renderUI({
         if (verbose) print("dataHTML_ana")
         id = which(Variable()$variable == variable() &
-                   Variable()$event == event())
+                             Variable()$event == event())
         
         if (identical(id, integer(0))) {
             rv$dataHTML_ana
         } else {
-        
+            
             if (is.null(proba())) {
                 data = paste0(Variable()$variableHTML[id], ' : ',
                               Variable()$name[[id]])
@@ -1180,7 +1188,6 @@ server = function (input, output, session) {
         }
     })
 
-
     output$probaRow = renderText({
         if (verbose) print("probaRow")
         if (grepl(word("var.month", lg), variable())) {
@@ -1191,8 +1198,13 @@ server = function (input, output, session) {
             word("ana.proba", lg)
         }
     })
+
+    output$significativite = renderText({
+        paste0(word("out.sig", lg), " ",
+               as.numeric(alpha())*100, '%')
+    })
     
-    
+#### 4.5.10. update proba row ________________________________________
     observe({
         if (verbose) print("observe.proba_choice")
         if (!is.null(proba_choices())) {
@@ -1220,8 +1232,8 @@ server = function (input, output, session) {
     })
 
 
-
-### 2.4. _____________________________________________________________
+### 4.6. Sampling periode ____________________________________________
+#### 4.6.0. show / hide ______________________________________________
     observe({
         if (!is.null(input$optimalSlider_select)) {
             rv$optimalMode = TRUE
@@ -1250,6 +1262,7 @@ server = function (input, output, session) {
         }
     })
 
+#### 4.6.1. update render ui _________________________________________
     observeEvent({
         rv$sampleSliderMode
         rv$invertSliderMode
@@ -1300,18 +1313,7 @@ server = function (input, output, session) {
         })
     })
 
-    output$dateYear_slider = renderUI({
-        Slider(class="size2Slider",
-               inputId="dateYear_slider",
-               label=NULL,
-               step=1,
-               sep='',
-               min=1900,
-               max=2020,
-               value=c(1968, 2020))
-    })
-        
-
+#### 4.6.2. get ______________________________________________________
     sampling_periodB = reactive({
         if (verbose) print("sampling_period")
         if (!is.null(input$sampling_period_slider)) {
@@ -1359,6 +1361,7 @@ server = function (input, output, session) {
     })
     sampling_period = debounce(sampling_periodB, 1000)
 
+#### 4.6.3. html output ______________________________________________
     output$sampling_periodHTML = renderUI({
         if (rv$optimalMode_act) {
             HTML(word("out.optimal", lg))
@@ -1371,8 +1374,88 @@ server = function (input, output, session) {
                         word("out.to", lg), " ",
                         hydroEnd))
         }
-    })    
+    })
+
+
+### 4.7. Analyse periode _____________________________________________
+#### 4.7.0. render ui ________________________________________________
+    output$dateYear_slider = renderUI({
+        Slider(class="size2Slider",
+               inputId="dateYear_slider",
+               label=NULL,
+               step=1,
+               sep='',
+               min=1900,
+               max=2020,
+               value=c(1968, 2020))
+    })
+
+#### 4.7.1. get period _______________________________________________
+    periodB = reactive({
+        if (verbose) print("period")
+        if (!is.null(input$dateYear_slider)) {
+            startYear = input$dateYear_slider[1]
+            endYear = input$dateYear_slider[2]
+        } else {
+            startYear = 1968
+            endYear = 2020
+        }
         
+        inter = endYear - startYear
+        if (inter < 30) {
+            if (startYear + 30 > 2020 & endYear - 30 >= 1900) {
+                startYear = endYear - 30
+            } else {
+                endYear = startYear + 30
+            }
+            updateSlider(session=session,
+                         class="size2Slider",
+                         inputId="dateYear_slider",
+                         value=c(startYear, endYear))
+        }
+
+        if (rv$sampleSliderMode & length(sampling_period()) == 2) {
+            Start = as.Date(paste0(startYear,
+                                   "-",
+                                   sampling_period()[1]))
+            End = as.Date(paste0(endYear,
+                                 "-",
+                                 sampling_period()[2]))
+            periodB = c(Start, End)
+
+        } else {
+            Start = as.Date(paste0(startYear,
+                                   "-",
+                                   sampling_period()[1]))
+            Endtmp = as.Date(paste0(endYear,
+                                    "-",
+                                    sampling_period()[1])) - 1
+            End = as.Date(paste0(endYear,
+                                 "-",
+                                 substr(Endtmp, 6, 10)))
+            periodB = c(Start, End)
+        }
+        periodB
+    })
+    period = debounce(periodB, 1000)
+
+#### 4.7.2. html output ______________________________________________
+    output$period_ana = renderText({        
+        start = format(periodB()[1], word("out.date_format", lg))
+        end = format(periodB()[2], word("out.date_format", lg))
+        paste0(word("out.From", lg), " ", start, " ",
+               word("out.to", lg), " ", end)
+    })
+
+    output$period = renderText({
+        start = format(rv$period[1], "%Y")
+        end = format(rv$period[2], "%Y")
+        paste0(word("out.period", lg), " ", start, ' - ', end)
+    })
+
+
+## 5. DATA ___________________________________________________________
+### 5.1. All data ____________________________________________________
     dataAll = reactive({
         if (verbose) print("dataAll")
         test = file.path(computer_data_path,
@@ -1381,29 +1464,11 @@ server = function (input, output, session) {
                                 data_name(),
                                 '.fst'))
         if (file.exists(test)) {
-
-            # if (data_name() == "RRExplore2") {
-            #     data1 = read_tibble(filedir=file.path(computer_data_path,
-            #                                           'fst'),
-            #                         filename=paste0('data_',
-            #                                         data_name(),
-            #                                         '_1.fst'))
-            #     data2 = read_tibble(filedir=file.path(computer_data_path,
-            #                                           'fst'),
-            #                         filename=paste0('data_',
-            #                                         data_name(),
-            #                                         '_2.fst'))
-            #     dataAll = dplyr::bind_rows(data1, data2)
-
-            # } else {
-
-                dataAll = read_tibble(filedir=file.path(computer_data_path,
-                                                        'fst'),
-                                      filename=paste0('data_',
-                                                      data_name(),
-                                                      '.fst'))
-            # }
-
+            dataAll = read_tibble(filedir=file.path(computer_data_path,
+                                                    'fst'),
+                                  filename=paste0('data_',
+                                                  data_name(),
+                                                  '.fst'))
             if (dev) {
                 if (!is.null(nStation_dev)) {
                     dataAll =
@@ -1420,6 +1485,7 @@ server = function (input, output, session) {
         }
     })
 
+### 5.2. Sub data ____________________________________________________
     data = reactive({
         if (verbose) print("data")
         if (!is.null(dataAll()) & !is.null(CodeSample())) {
@@ -1449,6 +1515,9 @@ server = function (input, output, session) {
         }
     })
 
+    
+## 6. ACTUALISE ______________________________________________________
+### 6.1. Test ________________________________________________________
     observeEvent({
         CodeSample()
         variable()
@@ -1487,6 +1556,8 @@ server = function (input, output, session) {
         }
     })
 
+### 6.2. Do __________________________________________________________
+#### 6.2.0. check ____________________________________________________
     observeEvent({
         input$actualise_button
         rv$actualiseForce
@@ -1498,13 +1569,13 @@ server = function (input, output, session) {
             showElement(id="loading_panel")
         }
     })
-
     
     observeEvent(rv$actualise, {
         if (verbose) print("actualise")
         if (rv$actualise & rv$start) {
 
 
+#### 6.2.1. actualise reactive value _________________________________
             if (!is.null(rv$codePlot)) {
                 map = leafletProxy("map")
                 map = fitBounds(map,
@@ -1550,7 +1621,8 @@ server = function (input, output, session) {
             rv$sampling_period = sampling_period()
             rv$Palette = Palette()
 
-            
+
+#### 6.2.2. get extraction parameters ________________________________
             if (!is.null(rv$CodeAdd)) {
                 data = rv$data[rv$data$Code %in% rv$CodeAdd,]
             } else {
@@ -1589,6 +1661,7 @@ server = function (input, output, session) {
                 
                 data = dplyr::relocate(data, Code, .before=Date)
 
+#### 6.2.3. variable extraction ______________________________________
                 if (verbose) print("CARD_extraction")
                 res = CARD_extraction(
                     data,
@@ -1630,8 +1703,8 @@ server = function (input, output, session) {
                                        !all(is.na(get(rv$variable_en))),
                                        .by="Code")
 
+#### 6.2.4. process trend analyse ____________________________________
                 if (verbose) print("process_trend")
-
                 trendEX = process_trend(
                     dataEX, metaEX,
                     extreme_take_not_signif_into_account=TRUE,
@@ -1686,76 +1759,9 @@ server = function (input, output, session) {
         hide(id="loading_panel")
     })
     
-
-### 2.4. Period ______________________________________________________
-    periodB = reactive({
-        if (verbose) print("period")
-        if (!is.null(input$dateYear_slider)) {
-            startYear = input$dateYear_slider[1]
-            endYear = input$dateYear_slider[2]
-        } else {
-            startYear = 1968
-            endYear = 2020
-        }
-        
-        inter = endYear - startYear
-        if (inter < 30) {
-            if (startYear + 30 > 2020 & endYear - 30 >= 1900) {
-                startYear = endYear - 30
-            } else {
-                endYear = startYear + 30
-            }
-            updateSlider(session=session,
-                         class="size2Slider",
-                         inputId="dateYear_slider",
-                         value=c(startYear, endYear))
-        }
-
-        if (rv$sampleSliderMode & length(sampling_period()) == 2) {
-            Start = as.Date(paste0(startYear,
-                                   "-",
-                                   sampling_period()[1]))
-            End = as.Date(paste0(endYear,
-                                 "-",
-                                 sampling_period()[2]))
-            periodB = c(Start, End)
-
-        } else {
-            Start = as.Date(paste0(startYear,
-                                   "-",
-                                   sampling_period()[1]))
-            Endtmp = as.Date(paste0(endYear,
-                                    "-",
-                                    sampling_period()[1])) - 1
-            End = as.Date(paste0(endYear,
-                                 "-",
-                                 substr(Endtmp, 6, 10)))
-            periodB = c(Start, End)
-        }
-        periodB
-    })
-    period = debounce(periodB, 1000)
-
-    output$period_ana = renderText({        
-        start = format(periodB()[1], word("out.date_format", lg))
-        end = format(periodB()[2], word("out.date_format", lg))
-        paste0(word("out.From", lg), " ", start, " ",
-               word("out.to", lg), " ", end)
-    })
-
-    output$period = renderText({
-        start = format(rv$period[1], "%Y")
-        end = format(rv$period[2], "%Y")
-        paste0(word("out.period", lg), " ", start, ' - ', end)
-    })
     
-    
-### 2.5. Trend analysis ______________________________________________
-    output$significativite = renderText({
-        paste0(word("out.sig", lg), " ",
-               as.numeric(alpha())*100, '%')
-    })
-
+## 7. CODE CHECK _____________________________________________________
+### 7.1. Miss code ___________________________________________________
     missCode = reactive({
         if (verbose) print("missCode")
         if (!is.null(rv$dataAll)) {
@@ -1778,6 +1784,7 @@ server = function (input, output, session) {
         }
     })
 
+### 7.2. Invalid code ________________________________________________
     invalidCode = reactive({
         if (verbose) print("invalidCode")
         if (!is.null(rv$dataAll) & !is.null(rv$period)) {
@@ -1785,7 +1792,7 @@ server = function (input, output, session) {
             End = rv$period[2]
             dataNoNA = rv$dataAll[!is.na(rv$dataAll$Q),]
             dataNoNA = dataNoNA[Start <= dataNoNA$Date
-                                      & dataNoNA$Date <= End,]
+                                & dataNoNA$Date <= End,]
             
             df_Period = summarise(group_by(dataNoNA, Code),
                                   Period=length(Q))
@@ -1799,18 +1806,20 @@ server = function (input, output, session) {
         }
     })
 
-    
+### 7.3. Bad code ____________________________________________________
     badCode = reactive({
         if (verbose) print("badCode")
         badCode = c(missCode(), invalidCode())
         badCode[!duplicated(badCode)]
     })
 
-### 2.6. Trend plot __________________________________________________
+
+## 8. TREND PLOT _____________________________________________________
+### 8.1. Code click __________________________________________________
     observeEvent(codeClick(), {
         if (verbose) print("codeClick")
         if (rv$polyMode == 'false' & !rv$clickMode & !rv$dlClickMode) {
-        
+            
             if (!is.null(codeClick()) & !is.null(rv$codePlot)) {
                 if (codeClick() == rv$codePlot) {
 
@@ -1834,6 +1843,7 @@ server = function (input, output, session) {
         }
     })
 
+### 8.2. Zoom ________________________________________________________
     observeEvent(rv$codePlot, {
         if (verbose) print("fitBounds")
         Lon = rv$meta$lon[rv$meta$Code == rv$codePlot]
@@ -1850,6 +1860,7 @@ server = function (input, output, session) {
                         options=list(padding=c(20, 20)))
     })
 
+### 8.3. Plot ________________________________________________________
     observeEvent({
         rv$codePlot
         rv$period
@@ -2090,23 +2101,23 @@ server = function (input, output, session) {
                 }
 
                 fig1 = plotly::add_trace(
-                                  fig1,
-                                  type="scatter",
-                                  mode="lines",
-                                  x=x,
-                                  y=y,
-                                  line=list(color=grey20COL, width=0.85),
-                                  xhoverformat=
-                                      word("out.date_format", lg),
-                                  hovertemplate = paste0(
-                                      word("plot.day", lg),
-                                      " ", "%{x}<br>",
-                                      "<b>", varLabel, "</b> %{y}",
-                                      unitLabel,
-                                      "<extra></extra>"),
-                                  hoverlabel=list(bgcolor=color,
-                                                  font=list(size=12),
-                                                  bordercolor="white"))
+                                   fig1,
+                                   type="scatter",
+                                   mode="lines",
+                                   x=x,
+                                   y=y,
+                                   line=list(color=grey20COL, width=0.85),
+                                   xhoverformat=
+                                       word("out.date_format", lg),
+                                   hovertemplate = paste0(
+                                       word("plot.day", lg),
+                                       " ", "%{x}<br>",
+                                       "<b>", varLabel, "</b> %{y}",
+                                       unitLabel,
+                                       "<extra></extra>"),
+                                   hoverlabel=list(bgcolor=color,
+                                                   font=list(size=12),
+                                                   bordercolor="white"))
 
 
                 data_codeLIM = data_code
@@ -2303,7 +2314,7 @@ server = function (input, output, session) {
                 # Compute the y of the trend
                 if (rv$metaEX$unit_en == "yearday") {
                     ord = as.Date(abs_num * trendEX_code$a +
-                        trendEX_code$b, origin="1970-01-01")
+                                  trendEX_code$b, origin="1970-01-01")
                 } else {
                     ord = abs_num * trendEX_code$a +
                         trendEX_code$b
@@ -2327,7 +2338,7 @@ server = function (input, output, session) {
                 }
 
                 id = which(Variable_ALL()$event == rv$event &
-                           Variable_ALL()$variable == rv$variable)
+                                         Variable_ALL()$variable == rv$variable)
                 varLabel = Variable_ALL()$variableHTML[id]
                 if (!is.null(rv$proba)) {
                     if (grepl(SeasonMonth_pattern, rv$variable)) {
@@ -2342,42 +2353,42 @@ server = function (input, output, session) {
                 fig2 = plotly::plot_ly()
                 
                 fig2 = plotly::add_trace(
-                                  fig2,
-                                  type="scatter",
-                                  mode="markers",
-                                  x=x,
-                                  y=y,
-                                  marker=list(color=grey50COL),
-                                  xhoverformat="%Y",
-                                  yhoverformat=yhoverformat,
-                                  hovertemplate = paste0(
-                                      "année %{x}<br>",
-                                      "<b>", varLabel, "</b> %{y}",
-                                      unitLabel,
-                                      "<extra></extra>"),
-                                  hoverlabel=list(bgcolor=color,
-                                                  font=list(size=12),
-                                                  bordercolor="white"))
+                                   fig2,
+                                   type="scatter",
+                                   mode="markers",
+                                   x=x,
+                                   y=y,
+                                   marker=list(color=grey50COL),
+                                   xhoverformat="%Y",
+                                   yhoverformat=yhoverformat,
+                                   hovertemplate = paste0(
+                                       "année %{x}<br>",
+                                       "<b>", varLabel, "</b> %{y}",
+                                       unitLabel,
+                                       "<extra></extra>"),
+                                   hoverlabel=list(bgcolor=color,
+                                                   font=list(size=12),
+                                                   bordercolor="white"))
 
                 fig2 = plotly::add_trace(
-                                  fig2,
-                                  type="scatter",
-                                  mode="markers+lines",
-                                  x=abs,
-                                  y=ord,
-                                  marker=list(color='white', size=6),
-                                  line=list(color='white', width=6),
-                                  hoverinfo="none")
+                                   fig2,
+                                   type="scatter",
+                                   mode="markers+lines",
+                                   x=abs,
+                                   y=ord,
+                                   marker=list(color='white', size=6),
+                                   line=list(color='white', width=6),
+                                   hoverinfo="none")
                 
                 fig2 = plotly::add_trace(
-                                  fig2,
-                                  type="scatter",
-                                  mode="markers+lines",
-                                  x=abs,
-                                  y=ord,
-                                  marker=list(color=color, size=3),
-                                  line=list(color=color, width=3),
-                                  hoverinfo="none")
+                                   fig2,
+                                   type="scatter",
+                                   mode="markers+lines",
+                                   x=abs,
+                                   y=ord,
+                                   marker=list(color=color, size=3),
+                                   line=list(color=color, width=3),
+                                   hoverinfo="none")
                 
                 unitLabel = rv$unit
                 unitLabel = gsub('[/^][/{]', '<sup>', unitLabel)
@@ -2515,6 +2526,7 @@ server = function (input, output, session) {
         }
     })
 
+### 8.4. Close _______________________________________________________
     observeEvent(input$closePlot_button, {
         if (verbose) print("closePlot_button")
         map = leafletProxy("map")
@@ -2529,6 +2541,7 @@ server = function (input, output, session) {
         hide(id='plot_panel')
     })
 
+### 8.5. Download data _______________________________________________
     observeEvent(input$downloadData_button, {
         if (verbose) print("downloadData_button")
         outdir = file.path(computer_data_path, "tmp")
@@ -2589,40 +2602,9 @@ server = function (input, output, session) {
         session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))
     })
-    
 
-## 3. CUSTOMIZATION __________________________________________________
-    observeEvent(input$theme_button, {
-        toggleOnly(id="theme_panel")
-        deselect_mode(session, rv)
-    })
-
-    observeEvent(input$closeSettings_button, {
-        hide(id='theme_panel')
-        showElement(id='ana_panel')
-    })
     
-### 3.2. Palette _____________________________________________________
-    colorbar_choice = reactive({
-        if (is.null(input$colorbar_choice)) {
-            default_colorbar_choice 
-        } else {
-            input$colorbar_choice
-        }
-    })
-    
-    observeEvent({
-        colorbar_choice()
-        rv$trendEX
-    }, {
-        if (verbose) print("colorbar_choice")
-        if (colorbar_choice() == 'show' & !is.null(rv$trendEX)) {
-            showElement(id="colorbar_panel")
-        } else if (colorbar_choice() == 'none' | is.null(rv$trendEX)) {
-            hide(id="colorbar_panel")
-        }
-    })
-
+## 9. COLORBAR PLOT __________________________________________________
     observeEvent({
         colorbar_choice()
         rv$minX
@@ -2748,7 +2730,7 @@ server = function (input, output, session) {
 
                 ncharLim = 4
                 # if (rv$to_normalise) {                    
-                    # labelRaw = binNoINF*100
+                # labelRaw = binNoINF*100
                 # } else {
                 labelRaw = binNoINF
                 # }
@@ -2845,8 +2827,42 @@ server = function (input, output, session) {
             })
         }
     })
+    
 
-### 3.3. Resume panel ________________________________________________
+## 10. CUSTOMIZATION _________________________________________________
+### 10.0. Show / hide ________________________________________________
+    observeEvent(input$theme_button, {
+        toggleOnly(id="theme_panel")
+        deselect_mode(session, rv)
+    })
+
+    observeEvent(input$closeSettings_button, {
+        hide(id='theme_panel')
+        showElement(id='ana_panel')
+    })
+    
+### 10.1. Palette ____________________________________________________
+    colorbar_choice = reactive({
+        if (is.null(input$colorbar_choice)) {
+            default_colorbar_choice 
+        } else {
+            input$colorbar_choice
+        }
+    })
+    
+    observeEvent({
+        colorbar_choice()
+        rv$trendEX
+    }, {
+        if (verbose) print("colorbar_choice")
+        if (colorbar_choice() == 'show' & !is.null(rv$trendEX)) {
+            showElement(id="colorbar_panel")
+        } else if (colorbar_choice() == 'none' | is.null(rv$trendEX)) {
+            hide(id="colorbar_panel")
+        }
+    })
+
+### 10.2. Resume _____________________________________________________
     resume_choice = reactive({
         if (is.null(input$resume_choice)) {
             default_resume_choice 
@@ -2868,7 +2884,7 @@ server = function (input, output, session) {
     })
 
     
-## 4. INFO ___________________________________________________________
+## 11. INFO __________________________________________________________
     observeEvent(input$info_button, {
         if (verbose) print("info_panel")
         toggleOnly(id="info_panel")
@@ -2876,8 +2892,7 @@ server = function (input, output, session) {
     })
 
     
-## 5. SAVE ___________________________________________________________
-### 5.1. Screenshot __________________________________________________
+## 12. SCREENSHOT ____________________________________________________
     observeEvent(input$photo_button, {
         if (verbose) print("photo")
         hide(id="zoom_panelButton")
@@ -2909,7 +2924,8 @@ server = function (input, output, session) {
     })
     
 
-### 5.2. Download ____________________________________________________
+## 13. DOWNLOAD ______________________________________________________
+### 13.0. show/ hide _________________________________________________
     observeEvent(input$download_button, {
         toggleOnly(id="download_bar")
         deselect_mode(session, rv)
@@ -2935,6 +2951,34 @@ server = function (input, output, session) {
         }
     })
 
+    observeEvent(input$dlClickOk_button, {
+        deselect_mode(session, rv)
+        hide(id='dlClick_bar')
+        showElement(id='download_bar')
+    })
+
+### 13.1. Click ______________________________________________________
+    observeEvent(codeClick(), {
+        if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode & !rv$photoMode) {
+            output$downloadData = downloadHandler(
+                filename = function () {
+                    paste0(codeClick(), ".pdf")
+                },
+                content = function (file) {
+                    name = paste0(codeClick(), ".pdf")
+                    from = file.path(computer_data_path, 'pdf', name)
+                    file.copy(from, file)
+                }
+            )
+            jsinject = "setTimeout(function()
+                        {window.open($('#downloadData')
+                        .attr('href'))}, 100);"
+            session$sendCustomMessage(type='jsCode',
+                                      list(value=jsinject))    
+        }
+    })
+
+### 13.2. Selection __________________________________________________
     observeEvent(input$dlSelec_button, {
         
         outdir = file.path(computer_data_path, "tmp")
@@ -2966,6 +3010,7 @@ server = function (input, output, session) {
                                   list(value=jsinject))  
     })
 
+### 13.3. All ________________________________________________________
     observeEvent(input$dlAll_button, {
         outdir = file.path(computer_data_path, "zip")        
         if (!(file.exists(outdir))) {
@@ -2997,33 +3042,8 @@ server = function (input, output, session) {
     })
 
 
-    observeEvent(codeClick(), {
-        if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode & !rv$photoMode) {
-            output$downloadData = downloadHandler(
-                filename = function () {
-                    paste0(codeClick(), ".pdf")
-                },
-                content = function (file) {
-                    name = paste0(codeClick(), ".pdf")
-                    from = file.path(computer_data_path, 'pdf', name)
-                    file.copy(from, file)
-                }
-            )
-            jsinject = "setTimeout(function()
-                        {window.open($('#downloadData')
-                        .attr('href'))}, 100);"
-            session$sendCustomMessage(type='jsCode',
-                                      list(value=jsinject))    
-        }
-    })
-
-    observeEvent(input$dlClickOk_button, {
-        deselect_mode(session, rv)
-        hide(id='dlClick_bar')
-        showElement(id='download_bar')
-    })
-
-## 6. HELP ___________________________________________________________
+## 14. HELP __________________________________________________________
+### 14.0. Show / hide ________________________________________________
     observeEvent({
         input$help_button
         rv$startHelp
@@ -3056,6 +3076,7 @@ server = function (input, output, session) {
         
     })
 
+### 14.1. Navigation _________________________________________________
     observeEvent(input$before_button, {
         if (verbose) print("before_button")
         if (rv$helpPage > 1) {
@@ -3063,7 +3084,16 @@ server = function (input, output, session) {
             rv$helpPage = rv$helpPage - 1
         }
     })
-    
+
+    observeEvent(input$next_button, {
+        if (verbose) print("help next")
+        if (rv$helpPage < N_helpPage) {
+            show_page(n=rv$helpPage + 1, N=N_helpPage)
+            rv$helpPage = rv$helpPage + 1
+        }
+    })
+
+### 14.2. Make page __________________________________________________
     observePage(input, rv, n=1, N=N_helpPage)
     observePage(input, rv, n=2, N=N_helpPage)
     observePage(input, rv, n=3, N=N_helpPage)
@@ -3080,6 +3110,7 @@ server = function (input, output, session) {
     observePage(input, rv, n=14, N=N_helpPage)
     observePage(input, rv, n=15, N=N_helpPage)
 
+### 14.3. Update page ________________________________________________
     observeEvent({
         rv$helpPage
         rv$width
@@ -3111,7 +3142,7 @@ server = function (input, output, session) {
                 }
                 maskOnly(id="maskAna_panelButton")
             }
-                
+            
             if (rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8) {
                 if (rv$width > width_lim) {
                     showOnly(id="ana_panel")
@@ -3164,15 +3195,7 @@ server = function (input, output, session) {
         }
     })
 
-    observeEvent(input$next_button, {
-        if (verbose) print("help next")
-        if (rv$helpPage < N_helpPage) {
-            show_page(n=rv$helpPage + 1, N=N_helpPage)
-            rv$helpPage = rv$helpPage + 1
-        }
-    })
-
-
+### 14.4. Download help ______________________________________________
     observeEvent(input$dlHelp_button, {
         outdir = file.path(resources_path)
         outfile = "makaho.pdf"
@@ -3194,7 +3217,7 @@ server = function (input, output, session) {
                                   list(value=jsinject))
     })
     
-
+### 14.5. Close ______________________________________________________
     observeEvent(input$closeHelp_button, {
         if (verbose) print("help close")
         if (rv$helpPage == 4) {
@@ -3218,7 +3241,4 @@ server = function (input, output, session) {
 
         hide(id='dlHelp_panelButton')        
     })
-
-    
-} 
-
+}

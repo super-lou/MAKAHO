@@ -1,3 +1,4 @@
+/* GENERAL */
 :root {
     font-size: medium !important;
     color: #ffffff !important;
@@ -15,6 +16,42 @@ strong, b {
     font-weight: bold !important;
 }
 
+body {
+    margin: 0;
+    color: #eeeeee;
+    background: rgba(5, 5, 10, 0.83);
+    font-size: inherit;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 0;
+    margin: 1px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    color: #979797 !important;
+    text-decoration: none !important;
+}
+a:link {
+    color: #979797 !important;
+}
+a:hover {
+    color: #ffffff !important;
+}
+
+
+/* CARD PANEL ELEMENT */
 .Panel {
     flex-direction: column !important;
     align-items: stretch !important;
@@ -23,7 +60,6 @@ strong, b {
 .Panel > :not(:first-child) {
     margin-top: 0.2rem !important;
 }
-
 
 .card {
     padding-top: 0.5rem !important;
@@ -55,7 +91,6 @@ strong, b {
     min-width: 13rem !important;
     max-width: calc(100vw - 8.5rem) !important;
 }
-
 
 .card-insert-c,
 .card-insert-r {
@@ -102,7 +137,6 @@ strong, b {
 .card-smallbar-r {
     min-width: 8rem !important;
 }
-
 
 .card-blur {
     padding: 0 !important;
@@ -151,75 +185,6 @@ strong, b {
     margin-bottom: 0 !important;
 }
 
-body {
-    margin: 0;
-    color: #eeeeee;
-    background: rgba(5, 5, 10, 0.83);
-    font-size: inherit;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-td, th {
-    padding: 0;
-    margin: 1px;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-a {
-    color: #979797 !important;
-    text-decoration: none !important;
-}
-a:link {
-    color: #979797 !important;
-}
-a:hover {
-    color: #ffffff !important;
-}
-
-.Tooltip {
-    position: relative !important;
-    display: inline-block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-/* Tooltip text */
-.Tooltip .Tooltiptext {
-    font-size: var(--tooltipSize) !important;
-    visibility: hidden !important;
-    background-color: rgba(5, 5, 10, 0.83) !important;
-    color: #ffffff !important;
-    text-align: center !important;
-
-    border-radius: 0 0 0.5rem 0.5rem !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0.5rem 1rem !important;
-    
-    position: fixed !important;
-    top: 0 !important;
-    left: 47px !important;
-    /* height: 36px !important; */
-    min-height: 2.25rem !important;
-    min-width: 10rem !important;
-    max-width: calc(100vw - 8rem) !important;
-
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.Tooltip:hover .Tooltiptext {
-    visibility: visible !important;
-}
-
 
 /* MENU BUTTON */
 .Button-menu {
@@ -247,6 +212,7 @@ a:hover {
     color: #ffffff !important;
 }
 
+
 /* SMALL ACTUALISE BUTTON */
 .SmallButton-actualise {
     font: inherit !important;
@@ -264,6 +230,7 @@ a:hover {
 .SmallButton-actualise:hover {
     background-color: rgba(39, 86, 98, 0.80) !important;
 }
+
 
 /* SMALL WHITE MENU BUTTON */
 .Button-icon {
@@ -669,7 +636,7 @@ a:hover {
 }
 
 
-/* LOAD MESSAGE */
+/* LOAD SYMBOL */
 .lds-ring,
 .lds-ring div {
     box-sizing: border-box;
@@ -677,8 +644,6 @@ a:hover {
 .lds-ring {
     display: inline-block;
     position: relative;
-    /* width:80px; */
-    /* height:80px */
     width: 1.6rem;
     height: 1.6rem;
 }
@@ -686,10 +651,6 @@ a:hover {
     box-sizing: border-box;
     display: block;
     position: absolute;
-    /* width: 64px; */
-    /* height: 64px; */
-    /* margin: 8px; */
-    /* border: 8px solid currentColor; */
     width: 1.4rem;
     height: 1.4rem;
     margin: 0.25rem;
@@ -714,3 +675,36 @@ a:hover {
     {transform: rotate(360deg)}
 }
 
+
+/* TOOLTIP */
+.Tooltip {
+    position: relative !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.Tooltip .Tooltiptext {
+    font-size: var(--tooltipSize) !important;
+    visibility: hidden !important;
+    background-color: rgba(5, 5, 10, 0.83) !important;
+    color: #ffffff !important;
+    text-align: center !important;
+
+    border-radius: 0 0 0.5rem 0.5rem !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0.5rem 1rem !important;
+    
+    position: fixed !important;
+    top: 0 !important;
+    left: 47px !important;
+    min-height: 2.25rem !important;
+    min-width: 10rem !important;
+    max-width: calc(100vw - 8rem) !important;
+
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.Tooltip:hover .Tooltiptext {
+    visibility: visible !important;
+}

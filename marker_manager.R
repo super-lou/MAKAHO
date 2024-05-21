@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Louis Héraut (louis.heraut@inrae.fr)*1,
+# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1,
 #                     Éric Sauquet (eric.sauquet@inrae.fr)*1,
 #                     Michel Lang (michel.lang@inrae.fr)*1,
 #                     Jean-Philippe Vidal (jean-philippe.vidal@inrae.fr)*1,
@@ -23,6 +23,7 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
+## 1. CREATION _______________________________________________________
 save_marker = function (y, shape, color, fill, size, sizeName,
                         svgSize, stroke, outdir, name=NA, ...) {
 
@@ -132,6 +133,8 @@ create_marker = function (shapeList, sizeShapeList, colorList,
     return (Urls)
 }
 
+## /!\ NEEDS TO BE RUN ONCE TO GENERATE MARKERS ##
+
 # library(ggplot2)
 
 # markerAdd = list(
@@ -201,7 +204,10 @@ create_marker = function (shapeList, sizeShapeList, colorList,
 #               relY=c(0, -0.02, 0.02),
 #               markerAdd=markerAdd)
 
+##################################################
 
+
+## 2. GET ____________________________________________________________
 get_marker = function (size, shape, color, fill,
                        resources_path, filedir) {
 
@@ -220,7 +226,6 @@ get_marker = function (size, shape, color, fill,
     marker = makeIcon(file.path(resources_path, filedir, filename))
     return (marker)
 }
-
 
 get_markerList = function (sizeList, shapeList=NULL, colorList=NULL, fillList=NULL, resources_path="", filedir='marker', width=20) {
 
