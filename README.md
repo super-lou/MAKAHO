@@ -15,7 +15,7 @@ It is a [R Shiny](https://shiny.rstudio.com/) website based on [EXstat](https://
 
 Data came from [Hydroportail](https://www.hydro.eaufrance.fr/) and the selection of stations follows the Reference Network for Low Water Monitoring (Réseau de référence pour la surveillance des étiages, [RRSE](https://geo.data.gouv.fr/en/datasets/29819c27c73f29ee1a962450da7c2d49f6e11c15) in french).
 
-A part of the data produced by [MAKAHO](https://makaho.sk8.inrae.fr/) can be downloaded from [Recherche Data Gouv](https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.57745/LNBEGZ#).
+A part of the data produced by [MAKAHO](https://makaho.sk8.inrae.fr/) can be downloaded from [Recherche Data Gouv](https://doi.org/10.57745/LNBEGZ).
 
 This project was carried out for National Research Institute for Agriculture, Food and the Environment (Institut National de Recherche pour l’Agriculture, l’Alimentation et l’Environnement, [INRAE](https://agriculture.gouv.fr/inrae-linstitut-national-de-recherche-pour-lagriculture-lalimentation-et-lenvironnement) in french).
 
@@ -28,7 +28,7 @@ If you want a local instance, you can download the latest development version us
 git clone https://github.com/super-lou/MAKAHO.git
 ```
 
-The input data needed are not hosted on GitHub but can be found on [Recherche Data Gouv](https://entrepot.recherche.data.gouv.fr/file.xhtml?persistentId=doi:10.57745/1BBH2Y&version=1.1). This data is in a long format `dplyr::tibble` with concatenated hydrometric station data gathered from [Hydroportail](https://www.hydro.eaufrance.fr/). There is a file named `script_create.R` that can help you format such a data table using the [ASHE](https://github.com/super-lou/ASHE) package.
+The input data needed are not hosted on GitHub but can be found on [Recherche Data Gouv](https://doi.org/10.57745/1BBH2Y). This data is in a long format `dplyr::tibble` with concatenated hydrometric station data gathered from [Hydroportail](https://www.hydro.eaufrance.fr/). There is a file named `script_create.R` that can help you format such a data table using the [ASHE](https://github.com/super-lou/ASHE) package.
 
 The local personalized instance has not been properly tested yet but can be a potential area for future improvement!
 
