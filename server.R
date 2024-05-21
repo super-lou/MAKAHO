@@ -2883,10 +2883,8 @@ server = function (input, output, session) {
         }
         dir.create(outdir)
         
-        files = c("data.csv", "meta.csv", "metaEX.csv",
+        files = c("meta.csv", "metaEX.csv",
                   "dataEX.csv", "trendEX.csv")
-        ASHE::write_tibble(rv$data, filedir=outdir,
-                           filename="data.csv")
         ASHE::write_tibble(rv$meta, filedir=outdir,
                            filename="meta.csv")
         ASHE::write_tibble(rv$metaEX, filedir=outdir,
