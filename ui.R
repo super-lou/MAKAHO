@@ -236,28 +236,6 @@ ui = bootstrapPage(
                        inputId='closePlot_button',
                        label=NULL,
                        icon_name=iconLib$close_black))
-            
-            # div(Button(class="Button-icon",
-            #            style="position: absolute;
-            #                   top: 26%;
-            #                   height: 85px;
-            #                   left: 15px; 
-            #                   width: 28px;
-            #                   transform: translate(0, -50%);",
-            #            inputId='graph_downloadData_button',
-            #            label=NULL,
-            #            icon_name=NULL)),
-            
-            # div(Button(class="Button-icon",
-            #            style="position: absolute;
-            #                   top: 63.5%; 
-            #                   height: 115px;
-            #                   left: 15px; 
-            #                   width: 28px;
-            #                   transform: translate(0, -50%);",
-            #            inputId='graph_downloadDataEx_button',
-            #            label=NULL,
-            #            icon_name=NULL))
         )
     ),
 

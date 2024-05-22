@@ -2868,13 +2868,7 @@ server = function (input, output, session) {
     
 
 ## 13. DOWNLOAD ______________________________________________________
-
-    
-
-
-
-
-### 13.1. Data _______________________________________________
+### 13.1. Data _______________________________________________________
     observeEvent(input$download_data_button, {
         if (verbose) print("downloadData_button")
         outdir = file.path(computer_data_path, "tmp")
@@ -2897,10 +2891,11 @@ server = function (input, output, session) {
                            filename="trendEX.csv")
 
         readme = readLines(readme_path)
-        sep = " -> "
-        readme = c(readme,
+        sep = " : "
+        param = NULL
+        param = c(param,
                    paste0(word("ana.data", lg), sep, rv$data_name))
-        readme = c(readme,
+        param = c(param,
                    paste0(word("ana.type", lg), sep, rv$type))
 
         if (rv$type == word("ana.type.T", lg)) {
@@ -2910,9 +2905,9 @@ server = function (input, output, session) {
         } else if (rv$type == word("ana.type.P", lg)) {
             event_name = word("ana.pluviometrie", lg)
         }
-        readme = c(readme,
+        param = c(param,
                    paste0(event_name, sep, rv$event))
-        readme = c(readme,
+        param = c(param,
                    paste0(word('ana.var', lg), sep, rv$variable))
 
         if (grepl(word("var.month", lg), rv$variable)) {
@@ -2922,7 +2917,7 @@ server = function (input, output, session) {
         } else {
             proba_name = word("ana.proba", lg)
         }
-        readme = c(readme,
+        param = c(param,
                    paste0(proba_name, sep, rv$proba))
 
         if (rv$optimalMode_act) {
@@ -2932,14 +2927,20 @@ server = function (input, output, session) {
                                                collapse=" ")
         }
         
-        readme = c(readme,
+        param = c(param,
                    paste0(word('ana.dm', lg), sep,
                                sampling_period_overwrite))
-        readme = c(readme,
+        param = c(param,
                    paste0(word('ana.dy', lg), sep,
                           paste0(rv$period, collapse=" ")))
-        readme = c(readme,
+        param = c(param,
                    paste0(word('ana.sig', lg), sep, rv$alpha))
+
+        id = which(grepl("[[]PARAM[]]", readme))
+        readme = c(readme[1:(id-1)],
+                   param,
+                   readme[(id+1):length(readme)])
+        readme = gsub("[[]DATE[]]", Sys.time(), readme)
         
         writeLines(readme, readme_tmp_path)
         
@@ -2964,11 +2965,9 @@ server = function (input, output, session) {
         session$sendCustomMessage(type='jsCode',
                                   list(value=jsinject))
     })
-    
 
-
-
-    ### 13.0. show/ hide _________________________________________________
+### 13.2. Sheet ______________________________________________________
+#### 13.2.0. show/ hide ______________________________________________
     observeEvent(input$download_sheet_button, {
         toggleOnly(id="download_sheet_bar")
         deselect_mode(session, rv)
@@ -3000,7 +2999,7 @@ server = function (input, output, session) {
         showElement(id='download_sheet_bar')
     })
 
-### 13.1. Click ______________________________________________________
+#### 13.2.1. click ___________________________________________________
     observeEvent(codeClick(), {
         if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode & !rv$photoMode) {
             output$downloadData = downloadHandler(
@@ -3021,7 +3020,7 @@ server = function (input, output, session) {
         }
     })
 
-### 13.2. Selection __________________________________________________
+#### 13.2.2. selection _______________________________________________
     observeEvent(input$dlSelec_button, {
         
         outdir = file.path(computer_data_path, "tmp")
@@ -3053,7 +3052,7 @@ server = function (input, output, session) {
                                   list(value=jsinject))  
     })
 
-### 13.3. All ________________________________________________________
+#### 13.2.3. all _____________________________________________________
     observeEvent(input$dlAll_button, {
         outdir = file.path(computer_data_path, "zip")        
         if (!(file.exists(outdir))) {
