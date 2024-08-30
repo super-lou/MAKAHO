@@ -38,7 +38,7 @@ library(stringr)
 # library(CircStats)
 # library(Hmisc)
 library(lubridate)
-# library(sf)
+library(sf)
 # library(sp)
 
 
