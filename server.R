@@ -1918,7 +1918,8 @@ server = function (input, output, session) {
                                            unitLabel,
                                            "<extra></extra>"),
                                        hoverlabel=list(bgcolor=color,
-                                                       font=list(size=12),
+                                                       font=list(size=12,
+                                                                 family="Helvetica"),
                                                        bordercolor="white"))
 
 
@@ -1993,6 +1994,7 @@ server = function (input, output, session) {
                                            hoverlabel=
                                                list(bgcolor=lightCyanCOL,
                                                     font=list(color="white",
+                                                              family="Helvetica",
                                                               size=12),
                                                     bordercolor="white"))
                     }
@@ -2024,6 +2026,7 @@ server = function (input, output, session) {
                                        xanchor='left',
                                        yanchor='bottom',
                                        font=list(color=switchColor,
+                                                 family="Helvetica",
                                                  size=12))
 
                     fig0 = plotly::add_annotations(
@@ -2040,6 +2043,7 @@ server = function (input, output, session) {
                                        xanchor='left',
                                        yanchor='bottom',
                                        font=list(color=INRAECyanCOL,
+                                                 family="Helvetica",
                                                  size=12))
                     
                     fig0 = plotly::layout(
@@ -2052,12 +2056,14 @@ server = function (input, output, session) {
                                                text=paste0(
                                                    "<b>", varLabel, "</b>",
                                                    unitLabel),
-                                               font=list(color=grey20COL)),
+                                               font=list(color=grey20COL,
+                                                         family="Helvetica")),
                                            gridcolor=grey85COL,
                                            gridwidth=0.6,
                                            ticks="outside",
                                            tickcolor=grey75COL,
-                                           tickfont=list(color=grey40COL),
+                                           tickfont=list(color=grey40COL,
+                                                         family="Helvetica"),
                                            showline=TRUE,
                                            linewidth=2,
                                            linecolor=grey85COL,
@@ -2120,7 +2126,8 @@ server = function (input, output, session) {
                                        unitLabel,
                                        "<extra></extra>"),
                                    hoverlabel=list(bgcolor=color,
-                                                   font=list(size=12),
+                                                   font=list(size=12,
+                                                             family="Helvetica"),
                                                    bordercolor="white"))
 
 
@@ -2195,6 +2202,7 @@ server = function (input, output, session) {
                                        hoverlabel=
                                            list(bgcolor=lightCyanCOL,
                                                 font=list(color="white",
+                                                          family="Helvetica",
                                                           size=12),
                                                 bordercolor="white"))
                 }
@@ -2228,6 +2236,7 @@ server = function (input, output, session) {
                                        xanchor='left',
                                        yanchor='bottom',
                                        font=list(color=switchColor,
+                                                 family="Helvetica",
                                                  size=12))
 
                     fig1 = plotly::add_annotations(
@@ -2244,6 +2253,7 @@ server = function (input, output, session) {
                                        xanchor='left',
                                        yanchor='bottom',
                                        font=list(color=INRAECyanCOL,
+                                                 family="Helvetica",
                                                  size=12))
 
                 }
@@ -2259,12 +2269,14 @@ server = function (input, output, session) {
                                                        varLabel,
                                                        "</b>",
                                                        unitLabel),
-                                           font=list(color=grey20COL)),
+                                           font=list(color=grey20COL,
+                                                     family="Helvetica")),
                                        gridcolor=grey85COL,
                                        gridwidth=0.6,
                                        ticks="outside",
                                        tickcolor=grey75COL,
-                                       tickfont=list(color=grey40COL),
+                                       tickfont=list(color=grey40COL,
+                                                     family="Helvetica"),
                                        showline=TRUE,
                                        linewidth=2,
                                        linecolor=grey85COL,
@@ -2371,7 +2383,8 @@ server = function (input, output, session) {
                                        unitLabel,
                                        "<extra></extra>"),
                                    hoverlabel=list(bgcolor=color,
-                                                   font=list(size=12),
+                                                   font=list(size=12,
+                                                             family="Helvetica"),
                                                    bordercolor="white"))
 
                 fig2 = plotly::add_trace(
@@ -2408,11 +2421,13 @@ server = function (input, output, session) {
                                    yaxis=list(
                                        title=list(
                                            text=title,
-                                           font=list(color=grey20COL)),
+                                           font=list(color=grey20COL,
+                                                     family="Helvetica")),
                                        showgrid=FALSE,
                                        ticks="outside",
                                        tickcolor=grey75COL,
-                                       tickfont=list(color=grey40COL),
+                                       tickfont=list(color=grey40COL,
+                                                     family="Helvetica"),
                                        showline=TRUE,
                                        linewidth=2,
                                        linecolor=grey85COL,
@@ -2496,7 +2511,8 @@ server = function (input, output, session) {
                                                 ticks="outside",
                                                 tickcolor=grey75COL,
                                                 tickfont=
-                                                    list(color=grey40COL),
+                                                    list(color=grey40COL,
+                                                         family="Helvetica"),
                                                 showline=TRUE,
                                                 linewidth=2,
                                                 linecolor=grey85COL,
@@ -2645,7 +2661,8 @@ server = function (input, output, session) {
                                   hoverinfo="text",
                                   hoveron="fills",
                                   hoverlabel=list(bgcolor=counts[colorStep],
-                                                  font=list(size=12),
+                                                  font=list(size=12,
+                                                            family="Helvetica"),
                                                   bordercolor="white"))
                 
                 fig = plotly::add_trace(
@@ -2664,7 +2681,8 @@ server = function (input, output, session) {
                                   hoverinfo="text",
                                   hoveron="fills",
                                   hoverlabel=list(bgcolor=counts[1],
-                                                  font=list(size=12),
+                                                  font=list(size=12,
+                                                            family="Helvetica"),
                                                   bordercolor="white"))
 
                 Xlab = rep(1.2, colorStep)
@@ -2691,6 +2709,7 @@ server = function (input, output, session) {
                                       showarrow=FALSE,
                                       xanchor='left',
                                       font=list(color=grey60COL,
+                                                family="Helvetica",
                                                 size=12.5))
 
                     fig = plotly::layout(
@@ -2721,6 +2740,7 @@ server = function (input, output, session) {
                                   showarrow=FALSE,
                                   xanchor='left',
                                   font=list(color=grey40COL,
+                                            family="Helvetica",
                                             size=12))
 
                 # unit = rv$unit
@@ -2758,6 +2778,7 @@ server = function (input, output, session) {
                                   xanchor='right',
                                   yanchor='center',
                                   font=list(color=grey50COL,
+                                            family="Helvetica",
                                             size=13.5))
                 
                 fig = plotly::config(
