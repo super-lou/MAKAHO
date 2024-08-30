@@ -1185,29 +1185,29 @@
 	    ],
 	    "Hash": "906cb23d2f1c5680b8ce439b44c6fa63"
 	},
-	"sf": {
-	    "Package": "sf",
-	    "Version": "1.0-14",
-	    "Source": "Repository",
-	    "Repository": "CRAN",
-	    "Requirements": [
-		"DBI",
-		"R",
-		"Rcpp",
-		"classInt",
-		"grDevices",
-		"graphics",
-		"grid",
-		"magrittr",
-		"methods",
-		"s2",
-		"stats",
-		"tools",
-		"units",
-		"utils"
-	    ],
-	    "Hash": "e2111252a76984ca50bf8d6314348681"
-	},
+	// "sf": {
+	//     "Package": "sf",
+	//     "Version": "1.0-14",
+	//     "Source": "Repository",
+	//     "Repository": "CRAN",
+	//     "Requirements": [
+	//  	"DBI",
+	//  	"R",
+	//  	"Rcpp",
+	//  	"classInt",
+	//  	"grDevices",
+	//  	"graphics",
+	//  	"grid",
+	//  	"magrittr",
+	//  	"methods",
+	//  	"s2",
+	//  	"stats",
+	//  	"tools",
+	//  	"units",
+	//  	"utils"
+	//     ],
+	//     "Hash": "e2111252a76984ca50bf8d6314348681"
+	// },
 	"shiny": {
 	    "Package": "shiny",
 	    "Version": "1.7.5",
