@@ -1719,8 +1719,6 @@ server = function (input, output, session) {
                     show_advance_stat=TRUE,
                     verbose=verbose)
 
-                print(trendEX, n=Inf, width=Inf)
-                
                 if (verbose) print("trendEX")
                 rv$unit = metaEX[paste0("unit_", lg)][1]
                 rv$to_normalise = metaEX$to_normalise[1]
