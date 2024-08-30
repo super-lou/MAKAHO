@@ -161,7 +161,7 @@ CARD$P1.keep = "all"
 CARD$P2.funct = list(VCN10_winter=minNA)
 CARD$P2.funct_args = list("VC10_winter", na.rm=TRUE)
 CARD$P2.time_step = "year"
-CARD$P2.sampling_period = list(max, list("Q", na.rm=TRUE))
+CARD$P2.sampling_period = c("11-01", "04-30")
 CARD$P2.NApct_lim = 3
 CARD$P2.NAyear_lim = 10
 CARD$P2.keep = "all"
@@ -189,7 +189,7 @@ CARD$P4.funct_args = list(list("VC10_winter", lim="upLim", where="<=",
                           list("VC10_winter", select="longest",
                                upLim="upLim"))
 CARD$P4.time_step = "year"
-CARD$P4.sampling_period = list(max, list("Q", na.rm=TRUE))
+CARD$P4.sampling_period = c("11-01", "04-30")
 CARD$P4.is_date = c(TRUE, TRUE, TRUE, FALSE, FALSE)
 CARD$P4.NApct_lim = 3
 

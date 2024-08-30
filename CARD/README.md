@@ -1,4 +1,4 @@
-# CARD [<img src="figures/flower_alt_hex.png" align="right" width=160 height=160 alt=""/>](https://makaho.sk8.inrae.fr/)
+# CARD [<img src="figures/flower_alt_hex.png" align="right" width=160 height=160 alt=""/>](https://github.com/super-lou/EXstat/)
 
 <!-- badges: start -->
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green)](https://lifecycle.r-lib.org/articles/stages.html)
@@ -6,9 +6,9 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md) 
 <!-- badges: end -->
 
-**CARD** is a set of parameterization files for the banking and simplification of hydro-climatic data aggregation with the [EXstat](https://github.com/super-lou/EXstat) package.
+**CARD** is a set of parameterization files for the banking and simplification of hydroclimatic temporal data aggregation with the [EXstat](https://github.com/super-lou/EXstat) package.
 
-This repository lists all the available CARDs and is intended to work in conjunction with [EXstat](https://github.com/super-lou/EXstat). For information on how to use these CARDs, please refer to the [EXstat](https://github.com/super-lou/EXstat) documentation.
+This repository lists all the available CARDs and is intended to work in conjunction with EXstat. For information on how to use these CARDs, please refer to the EXstat documentation.
 
 This project was carried out for National Research Institute for Agriculture, Food and the Environment (Institut National de Recherche pour l’Agriculture, l’Alimentation et l’Environnement, [INRAE](https://agriculture.gouv.fr/inrae-linstitut-national-de-recherche-pour-lagriculture-lalimentation-et-lenvironnement) in french).
 
@@ -85,7 +85,7 @@ CARD$P1.NApct_lim = 3
 CARD$P1.NAyear_lim = 10
 ```
 
-CARDS are separated into 2 main parts: `INFO` and `PROCESS`.
+CARDs are separated into 2 main parts: `INFO` and `PROCESS`.
 
 ##### INFO
 In this part, you can find all the necessary info about the variable represented by this CARD. There are English and French versions for parameters such as the unit, the name, and the description. Global info are general info that do not need translation.

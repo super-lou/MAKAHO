@@ -195,4 +195,5 @@ CARD_dir = "MAKAHOapp"
 
 
 ### 3.9. Dev _________________________________________________________
-nStation_dev = 2
+make_marker = FALSE
+nStation_dev = 10

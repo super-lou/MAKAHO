@@ -134,76 +134,76 @@ create_marker = function (shapeList, sizeShapeList, colorList,
 }
 
 ## /!\ NEEDS TO BE RUN ONCE TO GENERATE MARKERS ##
+if (make_marker) { 
+    library(ggplot2)
 
-# library(ggplot2)
+    markerAdd = list(
+        c(color=missColor,
+          fill=none2Color_light,
+          stroke=1),
+        c(color=missColor,
+          fill=none2Color_dark,
+          stroke=1),
+        
+        c(color=validSColor,
+          fill=validSColor,
+          stroke=0.8),
+        c(color=none1Color_light,
+          fill=none2Color_light,
+          stroke=0.8),
+        c(color=none1Color_dark,
+          fill=none2Color_dark,
+          stroke=0.8),
 
-# markerAdd = list(
-#     c(color=missColor,
-#       fill=none2Color_light,
-#       stroke=1),
-#     c(color=missColor,
-#       fill=none2Color_dark,
-#       stroke=1),
-    
-#     c(color=validSColor,
-#       fill=validSColor,
-#       stroke=0.8),
-#     c(color=none1Color_light,
-#       fill=none2Color_light,
-#       stroke=0.8),
-#     c(color=none1Color_dark,
-#       fill=none2Color_dark,
-#       stroke=0.8),
+        c(color="black",
+          fill="black",
+          stroke=1,
+          alpha=0,
+          name="void")
+    )
 
-#     c(color="black",
-#       fill="black",
-#       stroke=1,
-#       alpha=0,
-#       name="void")
-#     )
+    create_marker(shapeList=c(21, 24, 25),
+                  sizeShapeList=c(5, 7, 7),
+                  colorList=c(validSColor, validNSColor, invalidColor),
+                  strokeColorList=c(0.8, 0.8, 1),
+                  sizeList=c(0.8, 0.8, 1.2),
+                  strokeSizeList=c(1, 1, 1.4),
+                  nameSizeList=c('small', 'small', 'big'),
+                  svgSizeList=c(100, 100, 125),
+                  fillPalette=get_IPCC_Palette("hydro_10"),
+                  resources_path=resources_path,
+                  filedir='marker',
+                  relY=c(0, -0.02, 0.02),
+                  markerAdd=markerAdd)
 
-# create_marker(shapeList=c(21, 24, 25),
-#               sizeShapeList=c(5, 7, 7),
-#               colorList=c(validSColor, validNSColor, invalidColor),
-#               strokeColorList=c(0.8, 0.8, 1),
-#               sizeList=c(0.8, 0.8, 1.2),
-#               strokeSizeList=c(1, 1, 1.4),
-#               nameSizeList=c('small', 'small', 'big'),
-#               svgSizeList=c(100, 100, 125),
-#               fillPalette=get_IPCC_Palette("MAKAHO_hydro"),
-#               resources_path=resources_path,
-#               filedir='marker',
-#               relY=c(0, -0.02, 0.02),
-#               markerAdd=markerAdd)
+    create_marker(shapeList=c(21, 24, 25),
+                  sizeShapeList=c(5, 7, 7),
+                  colorList=c(validSColor, validNSColor, invalidColor),
+                  strokeColorList=c(0.8, 0.8, 1),
+                  sizeList=c(0.8, 0.8, 1.2),
+                  strokeSizeList=c(1, 1, 1.4),
+                  nameSizeList=c('small', 'small', 'big'),
+                  svgSizeList=c(100, 100, 125),
+                  fillPalette=get_IPCC_Palette("temperature_10"),
+                  resources_path=resources_path,
+                  filedir='marker',
+                  relY=c(0, -0.02, 0.02),
+                  markerAdd=markerAdd)
 
-# create_marker(shapeList=c(21, 24, 25),
-#               sizeShapeList=c(5, 7, 7),
-#               colorList=c(validSColor, validNSColor, invalidColor),
-#               strokeColorList=c(0.8, 0.8, 1),
-#               sizeList=c(0.8, 0.8, 1.2),
-#               strokeSizeList=c(1, 1, 1.4),
-#               nameSizeList=c('small', 'small', 'big'),
-#               svgSizeList=c(100, 100, 125),
-#               fillPalette=get_IPCC_Palette("MAKAHO_temperature"),
-#               resources_path=resources_path,
-#               filedir='marker',
-#               relY=c(0, -0.02, 0.02),
-#               markerAdd=markerAdd)
-
-# create_marker(shapeList=c(21, 24, 25),
-#               sizeShapeList=c(5, 7, 7),
-#               colorList=c(validSColor, validNSColor, invalidColor),
-#               strokeColorList=c(0.8, 0.8, 1),
-#               sizeList=c(0.8, 0.8, 1.2),
-#               strokeSizeList=c(1, 1, 1.4),
-#               nameSizeList=c('small', 'small', 'big'),
-#               svgSizeList=c(100, 100, 125),
-#               fillPalette=get_IPCC_Palette("MAKAHO_date"),
-#               resources_path=resources_path,
-#               filedir='marker',
-#               relY=c(0, -0.02, 0.02),
-#               markerAdd=markerAdd)
-
+    create_marker(shapeList=c(21, 24, 25),
+                  sizeShapeList=c(5, 7, 7),
+                  colorList=c(validSColor, validNSColor, invalidColor),
+                  strokeColorList=c(0.8, 0.8, 1),
+                  sizeList=c(0.8, 0.8, 1.2),
+                  strokeSizeList=c(1, 1, 1.4),
+                  nameSizeList=c('small', 'small', 'big'),
+                  svgSizeList=c(100, 100, 125),
+                  fillPalette=get_IPCC_Palette("date_10"),
+                  resources_path=resources_path,
+                  filedir='marker',
+                  relY=c(0, -0.02, 0.02),
+                  markerAdd=markerAdd)
+}
 ##################################################
 
 

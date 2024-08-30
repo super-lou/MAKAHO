@@ -64,4 +64,3 @@ CARD$P1.nameEX = "X"
 CARD$P1.keep = NULL
 CARD$P1.compress = FALSE
 CARD$P1.expand = FALSE
-CARD$P1.rmNApct = TRUE

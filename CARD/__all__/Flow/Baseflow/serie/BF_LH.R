@@ -23,40 +23,33 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
-### /!\ not realy clean, need to be done with season but without the
-# other season part. Need some adjustementin EXstat for that. ###
-
 ## INFO ______________________________________________________________
 ### English __________________________________________________________
-CARD$P.variable_en = "QSA_JJASON"
+CARD$P.variable_en = "BF_LH"
 CARD$P.unit_en = "m^{3}.s^{-1}"
-CARD$P.name_en = "Seasonal annual mean daily discharge"
+CARD$P.name_en = "Base flow (Lyne and Hollick)"
 CARD$P.description_en = ""
-CARD$P.method_en = "1. annual aggregation [06-01, 10-31] - mean"
-CARD$P.sampling_period_en = "06-01, 10-31"
-CARD$P.topic_en = "Flow, Mean Flows, Intensity"
+CARD$P.method_en = "1. no temporal aggregation - extraction of the base flow (Lyne and Hollick)"
+CARD$P.topic_en = "Flow, Base Flow, Intensity"
 
 ### French ___________________________________________________________
-CARD$P.variable_fr = "QSA_JJASON"
+CARD$P.variable_fr = "QB_LH"
 CARD$P.unit_fr = "m^{3}.s^{-1}"
-CARD$P.name_fr = "Moyenne saisonnière annuelle du débit journalier"
+CARD$P.name_fr = "Débit de base (Lyne et Hollick)"
 CARD$P.description_fr = ""
-CARD$P.method_fr = "1. agrégation annuelle [01-06, 31-10] - moyenne"
-CARD$P.sampling_period_fr = "06-01, 10-31"
-CARD$P.topic_fr = "Débit, Moyennes Eaux, Intensité"
+CARD$P.method_fr = "1. aucune agrégation temporelle - extraction du débit de base (Lyne et Hollick)"
+CARD$P.topic_fr = "Débit, Débit de Base, Intensité"
 
 ### Global ___________________________________________________________
 CARD$P.is_date = FALSE
-CARD$P.to_normalise = TRUE
-CARD$P.palette = "#452C1A #7F4A23 #B3762A #D4B86A #EFE0B0 #BCE6DB #7ACEB9 #449C93 #2A6863 #193830"
+CARD$P.to_normalise = FALSE
+CARD$P.palette = NULL
 
 
 ## PROCESS ___________________________________________________________
 ### P1 _______________________________________________________________
-CARD$P1.funct = list(QSA_JJASON=mean)
-CARD$P1.funct_args = list("Q", na.rm=TRUE)
-CARD$P1.time_step = "year"
-CARD$P1.sampling_period = c("06-01", "10-31")
-CARD$P1.NApct_lim = 3
+CARD$P1.funct = list(BF_LH=BFS)
+CARD$P1.funct_args = list("Q", method="LH")
+CARD$P1.time_step = "none"
+CARD$P1.keep = "all"
 CARD$P1.NAyear_lim = 10
-

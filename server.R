@@ -1709,7 +1709,8 @@ server = function (input, output, session) {
 #### 6.2.4. process trend analyse ____________________________________
                 if (verbose) print("process_trend")
                 trendEX = process_trend(
-                    dataEX, metaEX,
+                    dataEX,
+                    metaEX=metaEX,
                     extreme_take_not_signif_into_account=TRUE,
                     MK_level=as.numeric(alpha()),
                     time_dependency_option="AR1",
@@ -1718,6 +1719,8 @@ server = function (input, output, session) {
                     show_advance_stat=TRUE,
                     verbose=verbose)
 
+                print(trendEX, n=Inf, width=Inf)
+                
                 if (verbose) print("trendEX")
                 rv$unit = metaEX[paste0("unit_", lg)][1]
                 rv$to_normalise = metaEX$to_normalise[1]
