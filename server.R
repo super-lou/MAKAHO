@@ -3183,7 +3183,9 @@ server = function (input, output, session) {
         if (verbose) print("help")
         if (!is.null(rv$helpPage)) {
 
-            if (rv$helpPage == 1 | rv$helpPage == 2 | rv$helpPage == 3) {
+            if (rv$helpPage == 1 |
+                rv$helpPage == 2 |
+                rv$helpPage == 3) {
                 hideAll()
                 maskAll()
             }
@@ -3196,7 +3198,8 @@ server = function (input, output, session) {
             if (rv$helpPage == 4) {
                 hideAll()
                 maskOnly(id="maskZoom_panelButton")
-                rv$CodeSample = rv$CodeAll[substr(rv$CodeAll, 1, 1) == "O"]
+                rv$CodeSample = rv$CodeAll[substr(rv$CodeAll,
+                                                  1, 1) == "O"]
             } else {
                 rv$CodeSample = rv$CodeAll
             }
@@ -3208,7 +3211,8 @@ server = function (input, output, session) {
                 maskOnly(id="maskAna_panelButton")
             }
             
-            if (rv$helpPage == 6 | rv$helpPage == 7 | rv$helpPage == 8) {
+            if (rv$helpPage == 6 | rv$helpPage == 7 |
+                rv$helpPage == 8) {
                 if (rv$width > width_lim) {
                     showOnly(id="ana_panel")
                 }
