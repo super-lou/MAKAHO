@@ -185,7 +185,7 @@ N_helpPage = 16
 widthHelp = 350
 leftHelp = "51%"
 topHelp = "45%"
-bottomNavHelp = 45
+bottomNavHelp = 50
 dhNavHelp = 21
 
 

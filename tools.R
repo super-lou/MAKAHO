@@ -469,7 +469,7 @@ page_circle = function (n, leftBase, widthHelp,
 
                    hidden(
                        div(id=paste0("c", n,"U_panelButton"),
-                           Button(class="Button-icon",
+                           Button(class="Button-icon-hover",
                                   inputId=paste0("c", n, "U_button"),
                                   label=NULL,
                                   icon_name=iconLib$circle_unchecked_white,
@@ -477,7 +477,7 @@ page_circle = function (n, leftBase, widthHelp,
                    ),
                    hidden(
                        div(id=paste0("c", n,"C_panelButton"),
-                           Button(class="Button-icon",
+                           Button(class="Button-icon-hover",
                                   inputId=paste0("c", n, "C_button"),
                                   label=NULL,
                                   icon_name=iconLib$circle_checked_white,
@@ -486,6 +486,7 @@ page_circle = function (n, leftBase, widthHelp,
                    )
     )
 }
+
 
 ### 7.2. Page ________________________________________________________
 show_page = function (n, N) {

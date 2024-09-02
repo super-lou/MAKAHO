@@ -165,7 +165,7 @@ ui = bootstrapPage(
         fixedPanel(id='help_panelButton',
                    right=105, bottom=10,
                    width="auto", height="auto",
-                   Button(class="Button-icon",
+                   Button(class="Button-icon-hover",
                           style="color: rgba(5, 5, 10, 0.90) !important;
                                  padding-left: 0.5rem !important;
                                  padding-right: 0.5rem !important;",
@@ -175,7 +175,7 @@ ui = bootstrapPage(
                           tooltip=word("tt.help", lg))
                    )
     ),
-    
+
     hidden(
         fixedPanel(id='blur_panel',
                    class="Panel card-blur"   
@@ -229,7 +229,7 @@ ui = bootstrapPage(
                                      width="auto",
                                      height="auto")),
             
-            div(Button(class="Button-icon",
+            div(Button(class="Button-icon-hover",
                        style="position: absolute;
                               top: 0.15rem;
                               left: 0.15rem;",
@@ -267,7 +267,7 @@ ui = bootstrapPage(
             div(style="position: absolute;
                        bottom: 0.6rem;
                        right: 0.6rem;",
-                Button(class="Button-icon",
+                Button(class="Button-icon-hover",
                        inputId='theme_button',
                        label=NULL,
                        icon_name=iconLib$settings_white,
@@ -574,7 +574,7 @@ ui = bootstrapPage(
             width="auto", height="auto",
             left=10, bottom="50%",
 
-            div(Button(class="Button-icon",
+            div(Button(class="Button-icon-hover",
                        style="position: absolute;
                               top: 0.15rem;
                               left: 0.15rem;",
@@ -949,7 +949,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help1_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -967,7 +967,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help2_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -985,7 +985,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help3_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -993,7 +993,7 @@ ui = bootstrapPage(
                    h4(HTML(word("help.p3.ss1", lg))),
                    p(HTML(word("help.p3.p1", lg))),
                    p(HTML(word("help.p3.p2", lg)))
-                   )  
+                   )
     ),
 
 #### 11.2.4. page 4 __________________________________________________
@@ -1004,7 +1004,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help4_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1022,7 +1022,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help5_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1042,7 +1042,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help6_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1062,7 +1062,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help7_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1082,7 +1082,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help8_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1101,7 +1101,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help9_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1121,7 +1121,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help10_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1142,7 +1142,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help11_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1161,7 +1161,7 @@ ui = bootstrapPage(
 
     hidden(
         fixedPanel(id="help12_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
 
@@ -1181,7 +1181,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help13_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1199,7 +1199,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help14_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1219,7 +1219,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help15_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto", height="auto",
                    
@@ -1238,7 +1238,7 @@ ui = bootstrapPage(
     
     hidden(
         fixedPanel(id="help16_panel",
-                   class="Panel card-text",
+                   class="Panel card-help",
                    left=leftHelp, top=topHelp,
                    width="auto",
                    height="auto",
@@ -1257,7 +1257,7 @@ ui = bootstrapPage(
                                " - ", dhNavHelp, "px)"),
                    bottom=bottomNavHelp,
                    width="auto", height="auto",
-                   Button(class="Button-icon",
+                   Button(class="Button-icon-hover",
                           inputId='before_button',
                           label=NULL,
                           icon_name=iconLib$navigate_before_white,
@@ -1273,7 +1273,7 @@ ui = bootstrapPage(
                                " + ", dhNavHelp*N_helpPage, "px)"),
                    bottom=bottomNavHelp,
                    width="auto", height="auto",
-                   Button(class="Button-icon",
+                   Button(class="Button-icon-hover",
                           inputId='next_button',
                           label=NULL,
                           icon_name=iconLib$navigate_next_white,
@@ -1281,30 +1281,16 @@ ui = bootstrapPage(
                    )
     ),
 
-#### 11.3.3. close ___________________________________________________
-    hidden(
-        fixedPanel(id='closeHelp_panelButton',
-                   left=paste0("calc(", leftHelp,
-                               " - ", 0.5*widthHelp, "px",
-                               " + ", dhNavHelp*(N_helpPage+1), "px)"),
-                   bottom=bottomNavHelp+1,
-                   width="auto", height="auto",
-                   Button(class="Button-icon",
-                          style="padding-left: 0.5rem !important;
-                                 padding-right: 0.5rem !important;",
-                          inputId='closeHelp_button',
-                          label=word("help.close", lg),
-                          icon_name=iconLib$close_white,
-                          tooltip=NULL)
-                   )
-    ),
-
-### 11.4. Download help ______________________________________________
+#### 11.3.3. download help ___________________________________________
     hidden(
         fixedPanel(id='dlHelp_panelButton',
+                   # left=paste0("calc(", leftHelp,
+                   #             " - ", 0.5*widthHelp, "px",
+                   #             " + ", dhNavHelp*(N_helpPage+1), "px)"),
+                   # bottom=bottomNavHelp+1,
                    left=paste0("calc(", leftHelp,
-                               " - 1% - 0.5rem)"),
-                   bottom=paste0("calc(", bottomNavHelp, "px - 2rem)"), 
+                               " - 1% - 10rem)"),
+                   bottom=paste0("calc(", bottomNavHelp, "px - 2rem)"),
                    width="auto", height="auto",
                    Button(class="Button-icon",
                           style="padding-left: 0.5rem !important;
@@ -1316,6 +1302,22 @@ ui = bootstrapPage(
                    )
     ),
 
+#### 11.3.4. close ___________________________________________________
+    hidden(
+        fixedPanel(id='closeHelp_panelButton',
+                   left=paste0("calc(", leftHelp,
+                               " - 1% + 2.5rem)"),
+                   bottom=paste0("calc(", bottomNavHelp, "px - 2rem)"), 
+                   width="auto", height="auto",
+                   Button(class="Button-icon",
+                          style="padding-left: 0.5rem !important;
+                                 padding-right: 0.5rem !important;",
+                          inputId='closeHelp_button',
+                          label=word("help.close", lg),
+                          icon_name=iconLib$close_white,
+                          tooltip=NULL)
+                       )
+        ),
 
 ## 12. LOADING SYMBOL ________________________________________________
     hidden(

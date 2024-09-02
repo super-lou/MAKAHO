@@ -161,7 +161,9 @@ a:hover {
     background-color: rgba(5, 5, 10, 0.3) !important;
 }
 
-.card-text {
+.card-help {
+    top: 45%;
+    left: 51%;
     min-width: 22rem !important;
     max-width: calc(100vw - 55vw) !important;
     background-color: transparent !important;
@@ -169,6 +171,17 @@ a:hover {
     padding: 0 !important;
     margin: 0 !important;
 }
+/* .help-bar { */
+/*     position: absolute !important; */
+/*     bottom: 10%; */
+/*     left: 50%; */
+/*     transform: translate(-50%, -50%) !important;  */
+/*     display: flex !important; */
+/* } */
+/* .help-circle { */
+/*     position: relative !important; */
+/* } */
+
 
 .card-insert-text {
     background-color: transparent !important;
@@ -233,7 +246,8 @@ a:hover {
 
 
 /* SMALL WHITE MENU BUTTON */
-.Button-icon {
+.Button-icon,
+.Button-icon-hover {
     font-size: 16px !important;
     border: none !important;
     border-radius: 10rem/10rem !important;
@@ -245,11 +259,18 @@ a:hover {
     background-color: transparent !important;
     color: transparent !important;
 }
+.Button-icon {
+    color: #ffffff !important;
+}
 /* Hover */
-.Button-icon:hover {
+.Button-icon-hover:hover {
     background-color: rgba(180, 180, 180, 0.2) !important;
     color: #ffffff !important;
 }
+.Button-icon:hover {
+    background-color: rgba(180, 180, 180, 0.2) !important;
+}
+
 
 
 /* INFO BUTTON */
