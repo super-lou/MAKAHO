@@ -3292,10 +3292,7 @@ server = function (input, output, session) {
     })
     
 ### 14.5. Close ______________________________________________________
-    observeEvent({
-        input$closeHelp_button
-        input$blur_panel
-    }, {
+    observeEvent(input$closeHelp_button, {
         if (verbose) print("help close")
         if (rv$helpPage == 4) {
             rv$CodeSample = rv$CodeAll
