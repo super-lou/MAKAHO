@@ -131,7 +131,6 @@
         },
         {
             "type": "Role",
-            "schema:author": "",
             "roleName": "Management"
         }
     ],
@@ -153,9 +152,7 @@
         "climate change adpatation",
         "climate change mitigation"
     ],
-    "license": [
-        "https://spdx.org/licenses/AGPL-3.0-or-later"
-    ],
+    "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
     "name": "MAKAHO",
     "operatingSystem": "Debian 10.x",
     "programmingLanguage": "R 4.x.x",
