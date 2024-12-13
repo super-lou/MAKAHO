@@ -139,7 +139,7 @@
     "dateCreated": "2022-03-01",
     "dateModified": "2022-07-01",
     "datePublished": "2022-07-01",
-    "description": "MAKAHO https://makaho.sk8.inrae.fr (pour MAnn-Kendall Analysis of Hydrological Observations) est un système de visualisation cartographique interactif permettant de calculer les tendances présentes dans les données des stations hydrométriques aux débits peu influencés par les actions humaines. Le test de Mann-Kendall permet d’analyser la significativité des tendances de variables hydrologiques sur les différentes composantes du régime des cours d'eau (étiages, moyennes-eaux, crues), à mettre ensuite en relation avec les impacts du changement climatique sur l’hydrologie de surface.\nMAKAHO https://makaho.sk8.inrae.fr (for MAnn-Kendall Analysis of Hydrological Observations) is an interactive cartographic visualization system designed to calculate trends present in data from streamflow gauging stations with minimal human influence. The Mann-Kendall test is used to analyze the significance of trends in hydrological variables across different components of streamflow regimes (low flows, mean flows, high flows), which are then related to the impacts of climate change on surface hydrology.",
+    "description": "MAKAHO https://makaho.sk8.inrae.fr (pour MAnn-Kendall Analysis of Hydrological Observations) est un système de visualisation cartographique interactif permettant de calculer les tendances présentes dans les données des stations hydrométriques aux débits peu influencés par les actions humaines. Le test de Mann-Kendall permet d’analyser la significativité des tendances de variables hydrologiques sur les différentes composantes du régime des cours d'eau (étiages, moyennes-eaux, crues), à mettre ensuite en relation avec les impacts du changement climatique sur l’hydrologie de surface.\n\nMAKAHO https://makaho.sk8.inrae.fr (for MAnn-Kendall Analysis of Hydrological Observations) is an interactive cartographic visualization system designed to calculate trends present in data from streamflow gauging stations with minimal human influence. The Mann-Kendall test is used to analyze the significance of trends in hydrological variables across different components of streamflow regimes (low flows, mean flows, high flows), which are then related to the impacts of climate change on surface hydrology.",
     "funder": {
         "type": "Organization",
         "name": "Ministry of Ecological Transition France, INRAE"
@@ -154,7 +154,6 @@
         "climate change mitigation"
     ],
     "license": [
-        "https://spdx.org/licenses/AGPL-3.0-or-later",
         "https://spdx.org/licenses/AGPL-3.0-or-later"
     ],
     "name": "MAKAHO",
