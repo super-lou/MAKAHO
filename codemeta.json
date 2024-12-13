@@ -40,13 +40,13 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0003-1417-1495",
-            "roleName": "Scientific Referee"
+            "roleName": "Management"
         },
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0003-1417-1495",
             "endDate": "2022-07-31",
-            "roleName": "Project manager",
+            "roleName": "Management",
             "startDate": "2022-03-01"
         },
         {
@@ -63,7 +63,7 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0001-8447-5430",
-            "roleName": "Scientific Referee"
+            "roleName": "Management"
         },
         {
             "type": "Role",
@@ -84,7 +84,7 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0002-3748-6150",
-            "roleName": "Scientific Referee"
+            "roleName": "Management"
         },
         {
             "id": "https://orcid.org/0000-0001-9539-7730",
@@ -100,7 +100,7 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0001-9539-7730",
-            "roleName": "Scientific Referee"
+            "roleName": "Management"
         },
         {
             "id": "https://orcid.org/0000-0001-8700-7026",
@@ -116,7 +116,7 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0000-0001-8700-7026",
-            "roleName": "Scientific Referee"
+            "roleName": "Management"
         },
         {
             "id": "_:author_7",
@@ -131,8 +131,8 @@
         },
         {
             "type": "Role",
-            "schema:author": "_:author_7",
-            "roleName": "Scientific Referee"
+            "schema:author": "",
+            "roleName": "Management"
         }
     ],
     "codeRepository": "https://github.com/super-lou/MAKAHO",
