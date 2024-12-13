@@ -8,7 +8,7 @@
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
-                "name": "INRAE"
+                "name": "RiverLy, INRAE, France"
             },
             "email": "louis.heraut@inrae.fr",
             "familyName": "Heraut",
@@ -17,21 +17,21 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0009-0006-4372-0923",
-            "roleName": "Maintainer",
+            "roleName": "Developper",
             "startDate": "2022-03-01"
         },
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0009-0006-4372-0923",
-            "roleName": "Developper",
+            "roleName": "Maintainer",
             "startDate": "2022-03-01"
         },
         {
-            "id": "_:author_2",
+            "id": "https://orcid.org/0000-0003-1417-1495",
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
-                "name": "INRAE"
+                "name": "RiverLy, INRAE, France"
             },
             "email": "michel.lang@inrae.fr",
             "familyName": "Lang",
@@ -39,20 +39,22 @@
         },
         {
             "type": "Role",
-            "schema:author": "_:author_2",
+            "schema:author": "https://orcid.org/0000-0003-1417-1495",
+            "roleName": "Scientific Referee"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0003-1417-1495",
             "endDate": "2022-07-31",
             "roleName": "Project manager",
             "startDate": "2022-03-01"
-        }
-    ],
-    "codeRepository": "https://github.com/super-lou/MAKAHO",
-    "contributor": [
+        },
         {
-            "id": "_:contributor_1",
+            "id": "https://orcid.org/0000-0001-8447-5430",
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
-                "name": "INRAE"
+                "name": "RECOVER, INRAE, France"
             },
             "email": "benjamin.renard@inrae.fr",
             "familyName": "Renard",
@@ -60,32 +62,80 @@
         },
         {
             "type": "Role",
-            "schema:author": "_:contributor_1",
+            "schema:author": "https://orcid.org/0000-0001-8447-5430",
+            "roleName": "Scientific Referee"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0001-8447-5430",
             "roleName": "Developer"
         },
         {
-            "id": "_:contributor_2",
+            "id": "https://orcid.org/0000-0002-3748-6150",
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
-                "name": "INRAE"
+                "name": "RiverLy, INRAE, France"
             },
             "email": "jean-philippe.vidal@inrae.fr",
             "familyName": "Vidal",
             "givenName": "Jean-Philippe"
         },
         {
-            "id": "_:contributor_3",
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0002-3748-6150",
+            "roleName": "Scientific Referee"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-9539-7730",
             "type": "Person",
             "affiliation": {
                 "type": "Organization",
-                "name": "INRAE"
+                "name": "RiverLy, INRAE, France"
             },
             "email": "eric.sauquet@inrae.fr",
             "familyName": "Sauquet",
             "givenName": "Eric"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0001-9539-7730",
+            "roleName": "Scientific Referee"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-8700-7026",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "CNR-ISAC, Bologne, Italie"
+            },
+            "email": "i.giuntoli@isac.cnr.it",
+            "familyName": "Giuntoli",
+            "givenName": "Ignazio "
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0001-8700-7026",
+            "roleName": "Scientific Referee"
+        },
+        {
+            "id": "_:author_7",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "EDSB, Université Louis Pasteur, Briançon, France"
+            },
+            "email": "antoine.bard@edsb.fr",
+            "familyName": "Bard",
+            "givenName": "Antoine"
+        },
+        {
+            "type": "Role",
+            "schema:author": "_:author_7",
+            "roleName": "Scientific Referee"
         }
     ],
+    "codeRepository": "https://github.com/super-lou/MAKAHO",
     "dateCreated": "2022-03-01",
     "dateModified": "2022-07-01",
     "datePublished": "2022-07-01",
@@ -98,9 +148,15 @@
         "Mann-Kendall trend test",
         "Sen-Theil estimator",
         "data visualisation",
-        "data analyse"
+        "data analyse",
+        "climate change",
+        "climate change adpatation",
+        "climate change mitigation"
     ],
-    "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
+    "license": [
+        "https://spdx.org/licenses/AGPL-3.0-or-later",
+        "https://spdx.org/licenses/AGPL-3.0-or-later"
+    ],
     "name": "MAKAHO",
     "operatingSystem": "Debian 10.x",
     "programmingLanguage": "R 4.x.x",
@@ -109,5 +165,5 @@
         "https://github.com/super-lou/CARD"
     ],
     "version": "1.0.0",
-    "developmentStatus": "active"
-} 
+    "developmentStatus": "inactive"
+}

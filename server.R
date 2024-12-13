@@ -790,7 +790,7 @@ server = function (input, output, session) {
             station_coordinates = sp::SpatialPointsDataFrame(
                                           rv$meta[c('lon', 'lat')],
                                           rv$meta['Code'])
-
+            
             # Transform them to an sp Polygon
             drawn_polygon = sp::Polygon(as.matrix(rv$polyCoord))
             
