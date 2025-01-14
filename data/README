@@ -1,5 +1,5 @@
-              _          _         
- _ __   __ _ | |__ __ _ | |_   ___ 
+              _          _
+ _ __   __ _ | |__ __ _ | |_   ___
 | '  \ / _` || / // _` || ' \ / _ \
 |_|_|_|\__,_||_\_\\__,_||_||_|\___/
 Généré le [DATE] par MAKAHO.
@@ -12,7 +12,7 @@ site web : https://makaho.sk8.inrae.fr/
 code source : https://archive.softwareheritage.org/swh:1:dir:5a8041b9883469f2dd8f32f217ce4b01c37ae992
 
 Adresse de contact :
-- louis.heraut@inrae.fr 
+- louis.heraut@inrae.fr
 - michel.lang@inrae.fr
 
 
@@ -30,14 +30,14 @@ regroupement de code CARD https://github.com/super-lou/CARD
 Autres information sur les données :
 La sélection de station correspond à la celle du Réseau de Référence
 pour la Surveillance des Étiages établi dans le papier suivant
-https://hal.science/hal-00833431 
+https://hal.science/hal-00833431
 Ces stations montrent une haute qualité de mesure, des séries
 chronologiques avec une profondeur historique de plus de 40 ans,
 et leur débit est faiblement impacté par les activités humaines.
 
 
 APERCUS DES DONNEES ET FICHIERS ______________________________________
-- data.csv 
+- data.csv
 Chroniques de débits journalières du RRSE issues des stations de
 mesures hydrométriques disponibles sur l'HydroPortail.
 Ce fichier n'est pas présent car trop lourd et redondant.
@@ -80,19 +80,19 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : *.csv ____________________
 
 INFORMATIONS SPECIFIQUES AUX DONNEES POUR : data.csv _________________
 - date
-  -- nom : date 
-  -- description : date de la série de données 
+  -- nom : date
+  -- description : date de la série de données
   -- unité : jour
-  -- valeurs autorisées : caratère
-  
+  -- valeurs autorisées : caractère
+
 - code
   -- nom : code
   -- description : code de la station hydrométrique
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - Q
   -- nom : débit
-  -- description : débit journalier mesuré 
+  -- description : débit journalier mesuré
   -- unité : m3.s-1
   -- valeurs autorisées : numérique
 
@@ -101,32 +101,32 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : meta.csv _________________
 - code
   -- nom : code
   -- description : code de la station hydrométrique
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - name
   -- nom : nom
   -- description : nom de la station hydrométrique
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - territoire
   -- nom : territoire
   -- description : territoire contenant la station hydrométrique
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - gestionnaire
   -- nom : gestionnaire
   -- description : gestionnaire de la station hydrométrique
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - XL93_m
   -- nom : X lambert 93
-  -- description : position X de la station en lambert 93 
+  -- description : position X de la station en lambert 93
   -- unité : m
   -- valeurs autorisées : numérique
-  
+
 - YL93_m
   -- nom : Y lambert 93
-  -- description : position Y de la station en lambert 93 
+  -- description : position Y de la station en lambert 93
   -- unité : m
   -- valeurs autorisées : numérique
 
@@ -145,17 +145,17 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : meta.csv _________________
 - debut
   -- nom : début
   -- description : début de chronique de mesure
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - fin
   -- nom : fin
   -- description : fin de chronique de mesure
-  -- valeurs autorisées : caratère
-  
+  -- valeurs autorisées : caractère
+
 statut
   -- nom : statut
   -- description : statut de la station
-  -- varleurs autorisées : [0] inconnu,
+  -- valeurs autorisées : [0] inconnu,
      	      		   [1] station avec signification hydrologique,
 			   [2] station sans signification hydrologique,
 			   [3] station d'essai
@@ -199,7 +199,7 @@ debit
 
 QBE, QME, QHE
   -- nom : qualité des débits
-  -- description : qualité des débit en basses, moyennes, hautes eaux 
+  -- description : qualité des débit en basses, moyennes, hautes eaux
   -- varleurs autorisées : [0] inconnue,
      	      		   [1] bonne,
 			   [2] douteuse
@@ -207,44 +207,44 @@ QBE, QME, QHE
 hydrological_region
   -- nom : région hydrologique
   -- description : région hydrologique de la station
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 
 INFORMATIONS SPECIFIQUES AUX DONNEES POUR : metaEX.csv _______________
 variable_en
   -- nom : variable
   -- description : acronyme de la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 unit_en
   -- nom : unit
   -- description : unité de la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 name_en
   -- nom : name
   -- description : nom de la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 description_en
   -- nom : description
   -- description : description de la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 method_en
   -- nom : method
   -- description : méthode de calcul de la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 sampling_period_en
   -- nom : sampling period
   -- description : période d'échantillonnage de l'année hydrologique en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 topic_en
   -- nom : topic
   -- description : mot clé concerant la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 ** l'ensemble des paramètres ci-dessus sont dérivés en français **
 
@@ -261,7 +261,7 @@ to_normalise
 palette
   -- nom : palette
   -- description : palette de couleur à utiliser pour la variable
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
   -- particularité : couleurs séparées par des " "
 
 
@@ -269,13 +269,13 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : dataEX.csv _______________
 - code
   -- nom : code
   -- description : code de la station hydrométrique
-  -- valeurs autorisées : caratère
-  
+  -- valeurs autorisées : caractère
+
 - date
-  -- nom : date 
-  -- description : date de la série de données 
+  -- nom : date
+  -- description : date de la série de données
   -- unité : année
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - *variable*
   -- nom : *variable*
@@ -288,12 +288,12 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : trendEX.csv ______________
 - code
   -- nom : code
   -- description : code de la station hydrométrique
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - variable_en
   -- nom : variable
   -- description : acronyme de la variable en anglais
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
 
 - level
   -- nom : level
@@ -304,9 +304,9 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : trendEX.csv ______________
 - H
   -- nom : H
   -- description : hypothèse du test de Mann-Kendall.
-     		   TRUE une tendance est détéctée.
-		   FALSE aucune tendance n'est détecté.
-  -- valeurs autorisées : boléen
+     		   TRUE une tendance est détéctéee.
+     		   FALSE aucune tendance n'est détectée.
+  -- valeurs autorisées : booléen
 
 - p
   -- nom : p
@@ -322,7 +322,7 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : trendEX.csv ______________
 
 - b
   -- nom : b
-  -- description : ordonnée à l'origine de la droite porté par la
+  -- description : ordonnée à l'origine de la droite portée par la
      		   pente de l'estimateur de Sen-Theil
   -- unité : unité de la *variable*
   -- valeurs autorisées : numérique
@@ -330,7 +330,7 @@ INFORMATIONS SPECIFIQUES AUX DONNEES POUR : trendEX.csv ______________
 period_trend
   -- nom : period trend
   -- description : période de l'analyse de tendance
-  -- valeurs autorisées : caratère
+  -- valeurs autorisées : caractère
   -- particularité : date séparées par des " "
 
 - mean_period_trend
@@ -339,7 +339,7 @@ period_trend
      		   si la *variable* est à normaliser
   -- unité : unité de la *variable*
   -- valeurs autorisées : numérique
-  
+
 - a_normalise
   -- nom : a normalise
   -- description : pente de l'estimateur de Sen-Theil normalisé
