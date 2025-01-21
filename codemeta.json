@@ -22,7 +22,7 @@
         {
             "type": "Role",
             "schema:author": "https://orcid.org/0009-0006-4372-0923",
-            "roleName": "Developper"
+            "roleName": "Developer"
         },
         {
             "id": "https://orcid.org/0000-0003-1417-1495",
@@ -141,7 +141,7 @@
         "data visualisation",
         "data analyse",
         "climate change",
-        "climate change adpatation",
+        "climate change adaptation",
         "climate change mitigation"
     ],
     "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
