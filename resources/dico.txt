@@ -113,7 +113,7 @@ i.maj.version;mai 2024;mai 2024
 tt.z.focus;Focus sur la sélection de stations;Focus on the selection of stations
 tt.z.default;Vue par défaut;Default view
 tt.p.title;Mode photo;Photo mode
-tt.d.data.title;Téléchargement de des données;Download data
+tt.d.data.title;Téléchargement des données;Download data
 tt.d.sheet.title;Téléchargement de fiches stations;Download station cards
 d.dl;Fiches stations;Station cards
 dl.bar;Téléchargement de fiches stations par clic;Download station cards by click
