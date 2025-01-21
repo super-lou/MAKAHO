@@ -593,11 +593,12 @@ server = function (input, output, session) {
     meta = reactive({
         if (verbose) print("meta") 
         metatmp =
-            read_tibble(filedir=file.path(computer_data_path,
-                                          'fst'),
-                        filename=paste0('meta_',
-                                        data_name(),
-                                        '.fst'))
+            read_tibble(path=file.path(computer_data_path,
+                                          'fst',
+                                       paste0('meta_',
+                                              data_name(),
+                                              '.fst')))
+        
         if (dev) {
             if (!is.null(nStation_dev)) {
                 metatmp = metatmp[1:nStation_dev,]
@@ -1466,11 +1467,12 @@ server = function (input, output, session) {
                                 data_name(),
                                 '.fst'))
         if (file.exists(test)) {
-            dataAll = read_tibble(filedir=file.path(computer_data_path,
-                                                    'fst'),
-                                  filename=paste0('data_',
+            dataAll =
+                read_tibble(path=file.path(computer_data_path,
+                                           'fst',
+                                           paste0('data_',
                                                   data_name(),
-                                                  '.fst'))
+                                                  '.fst')))
             if (dev) {
                 if (!is.null(nStation_dev)) {
                     dataAll =

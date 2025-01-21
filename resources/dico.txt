@@ -103,6 +103,7 @@ c.theme.dark;Sombre;Dark
 tt.c.theme.dark;Fond de carte de couleurs gris sombres;Map background with dark gray colors
 tt.i.title;Panneau d'information et de contact;Information and contact panel
 i.dev;Développeur;Developer
+i.contact;Contact;Contact
 i.ref;Référent;Reference
 i.data;Jeu de donnée;Dataset
 i.code;Code source;Source code

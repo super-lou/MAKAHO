@@ -32,20 +32,14 @@ library(leaflet)
 library(icons)
 library(dplyr)
 library(stringr)
-# library(zoo)
-# already ::
-# library(RcppRoll)
-# library(CircStats)
-# library(Hmisc)
 library(lubridate)
 library(sf)
-# library(sp)
 
 
 ### 1.2. Source ______________________________________________________
 #### 1.2.0. work path ________________________________________________
 dev_lib_path =
-    "/home/louis/Documents/bouleau/INRAE/project/"
+    "/home/lheraut/Documents/INRAE/projects"
     # ""
 
 #### 1.2.1. EXstat ___________________________________________________

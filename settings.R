@@ -37,7 +37,8 @@ INRAElogo_path = file.path(resources_path,
 # Name of the dictionnary to use for the translation
 dico_file = 'dico.txt'
 # Creates the dictionnary
-dico = ASHE::read_tibble(file.path(resources_path, dico_file), sep=";")
+dico = ASHE::read_tibble(path=file.path(resources_path, dico_file),
+                         sep=";")
 
 # Icon directory
 icon_dir = 'icons'
