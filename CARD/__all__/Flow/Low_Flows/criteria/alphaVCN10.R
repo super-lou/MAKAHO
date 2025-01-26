@@ -29,8 +29,8 @@ CARD$P.variable_en = c("alphaVCN10", "HYPalphaVCN10")
 CARD$P.unit_en = "m^{3}.s^{-1}.year^{-1}"
 CARD$P.name_en = "Center of low flows"
 CARD$P.description_en = "Date when 50 % of the annual cumulative baseflow is reached"
-CARD$P.method_en = "1. annual aggregation [09-01, 08-31] - date when the baseflow sum corresponds to 50 % of the total sum"
-CARD$P.sampling_period_en = "09-01, 08-31"
+CARD$P.method_en = "1. annual aggregation [Month of maximum monthly flows] - date when the baseflow sum corresponds to 50 % of the total sum"
+CARD$P.sampling_period_en = "Month of maximum monthly flows"
 CARD$P.topic_en = "Flow, Baseflow, Seasonality"
 
 ### French ___________________________________________________________
@@ -48,6 +48,7 @@ CARD$P.topic_fr = "Débit, Basses Eaux, Intensité"
 CARD$P.source = "KENDALL, M. G. (1975). « Rank Correlation Methods ». Griffin, London, UK.
 MANN, H. (1945). « Nonparametric tests against trend ». Econometrica, 13(3):245–259.
 SEN, P. K. (1968). « Estimates of the regression coefficient based on Kendall’s tau ». In : Journal of the American Statistical Association 63, p. 1379-1389. DOI : doi:10.2307/2285891."
+CARD$P.preferred_hydrological_month = 1
 CARD$P.is_date = FALSE
 CARD$P.to_normalise = c(TRUE, FALSE)
 CARD$P.palette = NULL

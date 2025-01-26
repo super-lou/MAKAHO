@@ -51,6 +51,7 @@ CARD$P.sampling_period_fr = "Mois du minimum des débits mensuels"
 CARD$P.topic_fr = "Débit, Hautes Eaux, Durée"
 
 ### Global ___________________________________________________________
+CARD$P.preferred_hydrological_month = 9
 CARD$P.is_date = FALSE
 CARD$P.to_normalise = TRUE
 CARD$P.palette = NULL

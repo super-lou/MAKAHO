@@ -65,6 +65,7 @@ jawg_token =
 ### 3.1. Dataset and variable ________________________________________
 default_data = "RRSE"
 default_variable = "QA"
+default_sampling_period = "09-01"
 if (lg == "fr") {
     default_event = "Moyennes Eaux"
 } else if (lg == "en") {
@@ -117,7 +118,10 @@ maxZoom = 20
 today = Sys.Date()
 # Creates a vector of years
 Years = 1900:as.numeric(format(today, "%Y"))
-
+# Year limits
+slider_minYear = 1900
+slider_midYear = 1968
+slider_maxYear = 2024
 
 ### 3.5. Statistical option __________________________________________
 # Level of risk
@@ -197,4 +201,4 @@ CARD_dir = "MAKAHOapp"
 
 ### 3.9. Dev _________________________________________________________
 make_marker = FALSE
-nStation_dev = 10
+nStation_dev = 229

@@ -112,6 +112,8 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
                                   variableHTML=variableHTML,
                                   name=list(name),
                                   sub=list(sub),
+                                  preferred_hydrological_month=
+                                      preferred_hydrological_month,
                                   palette=str_split(palette,
                                                     " ")))
                 
@@ -147,6 +149,8 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
                                       variableHTML=variableHTML,
                                       name=list(name),
                                       sub=list(sub),
+                                      preferred_hydrological_month=
+                                  preferred_hydrological_month,
                                       palette=str_split(palette,
                                                         " ")))
                 } else {
@@ -174,16 +178,18 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
                               variableHTML=variableHTML,
                               name=list(name),
                               sub=NA,
+                              preferred_hydrological_month=
+                                  preferred_hydrological_month,
                               palette=str_split(palette,
                                                 " ")))
         }
         # print(paste0("variable : ", variable))
         # cat("\n")
     }
-    return (Variable) 
+    return (Variable)
 }
 
-# get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
+# Variable = get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
 # stop()
 
 
@@ -535,7 +541,7 @@ observePage = function (input, rv, n, N) {
 ### 8.1. Mask ________________________________________________________
 IdList_mask = c("maskZoom_panelButton",
                 "maskAna_panelButton",
-                "maskActualise_panelButton",
+                # "maskActualise_panelButton",
                 "maskInfo_panelButton",
                 "maskPhoto_panelButton",
                 "opacPhoto_panelButton",
@@ -637,47 +643,50 @@ deselect_mode = function (session, rv) {
 
 
 ## 9. PLOTTING _______________________________________________________
-get_trendExtremesMOD = function (rv,
-                                 data, df_trend, unit,
-                                 minXprob=0, maxXprob=1,
-                                 CodeSample=NULL) {
+# get_trendExtremesMOD = function (rv,
+#                                  data, df_trend, unit,
+#                                  minXprob=0, maxXprob=1,
+#                                  CodeSample=NULL) {
     
-    if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
-        df_mean =
-            summarise(group_by(data, Code),
-                      mean=mean(get(rv$variable), na.rm=TRUE))
+#     if (unit == 'hm^{3}' | unit == 'm^{3}.s^{-1}') {
+#         df_mean =
+#             summarise(group_by(data, code),
+#                       mean=mean(get(rv$variable), na.rm=TRUE))
 
-        df_join = full_join(df_trend, df_mean, by="Code")
-        value = df_join$a / df_join$mean
-        Code = df_join$Code
-    } else {
-        value = df_trend$a
-        Code = df_trend$Code
-    }
+#         df_join = full_join(df_trend, df_mean, by="code")
+#         value = df_join$a / df_join$mean
+#         Code = df_join$code
+#     } else {
+#         value = df_trend$a
+#         Code = df_trend$code
+#     }
 
-    if (!is.null(CodeSample)) {
-        valueSample = value[Code %in% CodeSample]
-    } else {
-        valueSample = value
-    }
+#     if (!is.null(CodeSample)) {
+#         valueSample = value[Code %in% CodeSample]
+#     } else {
+#         valueSample = value
+#     }
     
-    minX = quantile(valueSample, minXprob, na.rm=TRUE)
-    maxX = quantile(valueSample, maxXprob, na.rm=TRUE)
+#     minX = quantile(valueSample, minXprob, na.rm=TRUE)
+#     maxX = quantile(valueSample, maxXprob, na.rm=TRUE)
     
-    df_value = tibble(Code=Code, value=value)   
-    if (all(CodeSample %in% Code)) {
-        df_valueSample = tibble(Code=CodeSample, value=valueSample)
-    } else {
-        df_valueSample = tibble(Code=Code, value=valueSample)
-    }
-    res = list(df_value=df_value, df_valueSample=df_valueSample,
-               min=minX, max=maxX)
-    return (res)
-}
+#     df_value = tibble(code=Code, value=value)   
+#     if (all(CodeSample %in% Code)) {
+#         df_valueSample = tibble(code=CodeSample, value=valueSample)
+#     } else {
+#         df_valueSample = tibble(code=Code, value=valueSample)
+#     }
+#     res = list(df_value=df_value, df_valueSample=df_valueSample,
+#                min=minX, max=maxX)
+#     return (res)
+# }
 
-get_trendLabel = function (rv, code, lg, space=FALSE) {
-    
-    trendEX_code = rv$trendEX[rv$trendEX$Code == code,]
+get_trendLabel = function (rv, Code, lg, space=FALSE) {
+
+    trendEX_code = rv$trendEX[rv$trendEX$code == Code,]
+    if (nrow(trendEX_code) == 0) {
+        return (NA)
+    }
     if (is.na(trendEX_code$a)) {
         return (NA)
     }
@@ -690,13 +699,12 @@ get_trendLabel = function (rv, code, lg, space=FALSE) {
     unitHTML = rv$unit
     unitHTML = gsub('[/^][/{]', '<sup>', unitHTML)
     unitHTML = gsub('[/}]', '</sup>', unitHTML)
-    
+
     power = get_power(trendEX_code$a)
 
     a_normaliseC =
         as.character(format(round(trendEX_code$a_normalise, 2),
                             nsmall=2))
-
     if (-1 <= power & power <= 1) {
         aC = as.character(signif(trendEX_code$a, 3))
 

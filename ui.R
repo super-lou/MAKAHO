@@ -1333,7 +1333,7 @@ ui = bootstrapPage(
                    width="100%", height="100%",
                    
                    div(style="position: fixed;
-                              left: 123px; bottom: 11px;",
+                              left: 135px; bottom: 11px;",
                        HTML('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>'))
                    )
     )

@@ -41,6 +41,7 @@ CARD$P.method_fr = "1. aucune agrégation temporelle - quantile à la probabilit
 CARD$P.topic_fr = "Débit, Hautes Eaux, Intensité"
 
 ### Global ___________________________________________________________
+CARD$P.preferred_hydrological_month = 1
 CARD$P.is_date = FALSE
 CARD$P.to_normalise = TRUE
 CARD$P.palette = NULL

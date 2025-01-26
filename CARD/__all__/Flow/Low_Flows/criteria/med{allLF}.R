@@ -119,6 +119,7 @@ CARD$P.topic_fr = c("Débit, Basses Eaux, Saisonnalité",
                     "Débit, Basses Eaux, Intensité")
 
 ### Global ___________________________________________________________
+CARD$P.preferred_hydrological_month = 1
 CARD$P.is_date = c(TRUE, TRUE, TRUE, FALSE, FALSE)
 CARD$P.to_normalise = c(FALSE, FALSE, FALSE, FALSE, TRUE)
 CARD$P.palette = NULL

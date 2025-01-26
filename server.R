@@ -72,6 +72,7 @@ server = function (input, output, session) {
                         invalidCode=c(),
                         badCode=c(),
                         actualise=FALSE,
+                        need_actualise=FALSE,
                         idCode=NA,
                         idDate=NA,
                         idValue=NA,
@@ -139,11 +140,11 @@ server = function (input, output, session) {
 
     defaultLimits = reactive({
         if (is.null(rv$meta)) {
-            Lon = meta()$lon
-            Lat = meta()$lat
+            Lon = meta()$lon_deg
+            Lat = meta()$lat_edg
         } else {
-            Lon = rv$meta$lon
-            Lat = rv$meta$lat 
+            Lon = rv$meta$lon_deg
+            Lat = rv$meta$lat_deg
         }
         list(north=max(Lat), east=max(Lon),
              south=min(Lat), west=min(Lon))
@@ -207,8 +208,8 @@ server = function (input, output, session) {
         rv$meta
     }, {
         if (!is.null(CodeSample())) {
-            Lon = rv$meta$lon[rv$meta$Code %in% CodeSample()]
-            Lat = rv$meta$lat[rv$meta$Code %in% CodeSample()]
+            Lon = rv$meta$lon_deg[rv$meta$code %in% CodeSample()]
+            Lat = rv$meta$lat_deg[rv$meta$code %in% CodeSample()]
             rv$currentLimits = list(north=max(Lat), east=max(Lon),
                                     south=min(Lat), west=min(Lon))
 
@@ -317,9 +318,9 @@ server = function (input, output, session) {
         }
 
         if (!is.null(rv$dataEX) & !is.null(rv$trendEX) &
-            all(rv$CodeSample %in% levels(factor(rv$dataEX$Code)))) {
+            all(rv$CodeSample %in% levels(factor(rv$dataEX$code)))) {
             
-            trendCode = rv$trendEX$Code
+            trendCode = rv$trendEX$code
 
             sizeList = rep('small', length(rv$CodeAll))
             sizeList[match(rv$codePlot, rv$CodeAll)] = 'big'
@@ -369,7 +370,7 @@ server = function (input, output, session) {
                               Palette=rv$Palette)
             
             fillList = rep(none2Color, length(rv$CodeAll))
-            fillCode = rv$trendEX$Code
+            fillCode = rv$trendEX$code
             
             okCodeSample = fillCode %in% CodeSample()
             fillCodeSample = fillCode[okCodeSample]
@@ -425,11 +426,11 @@ server = function (input, output, session) {
             as.numeric(str_extract(unlist(markerList$iconUrl),
                                    "[:digit:]+"))        
 
-        LonAll = rv$meta$lon
-        LatAll = rv$meta$lat
-        NomAll = rv$meta$Nom
-        SupAll = rv$meta$Surface_km2
-        AltAll = rv$meta$Altitude_m
+        LonAll = rv$meta$lon_deg
+        LatAll = rv$meta$lat_deg
+        NomAll = rv$meta$name
+        SupAll = rv$meta$surface_km2
+        AltAll = rv$meta$elevation_m
         trendColorAll = rv$fillList
         trendColorAll = sapply(trendColorAll, switch_color,
                                color_to_switch=color_to_switch)
@@ -604,16 +605,16 @@ server = function (input, output, session) {
                 metatmp = metatmp[1:nStation_dev,]
             }
         }
-        crs_rgf93 = sf::st_crs(2154)
-        crs_wgs84 = sf::st_crs(4326)
-        sf_loca = sf::st_as_sf(metatmp[c("XL93_m", "YL93_m")],
-                               coords=c("XL93_m", "YL93_m"))
-        sf::st_crs(sf_loca) = crs_rgf93
-        sf_loca = sf::st_transform(sf_loca, crs_wgs84)
-        sf_loca = sf::st_coordinates(sf_loca$geometry)
-        metatmp$lon = sf_loca[, 1]
-        metatmp$lat = sf_loca[, 2]
-        metatmp = metatmp[order(metatmp$Code),]
+        # crs_rgf93 = sf::st_crs(2154)
+        # crs_wgs84 = sf::st_crs(4326)
+        # sf_loca = sf::st_as_sf(metatmp[c("XL93_m", "YL93_m")],
+        #                        coords=c("XL93_m", "YL93_m"))
+        # sf::st_crs(sf_loca) = crs_rgf93
+        # sf_loca = sf::st_transform(sf_loca, crs_wgs84)
+        # sf_loca = sf::st_coordinates(sf_loca$geometry)
+        # metatmp$lon = sf_loca[, 1]
+        # metatmp$lat = sf_loca[, 2]
+        metatmp = metatmp[order(metatmp$code),]
 
         if (is.null(rv$meta)) {
             rv$meta = metatmp
@@ -626,7 +627,7 @@ server = function (input, output, session) {
 #### 4.3.0. sample ___________________________________________________
     CodeAll = reactive({
         if (verbose) print("CodeAll")
-        CodeAll = levels(factor(meta()$Code))
+        CodeAll = levels(factor(meta()$code))
         if (is.null(rv$CodeAll)) {
             rv$CodeAll = CodeAll
         }
@@ -789,8 +790,9 @@ server = function (input, output, session) {
         if (nrow(rv$polyCoord) != 0) {
             
             station_coordinates = sp::SpatialPointsDataFrame(
-                                          rv$meta[c('lon', 'lat')],
-                                          rv$meta['Code'])
+                                          rv$meta[c('lon_deg',
+                                                    'lat_deg')],
+                                          rv$meta['code'])
             
             # Transform them to an sp Polygon
             drawn_polygon = sp::Polygon(as.matrix(rv$polyCoord))
@@ -798,7 +800,7 @@ server = function (input, output, session) {
             # Use over from the sp package to identify selected station
             selected_station = sp::over(station_coordinates, sp::SpatialPolygons(list(sp::Polygons(list(drawn_polygon), "drawn_polygon"))))
 
-            selectCode = rv$meta$Code[!is.na(selected_station)]
+            selectCode = rv$meta$code[!is.na(selected_station)]
 
             if (rv$polyMode == "Add") {
                 rv$CodeSample = c(rv$CodeSample, selectCode)
@@ -825,11 +827,11 @@ server = function (input, output, session) {
 
 ### 4.5. Search ______________________________________________________
     meta_location = reactive({
-        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", rv$meta$Nom)
+        gsub("((L'|La |Le )(.*?)aux )|((L'|La |Le )(.*?)au )|((L'|La |Le )(.*?)à )", "", rv$meta$name)
     })
 
     meta_river = reactive({
-        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", rv$meta$Nom)
+        gsub("(L'|La |Le )| à(.*)| au(.*)| aux(.*)", "", rv$meta$name)
     })
 
     meta_basin = reactive({
@@ -850,30 +852,30 @@ server = function (input, output, session) {
                                     rep('Rhône-Méditérannée & Corse', 5),
                                     rep('Îles', 1)
                                     ))
-        fL = substr(rv$meta$Code, 1, 1)
+        fL = substr(rv$meta$code, 1, 1)
         df_basinName$basin[match(fL, df_basinName$letter)]
     })
     
     searchChoices = reactive({
         Values = c(
-            paste0("code:", rv$meta$Code),
-            paste0("name:", rv$meta$Nom),
-            paste0("region:", rv$meta$Region_Hydro),
+            paste0("code:", rv$meta$code),
+            paste0("name:", rv$meta$name),
+            paste0("region:", rv$meta$hydrological_region),
             # paste0("regime:", rv$meta$regime_hydro),
             paste0("location:", meta_location()),
             paste0("river:", meta_river()),
             paste0("basin:", meta_basin())
         )
         htmlValues = c(
-            paste0(rv$meta$Code,
+            paste0(rv$meta$code,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.code", lg),
                    '</i>'),
-            paste0(rv$meta$Nom,
+            paste0(rv$meta$name,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.name", lg),
                    '</i>'),
-            paste0(rv$meta$Region_Hydro,
+            paste0(rv$meta$hydrological_region,
                    '<i style="font-size: 9pt; color: ',
                    grey85COL, '">&emsp;', word("ana.search.region", lg),
                    '</i>'),
@@ -927,13 +929,13 @@ server = function (input, output, session) {
         Search = gsub("(.*?):", "", htmlSearch)
         searchType = gsub(":(.*)", "", htmlSearch)
 
-        Code = rv$meta$Code[rv$meta$Code %in% Search[searchType == "code"]]
-        CodeNom = rv$meta$Code[rv$meta$Nom %in% Search[searchType == "name"]]
-        CodeRegion = rv$meta$Code[rv$meta$Region_Hydro %in% Search[searchType == "region"]]
-        # CodeRegime = rv$meta$Code[rv$meta$regime_hydro %in% Search[searchType == "regime"]]
-        CodeLocation = rv$meta$Code[meta_location() %in% Search[searchType == "location"]]
-        CodeRiver = rv$meta$Code[meta_river() %in% Search[searchType == "river"]]
-        CodeBasin = rv$meta$Code[meta_basin() %in% Search[searchType == "basin"]]
+        Code = rv$meta$code[rv$meta$code %in% Search[searchType == "code"]]
+        CodeNom = rv$meta$code[rv$meta$name %in% Search[searchType == "name"]]
+        CodeRegion = rv$meta$code[rv$meta$hydrological_region %in% Search[searchType == "region"]]
+        # CodeRegime = rv$meta$code[rv$meta$regime_hydro %in% Search[searchType == "regime"]]
+        CodeLocation = rv$meta$code[meta_location() %in% Search[searchType == "location"]]
+        CodeRiver = rv$meta$code[meta_river() %in% Search[searchType == "river"]]
+        CodeBasin = rv$meta$code[meta_basin() %in% Search[searchType == "basin"]]
 
         selectCode = levels(factor(c(Code,
                                      CodeNom,
@@ -1090,6 +1092,19 @@ server = function (input, output, session) {
     })
 
 #### 4.5.7. palette __________________________________________________
+    preferred_hydrological_month = reactive({
+        if (verbose) print("preferred_hydrological_month")
+        id = which(Variable()$variable == variable() &
+                             Variable()$event == event())
+
+        if (!identical(id, integer(0))) {        
+            Variable()$preferred_hydrological_month[id]
+        } else {
+            NULL
+        }
+    })
+
+#### 4.5.8. palette __________________________________________________
     Palette = reactive({
         if (verbose) print("palette")
         id = which(Variable()$variable == variable() &
@@ -1101,7 +1116,7 @@ server = function (input, output, session) {
         }
     })
 
-#### 4.5.8. html output ______________________________________________
+#### 4.5.9. html output ______________________________________________
     output$regimeRow = renderText({
         if (verbose) print("regimeRow")
         if (type() == word("ana.type.T", lg)) {
@@ -1270,14 +1285,20 @@ server = function (input, output, session) {
         rv$sampleSliderMode
         rv$invertSliderMode
         rv$optimalMode
+        preferred_hydrological_month()
     }, {
         if (verbose) print("sampling_period_slider")
-        if (!is.null(input$sampling_period_slider)) {
-            hydroMonths = match(input$sampling_period_slider, Months)
+        # if (!is.null(input$sampling_period_slider)) {
+        #     hydroMonths = match(input$sampling_period_slider, Months)
+        # } else {
+        #     hydroMonths = default_sampling_period
+        # }
+        if (!is.null(preferred_hydrological_month())) {
+            hydroMonths = preferred_hydrological_month()
         } else {
-            hydroMonths = 1
+            hydroMonths = match(input$sampling_period_slider, Months)
         }
-        
+
         if (rv$optimalMode) {
             class = "size1Slider noneSlider"
             selected = Months[hydroMonths[1]]
@@ -1301,7 +1322,7 @@ server = function (input, output, session) {
             }           
         } else {
             class = "size1Slider soloSlider"
-            selected = Months[hydroMonths[1]]
+            selected = Months[hydroMonths[1]]            
         }
         
         output$sampling_period_slider = renderUI({
@@ -1359,10 +1380,10 @@ server = function (input, output, session) {
                 sampling_periodStart
             }
         } else {
-            "01-01"
+            default_sampling_period
         }
     })
-    sampling_period = debounce(sampling_periodB, 1000)
+    sampling_period = debounce(sampling_periodB, 100)
 
 #### 4.6.3. html output ______________________________________________
     output$sampling_periodHTML = renderUI({
@@ -1388,9 +1409,9 @@ server = function (input, output, session) {
                label=NULL,
                step=1,
                sep='',
-               min=1900,
-               max=2020,
-               value=c(1968, 2020))
+               min=slider_minYear,
+               max=slider_maxYear,
+               value=c(slider_midYear, slider_maxYear))
     })
 
 #### 4.7.1. get period _______________________________________________
@@ -1400,13 +1421,14 @@ server = function (input, output, session) {
             startYear = input$dateYear_slider[1]
             endYear = input$dateYear_slider[2]
         } else {
-            startYear = 1968
-            endYear = 2020
+            startYear = slider_midYear
+            endYear = slider_maxYear
         }
         
         inter = endYear - startYear
         if (inter < 30) {
-            if (startYear + 30 > 2020 & endYear - 30 >= 1900) {
+            if (startYear + 30 > slider_maxYear &
+                endYear - 30 >= slider_minYear) {
                 startYear = endYear - 30
             } else {
                 endYear = startYear + 30
@@ -1440,7 +1462,7 @@ server = function (input, output, session) {
         }
         periodB
     })
-    period = debounce(periodB, 1000)
+    period = debounce(periodB, 100)
 
 #### 4.7.2. html output ______________________________________________
     output$period_ana = renderText({        
@@ -1478,8 +1500,8 @@ server = function (input, output, session) {
                     dataAll =
                         dplyr::filter(
                                    dataAll,
-                                   Code %in%
-                                   levels(factor(dataAll$Code))[1:nStation_dev])
+                                   code %in%
+                                   levels(factor(dataAll$code))[1:nStation_dev])
                 }
             }
             dataAll
@@ -1494,8 +1516,8 @@ server = function (input, output, session) {
         if (verbose) print("data")
         if (!is.null(dataAll()) & !is.null(CodeSample())) {
             if (all(rv$CodeSample %in%
-                    levels(factor(dataAll()$Code)))) {
-                data = dataAll()[dataAll()$Code %in% CodeSample(),]
+                    levels(factor(dataAll()$code)))) {
+                data = dataAll()[dataAll()$code %in% CodeSample(),]
             } else {
                 data = dataAll()
                 rv$CodeSample = CodeAll()
@@ -1531,6 +1553,7 @@ server = function (input, output, session) {
         rv$photoMode
         rv$optimalMode
         data_name()
+        # rv$helpPage
     }, {
         if (verbose) print("observeEvent.check_actualise")
         if (!is.null(CodeSample()) & !is.null(rv$CodeSample_act)) {
@@ -1546,16 +1569,18 @@ server = function (input, output, session) {
             all(identical(period(), rv$period)) &
             identical(proba(), rv$proba) &
             all(identical(sampling_period(), rv$sampling_period)) &
-            is.null(rv$helpPage) &
+            # is.null(rv$helpPage) &
             identical(rv$optimalMode, rv$optimalMode_act) &
             identical(data_name(), rv$data_name)) {
-            hide(id="actualise_panelButton")    
+            hide(id="actualise_panelButton")
+            rv$need_actualise = FALSE
         } else {
             # if ((rv$variable != FALSE | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$sampling_period)) & !rv$photoMode) {
             #     showElement(id="actualise_panelButton")
             # }
             if ((!is.null(rv$variable) | !is.null(rv$period) | !is.null(rv$proba) | !is.null(rv$sampling_period)) & !rv$photoMode) {
                 showElement(id="actualise_panelButton")
+                rv$need_actualise = TRUE
             }
         }
     })
@@ -1629,7 +1654,7 @@ server = function (input, output, session) {
 
 #### 6.2.2. get extraction parameters ________________________________
             if (!is.null(rv$CodeAdd)) {
-                data = rv$data[rv$data$Code %in% rv$CodeAdd,]
+                data = rv$data[rv$data$code %in% rv$CodeAdd,]
             } else {
                 data = rv$data
             }
@@ -1663,8 +1688,8 @@ server = function (input, output, session) {
                 } else {
                     sampling_period_overwrite = rv$sampling_period
                 }
-                
-                data = dplyr::relocate(data, Code, .before=Date)
+
+                data = dplyr::relocate(data, code, .before=date)
 
 #### 6.2.3. variable extraction ______________________________________
                 if (verbose) print("CARD_extraction")
@@ -1691,8 +1716,8 @@ server = function (input, output, session) {
                                                              lg)] == variable_tmp]
                         dataEX =
                             dplyr::select(dataEX,
-                                          c("Code",
-                                            "Date",
+                                          c("code",
+                                            "date",
                                             tidyr::all_of(rv$variable_en)))
                         metaEX = metaEX[metaEX$variable_en == rv$variable_en,]
                         
@@ -1706,7 +1731,7 @@ server = function (input, output, session) {
 
                 dataEX = dplyr::filter(dataEX,
                                        !all(is.na(get(rv$variable_en))),
-                                       .by="Code")
+                                       .by="code")
 
 #### 6.2.4. process trend analyse ____________________________________
                 if (verbose) print("process_trend")
@@ -1728,14 +1753,14 @@ server = function (input, output, session) {
 
                 if (!is.null(rv$CodeAdd)) {
                     dataEX = bind_rows(rv$dataEX, dataEX)
-                    dataEX = dataEX[order(dataEX$Code),]
+                    dataEX = dataEX[order(dataEX$code),]
                     trendEX = bind_rows(rv$trendEX, trendEX)
-                    trendEX = trendEX[order(trendEX$Code),]
+                    trendEX = trendEX[order(trendEX$code),]
                     rv$CodeAdd = NULL
                 }
 
-                dataEX = dataEX[dataEX$Code %in% CodeSample(),]
-                trendEX = trendEX[trendEX$Code %in% CodeSample(),]
+                dataEX = dataEX[dataEX$code %in% CodeSample(),]
+                trendEX = trendEX[trendEX$code %in% CodeSample(),]
 
                 rv$idExValue = c()
                 for (id in 1:ncol(data)) {
@@ -1775,13 +1800,13 @@ server = function (input, output, session) {
             End = rv$period[2]
             dataNoNA = rv$dataAll[!is.na(rv$dataAll$Q),]
             
-            df_Start = summarise(group_by(dataNoNA, Code),
-                                 Start=min(Date, na.rm=TRUE))
+            df_Start = summarise(group_by(dataNoNA, code),
+                                 Start=min(date, na.rm=TRUE))
             StartData = df_Start$Start
-            df_End = summarise(group_by(dataNoNA, Code),
-                               End=max(Date, na.rm=TRUE))            
+            df_End = summarise(group_by(dataNoNA, code),
+                               End=max(date, na.rm=TRUE))            
             EndData = df_End$End
-            CodeData = df_Start$Code
+            CodeData = df_Start$code
 
             CodeData[EndData <= Start | End <= StartData]
             
@@ -1797,13 +1822,13 @@ server = function (input, output, session) {
             Start = rv$period[1]
             End = rv$period[2]
             dataNoNA = rv$dataAll[!is.na(rv$dataAll$Q),]
-            dataNoNA = dataNoNA[Start <= dataNoNA$Date
-                                & dataNoNA$Date <= End,]
+            dataNoNA = dataNoNA[Start <= dataNoNA$date
+                                & dataNoNA$date <= End,]
             
-            df_Period = summarise(group_by(dataNoNA, Code),
+            df_Period = summarise(group_by(dataNoNA, code),
                                   Period=length(Q))
             PeriodData = df_Period$Period/365.25
-            CodeData = df_Period$Code
+            CodeData = df_Period$code
 
             CodeData[PeriodData < analyseMinYear]
             
@@ -1852,8 +1877,8 @@ server = function (input, output, session) {
 ### 8.2. Zoom ________________________________________________________
     observeEvent(rv$codePlot, {
         if (verbose) print("fitBounds")
-        Lon = rv$meta$lon[rv$meta$Code == rv$codePlot]
-        Lat = rv$meta$lat[rv$meta$Code == rv$codePlot]
+        Lon = rv$meta$lon_deg[rv$meta$code == rv$codePlot]
+        Lat = rv$meta$lat_deg[rv$meta$code == rv$codePlot]
         names(Lon) = NULL
         names(Lat) = NULL
         
@@ -1879,12 +1904,12 @@ server = function (input, output, session) {
             
             showOnly(id='plot_panel', c(IdList_panel, 'plot_panel'))
             
-            name = rv$meta$Nom[rv$meta$Code == rv$codePlot]
+            name = rv$meta$name[rv$meta$code == rv$codePlot]
 
-            data_code = rv$data[rv$data$Code == rv$codePlot,]
+            data_code = rv$data[rv$data$code == rv$codePlot,]
             maxQ_win = max(data_code$Q, na.rm=TRUE)*1.1            
-            dataEX_code = rv$dataEX[rv$dataEX$Code == rv$codePlot,]
-            trendEX_code = rv$trendEX[rv$trendEX$Code == rv$codePlot,]
+            dataEX_code = rv$dataEX[rv$dataEX$code == rv$codePlot,]
+            trendEX_code = rv$trendEX[rv$trendEX$code == rv$codePlot,]
             color = rv$fillList[rv$CodeAll == rv$codePlot]
             switchColor = switch_color(color, color_to_switch)
             
@@ -1898,7 +1923,7 @@ server = function (input, output, session) {
                     maxP_win = max(data_code$P, na.rm=TRUE)*1.1 
                     fig0 = plotly::plot_ly()
 
-                    x = data_code$Date
+                    x = data_code$date
                     event = Variable_ALL()$event[Variable_ALL()$variable == rv$variable]
                     y = data_code$P
                     varLabel = "P"
@@ -1926,8 +1951,8 @@ server = function (input, output, session) {
 
 
                     data_codeLIM = data_code
-                    minDate = min(data_code$Date)
-                    maxDate = max(data_code$Date)
+                    minDate = min(data_code$date)
+                    maxDate = max(data_code$date)
                     
                     if (minDate > rv$period[1]) {
                         NAadd = seq.Date(rv$period[1],
@@ -1935,9 +1960,9 @@ server = function (input, output, session) {
                                          "day")
                         nNAadd = length(NAadd)
                         data_codeLIM =
-                            bind_rows(tibble(Date=NAadd,
+                            bind_rows(tibble(date=NAadd,
                                              P=rep(NA, nNAadd),
-                                             Code=rep(rv$codePlot, nNAadd)),
+                                             code=rep(rv$codePlot, nNAadd)),
                                       data_codeLIM)
                     }
                     
@@ -1948,13 +1973,13 @@ server = function (input, output, session) {
                         nNAadd = length(NAadd)
                         data_codeLIM =
                             bind_rows(data_codeLIM,
-                                      tibble(Date=NAadd,
+                                      tibble(date=NAadd,
                                              P=rep(NA, nNAadd),
-                                             Code=rep(rv$codePlot, nNAadd)))
+                                             code=rep(rv$codePlot, nNAadd)))
                     }
                     
                     # Extract NA data
-                    NAdate = data_codeLIM$Date[is.na(data_codeLIM$P)]
+                    NAdate = data_codeLIM$date[is.na(data_codeLIM$P)]
                     # Get the difference between each point of date data
                     # without NA
                     dNAdate = diff(NAdate)
@@ -2013,7 +2038,7 @@ server = function (input, output, session) {
                     }
 
                     trendLabel = get_trendLabel(rv,
-                                                code=rv$codePlot,
+                                                Code=rv$codePlot,
                                                 lg=lg,
                                                 space=TRUE)
 
@@ -2100,7 +2125,7 @@ server = function (input, output, session) {
 
                 fig1 = plotly::plot_ly()
 
-                x = data_code$Date
+                x = data_code$date
                 if (rv$event == "Basses Eaux") {
                     maxQ_win = sqrt(maxQ_win)
                     y = sqrt(data_code$Q)
@@ -2134,8 +2159,8 @@ server = function (input, output, session) {
 
 
                 data_codeLIM = data_code
-                minDate = min(data_code$Date)
-                maxDate = max(data_code$Date)
+                minDate = min(data_code$date)
+                maxDate = max(data_code$date)
                 
                 if (minDate > rv$period[1]) {
                     NAadd = seq.Date(rv$period[1],
@@ -2143,9 +2168,9 @@ server = function (input, output, session) {
                                      "day")
                     nNAadd = length(NAadd)
                     data_codeLIM =
-                        bind_rows(tibble(Date=NAadd,
+                        bind_rows(tibble(date=NAadd,
                                          Q=rep(NA, nNAadd),
-                                         Code=rep(rv$codePlot, nNAadd)),
+                                         code=rep(rv$codePlot, nNAadd)),
                                   data_codeLIM)
                 }
                 
@@ -2156,13 +2181,13 @@ server = function (input, output, session) {
                     nNAadd = length(NAadd)
                     data_codeLIM =
                         bind_rows(data_codeLIM,
-                                  tibble(Date=NAadd,
+                                  tibble(date=NAadd,
                                          Q=rep(NA, nNAadd),
-                                         Code=rep(rv$codePlot, nNAadd)))
+                                         code=rep(rv$codePlot, nNAadd)))
                 }
                 
                 # Extract NA data
-                NAdate = data_codeLIM$Date[is.na(data_codeLIM$Q)]
+                NAdate = data_codeLIM$date[is.na(data_codeLIM$Q)]
                 # Get the difference between each point of date data
                 # without NA
                 dNAdate = diff(NAdate)
@@ -2223,7 +2248,7 @@ server = function (input, output, session) {
                     }
 
                     trendLabel = get_trendLabel(rv,
-                                                code=rv$codePlot,
+                                                Code=rv$codePlot,
                                                 lg=lg,
                                                 space=TRUE)
 
@@ -2325,7 +2350,7 @@ server = function (input, output, session) {
                 
 
                 DateNoNA =
-                    dataEX_code$Date[!is.na(dataEX_code[[rv$variable_en]])]
+                    dataEX_code$date[!is.na(dataEX_code[[rv$variable_en]])]
                 abs = c(min(DateNoNA), max(DateNoNA))
                 # Convert the number of day to the unit of the period
                 abs_num = as.numeric(abs) / 365.25
@@ -2338,7 +2363,7 @@ server = function (input, output, session) {
                         trendEX_code$b
                 }
 
-                x = dataEX_code$Date
+                x = dataEX_code$date
 
                 if (rv$metaEX$unit_en == "yearday") {
                     y = as.Date(dataEX_code[[rv$variable_en]],
@@ -2903,16 +2928,16 @@ server = function (input, output, session) {
         
         files = c("meta.csv", "metaEX.csv",
                   "dataEX.csv", "trendEX.csv")
-        ASHE::write_tibble(rv$meta, filedir=outdir,
-                           filename="meta.csv")
-        ASHE::write_tibble(rv$metaEX, filedir=outdir,
-                           filename="metaEX.csv")
-        ASHE::write_tibble(rv$dataEX, filedir=outdir,
-                           filename="dataEX.csv")
+        ASHE::write_tibble(rv$meta,
+                           path=file.path(outdir, "meta.csv"))
+        ASHE::write_tibble(rv$metaEX,
+                           path=file.path(outdir, "metaEX.csv"))
+        ASHE::write_tibble(rv$dataEX,
+                           path=file.path(outdir, "dataEX.csv"))
         tmp = rv$trendEX
         tmp$period_trend = sapply(tmp$period_trend, paste0, collapse=" ")
-        ASHE::write_tibble(tmp, filedir=outdir,
-                           filename="trendEX.csv")
+        ASHE::write_tibble(tmp,
+                           path=file.path(outdir, "trendEX.csv"))
 
         readme = readLines(readme_path)
         sep = " : "
@@ -3026,12 +3051,13 @@ server = function (input, output, session) {
 #### 13.2.1. click ___________________________________________________
     observeEvent(codeClick(), {
         if (rv$polyMode == 'false' & !rv$clickMode & rv$dlClickMode & !rv$photoMode) {
+            code = rv$meta$code_hydro2[rv$meta$code == codeClick()]
             output$downloadData = downloadHandler(
                 filename = function () {
-                    paste0(codeClick(), ".pdf")
+                    paste0(code, ".pdf")
                 },
                 content = function (file) {
-                    name = paste0(codeClick(), ".pdf")
+                    name = paste0(code, ".pdf")
                     from = file.path(computer_data_path, 'pdf', name)
                     file.copy(from, file)
                 }
@@ -3116,6 +3142,7 @@ server = function (input, output, session) {
     }, {
         if (verbose) print("help start")
         rv$start = TRUE
+        rv$CodeSample = rv$CodeAll
         
         rv$helpPage = 1
         rv$helpPage_save = 0
@@ -3131,7 +3158,7 @@ server = function (input, output, session) {
         hide(id='help_panelButton')
         
         showElement(id='focusZoom_panelButton')
-        showElement(id='actualise_panelButton')
+        # showElement(id='actualise_panelButton')
         
         showElement(id='before_panelButton')
         show_page(n=1, N=N_helpPage)
@@ -3181,6 +3208,7 @@ server = function (input, output, session) {
     observeEvent({
         rv$helpPage
         rv$width
+        # rv$need_actualise
     }, {
         if (verbose) print("help")
         if (!is.null(rv$helpPage)) {
@@ -3188,8 +3216,10 @@ server = function (input, output, session) {
             if (rv$helpPage == 1 |
                 rv$helpPage == 2 |
                 rv$helpPage == 3) {
+                # hide(id="actualise_panelButton")
                 hideAll()
                 maskAll()
+                # hide(id="maskActualise_panelButton")
             }
 
             width_lim = 1260
@@ -3210,7 +3240,7 @@ server = function (input, output, session) {
                 if (rv$width > width_lim) {
                     showOnly(id=c("ana_panel", "poly_bar"))
                 }
-                maskOnly(id="maskAna_panelButton")
+                showElement(id="maskAna_panelButton")
             }
             
             if (rv$helpPage == 6 | rv$helpPage == 7 |
@@ -3225,8 +3255,12 @@ server = function (input, output, session) {
                 if (rv$width > width_lim) {
                     showOnly(id="ana_panel")
                 }
-                maskOnly(id=c("maskAna_panelButton",
-                              "maskActualise_panelButton"))
+                maskOnly(id="maskAna_panelButton")
+                showElement(id="actualise_panelButton")
+            } else {
+                if (!rv$need_actualise) {
+                    hide(id="actualise_panelButton")
+                }
             }
 
             if (rv$helpPage == 11) {
@@ -3268,6 +3302,12 @@ server = function (input, output, session) {
                 }
                 maskOnly(id="maskInfo_panelButton")
             }
+
+            if (rv$need_actualise & rv$helpPage != 10) {
+                showElement(id="maskActualise_panelButton")
+            } else {
+                hide(id="maskActualise_panelButton")
+            }
         }
     })
 
@@ -3304,7 +3344,8 @@ server = function (input, output, session) {
 
         hideAll()
         hide(id='focusZoom_panelButton')
-        hide(id='actualise_panelButton')
+        # hide(id='actualise_panelButton')
+        hide(id="maskActualise_panelButton")
         demaskAll()
 
         hide(id='blur_panel')
