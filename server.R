@@ -1091,7 +1091,7 @@ server = function (input, output, session) {
         }
     })
 
-#### 4.5.7. palette __________________________________________________
+#### 4.5.7. preferred ________________________________________________
     preferred_hydrological_month = reactive({
         if (verbose) print("preferred_hydrological_month")
         id = which(Variable()$variable == variable() &
