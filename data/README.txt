@@ -9,7 +9,7 @@ INFORMATIONS GENERALES _______________________________________________
 Titre du jeu de données : Analyse de tendance hydrologique RRSE MAKAHO
 DOI : https://doi.org/10.57745/LNBEGZ
 site web : https://makaho.sk8.inrae.fr/
-code source : https://archive.softwareheritage.org/swh:1:dir:5a8041b9883469f2dd8f32f217ce4b01c37ae992
+code source : https://archive.softwareheritage.org/swh:1:dir:fc377337fa88173d8ed716e5dee1695131393607
 
 Adresse de contact :
 - contact.makaho@listes.inrae.fr
@@ -17,7 +17,7 @@ Adresse de contact :
 
 INFORMATIONS METHODOLOGIQUES _________________________________________
 Sources des données : HydroPortail https://www.hydro.eaufrance.fr/
-Méthodes utilisées pour collecter les données : HydroPortail https://www.hydro.eaufrance.fr/
+Méthodes utilisées pour collecter les données : Web scraping
 
 Méthodes de traitement des données :
 - R Version : 4.x.x
