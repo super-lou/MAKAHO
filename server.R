@@ -453,7 +453,8 @@ server = function (input, output, session) {
         iconAnchorY = list(iconAnchorY=markerList$iconAnchorY)
 
         if (any(okN21)) {
-            iconUrlN21 = unlist(markerList$iconUrl, use.names=FALSE)[okN21]
+            iconUrlN21 = unlist(markerList$iconUrl,
+                                use.names=FALSE)[okN21]
             iconUrlN21 = as.list(iconUrlN21)
             names(iconUrlN21) = rep("iconUrl", times=length(iconUrlN21))
             iconUrlN21 = list(iconUrl=iconUrlN21)
@@ -519,7 +520,6 @@ server = function (input, output, session) {
 
         markerListVoid = get_markerList(rep("void", length(Code)),
                                         resources_path=resources_path)
-
         n = 4
         label = paste0(
             '<b style="color:#00a3a6">', Code," </b>", ' - ',
@@ -618,8 +618,7 @@ server = function (input, output, session) {
 
         if (is.null(rv$meta)) {
             rv$meta = metatmp
-        }
-        
+        }        
         metatmp
     })
 
@@ -2989,7 +2988,9 @@ server = function (input, output, session) {
         readme = c(readme[1:(id-1)],
                    param,
                    readme[(id+1):length(readme)])
-        readme = gsub("[[]DATE[]]", Sys.time(), readme)
+        readme = gsub("[[]DATE[]]",
+                      format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+                      readme)
         
         writeLines(readme, readme_tmp_path)
         

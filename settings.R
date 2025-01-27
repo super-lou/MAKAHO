@@ -75,7 +75,7 @@ if (lg == "fr") {
 licence_file = "ETALAB-Licence-Ouverte-v2.0.pdf"
 licence_path = file.path(computer_data_path,
                          licence_file)
-readme_file = "README"
+readme_file = "README.txt"
 readme_path = file.path(computer_data_path,
                         readme_file)
 readme_tmp_path = file.path(computer_data_path,
@@ -201,4 +201,4 @@ CARD_dir = "MAKAHOapp"
 
 ### 3.9. Dev _________________________________________________________
 make_marker = FALSE
-nStation_dev = 229
+nStation_dev = 228
