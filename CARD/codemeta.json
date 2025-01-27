@@ -1,0 +1,99 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "type": "SoftwareSourceCode",
+    "applicationCategory": "Hydrology",
+    "author": [
+        {
+            "id": "https://orcid.org/0009-0006-4372-0923",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "RiverLy, INRAE, France"
+            },
+            "email": "louis.heraut@inrae.fr",
+            "familyName": "Heraut",
+            "givenName": "Louis"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0009-0006-4372-0923",
+            "roleName": "Developper"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0009-0006-4372-0923",
+            "roleName": "Maintainer"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-3748-6150",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "RiverLy, INRAE, France"
+            },
+            "email": "jean-philippe.vidal@inrae.fr",
+            "familyName": "Vidal",
+            "givenName": "Jean-Philippe"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0002-3748-6150",
+            "roleName": "Management"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-9539-7730",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "RiverLy, INRAE, France"
+            },
+            "email": "eric.sauquet@inrae.fr",
+            "familyName": "Sauquet",
+            "givenName": "Eric"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0001-9539-7730",
+            "roleName": "Management"
+        }
+    ],
+    "codeRepository": "https://github.com/super-lou/CARD",
+    "contributor": [
+        {
+            "id": "https://orcid.org/0000-0002-6595-7984",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "UMR G-EAU, France"
+            },
+            "familyName": "Dorchies",
+            "givenName": "David"
+        },
+        {
+            "id": "_:contributor_2",
+            "type": "Person",
+            "familyName": "Horner",
+            "givenName": "Ivan"
+        },
+        {
+            "id": "_:contributor_3",
+            "type": "Person",
+            "familyName": "Santos",
+            "givenName": "Leonard"
+        }
+    ],
+    "dateCreated": "2023-01-05",
+    "datePublished": "2023-01-05",
+    "description": "<a href=\"https://github.com/super-lou/CARD\" target=\"_blank\">CARD is a set of parameterization files for the banking and simplification of hydroclimatic temporal data aggregation with the <a href=\"https://github.com/super-lou/EXstat\" target=\"_blank\">EXstat</a> package.\nThis repository lists all the available CARDs and is intended to work in conjunction with <a href=\"https://github.com/super-lou/EXstat\" target=\"_blank\">EXstat</a>. For information on how to use these CARDs, please refer to the <a href=\"https://github.com/super-lou/EXstat\" target=\"_blank\">EXstat</a> documentation.\n\n<a href=\"https://github.com/super-lou/CARD\" target=\"_blank\">CARD</a> est un ensemble de fichiers de paramétrage pour la gestion et la simplification de l'agrégation des données hydroclimatiques temporelles avec le package EXstat.\nCe dépôt répertorie tous les CARDs disponibles et est conçu pour fonctionner en conjonction avec <a href=\"https://github.com/super-lou/EXstat\" target=\"_blank\">EXstat</a>. Pour savoir comment utiliser ces CARDs, veuillez consulter la documentation d'<a href=\"https://github.com/super-lou/EXstat\" target=\"_blank\">EXstat</a>.",
+    "keywords": [
+        "hydroclimatological variable",
+        "controlled vocabulary",
+        "data analysis",
+        "data aggregation"
+    ],
+    "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
+    "name": "CARD",
+    "programmingLanguage": "R 4.x.x",
+    "softwareRequirements": "https://github.com/super-lou/EXstat",
+    "developmentStatus": "inactive"
+}
