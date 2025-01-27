@@ -110,7 +110,7 @@ i.code;Code source;Source code
 i.sk8;Hébergé par;Hosted by
 i.ui;Interface;Interface
 i.maj;Mise à jour;Update
-i.maj.version;mai 2024;mai 2024
+i.maj.version;janvier 2025;january 2025
 tt.z.focus;Focus sur la sélection de stations;Focus on the selection of stations
 tt.z.default;Vue par défaut;Default view
 tt.p.title;Mode photo;Photo mode
