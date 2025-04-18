@@ -349,7 +349,8 @@ updateSelectButton = function (session, inputId, label=NULL,
 }
 
 ### 5.4. Radio button ________________________________________________
-radioButton = function (class='', choiceIcons=NULL, choiceNames=NULL,
+radioButton = function (class='',
+                        choiceIcons=NULL, choiceNames=NULL,
                         choiceValues=NULL, choiceTooltips=NULL, ...) {
 
     if (!is.null(choiceNames)) {

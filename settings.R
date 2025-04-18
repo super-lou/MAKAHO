@@ -35,7 +35,7 @@ INRAElogo_path = file.path(resources_path,
                            "logo", "Logo-INRAE_Transparent.png")
 
 # Name of the dictionnary to use for the translation
-dico_file = 'dico.txt'
+dico_file = 'dico.csv'
 # Creates the dictionnary
 dico = ASHE::read_tibble(path=file.path(resources_path, dico_file),
                          sep=";")
@@ -183,6 +183,7 @@ color_to_switch = c(
 
 default_colorbar_choice = "show"
 default_resume_choice = "show"
+default_stat_choice = "show"
 
 
 ### 3.7. Help option _________________________________________________

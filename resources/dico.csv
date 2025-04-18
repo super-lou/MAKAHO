@@ -91,7 +91,11 @@ out.to;au;to
 out.optimal;Année hydrologique optimisée<br>pour chaque station;Optimized hydrological year<br>for each station
 out.period;Période;Period
 out.sig;Significativité de;Significance of
+out.stat.tot;stations au total;stations in total
+out.stat.up;hausses significatives;significant increases
+out.stat.down;baisses significatives;significant decreases
 c.resume;Résumé;Summary
+c.stat;Statistiques;Statistics
 c.show;Afficher;Show
 c.none;Aucune;None
 c.theme;Fond de carte;Map background
@@ -111,6 +115,8 @@ i.sk8;Hébergé par;Hosted by
 i.ui;Interface;Interface
 i.maj;Mise à jour;Update
 i.maj.version;janvier 2025;january 2025
+i.dataext;Extraction de l'HydroPortail;HydroPortail extraction
+i.dataext.date;septembre 2024;september 2024
 tt.z.focus;Focus sur la sélection de stations;Focus on the selection of stations
 tt.z.default;Vue par défaut;Default view
 tt.p.title;Mode photo;Photo mode

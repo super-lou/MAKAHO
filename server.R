@@ -1788,6 +1788,23 @@ server = function (input, output, session) {
         rv$actualise = FALSE
         hide(id="loading_panel")
     })
+
+#### 6.2.5 html output ______________________________________________
+    output$stat_totalHTML = renderUI({
+        hydroStart = format(rv$period[1], "%d %b")
+        hydroEnd = format(rv$period[2], "%d %b")
+        nStation = nrow(rv$trendEX)
+        nStation_up = nrow(dplyr::filter(rv$trendEX, H & a>0))
+        nStation_down = nrow(dplyr::filter(rv$trendEX, H & a<0))
+        
+        HTML(paste0("<b>", nStation, "</b> ",
+                    word("out.stat.tot", lg), "<br>",
+                    "&#8710; <b>", nStation_up, "</b> ",
+                    word("out.stat.up", lg), "<br>",
+                    "&#8711; <b>", nStation_down, "</b> ",
+                    word("out.stat.down", lg)
+                    ))
+    })
     
     
 ## 7. CODE CHECK _____________________________________________________
@@ -2872,6 +2889,27 @@ server = function (input, output, session) {
         }
     })
 
+### 10.3. Stat _______________________________________________________
+    stat_choice = reactive({
+        if (is.null(input$stat_choice)) {
+            default_stat_choice 
+        } else {
+            input$stat_choice
+        }
+    })
+
+    observeEvent({
+        stat_choice()
+        rv$trendEX
+    }, {
+        if (verbose) print("stat_choice")
+        if (stat_choice() == 'show' & !is.null(rv$trendEX)) {
+            showElement(id="stat_panel")
+        } else if (stat_choice() == 'none') {
+            hide(id="stat_panel")
+        }
+    })
+    
     
 ## 11. INFO __________________________________________________________
     observeEvent(input$info_button, {
@@ -2998,7 +3036,7 @@ server = function (input, output, session) {
         outpath = file.path(outdir, outfile)
         paths = file.path(outdir, files)
         paths = c(paths, licence_path, readme_tmp_path)
-        zip(zipfile=outpath, files=paths, flags = '-r9Xj')
+        zip(zipfile=outpath, files=paths, flags ='-r9Xj')
         
         output$downloadData = downloadHandler(
             filename = function () {

@@ -92,28 +92,7 @@ ui = bootstrapPage(
 
 
 ## 2. FLOATING PANEL _________________________________________________
-### 1.1. Palette _____________________________________________________
-    hidden(
-        absolutePanel(
-            id="colorbar_panel",
-            class="Panel card-insert-r",
-            style="transform: translate(0, 50%);",
-            fixed=TRUE,
-            width="auto",
-            height="auto", #280
-            right=0, bottom="35%",
-            
-            div(style="margin-top: 10px;
-                       margin-bottom: 10px;
-                       margin-left: 10px;
-                       margin-right: 5px;",
-                plotly::plotlyOutput("colorbar_plot",
-                                     width="auto",
-                                     height="auto"))
-        )
-    ),
-
-### 1.2. Resume ______________________________________________________
+### 1.1. Resume ______________________________________________________
     hidden(
         absolutePanel(
             id='resume_panel',
@@ -121,7 +100,7 @@ ui = bootstrapPage(
             style="transform: translate(0, -50%);",
             fixed=TRUE,
             width="auto", height="auto",
-            right=0, top="30%",
+            right=0, top="22%",
             
             div(class="card-insert-text",
                 
@@ -158,6 +137,50 @@ ui = bootstrapPage(
                 )
         )
     ),
+
+### 1.2. Palette _____________________________________________________
+    hidden(
+        absolutePanel(
+            id="colorbar_panel",
+            class="Panel card-insert-r",
+            # style="transform: translate(0, 50%);",
+            fixed=TRUE,
+            width="auto",
+            height="auto", #280
+            right=0, bottom="22%",
+            
+            div(style="margin-top: 10px;
+                       margin-bottom: 10px;
+                       margin-left: 10px;
+                       margin-right: 5px;",
+                plotly::plotlyOutput("colorbar_plot",
+                                     width="auto",
+                                     height="auto"))
+        )
+    ),
+
+### 1.3. Statistics __________________________________________________
+    hidden(
+        absolutePanel(
+            id='stat_panel',
+            class="Panel card-insert-r",
+            style="transform: translate(0, 100%);",
+            fixed=TRUE,
+            width="auto", height="auto",
+            right=0, bottom="20%",
+            
+            div(class="card-insert-text",
+
+                h6(class="no-margin-v",
+                  style="font-size: 0.8em; color: #999999;",
+                   HTML(paste0(
+                       htmlOutput("stat_totalHTML")
+                   )))
+
+                )
+        )
+    ),
+    
     
 
 ## 3. HELP BACKGROUND ________________________________________________
@@ -616,7 +639,24 @@ ui = bootstrapPage(
                                     list("show", "none"),
                                 selected=default_resume_choice))),
 
-#### 7.1.3. map background theme _____________________________________
+#### 7.1.3. stat ___________________________________________________
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("c.stat", lg),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(class="bunch",
+                    radioButton(class="radioButton",
+                                inputId="stat_choice",
+                                choiceNames=
+                                    list(word("c.show", lg),
+                                         word("c.none", lg)),
+                                choiceValues=
+                                    list("show", "none"),
+                                selected=default_stat_choice))),
+
+#### 7.1.4. map background theme _____________________________________
             div(class="Row",
                 div(class="row-label",
                     HTML(
@@ -752,7 +792,15 @@ ui = bootstrapPage(
                                 word("i.maj", lg),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(word("i.maj.version", lg)))
+                div(word("i.maj.version", lg))),
+            
+            div(class="Row",
+                div(class="row-label",
+                    HTML(paste0("<span><b>",
+                                word("i.dataext", lg),
+                                "</b></span>"))),
+                div(class="sep"),
+                div(word("i.dataext.date", lg)))
         )
     ),
 
