@@ -23,6 +23,9 @@
 # If not, see <https://www.gnu.org/licenses/>.
 
 
+computer = "LGA-LYP6123"
+
+
 ## 1. PACKAGES _______________________________________________________
 ### 1.1. Library _____________________________________________________
 library(shiny)
@@ -37,57 +40,10 @@ library(sf)
 
 
 ### 1.2. Source ______________________________________________________
-#### 1.2.0. work path ________________________________________________
+#### 1.2.0. dev management ___________________________________________
 dev_lib_path =
     "/home/lheraut/Documents/INRAE/projects"
-    # ""
-
-#### 1.2.1. EXstat ___________________________________________________
-dev_path = file.path(dev_lib_path,
-                     c('', 'EXstat_project'), 'EXstat', 'R')
-if (any(file.exists(dev_path))) {
-    print('Loading EXstat from local directory')
-    list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE)
-    for (path in list_path) {
-        source(path, encoding='UTF-8')
-    }
-} else {
-    print('Loading EXstat from package')
-    library(EXstat)
-}
-
-#### 1.2.2. ASHE _____________________________________________________
-dev_path = file.path(dev_lib_path,
-                     c('', 'ASHE_project'), 'ASHE', 'R')
-if (any(file.exists(dev_path))) {
-    print('Loading ASHE from local directory')
-    list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE)
-    for (path in list_path) {
-        source(path, encoding='UTF-8')
-    }
-} else {
-    print('Loading ASHE from package')
-    library(ASHE)
-}
-
-#### 1.2.3. dataSHEEP ________________________________________________
-dev_path = file.path(dev_lib_path,
-                     c('', 'dataSHEEP_project'), 'dataSHEEP', 'R')
-if (any(file.exists(dev_path))) {
-    print('Loading dataSHEEP from local directory')
-    list_path = list.files(dev_path, pattern='*.R$', full.names=TRUE)
-    for (path in list_path) {
-        source(path, encoding='UTF-8')
-    }
-} else {
-    print('Loading dataSHEEP from package')
-    library(dataSHEEP)
-}
-
-
-## 2. INITIALISATION _________________________________________________
-# Check if you are in dev mod
-if (dir.exists(dev_lib_path)) {
+if (Sys.info()["nodename"] == computer) {
     dev = TRUE
     verbose = TRUE
 } else {
@@ -95,6 +51,41 @@ if (dir.exists(dev_lib_path)) {
     verbose = FALSE
 }
 
+#### 1.2.1. EXstat ___________________________________________________
+if (dev) {
+    print('Loading EXstat from local directory')
+    devtools::load_all(file.path(dev_lib_path,
+                                 "EXstat_project/EXstat/"))
+    devtools::load_all(file.path(dev_lib_path,
+                                 "EXstat.CARD_project/EXstat.CARD/"))
+} else {
+    print('Loading EXstat from package')
+    library(EXstat)
+    library(EXstat.CARD)
+}
+
+#### 1.2.2. ASHE _____________________________________________________
+if (dev) {
+    print('Loading ASHE from local directory')
+    devtools::load_all(file.path(dev_lib_path,
+                                 "ASHE_project/ASHE/"))
+} else {
+    print('Loading ASHE from package')
+    library(ASHE)
+}
+
+#### 1.2.3. dataSHEEP ________________________________________________
+if (dev) {
+    print('Loading dataSHEEP from local directory')
+    devtools::load_all(file.path(dev_lib_path,
+                                 "dataSHEEP_project/dataSHEEP/"))
+} else {
+    print('Loading dataSHEEP from package')
+    library(dataSHEEP)
+}
+
+
+## 2. INITIALISATION _________________________________________________
 # language
 lg = "fr"
 

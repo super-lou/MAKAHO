@@ -970,7 +970,7 @@ server = function (input, output, session) {
 ### 4.5. Variable ____________________________________________________
 #### 4.5.0. all variables ____________________________________________
     Variable_ALL = reactive({
-        get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
+        get_Variable(CARD_path, check_varSub, lg=lg)
     })
 
 #### 4.5.1. type _____________________________________________________
@@ -1095,11 +1095,10 @@ server = function (input, output, session) {
         if (verbose) print("preferred_hydrological_month")
         id = which(Variable()$variable == variable() &
                              Variable()$event == event())
-
-        if (!identical(id, integer(0))) {        
+        if (!identical(id, integer(0)) & !identical(id, NA)) {        
             Variable()$preferred_hydrological_month[id]
         } else {
-            NULL
+            NA
         }
     })
 
@@ -1287,18 +1286,13 @@ server = function (input, output, session) {
         preferred_hydrological_month()
     }, {
         if (verbose) print("sampling_period_slider")
-        # if (!is.null(input$sampling_period_slider)) {
-        #     hydroMonths = match(input$sampling_period_slider, Months)
-        # } else {
-        #     hydroMonths = default_sampling_period
-        # }
-        if (!is.null(preferred_hydrological_month())) {
+        if (!is.na(preferred_hydrological_month())) {
             hydroMonths = preferred_hydrological_month()
         } else {
             hydroMonths = match(input$sampling_period_slider, Months)
         }
 
-        if (rv$optimalMode) {
+        if (rv$optimalMode | grepl(SeasonMonth_pattern, variable())) {
             class = "size1Slider noneSlider"
             selected = Months[hydroMonths[1]]
 
@@ -1695,7 +1689,7 @@ server = function (input, output, session) {
                 res = CARD_extraction(
                     data,
                     CARD_path=CARD_path,
-                    CARD_dir=CARD_dir,
+                    # CARD_dir=CARD_dir,
                     CARD_name=CARD_name,
                     period_default=rv$period,
                     cancel_lim=FALSE,

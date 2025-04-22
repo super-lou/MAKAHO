@@ -31,27 +31,20 @@ word = function (id, lg) {
 }
 
 ## 2. VARIABLE _______________________________________________________
-get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
+get_Variable = function (CARD_path, check_varSub, lg) {
 
     if (verbose) print("plot_trend")
     
-    CARD_dirpath = file.path(CARD_path, CARD_dir)
-    CARD_filepath = list.files(CARD_dirpath,
+    CARD_filepath = list.files(CARD_path,
                                full.names=TRUE,
                                recursive=TRUE)
+    CARD_filepath = CARD_filepath[!grepl("default", CARD_filepath)]
     nVariable = length(CARD_filepath)
     Variable = dplyr::tibble()
+
+    # metaEX_all = EXstat.CARD::CARD_list_all()
     
     for (CARD in CARD_filepath) {
-        list_path = list.files(file.path(CARD_path,
-                                         "__tools__"),
-                               pattern='*.R$',
-                               recursive=TRUE,
-                               full.names=TRUE)
-        for (path in list_path) {
-            source(path, encoding='UTF-8')    
-        }
-        
         Process_default = sourceProcess(
             file.path(CARD_path, "__default__.R"))
         
@@ -65,12 +58,15 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
             assign(principal_names[pp], principal[[pp]])
         }
 
-        variable = get(paste0("variable_", lg))
+
         variable_CARD = gsub("^[[:digit:]]+[_]", "",
                              gsub("[.]R", "", basename(CARD)))
-
-        # print(paste0("variable : ", paste0(variable, collapse=" ")))
-        # print(paste0("variable_CARD : ", variable_CARD))
+        # metaEX = dplyr::filter(metaEX_all, variable_en==variable_CARD)
+        # for (i in 1:length(names(metaEX))) {
+            # assign(names(metaEX)[i], metaEX[[i]])
+        # }
+        
+        variable = get(paste0("variable_", lg))
 
         topic = unlist(strsplit(get(paste0("topic_", lg)),
                                 ", "))
@@ -94,15 +90,12 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
                     variable = paste0(variable, word("var.season", lg))
                 }
                 
-                # print(paste0("sub : ", paste0(sub, collapse=" ")))
-
                 variableHTML = variable
                 if (grepl('[_]', variable)) {
                     variableHTML = paste0("<span>",
                                           gsub('_', '<sub>', variable),
                                           "</sub>", "</span>")
                 }
-                
                 Variable = bind_rows(
                     Variable,
                     dplyr::tibble(type=topic[1],
@@ -189,7 +182,7 @@ get_Variable = function (CARD_path, CARD_dir, check_varSub, lg) {
     return (Variable)
 }
 
-# Variable = get_Variable(CARD_path, CARD_dir, check_varSub, lg=lg)
+# Variable = get_Variable(CARD_path, check_varSub, lg=lg)
 # stop()
 
 

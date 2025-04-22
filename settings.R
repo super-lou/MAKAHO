@@ -196,10 +196,10 @@ dhNavHelp = 21
 
 
 ### 3.8. CARD parameters _____________________________________________
-CARD_path = "CARD"
-CARD_dir = "MAKAHOapp"
+# CARD_path = "."
+CARD_path = "./CARD-MAKAHOapp"
 
 
 ### 3.9. Dev _________________________________________________________
 make_marker = FALSE
-nStation_dev = 228
+nStation_dev = 10
