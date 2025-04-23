@@ -13,7 +13,7 @@ It is a [R Shiny](https://shiny.rstudio.com/) website based on [EXstat](https://
 
 [<img src="https://github.com/super-lou/MAKAHO/blob/2f1ea7fab7c867041d707cee1bd68d5c3b3bfd04/www/screen.png" width="600">](https://makaho.sk8.inrae.fr/)
 
-Data came from [Hydroportail](https://www.hydro.eaufrance.fr/) and the selection of stations follows the Reference Network for Low Water Monitoring (Réseau de référence pour la surveillance des étiages, [RRSE](https://geo.data.gouv.fr/en/datasets/29819c27c73f29ee1a962450da7c2d49f6e11c15) in french).
+Data came from [HydroPortail](https://www.hydro.eaufrance.fr/) and the selection of stations follows the Reference Network for Low Water Monitoring (Réseau de référence pour la surveillance des étiages, [RRSE](https://geo.data.gouv.fr/en/datasets/29819c27c73f29ee1a962450da7c2d49f6e11c15) in french).
 
 A part of the data produced by [MAKAHO](https://makaho.sk8.inrae.fr/) can be downloaded from [Recherche Data Gouv](https://doi.org/10.57745/LNBEGZ).
 
