@@ -92,15 +92,58 @@ ui = bootstrapPage(
 
 
 ## 2. FLOATING PANEL _________________________________________________
-### 1.1. Resume ______________________________________________________
+### 1.1. Palette _____________________________________________________
+    hidden(
+        absolutePanel(
+            id="colorbar_panel",
+            class="Panel card-insert-r",
+            # style="transform: translate(0, 0%);",
+            fixed=TRUE,
+            width="auto",
+            height="auto", #280
+            right=0, bottom="170px",
+            
+            div(style="margin-top: 10px;
+                       margin-bottom: 10px;
+                       margin-left: 10px;
+                       margin-right: 5px;",
+                plotly::plotlyOutput("colorbar_plot",
+                                     width="auto",
+                                     height="auto"))
+        )
+    ),
+
+### 1.2. Statistics __________________________________________________
+    hidden(
+        absolutePanel(
+            id='stat_panel',
+            class="Panel card-insert-r",
+            # style="transform: translate(0, 100%);",
+            fixed=TRUE,
+            width="auto", height="auto",
+            right=0, bottom="90px",
+            
+            div(class="card-insert-text",
+
+                h6(class="no-margin-v",
+                  style="font-size: 0.8em; color: #999999;",
+                   HTML(paste0(
+                       htmlOutput("stat_totalHTML")
+                   )))
+
+                )
+        )
+    ),
+
+### 1.3. Resume ______________________________________________________
     hidden(
         absolutePanel(
             id='resume_panel',
             class="Panel card-insert-r",
-            style="transform: translate(0, -50%);",
+            # style="transform: translate(0, -100%);",
             fixed=TRUE,
             width="auto", height="auto",
-            right=0, top="22%",
+            right=0, top="100px",
             
             div(class="card-insert-text",
                 
@@ -137,50 +180,6 @@ ui = bootstrapPage(
                 )
         )
     ),
-
-### 1.2. Palette _____________________________________________________
-    hidden(
-        absolutePanel(
-            id="colorbar_panel",
-            class="Panel card-insert-r",
-            # style="transform: translate(0, 50%);",
-            fixed=TRUE,
-            width="auto",
-            height="auto", #280
-            right=0, bottom="22%",
-            
-            div(style="margin-top: 10px;
-                       margin-bottom: 10px;
-                       margin-left: 10px;
-                       margin-right: 5px;",
-                plotly::plotlyOutput("colorbar_plot",
-                                     width="auto",
-                                     height="auto"))
-        )
-    ),
-
-### 1.3. Statistics __________________________________________________
-    hidden(
-        absolutePanel(
-            id='stat_panel',
-            class="Panel card-insert-r",
-            style="transform: translate(0, 100%);",
-            fixed=TRUE,
-            width="auto", height="auto",
-            right=0, bottom="20%",
-            
-            div(class="card-insert-text",
-
-                h6(class="no-margin-v",
-                  style="font-size: 0.8em; color: #999999;",
-                   HTML(paste0(
-                       htmlOutput("stat_totalHTML")
-                   )))
-
-                )
-        )
-    ),
-    
     
 
 ## 3. HELP BACKGROUND ________________________________________________
