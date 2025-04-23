@@ -9,7 +9,7 @@
 
 [MAKAHO](https://makaho.sk8.inrae.fr/) stands for MAnn-Kendall Analysis of Hydrological Observations.
 
-It is a [R Shiny](https://shiny.rstudio.com/) website based on [EXstat](https://github.com/super-lou/EXstat) package with [CARD](https://github.com/super-lou/CARD) code bundle. It provides an interactive cartographic solution to analyze the hydrological stationarity of French surface flows based on the data of the hydrometric stations where the flows are little influenced by the human actions.
+It is a [R Shiny](https://shiny.rstudio.com/) website based on [EXstat](https://github.com/super-lou/EXstat) package with [CARD](https://github.com/super-lou/EXstat.CARD) code bundle. It provides an interactive cartographic solution to analyze the hydrological stationarity of French surface flows based on the data of the hydrometric stations where the flows are little influenced by the human actions.
 
 [<img src="https://github.com/super-lou/MAKAHO/blob/2f1ea7fab7c867041d707cee1bd68d5c3b3bfd04/www/screen.png" width="600">](https://makaho.sk8.inrae.fr/)
 
@@ -18,6 +18,8 @@ Data came from [Hydroportail](https://www.hydro.eaufrance.fr/) and the selection
 A part of the data produced by [MAKAHO](https://makaho.sk8.inrae.fr/) can be downloaded from [Recherche Data Gouv](https://doi.org/10.57745/LNBEGZ).
 
 This project was carried out for National Research Institute for Agriculture, Food and the Environment (Institut National de Recherche pour l’Agriculture, l’Alimentation et l’Environnement, [INRAE](https://agriculture.gouv.fr/inrae-linstitut-national-de-recherche-pour-lagriculture-lalimentation-et-lenvironnement) in french).
+
+This projet have won the [2024 Open Science Research Data Award in the “Creating the Conditions for Reuse” category](https://www.enseignementsup-recherche.gouv.fr/fr/remise-des-prix-science-ouverte-des-donnees-de-la-recherche-2024-98045).
 
 
 ## Installation
