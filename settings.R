@@ -202,4 +202,4 @@ CARD_path = "./CARD-MAKAHOapp"
 
 ### 3.9. Dev _________________________________________________________
 make_marker = FALSE
-nStation_dev = 10
+nStation_dev = 228
