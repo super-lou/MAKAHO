@@ -752,11 +752,11 @@ ui = bootstrapPage(
                                 word("i.code", lg),
                                 "</b></span>"))),
                 div(class="sep"),
-                div(a(href="https://github.com/super-lou/MAKAHO",
+                div(a(href="https://github.com/louis-heraut/MAKAHO",
                       img(src="github.png", height="17px"),
                       target="_blank")),
                 div(style="padding-top: 3px; padding-left: 5px;",
-                    a(href="https://github.com/super-lou/MAKAHO",
+                    a(href="https://github.com/louis-heraut/MAKAHO",
                       "GitHub", target="_blank"))),
 
 #### 8.2.4. host _____________________________________________________
