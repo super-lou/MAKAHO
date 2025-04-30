@@ -2,9 +2,9 @@
 #  / __| __ _  _ _  __| |
 # | (__ / _` || '_|/ _` |
 #  \___|\__,_||_|  \__,_|
-# Copyright 2022-2024 Louis Héraut (louis.heraut@inrae.fr)*1
+# Copyright 2022-2025 Louis,Héraut <louis.heraut@inrae.fr>*1
 #
-# *1   INRAE, France
+# *1 INRAE, UR RiverLy, Villeurbanne, France
 #
 # This file is part of CARD R library.
 #
@@ -43,8 +43,9 @@ CARD$P.sampling_period_fr = NULL
 CARD$P.topic_fr = NULL
 
 ### Global ___________________________________________________________
+CARD$P.input_vars = "X"
 CARD$P.source = NULL
-CARD$P.preferred_hydrological_month = NULL
+CARD$P.preferred_sampling_period = NULL
 CARD$P.is_date = FALSE
 CARD$P.to_normalise = TRUE
 CARD$P.palette = NULL

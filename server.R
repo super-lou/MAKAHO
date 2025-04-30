@@ -1091,12 +1091,12 @@ server = function (input, output, session) {
     })
 
 #### 4.5.7. preferred ________________________________________________
-    preferred_hydrological_month = reactive({
-        if (verbose) print("preferred_hydrological_month")
+    preferred_sampling_period = reactive({
+        if (verbose) print("preferred_sampling_period")
         id = which(Variable()$variable == variable() &
                              Variable()$event == event())
         if (!identical(id, integer(0)) & !identical(id, NA)) {        
-            Variable()$preferred_hydrological_month[id]
+            Variable()$preferred_sampling_period[id]
         } else {
             NA
         }
@@ -1283,11 +1283,11 @@ server = function (input, output, session) {
         rv$sampleSliderMode
         rv$invertSliderMode
         rv$optimalMode
-        preferred_hydrological_month()
+        preferred_sampling_period()
     }, {
         if (verbose) print("sampling_period_slider")
-        if (!is.na(preferred_hydrological_month())) {
-            hydroMonths = preferred_hydrological_month()
+        if (!is.na(preferred_sampling_period())) {
+            hydroMonths = as.numeric(gsub("[-].*", "", preferred_sampling_period()))
         } else {
             hydroMonths = match(input$sampling_period_slider, Months)
         }
